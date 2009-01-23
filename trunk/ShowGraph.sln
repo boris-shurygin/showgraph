@@ -4,6 +4,12 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graph", "sources\Graph\Graph.vcproj", "{04D4EEAD-2118-4889-9D9D-620C7C46F8ED}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "sources\UnitTest\UnitTest.vcproj", "{A93B99CA-DC51-4B2F-803E-849B4B065CE3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4} = {21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4}
+		{04D4EEAD-2118-4889-9D9D-620C7C46F8ED} = {04D4EEAD-2118-4889-9D9D-620C7C46F8ED}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utils", "sources\Utils\Utils.vcproj", "{21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +25,10 @@ Global
 		{A93B99CA-DC51-4B2F-803E-849B4B065CE3}.Debug|Win32.Build.0 = Debug|Win32
 		{A93B99CA-DC51-4B2F-803E-849B4B065CE3}.Release|Win32.ActiveCfg = Release|Win32
 		{A93B99CA-DC51-4B2F-803E-849B4B065CE3}.Release|Win32.Build.0 = Release|Win32
+		{21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4}.Debug|Win32.Build.0 = Debug|Win32
+		{21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4}.Release|Win32.ActiveCfg = Release|Win32
+		{21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
