@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="Graph"
 	ProjectGUID="{04D4EEAD-2118-4889-9D9D-620C7C46F8ED}"
 	RootNamespace="Graph"
@@ -147,6 +147,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\edge.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\edge.h"
 				>
 			</File>
@@ -164,6 +168,10 @@
 			</File>
 			<File
 				RelativePath=".\graph_error.h"
+				>
+			</File>
+			<File
+				RelativePath=".\node.cpp"
 				>
 			</File>
 			<File

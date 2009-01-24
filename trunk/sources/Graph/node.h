@@ -1,20 +1,23 @@
 #ifndef NODE_H
 #define NODE_H
-#include "graph_impl.h"
+#include "graph_iface.h"
 
 class Node
 {
     int id;
     Graph * graph;
-    
+    list<Node *>::iterator my_it;
+
     //Lists of edges
     list<Edge *> edges[ GRAPH_DIRS_NUM];
     list<Edge *>::iterator e_it[ GRAPH_DIRS_NUM];
+    
+    /** We can't create nodes separately, do it through NewNode method of graph */
+    Node( Graph *graph_p, int _id):id(_id), graph(graph_p){};
+    friend class Graph;
 
 public:
-    //Constructor
-    Node( Graph *graph_p, int _id):id(_id), graph(graph_p){};
-    
+    ~Node();
     inline int GetId() const
     {
         return id;
@@ -59,7 +62,7 @@ public:
     }
     inline bool EndOfEdgesInDir( GraphDir dir)
     {
-        return e_it [ dir] != edges [ dir ].end();
+        return e_it [ dir] == edges [ dir ].end();
     }
     inline Edge* GetFirstSucc()
     {
@@ -85,6 +88,7 @@ public:
     {
         return EndOfEdgesInDir( GRAPH_DIR_UP);
     }
+    void DebugPrint();
 };
 
 #endif

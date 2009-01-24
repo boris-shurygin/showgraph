@@ -1,6 +1,6 @@
 #ifndef EDGE_H
 #define EDGE_H
-#include "graph_impl.h"
+#include "graph_iface.h"
 
 class Edge
 {
@@ -52,6 +52,7 @@ public:
     {
         return GetNode( GRAPH_DIR_DOWN);
     }
+    void DebugPrint();
 };
 
 #endif

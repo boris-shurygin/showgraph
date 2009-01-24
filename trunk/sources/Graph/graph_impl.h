@@ -9,4 +9,7 @@
 #include "../Utils/utils_iface.h"
 #include "graph_error.h"
 
+//namespaces import
+using namespace Utils;
+
 #endif
