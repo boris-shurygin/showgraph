@@ -5,13 +5,13 @@
 class Graph
 {
     /* List of nodes and its iterator */
-    list<Node *> nodes;
-    list<Node *>::iterator n_it;
+    NodeList nodes;
+    NodeListIt n_it;
     unsigned int node_last_id;
 
     /* List of edges and its iterator */
-    list<Edge *> edges;
-    list<Edge *>::iterator e_it;
+    EdgeList edges;
+    EdgeListIt e_it;
     unsigned int edge_last_id;
 
 public:
@@ -23,6 +23,10 @@ public:
     inline void DeleteNode( NodeListIt it)
     {
         nodes.erase( it);
+    }
+    inline void DeleteEdge( EdgeListIt it)
+    {
+        edges.erase( it);
     }
     inline size_t GetNodeCount()
     {
@@ -62,4 +66,5 @@ public:
     }
     void DebugPrint();
 };
+
 #endif

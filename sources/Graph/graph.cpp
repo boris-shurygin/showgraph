@@ -9,16 +9,24 @@ Graph::Graph()
 Node *
 Graph::NewNode()
 {
-    Node *node_p = new Node( this, node_last_id++);
-    nodes.push_back( node_p);
+    NodeListIt it;
+    nodes.push_back( NULL);
+    it = nodes.end();
+    it--;
+    Node *node_p = new Node( this, node_last_id++, it);
+    *it = node_p;
     return node_p;
 }
 
 Edge *
 Graph::NewEdge( Node * pred, Node * succ)
 {
+    EdgeListIt it;
     Edge *edge_p = new Edge( this, edge_last_id++, pred, succ);
     edges.push_back( edge_p);
+    it = edges.end();
+    it--;
+    edge_p->SetGraphIt( it);
     return edge_p;
 }
 

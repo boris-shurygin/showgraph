@@ -9,14 +9,14 @@ enum GraphDir
     GRAPH_DIRS_NUM
 };
 
-typedef list<Edge *> EdgeList;
-typedef list<Edge *>::iterator EdgeListIt;
+typedef list<Edge*> EdgeList;
+typedef EdgeList::iterator EdgeListIt;
 typedef list<Node *> NodeList;
-typedef list<Node *>::iterator NodeListIt;
-
+typedef NodeList::iterator NodeListIt;
 
 #include "graph.h"
 #include "node.h"
 #include "edge.h"
+
 
 #endif

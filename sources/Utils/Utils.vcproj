@@ -146,6 +146,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\misc.h"
+			>
+		</File>
+		<File
 			RelativePath=".\print.h"
 			>
 		</File>
