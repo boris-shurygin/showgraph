@@ -19,6 +19,7 @@ enum GraphErrorType{
  */
 class GraphError
 {
+public:
     GraphErrorType type;
     Graph *graph;
     Node *node1;
@@ -31,7 +32,6 @@ class GraphError
         node2 = NULL;
         edge = NULL;
     }
-public:
     GraphError()
     {
         type = GRAPH_ERROR_GENERIC;
@@ -55,8 +55,6 @@ inline void GraphAssert( bool asrt)
 {
     Assert<GraphError> (asrt);
 }
-inline void GraphAssert( bool asrt, GraphError e)
-{
-    Assert<GraphError> (asrt, e);
-}
+void GraphAssert( bool asrt, GraphError e);
+
 #endif

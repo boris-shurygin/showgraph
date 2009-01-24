@@ -1,6 +1,28 @@
 #ifndef ASRT_H
 #define ASRT_H
 
+enum ErrorT
+{
+    ERROR_GENERIC
+};
+enum Severity
+{
+    CRITICAL
+};
+
+
+class Error
+{
+    ErrorT type;
+    Severity sev;
+public:
+    Error()
+    {
+        type = ERROR_GENERIC;
+        sev = CRITICAL;
+    }
+};
+
 /**
  * Generic assertion template
  */
