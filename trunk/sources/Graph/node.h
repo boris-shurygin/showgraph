@@ -6,14 +6,14 @@ class Node
 {
     int id;
     Graph * graph;
-    list<Node *>::iterator my_it;
+    NodeList::iterator my_it;
 
     //Lists of edges
-    list<Edge *> edges[ GRAPH_DIRS_NUM];
-    list<Edge *>::iterator e_it[ GRAPH_DIRS_NUM];
+    EdgeList edges[ GRAPH_DIRS_NUM];
+    EdgeListIt e_it[ GRAPH_DIRS_NUM];
     
     /** We can't create nodes separately, do it through NewNode method of graph */
-    Node( Graph *graph_p, int _id):id(_id), graph(graph_p){};
+    Node( Graph *graph_p, int _id, NodeList::iterator it):id(_id), graph(graph_p), my_it( it){};
     friend class Graph;
 
 public:
@@ -26,23 +26,20 @@ public:
     {
         return graph;
     }
-    inline list<Edge *>& GetEdgesInDir( GraphDir dir)
+    inline EdgeList& GetEdgesInDir( GraphDir dir)
     {
-        list<Edge *>& res = edges[ dir];
+        EdgeList& res = edges[ dir];
         return res;
     }
-    inline list<Edge *>& GetPreds()
+    inline EdgeList& GetPreds()
     {
         return GetEdgesInDir( GRAPH_DIR_UP);
     }
-    inline list<Edge *>& GetSuccs()
+    inline EdgeList& GetSuccs()
     {
         return GetEdgesInDir( GRAPH_DIR_DOWN);
     }
-    inline void AddEdgeInDir( Edge *edge, GraphDir dir)
-    {
-        edges[ dir].push_back( edge);
-    }
+    void AddEdgeInDir( Edge *edge, GraphDir dir);
     inline void AddPred( Edge *edge)
     {
         edges[ GRAPH_DIR_UP].push_back( edge);
@@ -54,11 +51,12 @@ public:
     inline Edge* GetFirstEdgeInDir( GraphDir dir)
     {
         e_it[ dir ] = edges[ dir ].begin();
-        return *e_it[ dir ]++;
+        return *e_it[ dir ];
     }
     inline Edge* GetNextEdgeInDir( GraphDir dir)
     {
-        return *e_it[ dir]++;
+        e_it[ dir]++;
+        return (e_it[ dir] != edges[ dir].end())? *e_it[ dir] : NULL;
     }
     inline bool EndOfEdgesInDir( GraphDir dir)
     {
@@ -87,6 +85,15 @@ public:
     inline bool EndOfPreds()
     {
         return EndOfEdgesInDir( GRAPH_DIR_UP);
+    }
+    void DeleteEdgeInDir( GraphDir dir, EdgeListIt it);
+    inline void DeletePred( EdgeListIt it)
+    {
+        DeleteEdgeInDir( GRAPH_DIR_UP, it);
+    }
+    inline void DeleteSucc( EdgeListIt it)
+    {
+        DeleteEdgeInDir( GRAPH_DIR_DOWN, it);
     }
     void DebugPrint();
 };

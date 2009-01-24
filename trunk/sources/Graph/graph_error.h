@@ -11,7 +11,6 @@ enum GraphErrorType{
     GRAPH_ERROR_GENERIC,
     //Wrong Direction
     GRAPH_ERROR_WRONG_DIR,
-
 };
 
 /**
@@ -47,14 +46,5 @@ public:
     }
     void PrintMessage();
 };
-
-/**
- * Graph's assertion routines;
- */
-inline void GraphAssert( bool asrt)
-{
-    Assert<GraphError> (asrt);
-}
-void GraphAssert( bool asrt, GraphError e);
 
 #endif

@@ -21,8 +21,8 @@ bool UTestGraph()
             graph.NewEdge( nodes[ i - 2], nodes[ i]);
         }
     }
-    
     graph.NewEdge( nodes[ 8], nodes[ 4]);
+    delete nodes[ 8];
     graph.DebugPrint();
     /** Nodes traversal */
     //Assert<Error>( 0);

@@ -6,5 +6,12 @@ using namespace std;
 class Graph;
 class Node;
 class Edge;
+class GraphError;
+
+/**
+ * Graph's assertion routines;
+ */
+void GraphAssert( bool asrt);
+void GraphAssert( bool asrt, GraphError e);
 
 #endif 
