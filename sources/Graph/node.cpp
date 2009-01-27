@@ -1,5 +1,13 @@
+/**
+ * File: node.cpp - Node class implementation, part of Graph library, 
+ * an internal representation of graphs in ShowGraph tool.
+ * Copyright (C) 2009  Boris Shurygin
+ */
 #include "graph_impl.h"
 
+/** 
+ * Destructor. Corrects list of nodes in corresponding graph and deletes adjacent edges
+ */
 Node::~Node()
 {
     Edge *edge;
@@ -19,7 +27,9 @@ Node::~Node()
     graph->DeleteNode( my_it);
 }
 
-
+/**
+ * Add an edge to this node in specified direction
+ */
 void Node::AddEdgeInDir( Edge *edge, GraphDir dir)
 {
     GraphAssert( IsNotNullP( edge));
@@ -29,11 +39,18 @@ void Node::AddEdgeInDir( Edge *edge, GraphDir dir)
     it--;
     edge->SetListIt( RevDir( dir), it);
 }
-    
+
+/**
+ * Delete edge pointed by iterator in specidied direction
+ */
 void Node::DeleteEdgeInDir( GraphDir dir, EdgeListIt it)
 {
     edges[ dir].erase( it);
 }
+
+/**
+ * Print node in Dot format to stdout
+ */
 void Node::DebugPrint()
 {
     out("%u;", GetId());

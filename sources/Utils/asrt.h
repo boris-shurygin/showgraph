@@ -1,16 +1,29 @@
+/**
+ * File: misc.h - Assertion related routines of Utils library for ShowGraph
+ * Copyright (C) 2009  Boris Shurygin
+ */
 #ifndef ASRT_H
 #define ASRT_H
 
+/**
+ * Type of error
+ */
 enum ErrorT
 {
     ERROR_GENERIC
 };
+
+/**
+ * Error's severity
+ */
 enum Severity
 {
     CRITICAL
 };
 
-
+/**
+ * Error description
+ */
 class Error
 {
     ErrorT type;
@@ -34,6 +47,9 @@ template<class Excpt> inline void Assert( bool assertion)
     }
 }
 
+/**
+ * Assertion template parameterized with thrown exception type
+ */
 template<class Excpt> inline void Assert( bool asrt, Excpt e)
 {
     if ( !asrt)

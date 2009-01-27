@@ -1,3 +1,7 @@
+/**
+ * File: misc.h - Wrapper for printing routines in ShowGraph
+ * Copyright (C) 2009  Boris Shurygin
+ */
 #ifndef PRINT_H
 #define PRINT_H
 

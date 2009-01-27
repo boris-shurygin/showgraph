@@ -1,3 +1,7 @@
+/**
+ * File: list.h - Some expiriments with list implementation. Not fully implemented. NOT FOR USE.
+ * Copyright (C) 2009  Boris Shurygin
+ */
 #ifndef LIST_H
 #define LIST_H
 
