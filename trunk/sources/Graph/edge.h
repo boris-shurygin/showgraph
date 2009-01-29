@@ -5,15 +5,20 @@
  */
 #ifndef EDGE_H
 #define EDGE_H
-#include "graph_iface.h"
 
 /**
  *  Edge class implements basic concept of graph edge.
  *  It has two Nodes as its end points. As edge is member of 3 lists it
  *  has 3 corresponding iterators pointing to it in theses lists
  */
-class Edge
+template <class Graph, class Node, class Edge> class EdgeT
 {
+public:
+    typedef list<Edge*> EdgeList;
+    typedef typename EdgeList::iterator EdgeListIt;
+    typedef list<Node *> NodeList;
+    typedef typename NodeList::iterator NodeListIt;
+private:
     /** Graph part */
     int id; //Unique ID
     Graph * graph; //Graph
@@ -22,9 +27,14 @@ class Edge
     /** Nodes */
     Node *nodes[ GRAPH_DIRS_NUM]; //Adjacent nodes
     EdgeListIt n_it[ GRAPH_DIRS_NUM];//Position in each node's list
-    
+
+protected:
+    /** Graph and Node have access to Edge's members */
+    friend class Graph;
+    friend class Node;
+
     /** Constructors are made private, only nodes and graph can create edges */
-    Edge( Graph *graph_p, int _id, Node *_pred, Node* _succ): id(_id), graph(graph_p)
+    EdgeT( Graph *graph_p, int _id, Node *_pred, Node* _succ): id(_id), graph(graph_p)
     {
         SetPred( _pred);
         SetSucc( _succ);
@@ -65,10 +75,6 @@ class Edge
      * Made private as it is low-level routine needed for implementation of edge-node relationship
      */
     void DetachFromNode( GraphDir dir);
-
-    /** Graph and Node have access to Edge's members */
-    friend class Node;
-    friend class Graph;
 public:
     /** 
      *  Destructor. Delete edge from list in graph.
@@ -82,7 +88,7 @@ public:
      *      edge->DetachFromNode( GRAPH_DIR_DOWN);
      *      delete edge;
      */
-    ~Edge();
+    ~EdgeT();
 
     /**
      * Connect edge to a node in specified direction.
@@ -94,7 +100,7 @@ public:
         nodes[ dir] = n;
         if ( n != NULL)
         {
-            n->AddEdgeInDir( this, 
+            n->AddEdgeInDir( (Edge *)this, 
                 ((dir == GRAPH_DIR_UP)? GRAPH_DIR_DOWN : GRAPH_DIR_UP));
         }
     }
@@ -140,5 +146,7 @@ public:
      */
     void DebugPrint();
 };
+
+#include "edge.cpp"
 
 #endif

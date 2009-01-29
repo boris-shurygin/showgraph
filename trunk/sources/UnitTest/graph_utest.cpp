@@ -34,12 +34,12 @@ bool UTestNodeEdge()
  */
 bool UTestGraph()
 {
-    Graph graph;
+    AGraph graph;
 
     /** 
      *  Check basic operation of graph library
      */
-    vector<Node *> nodes;
+    vector<ANode *> nodes;
     for ( int i =0; i<20; i++)
     {
         nodes.push_back( graph.NewNode());

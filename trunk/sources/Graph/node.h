@@ -5,31 +5,37 @@
  */
 #ifndef NODE_H
 #define NODE_H
-#include "graph_iface.h"
 
 /**
  * Node representation class. 
  */
-class Node
+template <class Graph, class Node, class Edge> class NodeT
 {
+public:
+    typedef list<Edge*> EdgeList;
+    typedef typename EdgeList::iterator EdgeListIt;
+    typedef list<Node *> NodeList;
+    typedef typename NodeList::iterator NodeListIt;
+private:
     /** Connection with inclusive graph */
     int id; // Unique id
     Graph * graph;// Pointer to graph
-    NodeList::iterator my_it; // Iterator pointing to node's position in graph's node list
+    NodeListIt my_it; // Iterator pointing to node's position in graph's node list
 
     //Lists of edges and iterators for them
     EdgeList edges[ GRAPH_DIRS_NUM];
     EdgeListIt e_it[ GRAPH_DIRS_NUM];
     
+protected:
     /** We can't create nodes separately, do it through NewNode method of graph */
-    Node( Graph *graph_p, int _id, NodeList::iterator it):id(_id), graph(graph_p), my_it( it){};
+    NodeT( Graph *graph_p, int _id, NodeListIt it):id(_id), graph(graph_p), my_it( it){};
     friend class Graph;
 
 public:
     /**
      * Destructor
      */
-    ~Node();
+    ~NodeT();
     
     /**
      * Get node's unique ID
@@ -163,6 +169,9 @@ public:
      * Print node in DOT format to stdout
      */
     void DebugPrint();
+
 };
+
+#include "node.cpp"
 
 #endif

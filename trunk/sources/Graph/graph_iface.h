@@ -7,27 +7,10 @@
 #define GRAPH_IFACE_H
 #include "predecls.h"
 
-/**
- * Directions type in graph
- */
-enum GraphDir
-{
-    GRAPH_DIR_UP,
-    GRAPH_DIR_DOWN,
-    GRAPH_DIRS_NUM
-};
-
-/**
- * Lists of nodes and edges
- */
-typedef list<Edge*> EdgeList;
-typedef EdgeList::iterator EdgeListIt;
-typedef list<Node *> NodeList;
-typedef NodeList::iterator NodeListIt;
-
 #include "graph.h"
 #include "node.h"
 #include "edge.h"
+#include "agraph.h"
 
 
 #endif

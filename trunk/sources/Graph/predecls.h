@@ -8,21 +8,46 @@
 
 #include <list>
 using namespace std;
-class Graph;
-class Node;
-class Edge;
-class GraphError;
+
+#include "../Utils/utils_iface.h"
+/** 
+ * namespaces import
+ */
+using namespace Utils;
+
+/**
+ * Directions type in graph
+ */
+enum GraphDir
+{
+    GRAPH_DIR_UP,
+    GRAPH_DIR_DOWN,
+    GRAPH_DIRS_NUM
+};
 
 /**
  * Graph's assertion routines;
  */
 void GraphAssert( bool asrt);
-void GraphAssert( bool asrt, GraphError e);
+
+/**
+ * Return direction that is reverse to given one
+ */
+inline GraphDir
+RevDir( GraphDir dir)
+{
+    GraphAssert( GRAPH_DIRS_NUM == 2);
+    return ( dir == GRAPH_DIR_UP)? GRAPH_DIR_DOWN: GRAPH_DIR_UP; 
+}
 
 /** Number type used for numbering nodes and edges in graph */
 typedef unsigned int GraphNum;
 
 #define GRAPH_MAX_NODE_NUM ( GraphNum)( -1)
 #define GRAPH_MAX_EDGE_NUM ( GraphNum)( -1)
+
+template <class Graph, class Node, class Edge> class GraphT;
+template <class Graph, class Node, class Edge> class NodeT;
+template <class Graph, class Node, class Edge> class EdgeT;
 
 #endif 

@@ -3,13 +3,13 @@
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
-#include "graph_impl.h"
 
 /**
  * Edge destructor.
  * Delete edge from graph's list of edges
  */
-Edge::~Edge()
+template <class Graph, class Node, class Edge>
+EdgeT<Graph, Node, Edge>::~EdgeT()
 {
     graph->DeleteEdge( graph_it);
 }
@@ -17,7 +17,9 @@ Edge::~Edge()
 /**
  * Print edge in DOT format to stdout
  */
-void Edge::DebugPrint()
+template <class Graph, class Node, class Edge>
+void
+EdgeT<Graph, Node, Edge>::DebugPrint()
 {
     /**
      * Check that edge is printable
@@ -33,7 +35,9 @@ void Edge::DebugPrint()
 /**
  * Low level correction of node's edge list in corresponding direction
  */
-void Edge::DetachFromNode( GraphDir dir)
+template <class Graph, class Node, class Edge>
+void
+EdgeT<Graph, Node, Edge>::DetachFromNode( GraphDir dir)
 {
     Node *n = GetNode( dir);
     n->DeleteEdgeInDir( RevDir( dir), n_it[ dir]);
