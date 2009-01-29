@@ -131,6 +131,11 @@ public:
      * Print graph to stdout in DOT format
      */
     void DebugPrint();
+    
+    /** Node/Edge creation routines MUST be overloaded by derived class */
+    void * CreateNode( Graph *graph_p, int _id, NodeListIt it);
+    void * CreateEdge( Graph *graph_p, int _id, Node *_pred, Node* _succ);
+    
 };
 
 #endif

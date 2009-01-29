@@ -14,6 +14,19 @@ Graph::Graph()
     edge_next_id = 0;
 }
 
+/** Node/Edge creation routines MUST be overloaded by derived class */
+void * 
+Graph::CreateNode( Graph *graph_p, int _id, NodeListIt it)
+{
+    return new Node ( graph_p, _id, it);
+}
+
+void * 
+Graph::CreateEdge( Graph *graph_p, int _id, Node *_pred, Node* _succ)
+{
+    return new Edge( graph_p, _id, _pred, _succ);
+}
+
 /**
  * Creation node in graph
  */
@@ -29,7 +42,7 @@ Graph::NewNode()
     nodes.push_back( NULL);
     it = nodes.end();
     it--;
-    Node *node_p = new Node( this, node_next_id++, it);
+    Node *node_p = ( Node *) CreateNode( this, node_next_id++, it);
     *it = node_p;
     return node_p;
 }
@@ -46,7 +59,7 @@ Graph::NewEdge( Node * pred, Node * succ)
      */
     GraphAssert( edge_next_id < GRAPH_MAX_NODE_NUM,
                  GraphError( GRAPH_ERROR_EDGE_NUM_OVERFLOW, this));
-    Edge *edge_p = new Edge( this, edge_next_id++, pred, succ);
+    Edge *edge_p = ( Edge *) CreateEdge( this, edge_next_id++, pred, succ);
     edges.push_back( edge_p);
     EdgeListIt it = edges.end();
     it--;
