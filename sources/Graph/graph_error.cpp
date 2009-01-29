@@ -18,13 +18,5 @@ void GraphError::PrintMessage()
  */
 void GraphAssert( bool asrt)
 {
-    Assert<GraphError> (asrt);
-}
-
-/**
- * Assert throwing error description for possible handling
- */
-void GraphAssert( bool asrt, GraphError e)
-{
-    Assert<GraphError> (asrt, e);
+    Assert<int> (asrt);
 }
