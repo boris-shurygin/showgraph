@@ -10,7 +10,7 @@
  * Graph class decribes a graph.
  *  Like classical definition G = ( N, E) where N is set of nodes n and E is set of edges e = {n_i, n_j}
  */
-template <class Graph, class Node, class Edge > class GraphT
+template <class Graph, class Node, class Edge > class GraphT: public MarkerManager
 {
 public:
     typedef list<Edge*> EdgeList;

@@ -11,7 +11,7 @@
  *  It has two Nodes as its end points. As edge is member of 3 lists it
  *  has 3 corresponding iterators pointing to it in theses lists
  */
-template <class Graph, class Node, class Edge> class EdgeT
+template <class Graph, class Node, class Edge> class EdgeT: public Marked
 {
 public:
     typedef list<Edge*> EdgeList;

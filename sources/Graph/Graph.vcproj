@@ -191,6 +191,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\marker.h"
+				>
+			</File>
+			<File
 				RelativePath=".\node.cpp"
 				>
 				<FileConfiguration
