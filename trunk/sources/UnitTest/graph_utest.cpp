@@ -30,6 +30,53 @@ bool UTestNodeEdge()
 }
 
 /**
+ * Check marker functionality
+ */
+bool UTestMarkers()
+{
+    AGraph graph;
+    ANode *pred = graph.NewNode();
+    ANode *succ = graph.NewNode();
+    AEdge *edge = graph.NewEdge( pred, succ);
+    Marker m = graph.NewMarker();
+    Marker m2 = graph.NewMarker();
+
+    Marker m_array[ MAX_GRAPH_MARKERS];
+    
+    Assert< int> ( !pred->IsMarked( m));
+    Assert< int> ( !succ->IsMarked( m));
+    Assert< int> ( !edge->IsMarked( m));
+    Assert< int> ( !pred->IsMarked( m2));
+
+    pred->Mark( m);
+    succ->Mark( m);
+    edge->Mark( m);
+    edge->Mark( m2);
+
+    Assert< int> ( pred->IsMarked( m));
+    Assert< int> ( succ->IsMarked( m));
+    Assert< int> ( edge->IsMarked( m));
+    Assert< int> ( edge->IsMarked( m2));
+    edge->Unmark( m);
+    Assert< int> ( edge->IsMarked( m2));
+    
+    graph.FreeMarker( m);
+    graph.FreeMarker( m2);
+    
+    for ( MarkerIndex i = 0; i < MAX_GRAPH_MARKERS; i++)
+    {
+        m_array [ i] = graph.NewMarker();
+    }
+    for ( MarkerIndex i = 0; i < MAX_GRAPH_MARKERS; i++)
+    {
+        graph.FreeMarker( m_array[ i]);
+    }
+    m = graph.NewMarker();
+    graph.FreeMarker( m);
+    return true;
+}
+
+/**
  * Unit tests for Graph library
  */
 bool UTestGraph()
@@ -66,6 +113,12 @@ bool UTestGraph()
      */
     if ( !UTestNodeEdge())
          return false;
+
+    /**
+     * Check markers
+     */
+    if ( !UTestMarkers())
+        return false;
 
     /** Nodes traversal */
     //Assert<Error>( 0);

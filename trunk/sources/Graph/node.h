@@ -9,7 +9,7 @@
 /**
  * Node representation class. 
  */
-template <class Graph, class Node, class Edge> class NodeT
+template <class Graph, class Node, class Edge> class NodeT: public Marked
 {
 public:
     typedef list<Edge*> EdgeList;
@@ -25,7 +25,7 @@ private:
     //Lists of edges and iterators for them
     EdgeList edges[ GRAPH_DIRS_NUM];
     EdgeListIt e_it[ GRAPH_DIRS_NUM];
-    
+
 protected:
     /** We can't create nodes separately, do it through NewNode method of graph */
     NodeT( Graph *graph_p, int _id, NodeListIt it):id(_id), graph(graph_p), my_it( it){};
