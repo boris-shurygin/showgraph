@@ -43,22 +43,23 @@ bool UTestMarkers()
 
     Marker m_array[ MAX_GRAPH_MARKERS];
     
-    Assert< int> ( !pred->IsMarked( m));
-    Assert< int> ( !succ->IsMarked( m));
-    Assert< int> ( !edge->IsMarked( m));
-    Assert< int> ( !pred->IsMarked( m2));
-
+    Assert( !pred->IsMarked( m));
+    Assert( !succ->IsMarked( m));
+    Assert( !edge->IsMarked( m));
+    Assert( !pred->IsMarked( m2));
+    
     pred->Mark( m);
     succ->Mark( m);
     edge->Mark( m);
     edge->Mark( m2);
 
-    Assert< int> ( pred->IsMarked( m));
-    Assert< int> ( succ->IsMarked( m));
-    Assert< int> ( edge->IsMarked( m));
-    Assert< int> ( edge->IsMarked( m2));
+    Assert( pred->IsMarked( m));
+    Assert( succ->IsMarked( m));
+    Assert( edge->IsMarked( m));
+    Assert( edge->IsMarked( m2));
     edge->Unmark( m);
-    Assert< int> ( edge->IsMarked( m2));
+    Assert( edge->IsMarked( m2));
+    Assert( !edge->IsMarked( m));
     
     graph.FreeMarker( m);
     graph.FreeMarker( m2);
