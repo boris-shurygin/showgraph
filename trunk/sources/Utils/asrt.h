@@ -57,4 +57,12 @@ template<class Excpt> inline void Assert( bool asrt, Excpt e)
         throw e;
     }
 }
+
+/**
+ * Generic assert
+ */
+inline void Assert( bool asrt)
+{
+    return Assert< int>( asrt);
+}
 #endif

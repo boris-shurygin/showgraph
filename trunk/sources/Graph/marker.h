@@ -12,9 +12,13 @@ typedef unsigned int MarkerValue;
  */
 typedef enum MarkerErrorType_e
 {
+    /** Some error occured */
     M_ERROR_GENERIC,
+    /** We've ran out of indexes. Someone forgot to free markers? */
     M_ERROR_OUT_OF_INDEXES,
+    /** We're out of values. Seems to be interanl error of marker class.*/
     M_ERROR_OUT_OF_VALUES,
+    /** Number of error types */
     M_ERROR_NUM
 } MarkerErrorType;
 
@@ -23,8 +27,12 @@ typedef enum MarkerErrorType_e
  */
 class Marker
 {
+    /** Markers index */
     MarkerIndex index;
+    /** Value */
     MarkerValue value;
+
+    /** Two classes have acces to marker internals. All others do not. */
     friend class Marked;
     friend class MarkerManager;
 };
@@ -32,7 +40,7 @@ class Marker
 /**
  * Marker-related constants
  */
-const short int MAX_GRAPH_MARKERS = 10;
+const short int MAX_GRAPH_MARKERS = 10; /** How many markers are allowed simultaneously */
 const MarkerValue GRAPH_MARKER_CLEAN = 0;
 const MarkerValue GRAPH_MARKER_FIRST = 1;
 const MarkerValue GRAPH_MARKER_LAST = ( MarkerValue)( (int)-1);
@@ -210,9 +218,9 @@ public:
             {
                 case M_ERROR_GENERIC:    
                 default:
-                    Assert< int>(0);
+                    Assert(0);
             }
-            Assert< int>(0);
+            Assert(0);
         }
         return NewMarker();
     }
