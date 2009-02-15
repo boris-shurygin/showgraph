@@ -6,19 +6,19 @@
 #ifndef GRAPH_W_H
 #define GRAPH_W_H
 
-#include <QtGui/QGraphicsView>
-
-class NodeW;
-class EdgeW;
-
-class GraphW: public QGraphicsView
+class GraphW: public QGraphicsView, public GraphT< GraphW, NodeW, EdgeW>
 {
     
 public:
     /** Constructor */
     GraphW();
+    ~GraphW();
 
     void drawBackground(QPainter *painter, const QRectF &rect);
+    
+    /** New node/edge overloads */
+    NodeW* NewNode();
+    EdgeW* NewEdge( NodeW* pred, NodeW* succ);
 };
 
 #endif

@@ -35,6 +35,8 @@ bool UTestNodeEdge()
 bool UTestMarkers()
 {
     AGraph graph;
+    ANode *dummy = graph.NewNode();
+    delete dummy;
     ANode *pred = graph.NewNode();
     ANode *succ = graph.NewNode();
     AEdge *edge = graph.NewEdge( pred, succ);
@@ -74,6 +76,12 @@ bool UTestMarkers()
     }
     m = graph.NewMarker();
     graph.FreeMarker( m);
+    
+    ANode *n;
+    for (  n = graph.GetFirstNode(); !graph.EndOfNodes(); n = graph.GetNextNode())
+    {
+        delete n;
+    }
     return true;
 }
 
@@ -88,6 +96,8 @@ bool UTestGraph()
      *  Check basic operation of graph library
      */
     vector<ANode *> nodes;
+
+    /** Create nodes and edges */
     for ( int i =0; i<20; i++)
     {
         nodes.push_back( graph.NewNode());

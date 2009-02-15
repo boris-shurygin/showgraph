@@ -171,7 +171,7 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
+			Name="Interface"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
@@ -180,11 +180,31 @@
 				>
 			</File>
 			<File
+				RelativePath=".\graph_w.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gui_iface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\node_w.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Implementation"
+			>
+			<File
+				RelativePath=".\edge_w.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\graph_w.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\graph_w.h"
+				RelativePath=".\gui_impl.h"
 				>
 			</File>
 			<File
@@ -192,7 +212,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\node_w.h"
+				RelativePath=".\node_w.cpp"
 				>
 			</File>
 		</Filter>
