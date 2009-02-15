@@ -8,9 +8,11 @@
 
 class EdgeW: public QGraphicsItem, EdgeT< GraphW, NodeW, EdgeW>
 {
+    qreal arrowSize;
+
     /** Constructors are made private, only nodes and graph can create edges */
     EdgeW( GraphW *graph_p, int _id, NodeW *_pred, NodeW* _succ):
-        EdgeT< GraphW, NodeW, EdgeW>( graph_p, _id, _pred, _succ){};
+        EdgeT< GraphW, NodeW, EdgeW>( graph_p, _id, _pred, _succ), arrowSize(10){};
         
     friend class GraphT< GraphW, NodeW, EdgeW>;
     friend class NodeT< GraphW, NodeW, EdgeW>;

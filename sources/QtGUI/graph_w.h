@@ -8,7 +8,9 @@
 
 class GraphW: public QGraphicsView, public GraphT< GraphW, NodeW, EdgeW>
 {
-    
+    QPoint src;
+    QPoint dst;
+    bool createEdge;
 public:
     /** Constructor */
     GraphW();
@@ -19,6 +21,13 @@ public:
     /** New node/edge overloads */
     NodeW* NewNode();
     EdgeW* NewEdge( NodeW* pred, NodeW* succ);
+        
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void drawForeground(QPainter *painter, const QRectF &rect);
+    
 };
 
 #endif

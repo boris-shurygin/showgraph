@@ -13,7 +13,9 @@ NodeW::~NodeW()
 QRectF 
 NodeW::boundingRect() const
 {
-    return QRectF( pos(), pos());
+    qreal adjust = 2;
+    return QRectF(-10 - adjust, -10 - adjust,
+                  23 + adjust, 23 + adjust);
 }
 
 QPainterPath 
@@ -46,4 +48,16 @@ NodeW::paint( QPainter *painter,
     painter->setBrush(gradient);
     painter->setPen(QPen(Qt::black, 0));
     painter->drawEllipse(-10, -10, 20, 20);
+}
+
+void NodeW::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    update();
+    QGraphicsItem::mousePressEvent(event);
+}
+
+void NodeW::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    update();
+    QGraphicsItem::mouseReleaseEvent(event);
 }
