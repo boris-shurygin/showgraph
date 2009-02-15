@@ -14,10 +14,7 @@
 template <class Graph, class Node, class Edge> class EdgeT: public Marked
 {
 public:
-    typedef list<Edge*> EdgeList;
-    typedef typename EdgeList::iterator EdgeListIt;
-    typedef list<Node *> NodeList;
-    typedef typename NodeList::iterator NodeListIt;
+    typedef ListItem< Edge> EdgeListIt;
 private:
     /** Graph part */
     int id; //Unique ID
@@ -34,8 +31,13 @@ protected:
     friend class Node;
 
     /** Constructors are made private, only nodes and graph can create edges */
-    EdgeT( Graph *graph_p, int _id, Node *_pred, Node* _succ): id(_id), graph(graph_p)
+    EdgeT( Graph *graph_p, int _id, Node *_pred, Node* _succ): id(_id), graph(graph_p), graph_it()
     {
+        graph_it.SetData( (Edge*) this);
+        n_it[ GRAPH_DIR_UP] = EdgeListIt();
+        n_it[ GRAPH_DIR_DOWN] = EdgeListIt();
+        n_it[ GRAPH_DIR_UP].SetData( (Edge*)this);
+        n_it[ GRAPH_DIR_DOWN].SetData( (Edge*)this);
         SetPred( _pred);
         SetSucc( _succ);
     }
@@ -48,9 +50,9 @@ protected:
     /** 
      * Return iterator pointing to this edge in graph's edge list
      */
-    EdgeListIt GetGraphIt()
+    EdgeListIt *GetGraphIt()
     {
-        return graph_it;
+        return &graph_it;
     }
 
     /** 
@@ -65,9 +67,9 @@ protected:
      * Return iterator pointing to this edge in node's edge
      * list in corresponding direction
      */
-    EdgeListIt GetNodeIt( GraphDir dir)
+    EdgeListIt *GetNodeIt( GraphDir dir)
     {
-        return n_it[ dir];
+        return &n_it[ dir];
     }
 
     /**

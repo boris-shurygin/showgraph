@@ -12,14 +12,20 @@ GraphT< Graph, Node, Edge>::GraphT()
 {
     node_next_id = 0;
     edge_next_id = 0;
+    node_num = 0;
+    edge_num = 0;
+    nodes = NULL;
+    edges = NULL;
+    n_it = NULL;
+    e_it = NULL;
 }
 
 /** Node/Edge creation routines can be overloaded by derived class */
 template <class Graph, class Node, class Edge>
 void * 
-GraphT< Graph, Node, Edge>::CreateNode( Graph *graph_p, int _id, NodeListIt it)
+GraphT< Graph, Node, Edge>::CreateNode( Graph *graph_p, int _id)
 {
-    return new Node ( graph_p, _id, it);
+    return new Node ( graph_p, _id);
 }
 
 template <class Graph, class Node, class Edge>
@@ -40,12 +46,12 @@ GraphT< Graph, Node, Edge>::NewNode()
      * Check that we have available node id 
      */
     GraphAssert( edge_next_id < GRAPH_MAX_NODE_NUM);
-    NodeListIt it;
-    nodes.push_back( NULL);
-    it = nodes.end();
-    it--;
-    Node *node_p = ( Node *) CreateNode( (Graph *)this, node_next_id++, it);
-    *it = node_p;
+    NodeListIt* it;
+    Node *node_p = ( Node *) CreateNode( (Graph *)this, node_next_id++);
+    it = node_p->GetGraphIt();
+    it->Attach( nodes);
+    nodes = it;
+    node_num++;
     return node_p;
 }
 
@@ -62,11 +68,10 @@ GraphT< Graph, Node, Edge>::NewEdge( Node * pred, Node * succ)
      */
     GraphAssert( edge_next_id < GRAPH_MAX_NODE_NUM);
     Edge *edge_p = ( Edge *) CreateEdge( (Graph *)this, edge_next_id++, pred, succ);
-    edges.push_back( edge_p);
-    EdgeListIt it = edges.end();
-    it--;
-    edge_p->SetGraphIt( it);
-
+    EdgeListIt* it = edge_p->GetGraphIt();
+    it->Attach( edges);
+    edges = it;
+    edge_num++;
     return edge_p;
 }
 

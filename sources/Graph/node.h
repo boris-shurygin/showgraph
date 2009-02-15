@@ -12,24 +12,32 @@
 template <class Graph, class Node, class Edge> class NodeT: public Marked
 {
 public:
-    typedef list<Edge*> EdgeList;
-    typedef typename EdgeList::iterator EdgeListIt;
-    typedef list<Node *> NodeList;
-    typedef typename NodeList::iterator NodeListIt;
+    typedef ListItem< Node> NodeListIt;
+    typedef ListItem< Edge> EdgeListIt;
 private:
     /** Connection with inclusive graph */
-    int a[ 200];
-    NodeListIt my_it; // Iterator pointing to node's position in graph's node list
     int id; // Unique id
     Graph * graph;// Pointer to graph
+    NodeListIt my_it;//Item of graph's list
     
     //Lists of edges and iterators for them
-    EdgeList edges[ GRAPH_DIRS_NUM];
-    EdgeListIt e_it[ GRAPH_DIRS_NUM];
+    EdgeListIt *edges[ GRAPH_DIRS_NUM];
+    EdgeListIt *e_it[ GRAPH_DIRS_NUM];
 
 protected:
+    NodeListIt* GetGraphIt()
+    {
+        return &my_it;
+    }
     /** We can't create nodes separately, do it through NewNode method of graph */
-    NodeT( Graph *graph_p, int _id, NodeListIt it):id(_id), graph(graph_p), my_it( it){};
+    NodeT( Graph *graph_p, int _id):id(_id), graph(graph_p), my_it()
+    {
+        edges[ GRAPH_DIR_UP] = NULL;
+        edges[ GRAPH_DIR_DOWN] = NULL;
+        e_it[ GRAPH_DIR_UP] = NULL;
+        e_it[ GRAPH_DIR_DOWN] = NULL;
+        my_it.SetData( ( Node*)this);
+    }
     friend class Graph;
 
 public:
@@ -53,21 +61,6 @@ public:
     {
         return graph;
     }
-    /******** routines are considered non-tested *************/
-    inline EdgeList& GetEdgesInDir( GraphDir dir)
-    {
-        EdgeList& res = edges[ dir];
-        return res;
-    }
-    inline EdgeList& GetPreds()
-    {
-        return GetEdgesInDir( GRAPH_DIR_UP);
-    }
-    inline EdgeList& GetSuccs()
-    {
-        return GetEdgesInDir( GRAPH_DIR_DOWN);
-    }
-    /**********************************************************/
 
     /**
      * Add edge to node in specified direction
@@ -96,13 +89,13 @@ public:
      */
     inline Edge* GetFirstEdgeInDir( GraphDir dir)
     {
-        e_it[ dir ] = edges[ dir ].begin();
+        e_it[ dir ] = edges[ dir ];
         
-        if ( e_it[ dir] == edges[ dir].end())
+        if ( e_it[ dir] == NULL)
         {
             return NULL;
         }
-        return *e_it[ dir ];
+        return e_it[ dir ]->GetData();
     }
     /**
      * Advance iterator and return next edge in specified direction
@@ -110,15 +103,15 @@ public:
      */
     inline Edge* GetNextEdgeInDir( GraphDir dir)
     {
-        e_it[ dir]++;
-        return (e_it[ dir] != edges[ dir].end())? *e_it[ dir] : NULL;
+        e_it[ dir] = e_it[ dir]->GetNext();
+        return (e_it[ dir] != NULL )? e_it[ dir]->GetData() : NULL;
     }
     /**
      * Return true if iterator of list points to one-after-last element
      */
     inline bool EndOfEdgesInDir( GraphDir dir)
     {
-        return e_it [ dir] == edges [ dir ].end();
+        return e_it [ dir] == NULL;
     }
 
     /** 
@@ -153,7 +146,7 @@ public:
     /**
      * Deletion of edge in specified direction
      */
-    void DeleteEdgeInDir( GraphDir dir, EdgeListIt it);
+    void DeleteEdgeInDir( GraphDir dir, EdgeListIt* it);
     
     /**
      * Delete predecessor edge

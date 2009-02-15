@@ -11,12 +11,12 @@ class NodeW: public QGraphicsItem, public NodeT< GraphW, NodeW, EdgeW>
     /** Widget data */
     
     /** We can't create nodes separately, do it through NewNode method of graph */
-    NodeW( GraphW *graph_p, int _id, NodeListIt it):
-        NodeT< GraphW, NodeW, EdgeW>( graph_p, _id, it){};
+    NodeW( GraphW *graph_p, int _id):
+        NodeT< GraphW, NodeW, EdgeW>( graph_p, _id){};
 
     /** Contructor of node with specified position */
-    NodeW( GraphW *graph_p, int _id, NodeListIt it, QPointF _pos):
-        NodeT< GraphW, NodeW, EdgeW>( graph_p, _id, it)
+    NodeW( GraphW *graph_p, int _id, QPointF _pos):
+        NodeT< GraphW, NodeW, EdgeW>( graph_p, _id)
     {
         setPos( _pos);
     }
