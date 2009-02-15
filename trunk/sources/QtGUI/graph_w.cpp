@@ -3,8 +3,9 @@
  * GUI for ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
-#include "graph_w.h"
+#include "gui_impl.h"
 
+/** Contructor */
 GraphW::GraphW()
 {
     QGraphicsScene *scene = new QGraphicsScene(this);
@@ -20,8 +21,37 @@ GraphW::GraphW()
     setWindowTitle(tr("ShowGraph"));
 }
 
+/** Destructor */
+GraphW::~GraphW()
+{
+    /** Delete all nodes */    
+    NodeW *n;
+    for (  n = GetFirstNode(); !EndOfNodes(); n = GetNextNode())
+    {
+        delete n;
+    }
+}
+
 void 
 GraphW::drawBackground(QPainter *painter, const QRectF &rect)
 {
+    painter->setRenderHint( QPainter::Antialiasing, true);
+    painter->setPen(QPen(Qt::black, 0));
+    painter->drawEllipse(-10, -10, 20, 20);
+}
 
+NodeW*
+GraphW::NewNode()
+{
+    NodeW* n = GraphT< GraphW, NodeW, EdgeW>::NewNode();
+    scene()->addItem( n);
+    return n;
+}
+
+EdgeW*
+GraphW::NewEdge( NodeW* pred, NodeW* succ)
+{
+    EdgeW* e = GraphT< GraphW, NodeW, EdgeW>::NewEdge( pred, succ);
+    scene()->addItem( e);
+    return e;
 }

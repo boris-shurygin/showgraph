@@ -19,6 +19,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QtGUI", "sources\QtGUI\QtGUI.vcproj", "{C74995DD-8FE9-4022-8766-7BCE51065554}"
+	ProjectSection(ProjectDependencies) = postProject
+		{21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4} = {21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4}
+		{04D4EEAD-2118-4889-9D9D-620C7C46F8ED} = {04D4EEAD-2118-4889-9D9D-620C7C46F8ED}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

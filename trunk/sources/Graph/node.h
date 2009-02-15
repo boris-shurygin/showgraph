@@ -18,10 +18,11 @@ public:
     typedef typename NodeList::iterator NodeListIt;
 private:
     /** Connection with inclusive graph */
+    int a[ 200];
+    NodeListIt my_it; // Iterator pointing to node's position in graph's node list
     int id; // Unique id
     Graph * graph;// Pointer to graph
-    NodeListIt my_it; // Iterator pointing to node's position in graph's node list
-
+    
     //Lists of edges and iterators for them
     EdgeList edges[ GRAPH_DIRS_NUM];
     EdgeListIt e_it[ GRAPH_DIRS_NUM];
@@ -96,6 +97,11 @@ public:
     inline Edge* GetFirstEdgeInDir( GraphDir dir)
     {
         e_it[ dir ] = edges[ dir ].begin();
+        
+        if ( e_it[ dir] == edges[ dir].end())
+        {
+            return NULL;
+        }
         return *e_it[ dir ];
     }
     /**

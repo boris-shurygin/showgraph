@@ -14,7 +14,7 @@ GraphT< Graph, Node, Edge>::GraphT()
     edge_next_id = 0;
 }
 
-/** Node/Edge creation routines MUST be overloaded by derived class */
+/** Node/Edge creation routines can be overloaded by derived class */
 template <class Graph, class Node, class Edge>
 void * 
 GraphT< Graph, Node, Edge>::CreateNode( Graph *graph_p, int _id, NodeListIt it)
