@@ -13,14 +13,13 @@
 template <class Graph, class Node, class Edge > class GraphT: public MarkerManager
 {
 public:
-    typedef list<Edge*> EdgeList;
-    typedef typename EdgeList::iterator EdgeListIt;
-    typedef list<Node *> NodeList;
-    typedef typename NodeList::iterator NodeListIt;
+    typedef ListItem< Node> NodeListIt;
+    typedef ListItem< Edge> EdgeListIt;
 private:
     /* List of nodes and its iterator */
-    NodeList nodes;
-    NodeListIt n_it;
+    NodeListIt* nodes;
+    NodeListIt* n_it;
+    unsigned long int node_num;
     
     /** 
      *  Id of next node. Incremented each time you create a node,
@@ -29,8 +28,9 @@ private:
     GraphNum node_next_id;
 
     /* List of edges and its iterator */
-    EdgeList edges;
-    EdgeListIt e_it;
+    EdgeListIt* edges;
+    EdgeListIt* e_it;
+    unsigned long int edge_num;
     
     /** Id of next edge. Incremented each time you create an edge,
      *  needed for edges to have unique id. In DEBUG mode edge id is not reused.
@@ -53,33 +53,51 @@ public:
     /**
      * Remove node from node list of graph
      */
-    inline void DeleteNode( NodeListIt it)
+    inline void DeleteNode( NodeListIt* it)
     {
-        nodes.erase( it);
+        GraphAssert( IsNotNullP( it));
+        if( nodes == it)
+        {
+           nodes = it->GetNext();
+        }
+        if( n_it == it)
+        {
+            n_it = it->GetNext();
+        }
+        it->Detach();
     }
 
     /**
      * Remove edge from edge list of graph
      */
-    inline void DeleteEdge( EdgeListIt it)
+    inline void DeleteEdge( EdgeListIt* it)
     {
-        edges.erase( it);
+        GraphAssert( IsNotNullP( it));
+        if( edges == it)
+        {
+            edges = it->GetNext();
+        }
+        if( e_it == it)
+        {
+            e_it = it->GetNext();
+        }
+        it->Detach();
     }
 
     /**
      * Return node quantity
      */
-    inline size_t GetNodeCount()
+    inline size_t GetNodeCount() const
     {
-        return nodes.size();
+        return node_num;
     }
 
     /**
      * Return edge quantity
      */
-    inline size_t GetEdgeCount()
+    inline size_t GetEdgeCount() const
     {
-        return edges.size();
+        return edge_num;
     }
     /*** 
      * Iteration through edges implementation
@@ -88,23 +106,23 @@ public:
      */
     inline Edge* GetFirstEdge() 
     {
-        e_it = edges.begin();
-        return *e_it;
+        e_it = edges;
+        return e_it->GetData();
     }
     /**
      * Advance iterator to next edge and return this edge. If end reached return NULL
      */
     inline Edge* GetNextEdge()
     {
-        e_it++;
-        return (e_it != edges.end())? *e_it : NULL;
+        e_it = e_it->GetNext();
+        return (e_it != NULL)? e_it->GetData() : NULL;
     }
     /**
      * return true if end of edge list is reached
      */
     inline bool EndOfEdges()
     {
-        return e_it == edges.end();
+        return e_it == NULL;
     }
     /*** 
      * Iteration through nodes implementation
@@ -113,16 +131,16 @@ public:
      */
     inline Node* GetFirstNode()
     {
-        n_it = nodes.begin();
-        return *n_it;
+        n_it = nodes;
+        return n_it->GetData();
     }
     /** 
      * Advance iterator to next node and return this node. If end reached return NULL
      */
     inline Node* GetNextNode()
     {
-        n_it++;
-        return ( n_it != nodes.end())? *n_it : NULL;
+        n_it = n_it->GetNext();
+        return ( n_it != NULL)? n_it->GetData() : NULL;
     }
     
     /**
@@ -130,7 +148,7 @@ public:
      */
     inline bool EndOfNodes()
     {
-        return n_it == nodes.end();
+        return n_it == NULL;
     }
     /**
      * Print graph to stdout in DOT format
@@ -138,7 +156,7 @@ public:
     void DebugPrint();
     
     /** Node/Edge creation routines can be overloaded by derived class */
-    void * CreateNode( Graph *graph_p, int _id, NodeListIt it);
+    void * CreateNode( Graph *graph_p, int _id);
     void * CreateEdge( Graph *graph_p, int _id, Node *_pred, Node* _succ);
     
 };

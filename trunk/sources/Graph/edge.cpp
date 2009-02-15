@@ -11,7 +11,7 @@
 template <class Graph, class Node, class Edge>
 EdgeT<Graph, Node, Edge>::~EdgeT()
 {
-    graph->DeleteEdge( graph_it);
+    graph->DeleteEdge( &graph_it);
 }
 
 /**
@@ -40,5 +40,5 @@ void
 EdgeT<Graph, Node, Edge>::DetachFromNode( GraphDir dir)
 {
     Node *n = GetNode( dir);
-    n->DeleteEdgeInDir( RevDir( dir), n_it[ dir]);
+    n->DeleteEdgeInDir( RevDir( dir), &n_it[ dir]);
 }

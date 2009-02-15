@@ -19,8 +19,8 @@ class ANode: public NodeT< AGraph, ANode, AEdge>
 {
     int dummy;
     /** We can't create nodes separately, do it through NewNode method of graph */
-    ANode( AGraph *graph_p, int _id, NodeListIt it):
-        NodeT< AGraph, ANode, AEdge>( graph_p, _id, it){};
+    ANode( AGraph *graph_p, int _id):
+        NodeT< AGraph, ANode, AEdge>( graph_p, _id){};
     friend class GraphT< AGraph, ANode, AEdge>;
     friend class AGraph;
 };
@@ -50,7 +50,7 @@ class AGraph: public GraphT< AGraph, ANode, AEdge>
 
     void * CreateNode( AGraph *graph_p, int _id, NodeListIt it)
     {
-        return new ANode( graph_p, _id, it);
+        return new ANode( graph_p, _id);
     }
     void * CreateEdge( AGraph *graph_p, int _id, ANode *_pred, ANode* _succ)
     {

@@ -13,18 +13,22 @@ NodeT<Graph, Node, Edge>::~NodeT()
     Edge *edge;
     
     /** Delete incidient edges */
-    for ( edge = GetFirstSucc(); !EndOfSuccs(); edge = GetNextSucc())
+    for ( edge = GetFirstSucc(); !EndOfSuccs();)
     {
+        Edge* next = GetNextSucc();
         edge->DetachFromNode( GRAPH_DIR_DOWN);// Edge is detached from succ node
         delete edge;
+        edge = next;
     }
-    for ( edge = GetFirstPred(); !EndOfPreds(); edge = GetNextPred())
+    for ( edge = GetFirstPred(); !EndOfPreds();)
     {
+        Edge* next = GetNextPred();
         edge->DetachFromNode( GRAPH_DIR_UP);// Edge is detached from pred node
         delete edge;
+        edge = next;
     }
     /** Delete myself from graph */
-    graph->DeleteNode( my_it);
+    graph->DeleteNode( &my_it);
 }
 
 /**
@@ -35,11 +39,9 @@ void
 NodeT<Graph, Node, Edge>::AddEdgeInDir( Edge *edge, GraphDir dir)
 {
     GraphAssert( IsNotNullP( edge));
-    EdgeListIt it;
-    edges[ dir].push_back( edge);
-    it = edges[ dir].end();
-    it--;
-    edge->SetListIt( RevDir( dir), it);
+    EdgeListIt *it = edge->GetNodeIt( RevDir( dir));
+    it->Attach( edges[ dir]);
+    edges[ dir] = it;
 }
 
 /**
@@ -47,9 +49,18 @@ NodeT<Graph, Node, Edge>::AddEdgeInDir( Edge *edge, GraphDir dir)
  */
 template <class Graph, class Node, class Edge>
 void
-NodeT<Graph, Node, Edge>::DeleteEdgeInDir( GraphDir dir, EdgeListIt it)
+NodeT<Graph, Node, Edge>::DeleteEdgeInDir( GraphDir dir, EdgeListIt* it)
 {
-    edges[ dir].erase( it);
+    GraphAssert( IsNotNullP( it));
+    if( edges[ dir] == it)
+    {
+        edges[ dir] = it->GetNext();
+    }
+    if( e_it[ dir] == it)
+    {
+        e_it[ dir] = it->GetNext();
+    }
+    it->Detach();
 }
 
 /**

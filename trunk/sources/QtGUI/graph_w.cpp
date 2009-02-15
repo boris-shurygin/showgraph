@@ -24,12 +24,7 @@ GraphW::GraphW()
 /** Destructor */
 GraphW::~GraphW()
 {
-    /** Delete all nodes */    
-    NodeW *n;
-    for (  n = GetFirstNode(); !EndOfNodes(); n = GetNextNode())
-    {
-        delete n;
-    }
+
 }
 
 void 
