@@ -9,10 +9,15 @@
 class EdgeW: public QGraphicsItem, EdgeT< GraphW, NodeW, EdgeW>
 {
     qreal arrowSize;
+    QPointF sourcePoint;
+    QPointF destPoint;
 
     /** Constructors are made private, only nodes and graph can create edges */
     EdgeW( GraphW *graph_p, int _id, NodeW *_pred, NodeW* _succ):
-        EdgeT< GraphW, NodeW, EdgeW>( graph_p, _id, _pred, _succ), arrowSize(10){};
+        EdgeT< GraphW, NodeW, EdgeW>( graph_p, _id, _pred, _succ), arrowSize(10)
+        {
+            adjust();
+        };
         
     friend class GraphT< GraphW, NodeW, EdgeW>;
     friend class NodeT< GraphW, NodeW, EdgeW>;
@@ -20,6 +25,11 @@ class EdgeW: public QGraphicsItem, EdgeT< GraphW, NodeW, EdgeW>
     friend class NodeW;
 public:
     
+    int type()
+    {
+        return TypeEdge;
+    }
+    void adjust();
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

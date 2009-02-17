@@ -19,6 +19,11 @@ class GraphW;
 #include <QDebug>
 #include <QWheelEvent>
 
+enum { 
+    TypeNode = QGraphicsItem::UserType + 1,
+    TypeEdge
+};
+
 #include "node_w.h"
 #include "edge_w.h"
 #include "graph_w.h"

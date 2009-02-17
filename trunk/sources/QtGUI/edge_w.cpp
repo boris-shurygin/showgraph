@@ -5,11 +5,27 @@
  */
 #include "gui_impl.h"
 
+void EdgeW::adjust()
+{
+    QLineF line(mapFromItem(GetPred(), 0, 0), mapFromItem(GetSucc(), 0, 0));
+    qreal length = line.length();
+    QPointF edgeOffset((line.dx() * 10) / length, (line.dy() * 10) / length);
+
+    sourcePoint = line.p1() + edgeOffset;
+    destPoint = line.p2() - edgeOffset;
+    prepareGeometryChange();
+}
+
 QRectF 
 EdgeW::boundingRect() const
 {
-    QPointF center = ( GetPred()->pos() - GetSucc()->pos())/2;
-    return QRectF( GetPred()->pos() - center, GetSucc()->pos() - center);
+    qreal penWidth = 1;
+    qreal extra = (penWidth + arrowSize) / 2.0;
+
+    return QRectF(sourcePoint, QSizeF(destPoint.x() - sourcePoint.x(),
+                                      destPoint.y() - sourcePoint.y()))
+        .normalized()
+        .adjusted(-extra, -extra, extra, extra);
 }
 
 QPainterPath 
@@ -25,15 +41,7 @@ EdgeW::paint( QPainter *painter,
               const QStyleOptionGraphicsItem *option,
               QWidget *widget)
 {
-    QPointF sourcePoint = GetPred()->pos();
-    QPointF destPoint = GetSucc()->pos();
-
-    QLineF line(mapFromItem(GetPred(), 0, 0), mapFromItem(GetSucc(), 0, 0));
-    qreal length = line.length();
-    QPointF edgeOffset((line.dx() * 10) / length, (line.dy() * 10) / length);
-
-    sourcePoint = line.p1() + edgeOffset;
-    destPoint = line.p2() - edgeOffset;
+    QLineF line = QLineF();
     line.setP1( sourcePoint);
     line.setP2( destPoint);
 
@@ -53,5 +61,4 @@ EdgeW::paint( QPainter *painter,
 
     painter->setBrush(Qt::black);
     painter->drawPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2); 
-    prepareGeometryChange();
 }
