@@ -60,6 +60,8 @@ bool UTestMarkers()
     Assert( edge->IsMarked( m));
     Assert( edge->IsMarked( m2));
     edge->Unmark( m);
+
+    /** Check that different markers have different behaviour */
     Assert( edge->IsMarked( m2));
     Assert( !edge->IsMarked( m));
     

@@ -99,6 +99,7 @@ public:
      */
     void SetNode( Node *n, GraphDir dir)
     {
+        GraphAssert( IsNotNullP( n));
         nodes[ dir] = n;
         if ( n != NULL)
         {

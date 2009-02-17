@@ -52,6 +52,11 @@ NodeW::paint( QPainter *painter,
 
 void NodeW::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    if( event->button() & Qt::RightButton)
+    {
+        GetGraph()->SetCreateEdge( true);
+        GetGraph()->SetTmpSrc( this);
+    }
     update();
     QGraphicsItem::mousePressEvent(event);
 }
@@ -60,4 +65,26 @@ void NodeW::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     update();
     QGraphicsItem::mouseReleaseEvent(event);
+}
+
+QVariant NodeW::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    EdgeW *edge = NULL;
+
+    switch (change) {
+    case ItemPositionHasChanged:
+        for ( edge = GetFirstSucc(); !EndOfSuccs(); edge = GetNextSucc())
+        {
+            edge->adjust();
+        }
+        for ( edge = GetFirstPred(); !EndOfPreds(); edge = GetNextPred())
+        {
+            edge->adjust();
+        }
+        break;
+    default:
+        break;
+    };
+
+    return QGraphicsItem::itemChange(change, value);
 }

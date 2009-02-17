@@ -11,6 +11,7 @@ class GraphW: public QGraphicsView, public GraphT< GraphW, NodeW, EdgeW>
     QPoint src;
     QPoint dst;
     bool createEdge;
+    NodeW *tmpSrc;
 public:
     /** Constructor */
     GraphW();
@@ -27,6 +28,22 @@ public:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void drawForeground(QPainter *painter, const QRectF &rect);
+    inline bool IsCreateEdge() const
+    {
+        return createEdge;
+    }
+    inline void SetCreateEdge( bool val)
+    {
+        createEdge = val;
+    }
+    inline void SetTmpSrc( NodeW* node)
+    {
+        tmpSrc = node;
+    }
+    inline NodeW* GetTmpSrc()
+    {
+        return tmpSrc;
+    }
     
 };
 

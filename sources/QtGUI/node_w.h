@@ -8,14 +8,12 @@
 
 class NodeW: public QGraphicsItem, public NodeT< GraphW, NodeW, EdgeW>
 {
-    /** Widget data */
-    
     /** Initialization */
     inline void SetInitFlags()
     {
         setFlag(ItemIsMovable);
-        //setCacheMode(DeviceCoordinateCache);
-        //setZValue(1);
+        setCacheMode(DeviceCoordinateCache);
+        setZValue(1);
     }
 
     /** We can't create nodes separately, do it through NewNode method of graph */
@@ -38,11 +36,16 @@ class NodeW: public QGraphicsItem, public NodeT< GraphW, NodeW, EdgeW>
 public:
     ~NodeW();
 
+    int type()
+    {
+        return TypeNode;
+    }
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 };
 
 #endif

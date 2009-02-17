@@ -19,6 +19,7 @@ GraphW::GraphW(): dst( 0, 0), src( 0, 0), createEdge( false)
     setResizeAnchor(AnchorViewCenter);
     setMinimumSize(400, 400);
     setWindowTitle(tr("ShowGraph"));
+    tmpSrc = NULL;
 }
 
 /** Destructor */
@@ -30,9 +31,7 @@ GraphW::~GraphW()
 void 
 GraphW::drawBackground(QPainter *painter, const QRectF &rect)
 {
-    painter->setRenderHint( QPainter::Antialiasing, true);
-    painter->setPen(QPen(Qt::black, 0));
-    painter->drawEllipse(-10, -10, 20, 20);
+
 }
 
 NodeW*
@@ -63,20 +62,15 @@ GraphW::mouseDoubleClickEvent(QMouseEvent *ev)
     } else if( ev->button() & Qt::RightButton)
     {
         NodeW *node = (NodeW *)scene()->itemAt( mapToScene( ev->pos()));
-        if( IsNotNullP( node))
+        if ( IsNotNullP( node) && qgraphicsitem_cast<NodeW *>( node))
         {
-            delete node;
+            delete qgraphicsitem_cast<NodeW *>( node);
         }
     }
 }
 
 void GraphW::mousePressEvent(QMouseEvent *ev)
 {
-    if( ev->button() & Qt::RightButton)
-    {
-        src = ev->pos();
-        createEdge = true;
-    }
     QGraphicsView::mousePressEvent( ev);
 }
 
@@ -84,18 +78,20 @@ void GraphW::mouseReleaseEvent(QMouseEvent *ev)
 {
     if( ev->button() & Qt::RightButton)
     {
-        dst = ev->pos();
         if ( createEdge)
         {
-            NodeW *src_node = (NodeW *)scene()->itemAt( mapToScene( src));
-            NodeW *dst_node = (NodeW *)scene()->itemAt( mapToScene( dst));
-            if( IsNotNullP( src_node) && IsNotNullP( dst_node))
+            QGraphicsItem* item = scene()->itemAt( mapToScene( ev->pos()));
+            if ( IsNotNullP( item) && qgraphicsitem_cast<NodeW *>(item))
             {
-                NewEdge( src_node, dst_node);
+                if ( tmpSrc != qgraphicsitem_cast<NodeW *>(item))
+                {
+                    NewEdge( tmpSrc, qgraphicsitem_cast<NodeW *>(item));
+                }
             }
         }
-        createEdge = false;
     }
+    tmpSrc = NULL;
+    createEdge = false;
     QGraphicsView::mouseReleaseEvent(ev);
 }
 
