@@ -12,6 +12,7 @@ class NodeW: public QGraphicsItem, public NodeT< GraphW, NodeW, EdgeW>
     inline void SetInitFlags()
     {
         setFlag(ItemIsMovable);
+        setFlag(ItemIsSelectable);
         setCacheMode(DeviceCoordinateCache);
         setZValue(1);
     }

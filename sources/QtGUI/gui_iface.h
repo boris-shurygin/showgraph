@@ -13,6 +13,7 @@ class GraphW;
 
 #include "../Graph/graph_iface.h"
 #include <QtGui>
+#include <QList>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>

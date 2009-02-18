@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="QtGUI"
 	ProjectGUID="{C74995DD-8FE9-4022-8766-7BCE51065554}"
 	RootNamespace="QtGUI"
