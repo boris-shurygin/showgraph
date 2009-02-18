@@ -1,0 +1,19 @@
+#summary The project features that are scheduled for implementation
+
+= Closest features =
+
+  * Implement nodes as items that can have various shapes and text( for now - not editable)
+  * Implement edges as editable splines
+  * Implement construction of augmented graph with dummy nodes that will be used by automatic graph visualization algorithm.
+
+= Details =
+
+Add your content here.  Format your content with:
+
+*Node*
+
+
+*Edge*
+
+
+*Augmented graph*
