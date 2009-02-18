@@ -31,8 +31,8 @@ EdgeW::boundingRect() const
 QPainterPath 
 EdgeW::shape() const
 {
-    QPainterPath path;
-    path.addEllipse(-10, -10, 20, 20);
+    QPainterPath path( sourcePoint);
+    path.lineTo( destPoint);
     return path; 
 }
 
@@ -46,7 +46,13 @@ EdgeW::paint( QPainter *painter,
     line.setP2( destPoint);
 
     // Draw the line itself
-    painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    if( option->state & QStyle::State_Selected)
+    {
+        painter->setPen(QPen(Qt::black, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    } else
+    {
+        painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    }
     painter->drawLine(line);
 
     // Draw the arrows if there's enough room

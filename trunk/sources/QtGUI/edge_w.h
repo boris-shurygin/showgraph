@@ -6,16 +6,32 @@
 #ifndef EDGE_W_H
 #define EDGE_W_H
 
+class EdgeControl: public QGraphicsItem
+{
+
+};
+
 class EdgeW: public QGraphicsItem, EdgeT< GraphW, NodeW, EdgeW>
 {
     qreal arrowSize;
     QPointF sourcePoint;
     QPointF destPoint;
+    QList< QPointF *> points;
+    QList< EdgeControl*> controls;
+
+    typedef enum EdgeMode
+    {
+        ModeShow,
+        ModeEdit
+    } EdgeMode;
+
+    EdgeMode mode;
 
     /** Constructors are made private, only nodes and graph can create edges */
     EdgeW( GraphW *graph_p, int _id, NodeW *_pred, NodeW* _succ):
         EdgeT< GraphW, NodeW, EdgeW>( graph_p, _id, _pred, _succ), arrowSize(10)
         {
+            setFlag( ItemIsSelectable);
             adjust();
         };
         
@@ -33,5 +49,6 @@ public:
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    //void mousePressEvent(QGraphicsSceneMouseEvent *event);
 };
 #endif
