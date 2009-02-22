@@ -5,14 +5,57 @@
  */
 #include "gui_impl.h"
 
+QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    switch (change) {
+    case ItemPositionHasChanged:
+        edge->adjust();
+        break;
+    default:
+        break;
+    };
+
+    return QGraphicsItem::itemChange(change, value);
+}  
+
+
 void EdgeW::adjust()
 {
-    QLineF line(mapFromItem(GetPred(), 0, 0), mapFromItem(GetSucc(), 0, 0));
-    qreal length = line.length();
-    QPointF edgeOffset((line.dx() * 10) / length, (line.dy() * 10) / length);
+    sourcePoint = mapFromItem(GetPred(), 0, 0);
+    destPoint = mapFromItem(GetSucc(), 0, 0);
+    QPointF nextToSrc = destPoint;
+    QPointF nextToDst = sourcePoint;
+    bool nextToSrcSelected = false;
 
-    sourcePoint = line.p1() + edgeOffset;
-    destPoint = line.p2() - edgeOffset;
+    topLeft = sourcePoint;
+    bottomRight = destPoint;
+    foreach( EdgeControl* control, controls)
+    {
+        QPointF cpos = mapFromScene(control->pos());
+        if ( !nextToSrcSelected)
+        {
+            nextToSrc = cpos;
+            nextToSrcSelected = true;
+        }
+        nextToDst = cpos;
+        if ( topLeft.x() > cpos.x())
+            topLeft.setX( cpos.x());
+        if ( topLeft.y() > cpos.y())
+            topLeft.setY( cpos.y());
+        if ( bottomRight.x() < cpos.x())
+            bottomRight.setX( cpos.x());
+        if ( bottomRight.y() < cpos.y())
+            bottomRight.setY( cpos.y());
+    }
+    QLineF line( sourcePoint, nextToSrc);
+    qreal length = line.length();
+    QPointF edgeOffsetSrc((line.dx() * 10) / length, (line.dy() * 10) / length);
+    QLineF line2( nextToDst, destPoint);
+    length = line2.length();
+    QPointF edgeOffsetDst((line2.dx() * 10) / length, (line2.dy() * 10) / length);
+
+    sourcePoint = line.p1() + edgeOffsetSrc;
+    destPoint = line2.p2() - edgeOffsetDst;
     prepareGeometryChange();
 }
 
@@ -22,8 +65,8 @@ EdgeW::boundingRect() const
     qreal penWidth = 1;
     qreal extra = (penWidth + arrowSize) / 2.0;
 
-    return QRectF(sourcePoint, QSizeF(destPoint.x() - sourcePoint.x(),
-                                      destPoint.y() - sourcePoint.y()))
+    return QRectF(topLeft, QSizeF(bottomRight.x() - topLeft.x(),
+                                      bottomRight.y() - topLeft.y()))
         .normalized()
         .adjusted(-extra, -extra, extra, extra);
 }
@@ -32,6 +75,10 @@ QPainterPath
 EdgeW::shape() const
 {
     QPainterPath path( sourcePoint);
+    foreach( EdgeControl *control, controls)
+    {
+        path.lineTo( mapFromScene(control->pos()));
+    }
     path.lineTo( destPoint);
     return path; 
 }
@@ -41,10 +88,19 @@ EdgeW::paint( QPainter *painter,
               const QStyleOptionGraphicsItem *option,
               QWidget *widget)
 {
+    QPointF curr_point;
     QLineF line = QLineF();
-    line.setP1( sourcePoint);
-    line.setP2( destPoint);
+    curr_point = sourcePoint;
 
+    QPainterPath path( sourcePoint);
+    foreach( EdgeControl *control, controls)
+    {
+        path.lineTo( mapFromScene(control->pos()));
+        curr_point = mapFromScene(control->pos());
+    }
+    path.lineTo( destPoint);
+    line.setP1( curr_point);
+    line.setP2( destPoint);
     // Draw the line itself
     if( option->state & QStyle::State_Selected)
     {
@@ -53,7 +109,7 @@ EdgeW::paint( QPainter *painter,
     {
         painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     }
-    painter->drawLine(line);
+    painter->drawPath(path);
 
     // Draw the arrows if there's enough room
     double angle = ::acos(line.dx() / line.length());
@@ -67,4 +123,40 @@ EdgeW::paint( QPainter *painter,
 
     painter->setBrush(Qt::black);
     painter->drawPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2); 
+}
+
+void EdgeW::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
+{
+    if( ev->button() & Qt::LeftButton)
+    {
+        EdgeControl* control = new EdgeControl( this);
+        this->GetGraph()->scene()->addItem( control);
+        control->setPos( ev->pos());
+        controls << control;
+        points << new QPointF( mapFromItem( control, 0, 0));
+    }
+    QGraphicsItem::mouseReleaseEvent( ev);
+}
+
+void EdgeW::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
+{
+
+}
+
+void EdgeW::focusInEvent(QFocusEvent *event)
+{
+    foreach( EdgeControl* control, controls)
+    {
+        control->setVisible( true);
+    }
+    QGraphicsItem::focusInEvent( event);
+}
+
+void EdgeW::focusOutEvent(QFocusEvent *event)
+{
+    foreach( EdgeControl* control, controls)
+    {
+        control->setVisible( false);
+    }
+    QGraphicsItem::focusOutEvent( event);
 }

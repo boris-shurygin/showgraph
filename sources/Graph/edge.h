@@ -41,6 +41,21 @@ protected:
         SetPred( _pred);
         SetSucc( _succ);
     }
+    /**
+     * Get edge's unique ID
+     */
+    inline int GetId() const
+    {
+        return id;
+    }
+
+    /**
+     * Get edge's corresponding graph
+     */
+    inline Graph * GetGraph() const
+    {
+        return graph;
+    }
 
     /** Pivate routines dealing with iterators */
     void SetGraphIt( EdgeListIt g_it)
