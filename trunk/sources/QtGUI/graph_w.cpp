@@ -56,17 +56,20 @@ GraphW::mouseDoubleClickEvent(QMouseEvent *ev)
     if( ev->button() & Qt::LeftButton)
     {
         QPoint p = ev->pos();
-        NodeW* node = NewNode();
-        node->setPos( mapToScene( p));
-        QGraphicsView::mouseDoubleClickEvent( ev);
+        if ( !scene()->itemAt( mapToScene( ev->pos())))
+        {
+            NodeW* node = NewNode();
+            node->setPos( mapToScene( p));
+        }
     } else if( ev->button() & Qt::RightButton)
     {
-        NodeW *node = (NodeW *)scene()->itemAt( mapToScene( ev->pos()));
+        QGraphicsItem *node = scene()->itemAt( mapToScene( ev->pos()));
         if ( IsNotNullP( node) && qgraphicsitem_cast<NodeW *>( node))
         {
             delete qgraphicsitem_cast<NodeW *>( node);
         }
     }
+    QGraphicsView::mouseDoubleClickEvent( ev);   
 }
 
 void GraphW::mousePressEvent(QMouseEvent *ev)

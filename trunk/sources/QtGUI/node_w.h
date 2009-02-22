@@ -12,7 +12,7 @@ class NodeW: public QGraphicsItem, public NodeT< GraphW, NodeW, EdgeW>
     inline void SetInitFlags()
     {
         setFlag(ItemIsMovable);
-        setFlag(ItemIsSelectable);
+        //setFlag(ItemIsSelectable);
         setCacheMode(DeviceCoordinateCache);
         setZValue(1);
     }
@@ -37,9 +37,11 @@ class NodeW: public QGraphicsItem, public NodeT< GraphW, NodeW, EdgeW>
 public:
     ~NodeW();
 
-    int type()
+    enum {Type = TypeNode};
+
+    int type() const
     {
-        return TypeNode;
+        return Type;
     }
     QRectF boundingRect() const;
     QPainterPath shape() const;

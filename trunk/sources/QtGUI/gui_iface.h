@@ -22,7 +22,8 @@ class GraphW;
 
 enum { 
     TypeNode = QGraphicsItem::UserType + 1,
-    TypeEdge
+    TypeEdge = QGraphicsItem::UserType + 2,
+    TypeEdgeControl = QGraphicsItem::UserType + 3
 };
 
 #include "node_w.h"
