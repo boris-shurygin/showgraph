@@ -9,7 +9,12 @@ QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &valu
 {
     switch (change) {
     case ItemPositionHasChanged:
-        edge->adjust();
+        if( IsNotNullP( edge))
+            edge->adjust();
+        if( IsNotNullP( predSeg))
+            predSeg->adjust();
+        if( IsNotNullP( succSeg))
+            succSeg->adjust();
         break;
     default:
         break;
@@ -104,7 +109,7 @@ EdgeW::paint( QPainter *painter,
     // Draw the line itself
     if( option->state & QStyle::State_Selected)
     {
-        painter->setPen(QPen(Qt::black, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     } else
     {
         painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
