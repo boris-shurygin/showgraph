@@ -29,10 +29,17 @@ bool UTestGUI(int argc, char **argv)
     c3.setPos( 20, 20);
     scene.addItem( &c3);
     
+    EdgeControl c4( NULL);
+    c4.setPos( 30, 30);
+    scene.addItem( &c4);
+
     EdgeSegment seg1( NULL, &c1, &c2);
     EdgeSegment seg2( NULL, &c2, &c3);
+    EdgeSegment seg3( NULL, &c3, &c4);
+
     scene.addItem( &seg1);
     scene.addItem( &seg2);
+    scene.addItem( &seg3);
     view.show();
     return app.exec();
 }
