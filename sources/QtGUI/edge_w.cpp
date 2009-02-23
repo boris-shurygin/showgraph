@@ -12,9 +12,23 @@ QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &valu
         if( IsNotNullP( edge))
             edge->adjust();
         if( IsNotNullP( predSeg))
+        {
             predSeg->adjust();
+            EdgeSegment* seg = predSeg->srcCtrl()->pred();
+            if( IsNotNullP( seg))
+            {
+                seg->adjust();
+            }
+        }
         if( IsNotNullP( succSeg))
+        {
             succSeg->adjust();
+            EdgeSegment* seg = succSeg->dstCtrl()->succ();
+            if( IsNotNullP( seg))
+            {
+                seg->adjust();
+            }
+        }
         break;
     default:
         break;

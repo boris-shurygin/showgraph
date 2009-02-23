@@ -102,6 +102,8 @@ class EdgeSegment: public QGraphicsItem
     QPointF dstP;
     EdgeControl* srcControl;
     EdgeControl* dstControl;
+    QPointF topLeft;
+    QPointF btmRight;
 
     enum SegmentType
     {
@@ -121,14 +123,38 @@ public:
         return dstP;
     }
 
+    inline EdgeControl* srcCtrl() const
+    {
+        return srcControl;
+    }
+
+    inline EdgeControl* dstCtrl() const
+    {
+        return dstControl;
+    }
     void adjust()
     {
         srcP = mapFromItem( srcControl, 0, 0);
         dstP = mapFromItem( dstControl, 0, 0);
+        
+        topLeft.setX( min< qreal>( srcP.x(), dstP.x()));
+        topLeft.setY( min< qreal>( srcP.y(), dstP.y()));
+        btmRight.setX( max< qreal>( srcP.x(), dstP.x()));
+        btmRight.setY( max< qreal>( srcP.y(), dstP.y()));
+
         QLineF mainLine = QLineF( srcP, dstP);
         qreal size = Abs< qreal>(( min< qreal>( Abs< qreal>( mainLine.dx()),
                                                 Abs< qreal>(mainLine.dy()))));
-        
+        //Stub
+        if( size < 2* EdgeControlSize)
+        {
+            size = 2* EdgeControlSize;
+        }
+        if( size > 20 * EdgeControlSize)
+        {
+            size = 20 * EdgeControlSize;
+        }
+
         /** Place cp1 */
         if ( IsNotNullP( srcControl->pred()))
         {
@@ -144,10 +170,15 @@ public:
             cp1 = srcP + cp1_offset;
         }
         
+        topLeft.setX( min< qreal>( topLeft.x(), cp1.x()));
+        topLeft.setY( min< qreal>( topLeft.y(), cp1.y()));
+        btmRight.setX( max< qreal>( btmRight.x(), cp1.x()));
+        btmRight.setY( max< qreal>( btmRight.y(), cp1.y()));
+
         /** Place cp2 */
-        if ( IsNotNullP( srcControl->succ()))
+        if ( IsNotNullP( dstControl->succ()))
         {
-            QPointF p2 = mapFromItem( srcControl->succ(), srcControl->succ()->dst());
+            QPointF p2 = mapFromItem( dstControl->succ(), dstControl->succ()->dst());
             QLineF line( p2, srcP);
             QPointF cp2_offset = QPointF( (line.dx() * size)/ line.length(),
                                           (line.dy() * size)/ line.length());
@@ -158,6 +189,12 @@ public:
                                           -(mainLine.dy() * size)/ mainLine.length());
             cp2 = dstP + cp2_offset;
         }
+        
+        topLeft.setX( min< qreal>( topLeft.x(), cp2.x()));
+        topLeft.setY( min< qreal>( topLeft.y(), cp2.y()));
+        btmRight.setX( max< qreal>( btmRight.x(), cp2.x()));
+        btmRight.setY( max< qreal>( btmRight.y(), cp2.y()));
+
         prepareGeometryChange();
     }
 
@@ -180,7 +217,9 @@ public:
         qreal penWidth = 1;
         qreal extra = penWidth / 2.0;
 
-        return QRectF( srcP, QSizeF(dstP.x() - srcP.x(), dstP.y() - srcP.y()))
+        return QRectF( topLeft,
+                       QSizeF( btmRight.x() - topLeft.x(),
+                               btmRight.y() - topLeft.y()))
                .normalized()
                .adjusted(-extra, -extra, extra, extra);
     }
@@ -197,7 +236,7 @@ public:
         QPainterPath path( srcP);
         path.cubicTo( cp1, cp2, dstP);
         
-        // Draw the line itself
+        // Select the pen
         if( option->state & QStyle::State_Selected)
         {
             painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -207,21 +246,43 @@ public:
         }
         
         painter->drawPath(path);
-        painter->setPen(QPen(Qt::black, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+        
+        /** For illustrative purposes */
+        painter->setPen(QPen(Qt::gray, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
         painter->drawLine( srcP, dstP);
+        painter->drawLine( srcP, cp1);
+        painter->drawLine( cp2, dstP);
     }
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         update();
+        if ( event->button() & Qt::RightButton)
+        {
+            adjust();
+        }
         QGraphicsItem::mousePressEvent(event);
     }
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
         update();
+        if ( event->button() & Qt::RightButton)
+        {
+            adjust();
+        }
         QGraphicsItem::mouseReleaseEvent(event);
     }
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+    {
+        update();
+        if ( event->button() & Qt::RightButton)
+        {
+            adjust();
+        }
+        QGraphicsItem::mouseDoubleClickEvent(event);
+    }
+
 };
 
 class EdgeW: public QGraphicsItem, EdgeT< GraphW, NodeW, EdgeW>
