@@ -20,4 +20,16 @@ inline bool IsNullP( void *pointer)
     return pointer == NULL;
 }
 
+/**
+ * Abs template 
+ * operators "<" and "-" must be defined for parameter class
+ */
+template<class Value> inline Value Abs( Value val)
+{
+    if( val < 0)
+        return -val;
+
+    return val;
+}
+
 #endif
