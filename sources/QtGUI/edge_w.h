@@ -91,11 +91,8 @@ public:
         update();
         QGraphicsItem::mouseReleaseEvent(event);
     }
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-    {
-        update();
-        QGraphicsItem::mouseDoubleClickEvent(event);
-    }
+    
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 };
 
@@ -119,24 +116,32 @@ class EdgeSegment: public QGraphicsItem
 
 public:
     
-    inline QPointF src() const
-    {
-        return srcP;
-    }
-
-    inline QPointF dst() const
-    {
-        return dstP;
-    }
-
-    inline EdgeControl* srcCtrl() const
+    inline EdgeControl* src() const
     {
         return srcControl;
     }
 
-    inline EdgeControl* dstCtrl() const
+    inline EdgeControl* dst() const
     {
         return dstControl;
+    }
+
+    inline void setSrc( EdgeControl* s)
+    {
+        srcControl = s;
+        if ( IsNotNullP( s))
+        {
+            s->setSucc( this);
+        }  
+    }
+
+    inline void setDst( EdgeControl* d)
+    {
+        dstControl = d;
+        if ( IsNotNullP( d))
+        {
+            d->setPred( this);
+        } 
     }
     void adjust()
     {
@@ -164,7 +169,7 @@ public:
         /** Place cp1 */
         if ( IsNotNullP( srcControl->pred()))
         {
-            QPointF p1 = mapFromItem( srcControl->pred(), srcControl->pred()->src());
+            QPointF p1 = mapFromScene( srcControl->pred()->src()->pos());
             QLineF line( p1, dstP);
             QPointF cp1_offset = QPointF( (line.dx() * size)/ line.length(),
                                           (line.dy() * size)/ line.length());
@@ -184,7 +189,7 @@ public:
         /** Place cp2 */
         if ( IsNotNullP( dstControl->succ()))
         {
-            QPointF p2 = mapFromItem( dstControl->succ(), dstControl->succ()->dst());
+            QPointF p2 = mapFromScene( dstControl->succ()->dst()->pos());
             QLineF line( p2, srcP);
             QPointF cp2_offset = QPointF( (line.dx() * size)/ line.length(),
                                           (line.dy() * size)/ line.length());
@@ -213,12 +218,17 @@ public:
         Assert( IsNotNullP( src));
         Assert( IsNotNullP( dst));
         //setFlag( ItemIsMovable);
-        setZValue(1);
+        setZValue(0);
         src->setSucc( this);
         dst->setPred( this);
         adjust();
     }
-
+    
+    ~EdgeSegment()
+    {
+        src()->setSucc( NULL);
+        dst()->setPred( NULL);
+    }
 
     QRectF boundingRect() const
     {
@@ -239,12 +249,6 @@ public:
         path.cubicTo( cp1, cp2, dstP);
         stroker.setWidth( 2);
         return stroker.createStroke( path); 
-    }
-
-    bool contains( const QPointF& point) const
-    {
-        bool res = shape().contains( point);
-        return res;
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -307,8 +311,14 @@ public:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     {
         update();
-        if ( event->button() & Qt::RightButton)
+        if ( event->button() & Qt::LeftButton)
         {
+            EdgeControl *control = new EdgeControl( edge);
+            scene()->addItem( control);
+            control->setPos( event->pos());
+            EdgeSegment* seg = new EdgeSegment( edge, control, dst()); 
+            scene()->addItem( seg);
+            setDst( control);
             adjust();
         }
         QGraphicsItem::mouseDoubleClickEvent(event);
