@@ -79,16 +79,22 @@ public:
         painter->drawEllipse(-EdgeControlSize, -EdgeControlSize,
                               2*EdgeControlSize, 2*EdgeControlSize);
     }
+    
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         update();
-        QGraphicsItem::mousePressEvent(event);
+        QGraphicsItem::mousePressEvent( event);
     }
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
         update();
         QGraphicsItem::mouseReleaseEvent(event);
+    }
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+    {
+        update();
+        QGraphicsItem::mouseDoubleClickEvent(event);
     }
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 };
@@ -206,6 +212,8 @@ public:
     {
         Assert( IsNotNullP( src));
         Assert( IsNotNullP( dst));
+        //setFlag( ItemIsMovable);
+        setZValue(1);
         src->setSucc( this);
         dst->setPred( this);
         adjust();
@@ -227,13 +235,22 @@ public:
     QPainterPath shape() const
     {
         QPainterPath path( srcP);
+        QPainterPathStroker stroker;
         path.cubicTo( cp1, cp2, dstP);
-        return path; 
+        stroker.setWidth( 2);
+        return stroker.createStroke( path); 
+    }
+
+    bool contains( const QPointF& point) const
+    {
+        bool res = shape().contains( point);
+        return res;
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
         QPainterPath path( srcP);
+        QPainterPathStroker stroker;
         path.cubicTo( cp1, cp2, dstP);
         
         // Select the pen
@@ -245,13 +262,16 @@ public:
             painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         }
         
+        stroker.setWidth( 4);
+        
         painter->drawPath(path);
         
         /** For illustrative purposes */
         painter->setPen(QPen(Qt::gray, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
-        painter->drawLine( srcP, dstP);
-        painter->drawLine( srcP, cp1);
-        painter->drawLine( cp2, dstP);
+        //painter->drawPath( stroker.createStroke( path));
+        //painter->drawLine( srcP, dstP);
+        //painter->drawLine( srcP, cp1);
+        //painter->drawLine( cp2, dstP);
     }
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -261,7 +281,18 @@ public:
         {
             adjust();
         }
-        QGraphicsItem::mousePressEvent(event);
+        if (event->button() == Qt::LeftButton && (flags() & ItemIsSelectable)) {
+            bool multiSelect = (event->modifiers() & Qt::ControlModifier) != 0;
+            if (!multiSelect) {
+                if (!isSelected()) {
+                    if (scene())
+                        scene()->clearSelection();
+                    setSelected(true);
+                }
+            }
+        } else if (!(flags() & ItemIsMovable)) {
+//            event->ignore();
+        }
     }
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
