@@ -17,29 +17,17 @@ bool UTestGUI(int argc, char **argv)
     view.setResizeAnchor(QGraphicsView::AnchorViewCenter);
     view.setMinimumSize(400, 400);
     
-    EdgeControl c1( NULL);
-    c1.setPos( 0, 0);
-    scene.addItem( &c1);
+    EdgeControl* c1 = new EdgeControl( NULL);
+    c1->setPos( -30, -30);
+    scene.addItem( c1);
     
-    EdgeControl c2( NULL);
-    c2.setPos( 10, 10);
-    scene.addItem( &c2);
+    EdgeControl* c2 = new EdgeControl( NULL);
+    c2->setPos( 30, 30);
+    scene.addItem( c2);
 
-    EdgeControl c3( NULL);
-    c3.setPos( 20, 20);
-    scene.addItem( &c3);
-    
-    EdgeControl c4( NULL);
-    c4.setPos( 30, 30);
-    scene.addItem( &c4);
-
-    EdgeSegment seg1( NULL, &c1, &c2);
-    EdgeSegment seg2( NULL, &c2, &c3);
-    EdgeSegment seg3( NULL, &c3, &c4);
-
-    scene.addItem( &seg1);
-    scene.addItem( &seg2);
-    scene.addItem( &seg3);
+    EdgeSegment* seg = new EdgeSegment( NULL, c1, c2);
+    scene.addItem( seg);
+   
     view.show();
     return app.exec();
 }

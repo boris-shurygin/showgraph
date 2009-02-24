@@ -5,6 +5,41 @@
  */
 #include "gui_impl.h"
 
+void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    update();
+    if ( event->button() & Qt::RightButton)
+    {
+        EdgeControl* srcControl = NULL;
+        EdgeControl* dstControl = NULL;
+        
+        if( IsNotNullP( predSeg))
+        {
+            srcControl = predSeg->src();
+            scene()->removeItem( predSeg);
+            //delete predSeg;
+        }
+        if( IsNotNullP( succSeg))
+        {
+            dstControl = succSeg->dst();
+            scene()->removeItem( succSeg);
+            //delete succSeg;    
+        }
+        if( srcControl && dstControl)
+        {
+            EdgeSegment *seg = new EdgeSegment( edge, srcControl, dstControl);
+            scene()->addItem( seg);
+        }
+        event->ignore();
+        scene()->removeItem( this);
+        //delete this;
+        return;
+    } else
+    {
+        QGraphicsItem::mouseDoubleClickEvent(event);
+    }
+}
+
 QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     switch (change) {
@@ -14,7 +49,7 @@ QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &valu
         if( IsNotNullP( predSeg))
         {
             predSeg->adjust();
-            EdgeSegment* seg = predSeg->srcCtrl()->pred();
+            EdgeSegment* seg = predSeg->src()->pred();
             if( IsNotNullP( seg))
             {
                 seg->adjust();
@@ -23,7 +58,7 @@ QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &valu
         if( IsNotNullP( succSeg))
         {
             succSeg->adjust();
-            EdgeSegment* seg = succSeg->dstCtrl()->succ();
+            EdgeSegment* seg = succSeg->dst()->succ();
             if( IsNotNullP( seg))
             {
                 seg->adjust();
