@@ -5,6 +5,20 @@
  */
 #include "gui_impl.h"
 
+EdgeControl::~EdgeControl()
+{
+    if( IsNotNullP( predSeg))
+    {
+        delete predSeg;
+    }
+    if( IsNotNullP( succSeg))
+    {
+        delete succSeg;    
+    }
+    prepareGeometryChange();
+    scene()->removeItem( this);
+}
+
 void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     update();
@@ -16,24 +30,18 @@ void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         if( IsNotNullP( predSeg))
         {
             srcControl = predSeg->src();
-            scene()->removeItem( predSeg);
-            //delete predSeg;
         }
+
         if( IsNotNullP( succSeg))
         {
             dstControl = succSeg->dst();
-            scene()->removeItem( succSeg);
-            //delete succSeg;    
         }
+
         if( srcControl && dstControl)
         {
-            EdgeSegment *seg = new EdgeSegment( edge, srcControl, dstControl);
-            scene()->addItem( seg);
+            EdgeSegment *seg = new EdgeSegment( edge, srcControl, dstControl, scene());
         }
-        event->ignore();
-        scene()->removeItem( this);
-        //delete this;
-        return;
+        this->deleteLater();
     } else
     {
         QGraphicsItem::mouseDoubleClickEvent(event);
@@ -183,8 +191,7 @@ void EdgeW::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 {
     if( ev->button() & Qt::LeftButton)
     {
-        EdgeControl* control = new EdgeControl( this);
-        this->GetGraph()->scene()->addItem( control);
+        EdgeControl* control = new EdgeControl( this, scene());
         control->setPos( ev->pos());
         controls << control;
         points << new QPointF( mapFromItem( control, 0, 0));
