@@ -10,7 +10,7 @@
 
 class EdgeSegment;
 
-class EdgeControl: public QGraphicsItem
+class EdgeControl: public QObject, public QGraphicsItem
 {
     EdgeW *edge; 
     EdgeSegment* predSeg;
@@ -45,7 +45,7 @@ public:
         return Type;
     }
 
-    EdgeControl( EdgeW* e): QGraphicsItem(), edge( e)
+    EdgeControl( EdgeW* e, QGraphicsScene* scene): QObject(), QGraphicsItem( 0, scene), edge( e)
     {
         setFlag( ItemIsMovable);
         //setFlag(ItemIsSelectable);
@@ -54,6 +54,9 @@ public:
         setPred( NULL);
         setSucc( NULL);
     }
+
+    ~EdgeControl();
+
     QRectF boundingRect() const
     {
         qreal adjust = 2;
@@ -209,14 +212,15 @@ public:
         prepareGeometryChange();
     }
 
-    EdgeSegment( EdgeW *e, EdgeControl *src, EdgeControl* dst): 
-        QGraphicsItem(),
+    EdgeSegment( EdgeW *e, EdgeControl *src, EdgeControl* dst, QGraphicsScene* scene): 
+        QGraphicsItem( 0, scene),
         edge( e),
         srcControl(src),
         dstControl( dst)
     {
         Assert( IsNotNullP( src));
         Assert( IsNotNullP( dst));
+        //setCacheMode(DeviceCoordinateCache);
         //setFlag( ItemIsMovable);
         setZValue(0);
         src->setSucc( this);
@@ -226,8 +230,16 @@ public:
     
     ~EdgeSegment()
     {
-        src()->setSucc( NULL);
-        dst()->setPred( NULL);
+        if( IsNotNullP( src()) && src()->succ() == this)
+        {
+            src()->setSucc( NULL);
+        }
+        if( IsNotNullP( dst()) && dst()->pred() == this)
+        {
+            dst()->setPred( NULL);
+        }
+        prepareGeometryChange();
+        scene()->removeItem( this);
     }
 
     QRectF boundingRect() const
@@ -313,11 +325,9 @@ public:
         update();
         if ( event->button() & Qt::LeftButton)
         {
-            EdgeControl *control = new EdgeControl( edge);
-            scene()->addItem( control);
+            EdgeControl *control = new EdgeControl( edge, scene());
             control->setPos( event->pos());
-            EdgeSegment* seg = new EdgeSegment( edge, control, dst()); 
-            scene()->addItem( seg);
+            EdgeSegment* seg = new EdgeSegment( edge, control, dst(), scene()); 
             setDst( control);
             adjust();
         }
