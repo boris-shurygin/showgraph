@@ -6,14 +6,16 @@
 #ifndef NODE_W_H
 #define NODE_W_H
 
-class NodeW: public QGraphicsItem, public NodeT< GraphW, NodeW, EdgeW>
-{
+class NodeW: public QGraphicsTextItem, public NodeT< GraphW, NodeW, EdgeW>
+{    
     /** Initialization */
     inline void SetInitFlags()
     {
-        setFlag(ItemIsMovable);
+        QString text = QString("Node %1").arg( GetId());
+        setPlainText( text);
+        setFlag( ItemIsMovable);
         //setFlag(ItemIsSelectable);
-        setCacheMode(DeviceCoordinateCache);
+        setCacheMode( DeviceCoordinateCache);
         setZValue(1);
     }
 
@@ -48,6 +50,8 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    void focusOutEvent(QFocusEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 };
 

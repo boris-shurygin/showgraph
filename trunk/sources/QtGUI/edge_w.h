@@ -7,6 +7,7 @@
 #define EDGE_W_H
 
 #define EdgeControlSize 5
+#include "gui_impl.h"
 
 class EdgeSegment;
 
@@ -15,10 +16,22 @@ class EdgeControl: public QObject, public QGraphicsItem
     EdgeW *edge; 
     EdgeSegment* predSeg;
     EdgeSegment* succSeg;
+    bool isFixed;
 public: 
         
     
     enum {Type = TypeEdgeControl};
+
+    inline void setFixed( bool fixed = true)
+    {
+        isFixed = fixed;
+        setFlag( ItemIsMovable, !fixed);
+    }
+
+    inline bool fixed()
+    {
+        return isFixed;
+    }
 
     inline EdgeSegment* pred() const
     {
@@ -45,7 +58,11 @@ public:
         return Type;
     }
 
-    EdgeControl( EdgeW* e, QGraphicsScene* scene): QObject(), QGraphicsItem( 0, scene), edge( e)
+    EdgeControl( EdgeW* e, QGraphicsScene* scene):
+        QObject(),
+        QGraphicsItem( 0, scene),
+        edge( e),
+        isFixed( false)
     {
         setFlag( ItemIsMovable);
         //setFlag(ItemIsSelectable);
@@ -60,7 +77,7 @@ public:
     QRectF boundingRect() const
     {
         qreal adjust = 2;
-        return QRectF(-EdgeControlSize - adjust, -EdgeControlSize - adjust,
+        return QRectF( -EdgeControlSize - adjust, -EdgeControlSize - adjust,
                       2*( EdgeControlSize + adjust), 2*( EdgeControlSize + adjust));
     }
 
@@ -72,15 +89,22 @@ public:
     }
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
-        if (option->state & QStyle::State_Sunken) {
-            painter->setBrush( Qt::gray);
-            painter->setPen( QPen( Qt::black, 0));
-        } else {
-            painter->setBrush( Qt::lightGray);
-            painter->setPen( QPen(Qt::darkGray, 0));
+        if( fixed())
+        {
+        
+        } else
+        {
+            if (option->state & QStyle::State_Sunken) {
+                painter->setBrush( Qt::gray);
+                painter->setPen( QPen( Qt::black, 0));
+            } else
+            {
+                painter->setBrush( Qt::lightGray);
+                painter->setPen( QPen(Qt::darkGray, 0));
+            }
+            painter->drawEllipse(-EdgeControlSize, -EdgeControlSize,
+                                  2*EdgeControlSize, 2*EdgeControlSize);
         }
-        painter->drawEllipse(-EdgeControlSize, -EdgeControlSize,
-                              2*EdgeControlSize, 2*EdgeControlSize);
     }
     
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -95,6 +119,8 @@ public:
         QGraphicsItem::mouseReleaseEvent(event);
     }
     
+    void prepareRemove();
+
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 };
@@ -239,7 +265,7 @@ public:
             dst()->setPred( NULL);
         }
         prepareGeometryChange();
-        scene()->removeItem( this);
+        update();
     }
 
     QRectF boundingRect() const
@@ -346,6 +372,8 @@ class EdgeW: public QGraphicsItem, EdgeT< GraphW, NodeW, EdgeW>
     QList< QPointF *> points;
     QList< EdgeControl*> controls;
     QList< EdgeSegment*> segments;
+    EdgeControl* srcControl;
+    EdgeControl* dstControl;
 
     typedef enum EdgeMode
     {
@@ -359,9 +387,10 @@ class EdgeW: public QGraphicsItem, EdgeT< GraphW, NodeW, EdgeW>
     EdgeW( GraphW *graph_p, int _id, NodeW *_pred, NodeW* _succ):
         EdgeT< GraphW, NodeW, EdgeW>( graph_p, _id, _pred, _succ), arrowSize(10)
         {
+            srcControl = 0;
+            dstControl = 0;
             mode = ModeShow;
             setFlag( ItemIsSelectable);
-            adjust();
         };
         
     ~EdgeW()
@@ -385,12 +414,22 @@ public:
     }
 
     void adjust();
+    void addControl( EdgeControl* control);
+    inline EdgeControl *srcCtrl() const
+    {
+        return srcControl;
+    }
+    inline EdgeControl *dstCtrl() const
+    {
+        return dstControl;
+    }
     QRectF boundingRect() const;
     QPainterPath shape() const;
+    
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void initControls();
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void focusInEvent(QFocusEvent *event);
-    void focusOutEvent(QFocusEvent *event);
 };
 #endif
