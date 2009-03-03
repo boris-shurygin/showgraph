@@ -278,3 +278,23 @@ void EdgeW::initControls()
     dstControl->setFixed();
     adjust();
 }
+
+void EdgeW::showControls()
+{
+    foreach( EdgeControl* control, controls)
+    {
+        if ( control != srcControl
+             && control != dstControl)
+        {
+            control->setFixed( false);
+        }
+    }
+}
+
+void EdgeW::hideControls()
+{
+    foreach( EdgeControl* control, controls)
+    {
+        control->setFixed( true);
+    }
+}
