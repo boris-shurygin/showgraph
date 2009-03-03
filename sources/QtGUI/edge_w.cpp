@@ -5,6 +5,28 @@
  */
 #include "gui_impl.h"
 
+void EdgeControl::prepareRemove()
+{
+    EdgeControl* srcControl = NULL;
+    EdgeControl* dstControl = NULL;
+    
+    if( IsNotNullP( predSeg))
+    {
+        srcControl = predSeg->src();
+    }
+
+    if( IsNotNullP( succSeg))
+    {
+        dstControl = succSeg->dst();
+    }
+
+    if( srcControl && dstControl)
+    {
+        EdgeSegment *seg = new EdgeSegment( edge, srcControl, dstControl, scene());
+    }
+    this->deleteLater();
+}
+
 EdgeControl::~EdgeControl()
 {
     if( IsNotNullP( predSeg))
@@ -16,7 +38,7 @@ EdgeControl::~EdgeControl()
         delete succSeg;    
     }
     prepareGeometryChange();
-    scene()->removeItem( this);
+    update();
 }
 
 void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -24,24 +46,13 @@ void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     update();
     if ( event->button() & Qt::RightButton)
     {
-        EdgeControl* srcControl = NULL;
-        EdgeControl* dstControl = NULL;
-        
-        if( IsNotNullP( predSeg))
+        //prepareRemove();
+    } else if ( event->button() & Qt::LeftButton)
+    {
+        if( !fixed())
         {
-            srcControl = predSeg->src();
+            setFixed( true);
         }
-
-        if( IsNotNullP( succSeg))
-        {
-            dstControl = succSeg->dst();
-        }
-
-        if( srcControl && dstControl)
-        {
-            EdgeSegment *seg = new EdgeSegment( edge, srcControl, dstControl, scene());
-        }
-        this->deleteLater();
     } else
     {
         QGraphicsItem::mouseDoubleClickEvent(event);
@@ -50,9 +61,12 @@ void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &value)
 {
+    
     switch (change) {
     case ItemPositionHasChanged:
-        if( IsNotNullP( edge))
+        if( IsNotNullP( edge) 
+            && this != edge->srcCtrl()
+            && this != edge->dstCtrl())
             edge->adjust();
         if( IsNotNullP( predSeg))
         {
@@ -83,23 +97,27 @@ QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &valu
 
 void EdgeW::adjust()
 {
-    sourcePoint = mapFromItem(GetPred(), 0, 0);
-    destPoint = mapFromItem(GetSucc(), 0, 0);
+    sourcePoint = mapFromItem(GetPred(), GetPred()->boundingRect().center());
+    destPoint = mapFromItem(GetSucc(), GetSucc()->boundingRect().center());
+    srcControl->setPos( mapToScene( sourcePoint));
+    dstControl->setPos( mapToScene( destPoint));
     QPointF nextToSrc = destPoint;
     QPointF nextToDst = sourcePoint;
-    bool nextToSrcSelected = false;
-
     topLeft = sourcePoint;
     bottomRight = destPoint;
+    if ( IsNotNullP( srcControl))
+    {
+        Assert( srcControl->succ());
+        nextToSrc = mapFromScene( srcControl->succ()->dst()->pos());
+    }
+    if ( IsNotNullP( dstControl))
+    {
+        Assert( dstControl->pred());
+        nextToDst = mapFromScene( dstControl->pred()->src()->pos());
+    }
     foreach( EdgeControl* control, controls)
     {
         QPointF cpos = mapFromScene(control->pos());
-        if ( !nextToSrcSelected)
-        {
-            nextToSrc = cpos;
-            nextToSrcSelected = true;
-        }
-        nextToDst = cpos;
         if ( topLeft.x() > cpos.x())
             topLeft.setX( cpos.x());
         if ( topLeft.y() > cpos.y())
@@ -110,14 +128,38 @@ void EdgeW::adjust()
             bottomRight.setY( cpos.y());
     }
     QLineF line( sourcePoint, nextToSrc);
-    qreal length = line.length();
-    QPointF edgeOffsetSrc((line.dx() * 10) / length, (line.dy() * 10) / length);
-    QLineF line2( nextToDst, destPoint);
-    length = line2.length();
-    QPointF edgeOffsetDst((line2.dx() * 10) / length, (line2.dy() * 10) / length);
+    QPolygonF endPolygon = mapFromItem( GetPred(), GetPred()->boundingRect());
+    QPointF p1 = endPolygon.first();
+    QPointF p2;
+    QPointF intersectPoint;
+    QLineF polyLine;
+    
+    for (int i = 1; i < endPolygon.count(); ++i) {
+        p2 = endPolygon.at(i);
+        polyLine = QLineF(p1, p2);
+        QLineF::IntersectType intersectType =
+             polyLine.intersect( line, &sourcePoint);
+        if (intersectType == QLineF::BoundedIntersection)
+             break;
+        p1 = p2;
+    }
 
-    sourcePoint = line.p1() + edgeOffsetSrc;
-    destPoint = line2.p2() - edgeOffsetDst;
+    QLineF line2( nextToDst, destPoint);
+    endPolygon = mapFromItem( GetSucc(), GetSucc()->boundingRect());
+    p1 = endPolygon.first();
+    p2;
+    
+    for (int i = 1; i < endPolygon.count(); ++i) {
+        p2 = endPolygon.at(i);
+        polyLine = QLineF(p1, p2);
+        QLineF::IntersectType intersectType =
+             polyLine.intersect( line2, &destPoint);
+        if (intersectType == QLineF::BoundedIntersection)
+             break;
+        p1 = p2;
+    }
+    srcControl->setPos( mapToScene( sourcePoint));
+    dstControl->setPos( mapToScene( destPoint));
     prepareGeometryChange();
 }
 
@@ -153,15 +195,15 @@ EdgeW::paint( QPainter *painter,
     QPointF curr_point;
     QLineF line = QLineF();
     curr_point = sourcePoint;
-
-    QPainterPath path( sourcePoint);
-    foreach( EdgeControl *control, controls)
+    QPointF nextToDst = sourcePoint;
+    
+    if ( IsNotNullP( dstControl))
     {
-        path.lineTo( mapFromScene(control->pos()));
-        curr_point = mapFromScene(control->pos());
+        Assert( dstControl->pred());
+        nextToDst = mapFromScene( dstControl->pred()->src()->pos());
     }
-    path.lineTo( destPoint);
-    line.setP1( curr_point);
+
+    line.setP1( nextToDst);
     line.setP2( destPoint);
     // Draw the line itself
     if( option->state & QStyle::State_Selected)
@@ -171,7 +213,7 @@ EdgeW::paint( QPainter *painter,
     {
         painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     }
-    painter->drawPath(path);
+    //painter->drawPath(path);
 
     // Draw the arrows if there's enough room
     double angle = ::acos(line.dx() / line.length());
@@ -186,38 +228,53 @@ EdgeW::paint( QPainter *painter,
     painter->setBrush(Qt::black);
     painter->drawPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2); 
 }
-
+void EdgeW::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    update();
+    if ( event->button() & Qt::RightButton)
+    {
+        adjust();
+    }
+    if (event->button() == Qt::LeftButton && (flags() & ItemIsSelectable)) {
+        bool multiSelect = (event->modifiers() & Qt::ControlModifier) != 0;
+        if (!multiSelect) {
+            if (!isSelected()) {
+                if (scene())
+                    scene()->clearSelection();
+                setSelected(true);
+            }
+        }
+    } else if (!(flags() & ItemIsMovable)) {
+//            event->ignore();
+    }
+}
 void EdgeW::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 {
-    if( ev->button() & Qt::LeftButton)
-    {
-        EdgeControl* control = new EdgeControl( this, scene());
-        control->setPos( ev->pos());
-        controls << control;
-        points << new QPointF( mapFromItem( control, 0, 0));
-    }
+    update();
     QGraphicsItem::mouseReleaseEvent( ev);
 }
 
 void EdgeW::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
 {
-
+    if( ev->button() & Qt::LeftButton)
+    {
+        
+    }
 }
 
-void EdgeW::focusInEvent(QFocusEvent *event)
+void EdgeW::addControl( EdgeControl* control)
 {
-    foreach( EdgeControl* control, controls)
-    {
-        control->setVisible( true);
-    }
-    QGraphicsItem::focusInEvent( event);
+    controls << control;
 }
 
-void EdgeW::focusOutEvent(QFocusEvent *event)
+void EdgeW::initControls()
 {
-    foreach( EdgeControl* control, controls)
-    {
-        control->setVisible( false);
-    }
-    QGraphicsItem::focusOutEvent( event);
+    srcControl = new EdgeControl( this, scene());
+    dstControl = new EdgeControl( this, scene());
+    new EdgeSegment( this, srcControl, dstControl, scene());
+    addControl( srcControl);
+    addControl( dstControl);
+    srcControl->setFixed();
+    dstControl->setFixed();
+    adjust();
 }

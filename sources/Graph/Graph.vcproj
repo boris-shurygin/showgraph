@@ -151,6 +151,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\aux_graph.h"
+				>
+			</File>
+			<File
 				RelativePath=".\edge.cpp"
 				>
 				<FileConfiguration

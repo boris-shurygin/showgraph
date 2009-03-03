@@ -47,6 +47,7 @@ GraphW::NewEdge( NodeW* pred, NodeW* succ)
 {
     EdgeW* e = GraphT< GraphW, NodeW, EdgeW>::NewEdge( pred, succ);
     scene()->addItem( e);
+    e->initControls();
     return e;
 }
 
