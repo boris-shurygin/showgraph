@@ -3,8 +3,6 @@
  * Copyright (C) 2009  Boris Shurygin
  */
 #include "gui_iface.h"
-#include <QLineEdit>
-#include <QMainWindow>
 
 int main(int argc, char **argv)
 {
