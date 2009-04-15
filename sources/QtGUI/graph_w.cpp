@@ -34,18 +34,18 @@ GraphW::drawBackground(QPainter *painter, const QRectF &rect)
 
 }
 
-NodeW*
+NodeItem*
 GraphW::NewNode()
 {
-    NodeW* n = GraphT< GraphW, NodeW, EdgeW>::NewNode();
+    NodeItem* n = GraphT< GraphW, NodeItem, EdgeItem>::NewNode();
     scene()->addItem( n);
     return n;
 }
 
-EdgeW*
-GraphW::NewEdge( NodeW* pred, NodeW* succ)
+EdgeItem*
+GraphW::NewEdge( NodeItem* pred, NodeItem* succ)
 {
-    EdgeW* e = GraphT< GraphW, NodeW, EdgeW>::NewEdge( pred, succ);
+    EdgeItem* e = GraphT< GraphW, NodeItem, EdgeItem>::NewEdge( pred, succ);
     scene()->addItem( e);
     e->initControls();
     return e;
@@ -59,15 +59,15 @@ GraphW::mouseDoubleClickEvent(QMouseEvent *ev)
         QPoint p = ev->pos();
         if ( !scene()->itemAt( mapToScene( ev->pos())))
         {
-            NodeW* node = NewNode();
+            NodeItem* node = NewNode();
             node->setPos( mapToScene( p));
         }
     } else if( ev->button() & Qt::RightButton)
     {
         QGraphicsItem *node = scene()->itemAt( mapToScene( ev->pos()));
-        if ( IsNotNullP( node) && qgraphicsitem_cast<NodeW *>( node))
+        if ( IsNotNullP( node) && qgraphicsitem_cast<NodeItem *>( node))
         {
-            delete qgraphicsitem_cast<NodeW *>( node);
+            delete qgraphicsitem_cast<NodeItem *>( node);
         }
     }
     QGraphicsView::mouseDoubleClickEvent( ev);   
@@ -85,11 +85,11 @@ void GraphW::mouseReleaseEvent(QMouseEvent *ev)
         if ( createEdge)
         {
             QGraphicsItem* item = scene()->itemAt( mapToScene( ev->pos()));
-            if ( IsNotNullP( item) && qgraphicsitem_cast<NodeW *>(item))
+            if ( IsNotNullP( item) && qgraphicsitem_cast<NodeItem *>(item))
             {
-                if ( tmpSrc != qgraphicsitem_cast<NodeW *>(item))
+                if ( tmpSrc != qgraphicsitem_cast<NodeItem *>(item))
                 {
-                    NewEdge( tmpSrc, qgraphicsitem_cast<NodeW *>(item));
+                    NewEdge( tmpSrc, qgraphicsitem_cast<NodeItem *>(item));
                 }
             }
         }

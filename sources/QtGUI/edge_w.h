@@ -13,7 +13,7 @@ class EdgeSegment;
 
 class EdgeControl: public QObject, public QGraphicsItem
 {
-    EdgeW *edge; 
+    EdgeItem *edge; 
     EdgeSegment* predSeg;
     EdgeSegment* succSeg;
     bool isFixed;
@@ -57,7 +57,7 @@ public:
         return Type;
     }
 
-    EdgeControl( EdgeW* e, QGraphicsScene* scene);
+    EdgeControl( EdgeItem* e, QGraphicsScene* scene);
     ~EdgeControl();
 
     QRectF boundingRect() const;
@@ -72,7 +72,7 @@ public:
 
 class EdgeSegment: public QGraphicsItem
 {
-    EdgeW* edge;
+    EdgeItem* edge;
     QPointF srcP;
     QPointF cp1;
     QPointF cp2;
@@ -121,7 +121,7 @@ public:
     void adjust();
     EdgeControl *addControl( QPointF p);
 
-    EdgeSegment( EdgeW *e, EdgeControl *src, EdgeControl* dst, QGraphicsScene* scene);
+    EdgeSegment( EdgeItem *e, EdgeControl *src, EdgeControl* dst, QGraphicsScene* scene);
     ~EdgeSegment();
     QRectF boundingRect() const;
     QPainterPath shape() const;
@@ -132,7 +132,7 @@ public:
 
 };
 
-class EdgeW: public QGraphicsItem, EdgeT< GraphW, NodeW, EdgeW>
+class EdgeItem: public QGraphicsItem, EdgeT< GraphW, NodeItem, EdgeItem>
 {
 public:        
     typedef enum EdgeMode
@@ -152,14 +152,13 @@ private:
     QList< EdgeSegment*> segments;
     EdgeControl* srcControl;
     EdgeControl* dstControl;
-
-
+    QList< AuxNode> aux_nodes;
 
     EdgeMode curr_mode;
 
     /** Constructors are made private, only nodes and graph can create edges */
-    EdgeW( GraphW *graph_p, int _id, NodeW *_pred, NodeW* _succ):
-        EdgeT< GraphW, NodeW, EdgeW>( graph_p, _id, _pred, _succ), arrowSize(10)
+    EdgeItem( GraphW *graph_p, int _id, NodeItem *_pred, NodeItem* _succ):
+        EdgeT< GraphW, NodeItem, EdgeItem>( graph_p, _id, _pred, _succ), arrowSize(10)
         {
             srcControl = 0;
             dstControl = 0;
@@ -167,17 +166,17 @@ private:
             setFlag( ItemIsSelectable);
         };
         
-    ~EdgeW()
+    ~EdgeItem()
     {
         foreach( EdgeControl* control, controls)
         {
             delete control;
         }
     }
-    friend class GraphT< GraphW, NodeW, EdgeW>;
-    friend class NodeT< GraphW, NodeW, EdgeW>;
+    friend class GraphT< GraphW, NodeItem, EdgeItem>;
+    friend class NodeT< GraphW, NodeItem, EdgeItem>;
     friend class GraphW;
-    friend class NodeW;
+    friend class NodeItem;
 public:
     
     enum {Type = TypeEdge};

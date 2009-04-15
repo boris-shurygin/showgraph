@@ -11,7 +11,7 @@ bool UTestGUI(int argc, char **argv)
     {
         for ( int j = 0; j < 10; j++)
         {
-            NodeW* node = graph.NewNode();
+            NodeItem* node = graph.NewNode();
             node->setPos( i * 80, j * 80);
         }
     }

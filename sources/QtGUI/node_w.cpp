@@ -5,13 +5,13 @@
  */
 #include "gui_impl.h"
 
-NodeW::~NodeW()
+NodeItem::~NodeItem()
 {
 
 }
 
 QRectF 
-NodeW::boundingRect() const
+NodeItem::boundingRect() const
 {
     qreal adjust = 5;
     return QGraphicsTextItem::boundingRect()
@@ -19,7 +19,7 @@ NodeW::boundingRect() const
 }
 
 QPainterPath 
-NodeW::shape() const
+NodeItem::shape() const
 {
     QPainterPath path;
     path.addRect( boundingRect());
@@ -27,7 +27,7 @@ NodeW::shape() const
 }
 
 void 
-NodeW::paint( QPainter *painter,
+NodeItem::paint( QPainter *painter,
               const QStyleOptionGraphicsItem *option,
               QWidget *widget)
 {
@@ -43,7 +43,7 @@ NodeW::paint( QPainter *painter,
     QGraphicsTextItem::paint( painter, option, widget);
 }
 
-void NodeW::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if( event->button() & Qt::RightButton)
     {
@@ -54,29 +54,29 @@ void NodeW::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mousePressEvent(event);
 }
 
-void NodeW::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void NodeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     update();
     QGraphicsItem::mouseReleaseEvent(event);
 }
 
-void NodeW::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     if (textInteractionFlags() == Qt::NoTextInteraction)
         setTextInteractionFlags(Qt::TextEditorInteraction);
     QGraphicsTextItem::mouseDoubleClickEvent(event);
 }
 
-void NodeW::focusOutEvent(QFocusEvent *event)
+void NodeItem::focusOutEvent(QFocusEvent *event)
 {
     setTextInteractionFlags(Qt::NoTextInteraction);
     //emit lostFocus(this);
     QGraphicsTextItem::focusOutEvent(event);
 }
 
-QVariant NodeW::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant NodeItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    EdgeW *edge = NULL;
+    EdgeItem *edge = NULL;
 
     switch (change) {
     case ItemPositionHasChanged:

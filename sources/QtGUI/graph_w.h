@@ -6,12 +6,12 @@
 #ifndef GRAPH_W_H
 #define GRAPH_W_H
 
-class GraphW: public QGraphicsView, public GraphT< GraphW, NodeW, EdgeW>
+class GraphW: public QGraphicsView, public GraphT< GraphW, NodeItem, EdgeItem>
 {
     QPoint src;
     QPoint dst;
     bool createEdge;
-    NodeW *tmpSrc;
+    NodeItem *tmpSrc;
 public:
     /** Constructor */
     GraphW();
@@ -20,8 +20,8 @@ public:
     void drawBackground(QPainter *painter, const QRectF &rect);
     
     /** New node/edge overloads */
-    NodeW* NewNode();
-    EdgeW* NewEdge( NodeW* pred, NodeW* succ);
+    NodeItem* NewNode();
+    EdgeItem* NewEdge( NodeItem* pred, NodeItem* succ);
         
     void mouseDoubleClickEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -36,11 +36,11 @@ public:
     {
         createEdge = val;
     }
-    inline void SetTmpSrc( NodeW* node)
+    inline void SetTmpSrc( NodeItem* node)
     {
         tmpSrc = node;
     }
-    inline NodeW* GetTmpSrc()
+    inline NodeItem* GetTmpSrc()
     {
         return tmpSrc;
     }
