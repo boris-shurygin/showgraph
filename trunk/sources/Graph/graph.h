@@ -10,7 +10,7 @@
  * Graph class decribes a graph.
  *  Like classical definition G = ( N, E) where N is set of nodes n and E is set of edges e = {n_i, n_j}
  */
-template <class Graph, class Node, class Edge > class GraphT: public MarkerManager
+template <class Graph, class Node, class Edge > class GraphT: public MarkerManager, public NumManager
 {
 public:
     typedef ListItem< Node> NodeListIt;
@@ -55,14 +55,14 @@ public:
      */
     inline void DeleteNode( NodeListIt* it)
     {
-        GraphAssert( IsNotNullP( it));
+        assert( IsNotNullP( it));
         if( nodes == it)
         {
-           nodes = it->GetNext();
+           nodes = it->next();
         }
         if( n_it == it)
         {
-            n_it = it->GetNext();
+            n_it = it->next();
         }
         it->Detach();
     }
@@ -72,14 +72,14 @@ public:
      */
     inline void DeleteEdge( EdgeListIt* it)
     {
-        GraphAssert( IsNotNullP( it));
+        assert( IsNotNullP( it));
         if( edges == it)
         {
-            edges = it->GetNext();
+            edges = it->next();
         }
         if( e_it == it)
         {
-            e_it = it->GetNext();
+            e_it = it->next();
         }
         it->Detach();
     }
@@ -104,7 +104,7 @@ public:
      *
      * Initialize iterator with first edge and return this edge
      */
-    inline Edge* GetFirstEdge() 
+    inline Edge* firstEdge() 
     {
         e_it = edges;
         return e_it->GetData();
@@ -112,15 +112,15 @@ public:
     /**
      * Advance iterator to next edge and return this edge. If end reached return NULL
      */
-    inline Edge* GetNextEdge()
+    inline Edge* nextEdge()
     {
-        e_it = e_it->GetNext();
+        e_it = e_it->next();
         return (e_it != NULL)? e_it->GetData() : NULL;
     }
     /**
      * return true if end of edge list is reached
      */
-    inline bool EndOfEdges()
+    inline bool endOfEdges()
     {
         return e_it == NULL;
     }
@@ -129,7 +129,7 @@ public:
      *
      * Initialize iterator with first node and return this node
      */
-    inline Node* GetFirstNode()
+    inline Node* firstNode()
     {
         n_it = nodes;
         return n_it->GetData();
@@ -137,16 +137,16 @@ public:
     /** 
      * Advance iterator to next node and return this node. If end reached return NULL
      */
-    inline Node* GetNextNode()
+    inline Node* nextNode()
     {
-        n_it = n_it->GetNext();
+        n_it = n_it->next();
         return ( n_it != NULL)? n_it->GetData() : NULL;
     }
     
     /**
      * return true if end of edge list is reached
      */
-    inline bool EndOfNodes()
+    inline bool endOfNodes()
     {
         return n_it == NULL;
     }
@@ -159,6 +159,15 @@ public:
     void * CreateNode( Graph *graph_p, int _id);
     void * CreateEdge( Graph *graph_p, int _id, Node *_pred, Node* _succ);
     
+    /**
+     * Clear unused markers from marked objects
+     */
+    void clearMarkersInObjects();
+
+    /**
+     * Clear unused numerations from numbered objects
+     */
+    void clearNumerationsInObjects();
 };
 
 #include "graph.cpp"

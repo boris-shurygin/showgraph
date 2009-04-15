@@ -17,12 +17,12 @@ void EdgeW::adjust()
     bottomRight = destPoint;
     if ( IsNotNullP( srcControl))
     {
-        Assert( srcControl->succ());
+        assert( srcControl->succ());
         nextToSrc = mapFromScene( srcControl->succ()->dst()->pos());
     }
     if ( IsNotNullP( dstControl))
     {
-        Assert( dstControl->pred());
+        assert( dstControl->pred());
         nextToDst = mapFromScene( dstControl->pred()->src()->pos());
     }
     foreach( EdgeControl* control, controls)
@@ -109,7 +109,7 @@ EdgeW::paint( QPainter *painter,
     
     if ( IsNotNullP( dstControl))
     {
-        Assert( dstControl->pred());
+        assert( dstControl->pred());
         nextToDst = mapFromScene( dstControl->pred()->src()->pos());
     }
 

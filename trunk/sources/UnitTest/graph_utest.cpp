@@ -40,47 +40,47 @@ bool UTestMarkers()
     ANode *pred = graph.NewNode();
     ANode *succ = graph.NewNode();
     AEdge *edge = graph.NewEdge( pred, succ);
-    Marker m = graph.NewMarker();
-    Marker m2 = graph.NewMarker();
+    Marker m = graph.newMarker();
+    Marker m2 = graph.newMarker();
 
     Marker m_array[ MAX_GRAPH_MARKERS];
     
-    Assert( !pred->IsMarked( m));
-    Assert( !succ->IsMarked( m));
-    Assert( !edge->IsMarked( m));
-    Assert( !pred->IsMarked( m2));
+    assert( !pred->isMarked( m));
+    assert( !succ->isMarked( m));
+    assert( !edge->isMarked( m));
+    assert( !pred->isMarked( m2));
     
-    pred->Mark( m);
-    succ->Mark( m);
-    edge->Mark( m);
-    edge->Mark( m2);
+    pred->mark( m);
+    succ->mark( m);
+    edge->mark( m);
+    edge->mark( m2);
 
-    Assert( pred->IsMarked( m));
-    Assert( succ->IsMarked( m));
-    Assert( edge->IsMarked( m));
-    Assert( edge->IsMarked( m2));
-    edge->Unmark( m);
+    assert( pred->isMarked( m));
+    assert( succ->isMarked( m));
+    assert( edge->isMarked( m));
+    assert( edge->isMarked( m2));
+    edge->unmark( m);
 
     /** Check that different markers have different behaviour */
-    Assert( edge->IsMarked( m2));
-    Assert( !edge->IsMarked( m));
+    assert( edge->isMarked( m2));
+    assert( !edge->isMarked( m));
     
-    graph.FreeMarker( m);
-    graph.FreeMarker( m2);
+    graph.freeMarker( m);
+    graph.freeMarker( m2);
     
     for ( MarkerIndex i = 0; i < MAX_GRAPH_MARKERS; i++)
     {
-        m_array [ i] = graph.NewMarker();
+        m_array [ i] = graph.newMarker();
     }
     for ( MarkerIndex i = 0; i < MAX_GRAPH_MARKERS; i++)
     {
-        graph.FreeMarker( m_array[ i]);
+        graph.freeMarker( m_array[ i]);
     }
-    m = graph.NewMarker();
-    graph.FreeMarker( m);
+    m = graph.newMarker();
+    graph.freeMarker( m);
     
     ANode *n;
-    for (  n = graph.GetFirstNode(); !graph.EndOfNodes(); n = graph.GetNextNode())
+    for (  n = graph.firstNode(); !graph.endOfNodes(); n = graph.nextNode())
     {
         delete n;
     }
@@ -134,6 +134,6 @@ bool UTestGraph()
         return false;
 
     /** Nodes traversal */
-    //Assert<Error>( 0);
+    //assert<Error>( 0);
     return true;
 }

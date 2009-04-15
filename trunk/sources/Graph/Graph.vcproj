@@ -187,14 +187,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\graph_error.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\graph_error.h"
-				>
-			</File>
-			<File
 				RelativePath=".\marker.h"
 				>
 			</File>
@@ -214,6 +206,10 @@
 				RelativePath=".\node.h"
 				>
 			</File>
+			<File
+				RelativePath=".\num.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="interface"
@@ -222,10 +218,6 @@
 			>
 			<File
 				RelativePath=".\graph_iface.h"
-				>
-			</File>
-			<File
-				RelativePath=".\graph_impl.h"
 				>
 			</File>
 			<File
