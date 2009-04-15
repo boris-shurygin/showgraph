@@ -71,7 +71,7 @@ void EdgeSegment::adjust()
     prepareGeometryChange();
 }
 
-EdgeSegment::EdgeSegment( EdgeW *e, EdgeControl *src, EdgeControl* dst, QGraphicsScene* scene): 
+EdgeSegment::EdgeSegment( EdgeItem *e, EdgeControl *src, EdgeControl* dst, QGraphicsScene* scene): 
     QGraphicsItem( 0, scene),
     edge( e),
     srcControl(src),
@@ -130,7 +130,7 @@ void EdgeSegment::paint( QPainter *painter,
     path.cubicTo( cp1, cp2, dstP);
     
     // Select the pen
-    if( IsNotNullP( edge) && edge->mode() == EdgeW::ModeEdit)
+    if( IsNotNullP( edge) && edge->mode() == EdgeItem::ModeEdit)
     {
         painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     } else
@@ -202,11 +202,11 @@ void EdgeSegment::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     if ( IsNotNullP( edge) 
          && event->button() & Qt::LeftButton)
     { 
-        if ( edge->mode() == EdgeW::ModeShow)
+        if ( edge->mode() == EdgeItem::ModeShow)
         {
             edge->showControls();
-            edge->setMode( EdgeW::ModeEdit);
-        } else if ( edge->mode() == EdgeW::ModeEdit)
+            edge->setMode( EdgeItem::ModeEdit);
+        } else if ( edge->mode() == EdgeItem::ModeEdit)
         {
             addControl( event->pos());
         }

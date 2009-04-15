@@ -6,8 +6,10 @@
 #ifndef NODE_W_H
 #define NODE_W_H
 
-class NodeW: public QGraphicsTextItem, public NodeT< GraphW, NodeW, EdgeW>
+class NodeItem: public QGraphicsTextItem, public NodeT< GraphW, NodeItem, EdgeItem>
 {    
+    QList< AuxNode> aux_nodes;
+
     /** Initialization */
     inline void SetInitFlags()
     {
@@ -20,24 +22,24 @@ class NodeW: public QGraphicsTextItem, public NodeT< GraphW, NodeW, EdgeW>
     }
 
     /** We can't create nodes separately, do it through NewNode method of graph */
-    NodeW( GraphW *graph_p, int _id):
-        NodeT< GraphW, NodeW, EdgeW>( graph_p, _id)
+    NodeItem( GraphW *graph_p, int _id):
+        NodeT< GraphW, NodeItem, EdgeItem>( graph_p, _id)
     {
         SetInitFlags();
     }
 
     /** Contructor of node with specified position */
-    NodeW( GraphW *graph_p, int _id, QPointF _pos):
-        NodeT< GraphW, NodeW, EdgeW>( graph_p, _id)
+    NodeItem( GraphW *graph_p, int _id, QPointF _pos):
+        NodeT< GraphW, NodeItem, EdgeItem>( graph_p, _id)
     {
         SetInitFlags();
         setPos( _pos);
     }
 
-    friend class GraphT< GraphW, NodeW, EdgeW>;
+    friend class GraphT< GraphW, NodeItem, EdgeItem>;
     friend class GraphW;
 public:
-    ~NodeW();
+    ~NodeItem();
 
     enum {Type = TypeNode};
 

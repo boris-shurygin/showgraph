@@ -1,6 +1,6 @@
 /**
  * File: aux_graph.h - Layout Graph class - Graph for performing layouts, consists of dummy nodes.
- * Graph library, internal representation of graphs in ShowGraph tool.
+ * Layout library, 2d graph placement of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef AUX_GRAPH_H
@@ -12,6 +12,11 @@
 class AuxNode;
 class AuxEdge;
 class AuxGraph;
+
+class Level
+{
+
+};
 
 class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
 {
@@ -118,7 +123,8 @@ public:
  */
 class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
 {
-
+    /** Array of node lists for ranks */
+    QVector< Level> ranks;
 public:
 
     void * CreateNode( AuxGraph *graph_p, int _id, NodeListIt it)
@@ -130,5 +136,4 @@ public:
         return new AuxEdge( graph_p, _id, _pred, _succ);
     }
 };
-
-#endif
+#endif /** AUX_GRAPH_H */

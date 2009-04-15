@@ -7,11 +7,12 @@
 #define GUI_IFACE_H
 
 /** Predeclarations */
-class NodeW;
-class EdgeW;
+class NodeItem;
+class EdgeItem;
 class GraphW;
 
 #include "../Graph/graph_iface.h"
+#include "../Layout/layout_iface.h"
 #include <QtGui>
 #include <QList>
 #include <QGraphicsItem>

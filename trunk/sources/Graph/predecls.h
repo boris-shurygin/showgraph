@@ -6,6 +6,9 @@
 #ifndef GRAPH_PREDECLS_H
 #define GRAPH_PREDECLS_H
 
+#include <QList>
+#include <QLinkedList>
+#include <QVector>
 #include <list>
 using namespace std;
 

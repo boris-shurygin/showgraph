@@ -5,7 +5,7 @@
  */
 #include "gui_impl.h"
 
-void EdgeW::adjust()
+void EdgeItem::adjust()
 {
     sourcePoint = mapFromItem(GetPred(), GetPred()->boundingRect().center());
     destPoint = mapFromItem(GetSucc(), GetSucc()->boundingRect().center());
@@ -74,7 +74,7 @@ void EdgeW::adjust()
 }
 
 QRectF 
-EdgeW::boundingRect() const
+EdgeItem::boundingRect() const
 {
     qreal penWidth = 1;
     qreal extra = (penWidth + arrowSize) / 2.0;
@@ -86,7 +86,7 @@ EdgeW::boundingRect() const
 }
 
 QPainterPath 
-EdgeW::shape() const
+EdgeItem::shape() const
 {
     QPainterPath path( sourcePoint);
     foreach( EdgeControl *control, controls)
@@ -98,7 +98,7 @@ EdgeW::shape() const
 }
 
 void 
-EdgeW::paint( QPainter *painter,
+EdgeItem::paint( QPainter *painter,
               const QStyleOptionGraphicsItem *option,
               QWidget *widget)
 {
@@ -138,7 +138,7 @@ EdgeW::paint( QPainter *painter,
     painter->setBrush(Qt::black);
     painter->drawPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2); 
 }
-void EdgeW::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void EdgeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     update();
     if ( event->button() & Qt::RightButton)
@@ -158,13 +158,13 @@ void EdgeW::mousePressEvent(QGraphicsSceneMouseEvent *event)
 //            event->ignore();
     }
 }
-void EdgeW::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
+void EdgeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 {
     update();
     QGraphicsItem::mouseReleaseEvent( ev);
 }
 
-void EdgeW::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
+void EdgeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
 {
     if( ev->button() & Qt::LeftButton)
     {
@@ -172,12 +172,12 @@ void EdgeW::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
     }
 }
 
-void EdgeW::addControl( EdgeControl* control)
+void EdgeItem::addControl( EdgeControl* control)
 {
     controls << control;
 }
 
-void EdgeW::initControls()
+void EdgeItem::initControls()
 {
     srcControl = new EdgeControl( this, scene());
     dstControl = new EdgeControl( this, scene());
@@ -189,7 +189,7 @@ void EdgeW::initControls()
     adjust();
 }
 
-void EdgeW::showControls()
+void EdgeItem::showControls()
 {
     foreach( EdgeControl* control, controls)
     {
@@ -202,7 +202,7 @@ void EdgeW::showControls()
     }
 }
 
-void EdgeW::hideControls()
+void EdgeItem::hideControls()
 {
     foreach( EdgeControl* control, controls)
     {

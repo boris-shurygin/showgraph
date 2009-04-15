@@ -50,10 +50,10 @@ void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     } else if ( event->button() & Qt::LeftButton)
     {
          if ( IsNotNullP( edge) 
-              && edge->mode() == EdgeW::ModeEdit)
+              && edge->mode() == EdgeItem::ModeEdit)
          {
             edge->hideControls();
-            edge->setMode( EdgeW::ModeShow);
+            edge->setMode( EdgeItem::ModeShow);
          }
     } else
     {
@@ -96,7 +96,7 @@ QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &valu
     return QGraphicsItem::itemChange(change, value);
 }
 
-EdgeControl::EdgeControl( EdgeW* e, QGraphicsScene* scene):
+EdgeControl::EdgeControl( EdgeItem* e, QGraphicsScene* scene):
         QObject(),
         QGraphicsItem( 0, scene),
         edge( e),
