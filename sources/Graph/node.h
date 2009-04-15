@@ -9,7 +9,7 @@
 /**
  * Node representation class. 
  */
-template <class Graph, class Node, class Edge> class NodeT: public Marked
+template <class Graph, class Node, class Edge> class NodeT: public Marked, public Numbered
 {
 public:
     typedef ListItem< Node> NodeListIt;
@@ -87,7 +87,7 @@ public:
      *
      *  Set iterator to beginning of edge list and return first edge
      */
-    inline Edge* GetFirstEdgeInDir( GraphDir dir)
+    inline Edge* firstEdgeInDir( GraphDir dir)
     {
         e_it[ dir ] = edges[ dir ];
         
@@ -101,46 +101,46 @@ public:
      * Advance iterator and return next edge in specified direction
      * NOTE: If end of list is reached we return NULL for first time and fail if called once again
      */
-    inline Edge* GetNextEdgeInDir( GraphDir dir)
+    inline Edge* nextEdgeInDir( GraphDir dir)
     {
-        e_it[ dir] = e_it[ dir]->GetNext();
+        e_it[ dir] = e_it[ dir]->next();
         return (e_it[ dir] != NULL )? e_it[ dir]->GetData() : NULL;
     }
     /**
      * Return true if iterator of list points to one-after-last element
      */
-    inline bool EndOfEdgesInDir( GraphDir dir)
+    inline bool endOfEdgesInDir( GraphDir dir)
     {
         return e_it [ dir] == NULL;
     }
 
     /** 
      * Corresponding iterators for successors/predeccessors.
-     * NOTE: See GetFirstEdgeInDir and other ...InDir routines for details
+     * NOTE: See firstEdgeInDir and other ...InDir routines for details
      */
-    inline Edge* GetFirstSucc()
+    inline Edge* firstSucc()
     {
-        return GetFirstEdgeInDir( GRAPH_DIR_DOWN);
+        return firstEdgeInDir( GRAPH_DIR_DOWN);
     }
-    inline Edge* GetNextSucc()
+    inline Edge* nextSucc()
     {
-        return GetNextEdgeInDir( GRAPH_DIR_DOWN);
+        return nextEdgeInDir( GRAPH_DIR_DOWN);
     }
-    inline bool EndOfSuccs()
+    inline bool endOfSuccs()
     {
-        return EndOfEdgesInDir( GRAPH_DIR_DOWN);
+        return endOfEdgesInDir( GRAPH_DIR_DOWN);
     }
-    inline Edge* GetFirstPred()
+    inline Edge* firstPred()
     {
-        return GetFirstEdgeInDir( GRAPH_DIR_UP);
+        return firstEdgeInDir( GRAPH_DIR_UP);
     }
-    inline Edge* GetNextPred()
+    inline Edge* nextPred()
     {
-        return GetNextEdgeInDir( GRAPH_DIR_UP);
+        return nextEdgeInDir( GRAPH_DIR_UP);
     }
-    inline bool EndOfPreds()
+    inline bool endOfPreds()
     {
-        return EndOfEdgesInDir( GRAPH_DIR_UP);
+        return endOfEdgesInDir( GRAPH_DIR_UP);
     }
 
     /**

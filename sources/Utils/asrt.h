@@ -39,7 +39,7 @@ public:
 /**
  * Generic assertion template
  */
-template<class Excpt> inline void Assert( bool assertion)
+template<class Excpt> inline void assert( bool assertion)
 {
     if ( !assertion)
     {
@@ -50,7 +50,7 @@ template<class Excpt> inline void Assert( bool assertion)
 /**
  * Assertion template parameterized with thrown exception type
  */
-template<class Excpt> inline void Assert( bool asrt, Excpt e)
+template<class Excpt> inline void assert( bool asrt, Excpt e)
 {
     if ( !asrt)
     {
@@ -61,8 +61,8 @@ template<class Excpt> inline void Assert( bool asrt, Excpt e)
 /**
  * Generic assert
  */
-inline void Assert( bool asrt)
+inline void assert( bool asrt)
 {
-    return Assert< int>( asrt);
+    return assert< int>( asrt);
 }
 #endif

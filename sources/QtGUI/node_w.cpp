@@ -80,11 +80,11 @@ QVariant NodeW::itemChange(GraphicsItemChange change, const QVariant &value)
 
     switch (change) {
     case ItemPositionHasChanged:
-        for ( edge = GetFirstSucc(); !EndOfSuccs(); edge = GetNextSucc())
+        for ( edge = firstSucc(); !endOfSuccs(); edge = nextSucc())
         {
             edge->adjust();
         }
-        for ( edge = GetFirstPred(); !EndOfPreds(); edge = GetNextPred())
+        for ( edge = firstPred(); !endOfPreds(); edge = nextPred())
         {
             edge->adjust();
         }

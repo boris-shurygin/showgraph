@@ -45,7 +45,7 @@ GraphT< Graph, Node, Edge>::NewNode()
     /**
      * Check that we have available node id 
      */
-    GraphAssert( edge_next_id < GRAPH_MAX_NODE_NUM);
+    assert( edge_next_id < GRAPH_MAX_NODE_NUM);
     NodeListIt* it;
     Node *node_p = ( Node *) CreateNode( (Graph *)this, node_next_id++);
     it = node_p->GetGraphIt();
@@ -66,7 +66,7 @@ GraphT< Graph, Node, Edge>::NewEdge( Node * pred, Node * succ)
     /**
      * Check that we have available edge id 
      */
-    GraphAssert( edge_next_id < GRAPH_MAX_NODE_NUM);
+    assert( edge_next_id < GRAPH_MAX_NODE_NUM);
     Edge *edge_p = ( Edge *) CreateEdge( (Graph *)this, edge_next_id++, pred, succ);
     EdgeListIt* it = edge_p->GetGraphIt();
     it->Attach( edges);
@@ -88,14 +88,56 @@ GraphT< Graph, Node, Edge>::DebugPrint()
     Edge *e;
     out( "digraph{");
     /** Print nodes */
-    for (  n = GetFirstNode(); !EndOfNodes(); n = GetNextNode())
+    for (  n = firstNode(); !endOfNodes(); n = nextNode())
     {
         n->DebugPrint();
     }
     /** Print edges */
-    for (  e = GetFirstEdge(); !EndOfEdges(); e = GetNextEdge())
+    for (  e = firstEdge(); !endOfEdges(); e = nextEdge())
     {
         e->DebugPrint();
     }
     out( "}");
+}
+
+/**
+ * Implementation for numerations cleanup
+ */
+template <class Graph, class Node, class Edge>
+void 
+GraphT< Graph, Node, Edge>::clearNumerationsInObjects()
+{
+    Node *n;
+    Edge *e;
+    /** Clean markers in nodes */
+    for (  n = firstNode(); !endOfNodes(); n = nextNode())
+    {
+        clearUnusedNumerations( static_cast<Numbered *>(n));
+    }
+    /** Clean markers in edges */
+    for (  e = firstEdge(); !endOfEdges(); e = nextEdge())
+    {
+        clearUnusedNumerations( static_cast<Numbered *>(n));
+    }
+}
+
+/**
+ * Implementation for markers cleanup
+ */
+template <class Graph, class Node, class Edge>
+void 
+GraphT< Graph, Node, Edge>::clearMarkersInObjects()
+{
+    Node *n;
+    Edge *e;
+    /** Clean markers in nodes */
+    for (  n = firstNode(); !endOfNodes(); n = nextNode())
+    {
+        clearUnusedMarkers( static_cast<Marked *>(n));
+    }
+    /** Clean markers in edges */
+    for (  e = firstEdge(); !endOfEdges(); e = nextEdge())
+    {
+        clearUnusedMarkers( static_cast<Marked *>(n));
+    }
 }

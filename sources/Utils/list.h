@@ -27,7 +27,7 @@ enum ListDir
 inline ListDir
 ListRDir( ListDir dir)
 {
-    Assert( LIST_DIR_NUM == 2);
+    assert( LIST_DIR_NUM == 2);
     return ( dir == LIST_DIR_DEFAULT)? LIST_DIR_RDEFAULT: LIST_DIR_DEFAULT; 
 }
 
@@ -66,7 +66,7 @@ public:
     }
     /** Default peers gets */
     /** Return next peer in default direction */
-    inline ListItem<Data> *GetNext() const
+    inline ListItem<Data> *next() const
     {
         return GetPeerInDir( LIST_DIR_DEFAULT);
     }

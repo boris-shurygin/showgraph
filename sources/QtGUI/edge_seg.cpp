@@ -77,8 +77,8 @@ EdgeSegment::EdgeSegment( EdgeW *e, EdgeControl *src, EdgeControl* dst, QGraphic
     srcControl(src),
     dstControl( dst)
 {
-    Assert( IsNotNullP( src));
-    Assert( IsNotNullP( dst));
+    assert( IsNotNullP( src));
+    assert( IsNotNullP( dst));
     //setCacheMode(DeviceCoordinateCache);
     //setFlag( ItemIsMovable);
     setZValue(0);

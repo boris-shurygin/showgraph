@@ -102,7 +102,7 @@ public:
     friend class AuxGraph;
     friend class AuxNode;
 
-    inline bool fixed() const
+    inline bool isFixed() const
     {
         return priv_fixed;
     }
