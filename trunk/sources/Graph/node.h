@@ -72,7 +72,7 @@ public:
      */
     inline void AddPred( Edge *edge)
     {
-        edges[ GRAPH_DIR_UP].push_back( edge);
+        AddEdgeInDir( edge, GRAPH_DIR_UP);
     }
 
     /**
@@ -80,7 +80,7 @@ public:
      */
     inline void AddSucc( Edge *edge) 
     {
-        edges[ GRAPH_DIR_DOWN].push_back( edge);
+        AddEdgeInDir( edge, GRAPH_DIR_DOWN);
     }
     /**
      *  Iteration through edges routines.
