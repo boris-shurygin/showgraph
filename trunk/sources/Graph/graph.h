@@ -10,7 +10,7 @@
  * Graph class decribes a graph.
  *  Like classical definition G = ( N, E) where N is set of nodes n and E is set of edges e = {n_i, n_j}
  */
-template <class Graph, class Node, class Edge > class GraphT: public MarkerManager, public NumManager
+template <class Graph, class Node, class Edge > class GraphT: public MarkerManager, public NumManager, public QDomDocument
 {
 public:
     typedef ListItem< Node> NodeListIt;
@@ -168,6 +168,11 @@ public:
      * Clear unused numerations from numbered objects
      */
     void clearNumerationsInObjects();
+
+    /**
+     * Save graph as an XML file
+     */
+    void writeToXML();
 };
 
 #include "graph.cpp"

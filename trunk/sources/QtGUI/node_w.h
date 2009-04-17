@@ -13,7 +13,7 @@ class NodeItem: public QGraphicsTextItem, public NodeT< GraphW, NodeItem, EdgeIt
     /** Initialization */
     inline void SetInitFlags()
     {
-        QString text = QString("Node %1").arg( GetId());
+        QString text = QString("Node %1").arg( id());
         setPlainText( text);
         setFlag( ItemIsMovable);
         //setFlag(ItemIsSelectable);

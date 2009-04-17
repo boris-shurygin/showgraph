@@ -18,6 +18,8 @@ GraphT< Graph, Node, Edge>::GraphT()
     edges = NULL;
     n_it = NULL;
     e_it = NULL;
+    QDomElement root = createElement("graph");
+    appendChild( root);
 }
 
 /** Node/Edge creation routines can be overloaded by derived class */
@@ -52,6 +54,8 @@ GraphT< Graph, Node, Edge>::NewNode()
     it->Attach( nodes);
     nodes = it;
     node_num++;
+    node_p->setElement( createElement( "node"));
+    documentElement().appendChild( node_p->elem());
     return node_p;
 }
 
@@ -72,6 +76,8 @@ GraphT< Graph, Node, Edge>::NewEdge( Node * pred, Node * succ)
     it->Attach( edges);
     edges = it;
     edge_num++;
+    edge_p->setElement( createElement( "edge"));
+    documentElement().appendChild( edge_p->elem());
     return edge_p;
 }
 
@@ -140,4 +146,36 @@ GraphT< Graph, Node, Edge>::clearMarkersInObjects()
     {
         clearUnusedMarkers( static_cast<Marked *>(n));
     }
+}
+
+/**
+ * Implementation for markers cleanup
+ */
+template <class Graph, class Node, class Edge>
+void 
+GraphT< Graph, Node, Edge>::writeToXML()
+{
+    QString fileName( "test.xml");
+    QFile file( fileName);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        assert( 0);
+        return;
+    }
+     
+    /** Clean markers in nodes */
+    for ( Node *n = firstNode(); !endOfNodes(); n = nextNode())
+    {
+        n->updateElement();
+    }
+
+    /** Clean markers in edges */
+    for (  Edge *e = firstEdge(); !endOfEdges(); e = nextEdge())
+    {
+        e->updateElement();
+    }
+
+    const int IndentSize = 4;
+
+    QTextStream out( &file);
+    save(out, IndentSize);
 }

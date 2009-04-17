@@ -115,7 +115,8 @@ bool UTestGraph()
     graph.NewEdge( nodes[ 8], nodes[ 4]);
     delete nodes[ 8];
     graph.DebugPrint();
-    
+    graph.writeToXML();
+
     /**
      * Check graph's data structures consistency
      */

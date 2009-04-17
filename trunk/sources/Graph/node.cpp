@@ -70,5 +70,15 @@ template <class Graph, class Node, class Edge>
 void
 NodeT<Graph, Node, Edge>::DebugPrint()
 {
-    out("%u;", GetId());
+    out("%u;", id());
+}
+
+/**
+ * Update DOM tree element
+ */
+template <class Graph, class Node, class Edge>
+void
+NodeT<Graph, Node, Edge>::updateElement()
+{
+    element.setAttribute( "id", id());
 }

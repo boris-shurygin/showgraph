@@ -32,11 +32,13 @@ class AEdge: public EdgeT< AGraph, ANode, AEdge>
     /** Constructors are made private, only nodes and graph can create edges */
     AEdge( AGraph *graph_p, int _id, ANode *_pred, ANode* _succ):
         EdgeT< AGraph, ANode, AEdge>( graph_p, _id, _pred, _succ){};
-public:
+        
     friend class GraphT< AGraph, ANode, AEdge>;
     friend class NodeT< AGraph, ANode, AEdge>;
     friend class AGraph;
     friend class ANode;
+public:
+    
 };
 
 /**
