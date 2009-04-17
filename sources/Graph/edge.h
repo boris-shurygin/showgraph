@@ -16,8 +16,11 @@ template <class Graph, class Node, class Edge> class EdgeT: public Marked, publi
 public:
     typedef ListItem< Edge> EdgeListIt;
 private:
+    /** Representation in document */
+    QDomElement element;
+
     /** Graph part */
-    int id; //Unique ID
+    int uid; //Unique ID
     Graph * graph; //Graph
     EdgeListIt graph_it; //Position in Graph's list of edges
 
@@ -31,32 +34,16 @@ protected:
     friend class Node;
 
     /** Constructors are made private, only nodes and graph can create edges */
-    EdgeT( Graph *graph_p, int _id, Node *_pred, Node* _succ): id(_id), graph(graph_p), graph_it()
+    EdgeT( Graph *graph_p, int _id, Node *_pred, Node* _succ): uid(_id), graph(graph_p), graph_it()
     {
         graph_it.SetData( (Edge*) this);
         n_it[ GRAPH_DIR_UP] = EdgeListIt();
         n_it[ GRAPH_DIR_DOWN] = EdgeListIt();
         n_it[ GRAPH_DIR_UP].SetData( (Edge*)this);
         n_it[ GRAPH_DIR_DOWN].SetData( (Edge*)this);
-        SetPred( _pred);
-        SetSucc( _succ);
+        setPred( _pred);
+        setSucc( _succ);
     }
-    /**
-     * Get edge's unique ID
-     */
-    inline int GetId() const
-    {
-        return id;
-    }
-
-    /**
-     * Get edge's corresponding graph
-     */
-    inline Graph * GetGraph() const
-    {
-        return graph;
-    }
-
     /** Pivate routines dealing with iterators */
     void SetGraphIt( EdgeListIt g_it)
     {
@@ -93,6 +80,33 @@ protected:
      */
     void DetachFromNode( GraphDir dir);
 public:
+    
+    inline QDomElement elem() const
+    {
+        return element;
+    }
+    
+    inline void setElement( QDomElement elem)
+    {
+        element = elem;
+    }
+
+    /**
+     * Get edge's unique ID
+     */
+    inline int id() const
+    {
+        return uid;
+    }
+
+    /**
+     * Get edge's corresponding graph
+     */
+    inline Graph * GetGraph() const
+    {
+        return graph;
+    }
+
     /** 
      *  Destructor. Delete edge from list in graph.
      *  Deletion from node lists MUST be performed manually.
@@ -126,14 +140,14 @@ public:
     /**
      * Connect edge with given node as a predecessor
      */
-    inline void SetPred( Node *n)
+    inline void setPred( Node *n)
     {
         SetNode( n, GRAPH_DIR_UP);
     }
     /**
      * Connect edge with given node as a successor
      */
-    inline void SetSucc( Node *n)
+    inline void setSucc( Node *n)
     {
         SetNode( n, GRAPH_DIR_DOWN);
     }
@@ -141,28 +155,34 @@ public:
     /**
      * Get node in specified direction
      */
-    inline Node *GetNode( GraphDir dir) const 
+    inline Node *node( GraphDir dir) const 
     {
         return nodes[ dir];
     }
     /**
      * Get predecessor of edge
      */
-    inline Node *GetPred() const 
+    inline Node *pred() const 
     {
-        return GetNode( GRAPH_DIR_UP);
+        return node( GRAPH_DIR_UP);
     }
     /**
      * Get successor of edge
      */
-    inline Node *GetSucc() const 
+    inline Node *succ() const 
     {
-        return GetNode( GRAPH_DIR_DOWN);
+        return node( GRAPH_DIR_DOWN);
     }
     /**
      * Print edge in dot fomat to stdout
      */
     void DebugPrint();
+
+    /** 
+     * Update DOM element
+     */
+    void updateElement();
+
 };
 
 #include "edge.cpp"

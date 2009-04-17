@@ -7,6 +7,12 @@
 #define AUX_GRAPH_H
 
 /**
+ * Rank type and its undefined constant
+ */
+typedef unsigned int Rank;
+const Rank RANK_UNDEF = (Rank) (-1);
+
+/**
  * AuxGraph, AuxNode and AuxEdge classes represent auxiliary graph used for layout purposes
  */
 class AuxNode;
@@ -15,6 +21,24 @@ class AuxGraph;
 
 class Level
 {
+    Rank level_rank;
+    QLinkedList< AuxNode*> node_list;
+public:
+    Level(): level_rank( 0){};
+    Level( Rank r): level_rank( r){};
+
+    inline Rank rank() const
+    {
+        return level_rank;
+    }
+    inline void rank( Rank r)
+    {
+        level_rank = r;
+    }
+    inline QLinkedList< AuxNode*> nodes() const
+    {
+        return node_list;
+    }
 
 };
 
@@ -25,7 +49,7 @@ class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
     double priv_height;
     double priv_width;
     int priv_priority;
-    int priv_rank;
+    Level * priv_level;
     int priv_pos;
 
 public:
@@ -45,7 +69,7 @@ public:
     }
     inline int rank() const
     {
-        return priv_rank;
+        return priv_level->rank();
     }
     inline int pos() const
     {
@@ -65,9 +89,9 @@ public:
     {
         priv_priority = p;
     }
-    inline void setRank( int r) 
+    inline void setLevel( Level* l) 
     {
-        priv_rank = r;
+        priv_level = l;
     }
     inline void setPos( int p) 
     {
@@ -82,7 +106,7 @@ private:
         priv_height(0),
         priv_width(0),
         priv_priority(-1),
-        priv_rank(-1),
+        priv_level( NULL),
         priv_pos(-1)
     {
     }
@@ -124,7 +148,7 @@ public:
 class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
 {
     /** Array of node lists for ranks */
-    QVector< Level> ranks;
+    QVector< Level*> levels;
 public:
 
     void * CreateNode( AuxGraph *graph_p, int _id, NodeListIt it)

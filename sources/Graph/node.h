@@ -15,8 +15,11 @@ public:
     typedef ListItem< Node> NodeListIt;
     typedef ListItem< Edge> EdgeListIt;
 private:
+    /** Representation in document */
+    QDomElement element;
+
     /** Connection with inclusive graph */
-    int id; // Unique id
+    int uid; // Unique id
     Graph * graph;// Pointer to graph
     NodeListIt my_it;//Item of graph's list
     
@@ -30,7 +33,7 @@ protected:
         return &my_it;
     }
     /** We can't create nodes separately, do it through NewNode method of graph */
-    NodeT( Graph *graph_p, int _id):id(_id), graph(graph_p), my_it()
+    NodeT( Graph *graph_p, int _id):uid(_id), graph(graph_p), my_it()
     {
         edges[ GRAPH_DIR_UP] = NULL;
         edges[ GRAPH_DIR_DOWN] = NULL;
@@ -46,12 +49,22 @@ public:
      */
     ~NodeT();
     
+    inline QDomElement elem() const
+    {
+        return element;
+    }
+    
+    inline void setElement( QDomElement elem)
+    {
+        element = elem;
+    }
+
     /**
      * Get node's unique ID
      */
-    inline int GetId() const
+    inline int id() const
     {
-        return id;
+        return uid;
     }
 
     /**
@@ -169,6 +182,10 @@ public:
      */
     void DebugPrint();
 
+    /** 
+     * Update DOM element
+     */
+    void updateElement();
 };
 
 #include "node.cpp"

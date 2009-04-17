@@ -6,6 +6,8 @@
 #ifndef GRAPH_PREDECLS_H
 #define GRAPH_PREDECLS_H
 
+#include <QDomDocument>
+#include <QtGui>
 #include <QList>
 #include <QLinkedList>
 #include <QVector>

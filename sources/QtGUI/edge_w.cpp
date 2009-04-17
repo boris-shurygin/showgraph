@@ -7,8 +7,8 @@
 
 void EdgeItem::adjust()
 {
-    sourcePoint = mapFromItem(GetPred(), GetPred()->boundingRect().center());
-    destPoint = mapFromItem(GetSucc(), GetSucc()->boundingRect().center());
+    sourcePoint = mapFromItem( pred(), pred()->boundingRect().center());
+    destPoint = mapFromItem( succ(), succ()->boundingRect().center());
     srcControl->setPos( mapToScene( sourcePoint));
     dstControl->setPos( mapToScene( destPoint));
     QPointF nextToSrc = destPoint;
@@ -38,7 +38,7 @@ void EdgeItem::adjust()
             bottomRight.setY( cpos.y());
     }
     QLineF line( sourcePoint, nextToSrc);
-    QPolygonF endPolygon = mapFromItem( GetPred(), GetPred()->boundingRect());
+    QPolygonF endPolygon = mapFromItem( pred(), pred()->boundingRect());
     QPointF p1 = endPolygon.first();
     QPointF p2;
     QPointF intersectPoint;
@@ -55,7 +55,7 @@ void EdgeItem::adjust()
     }
 
     QLineF line2( nextToDst, destPoint);
-    endPolygon = mapFromItem( GetSucc(), GetSucc()->boundingRect());
+    endPolygon = mapFromItem( succ(), succ()->boundingRect());
     p1 = endPolygon.first();
     p2;
     

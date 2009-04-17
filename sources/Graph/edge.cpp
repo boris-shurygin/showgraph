@@ -26,10 +26,10 @@ EdgeT<Graph, Node, Edge>::DebugPrint()
      * TODO: Implements graph states and in 'in process' state print node as '?'
      *       Examples of such prints: 4->? ?->3 ?->?
      */
-    assert( IsNotNullP( GetPred()));
-    assert( IsNotNullP( GetSucc()));
+    assert( IsNotNullP( pred()));
+    assert( IsNotNullP( succ()));
 
-    out("%u->%u;", GetPred()->GetId(), GetSucc()->GetId());
+    out("%u->%u;", pred()->id(), succ()->id());
 }
 
 /**
@@ -39,6 +39,17 @@ template <class Graph, class Node, class Edge>
 void
 EdgeT<Graph, Node, Edge>::DetachFromNode( GraphDir dir)
 {
-    Node *n = GetNode( dir);
+    Node *n = node( dir);
     n->DeleteEdgeInDir( RevDir( dir), &n_it[ dir]);
+}
+
+/**
+ * Update DOM tree element
+ */
+template <class Graph, class Node, class Edge>
+void
+EdgeT<Graph, Node, Edge>::updateElement()
+{
+    element.setAttribute( "source", pred()->id());
+    element.setAttribute( "target", pred()->id());
 }
