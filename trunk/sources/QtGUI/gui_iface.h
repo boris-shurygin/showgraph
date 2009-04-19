@@ -9,7 +9,7 @@
 /** Predeclarations */
 class NodeItem;
 class EdgeItem;
-class GraphW;
+class GraphView;
 
 #include "../Graph/graph_iface.h"
 #include "../Layout/layout_iface.h"

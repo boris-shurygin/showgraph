@@ -48,15 +48,15 @@ public:
     GraphT();
     
     /** Create new node in graph */
-    Node * newNode();
-    Node * newNode( QDomElement e);
+    virtual Node * newNode();
+    virtual Node * newNode( QDomElement e);
 
     /**
      * Create edge between two nodes.
      * We do not support creation of edge with undefined endpoints
      */
-    Edge * newEdge( Node * pred, Node * succ);
-    Edge * newEdge( Node * pred, Node * succ, QDomElement e);
+    virtual Edge * newEdge( Node * pred, Node * succ);
+    virtual Edge * newEdge( Node * pred, Node * succ, QDomElement e);
 
     /**
      * Remove node from node list of graph

@@ -6,7 +6,7 @@
 #include "gui_impl.h"
 
 /** Contructor */
-GraphW::GraphW(): dst( 0, 0), src( 0, 0), createEdge( false)
+GraphView::GraphView(): dst( 0, 0), src( 0, 0), createEdge( false)
 {
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -23,36 +23,54 @@ GraphW::GraphW(): dst( 0, 0), src( 0, 0), createEdge( false)
 }
 
 /** Destructor */
-GraphW::~GraphW()
+GraphView::~GraphView()
 {
-
+    //FIXME: For testing purposes. Remove this when saving implemented
+    writeToXML( "graph.xml");
 }
 
 void 
-GraphW::drawBackground(QPainter *painter, const QRectF &rect)
+GraphView::drawBackground(QPainter *painter, const QRectF &rect)
 {
 
 }
 
 NodeItem*
-GraphW::newNode()
+GraphView::newNode()
 {
-    NodeItem* n = GraphT< GraphW, NodeItem, EdgeItem>::newNode();
+    NodeItem* n = GraphT< GraphView, NodeItem, EdgeItem>::newNode();
     scene()->addItem( n);
     return n;
 }
 
 EdgeItem*
-GraphW::newEdge( NodeItem* pred, NodeItem* succ)
+GraphView::newEdge( NodeItem* pred, NodeItem* succ)
 {
-    EdgeItem* e = GraphT< GraphW, NodeItem, EdgeItem>::newEdge( pred, succ);
+    EdgeItem* e = GraphT< GraphView, NodeItem, EdgeItem>::newEdge( pred, succ);
     scene()->addItem( e);
     e->initControls();
     return e;
 }
 
+NodeItem*
+GraphView::newNode( QDomElement e)
+{
+    NodeItem* n = GraphT< GraphView, NodeItem, EdgeItem>::newNode( e);
+    scene()->addItem( n);
+    return n;
+}
+
+EdgeItem*
+GraphView::newEdge( NodeItem* pred, NodeItem* succ, QDomElement e)
+{
+    EdgeItem* edge_p = GraphT< GraphView, NodeItem, EdgeItem>::newEdge( pred, succ, e);
+    scene()->addItem( edge_p);
+    edge_p->initControls();
+    return edge_p;
+}
+
 void 
-GraphW::mouseDoubleClickEvent(QMouseEvent *ev)
+GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
 {
     if( ev->button() & Qt::LeftButton)
     {
@@ -73,12 +91,12 @@ GraphW::mouseDoubleClickEvent(QMouseEvent *ev)
     QGraphicsView::mouseDoubleClickEvent( ev);   
 }
 
-void GraphW::mousePressEvent(QMouseEvent *ev)
+void GraphView::mousePressEvent(QMouseEvent *ev)
 {
     QGraphicsView::mousePressEvent( ev);
 }
 
-void GraphW::mouseReleaseEvent(QMouseEvent *ev)
+void GraphView::mouseReleaseEvent(QMouseEvent *ev)
 {
     if( ev->button() & Qt::RightButton)
     {
@@ -99,7 +117,7 @@ void GraphW::mouseReleaseEvent(QMouseEvent *ev)
     QGraphicsView::mouseReleaseEvent(ev);
 }
 
-void GraphW::mouseMoveEvent(QMouseEvent *ev)
+void GraphView::mouseMoveEvent(QMouseEvent *ev)
 {
     if ( createEdge)
     {
@@ -108,7 +126,7 @@ void GraphW::mouseMoveEvent(QMouseEvent *ev)
     QGraphicsView::mouseMoveEvent(ev);
 }
 
-void GraphW::drawForeground(QPainter *painter, const QRectF &rect)
+void GraphView::drawForeground(QPainter *painter, const QRectF &rect)
 {
 
 }
