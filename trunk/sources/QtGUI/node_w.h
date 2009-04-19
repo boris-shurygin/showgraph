@@ -21,7 +21,7 @@ class NodeItem: public QGraphicsTextItem, public NodeT< GraphW, NodeItem, EdgeIt
         setZValue(1);
     }
 
-    /** We can't create nodes separately, do it through NewNode method of graph */
+    /** We can't create nodes separately, do it through newNode method of graph */
     NodeItem( GraphW *graph_p, int _id):
         NodeT< GraphW, NodeItem, EdgeItem>( graph_p, _id)
     {

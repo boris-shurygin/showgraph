@@ -10,9 +10,9 @@
 /**
  * Graph library unit testing
  */
-bool UTestGraph();
+bool uTestGraph();
 
 /**
  * UnitTesting of GUI
  */
-bool UTestGUI(int argc, char **argv);
+bool uTestGUI(int argc, char **argv);

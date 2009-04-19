@@ -43,6 +43,7 @@ RevDir( GraphDir dir)
 
 /** Number type used for numbering nodes and edges in graph */
 typedef unsigned int GraphNum;
+typedef unsigned long long GraphUid;
 
 const GraphNum GRAPH_MAX_NODE_NUM = ( GraphNum)( -1);
 const GraphNum GRAPH_MAX_EDGE_NUM = ( GraphNum)( -1);

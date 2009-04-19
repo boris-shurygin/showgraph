@@ -20,8 +20,8 @@ public:
     void drawBackground(QPainter *painter, const QRectF &rect);
     
     /** New node/edge overloads */
-    NodeItem* NewNode();
-    EdgeItem* NewEdge( NodeItem* pred, NodeItem* succ);
+    NodeItem* newNode();
+    EdgeItem* newEdge( NodeItem* pred, NodeItem* succ);
         
     void mouseDoubleClickEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);

@@ -19,8 +19,8 @@ private:
     QDomElement element;
 
     /** Connection with inclusive graph */
-    int uid; // Unique id
-    Graph * graph;// Pointer to graph
+    GraphUid uid; // Unique id
+    Graph * graph_p;// Pointer to graph
     NodeListIt my_it;//Item of graph's list
     
     //Lists of edges and iterators for them
@@ -32,8 +32,8 @@ protected:
     {
         return &my_it;
     }
-    /** We can't create nodes separately, do it through NewNode method of graph */
-    NodeT( Graph *graph_p, int _id):uid(_id), graph(graph_p), my_it()
+    /** We can't create nodes separately, do it through newNode method of graph */
+    NodeT( Graph *_graph_p, GraphUid _id):uid(_id), graph_p( _graph_p), my_it()
     {
         edges[ GRAPH_DIR_UP] = NULL;
         edges[ GRAPH_DIR_DOWN] = NULL;
@@ -62,7 +62,7 @@ public:
     /**
      * Get node's unique ID
      */
-    inline int id() const
+    inline GraphUid id() const
     {
         return uid;
     }
@@ -70,9 +70,9 @@ public:
     /**
      * Get node's corresponding graph
      */
-    inline Graph * GetGraph() const
+    inline Graph * graph() const
     {
-        return graph;
+        return graph_p;
     }
 
     /**
@@ -185,7 +185,12 @@ public:
     /** 
      * Update DOM element
      */
-    void updateElement();
+    virtual void updateElement();
+
+    /**
+     * Read properties from XML
+     */
+    virtual void readFromElement( QDomElement elem);
 };
 
 #include "node.cpp"

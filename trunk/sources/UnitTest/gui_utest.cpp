@@ -3,7 +3,7 @@
 /**
  * UnitTesting of GUI
  */
-bool UTestGUI(int argc, char **argv)
+bool uTestGUI(int argc, char **argv)
 {
     QApplication app(argc, argv);
     GraphW graph;
@@ -11,7 +11,7 @@ bool UTestGUI(int argc, char **argv)
     {
         for ( int j = 0; j < 10; j++)
         {
-            NodeItem* node = graph.NewNode();
+            NodeItem* node = graph.newNode();
             node->setPos( i * 80, j * 80);
         }
     }

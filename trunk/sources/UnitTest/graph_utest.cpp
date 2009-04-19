@@ -11,14 +11,14 @@ using namespace std;
  /**
   * TODO: Check graph's data structures being consistent with node and edge functionality
   */
-bool UTestGraphOwn()
+bool uTestGraphOwn()
 {
     return true;
 }
 /**
  * TODO: Check consistency of Node and Edge classes interoperation
  */
-bool UTestNodeEdge()
+bool uTestNodeEdge()
 {
     /**
      * TODO: Check that node and edge remain correct after basic edge/node creation/deletion
@@ -32,14 +32,14 @@ bool UTestNodeEdge()
 /**
  * Check marker functionality
  */
-bool UTestMarkers()
+bool uTestMarkers()
 {
     AGraph graph;
-    ANode *dummy = graph.NewNode();
+    ANode *dummy = graph.newNode();
     delete dummy;
-    ANode *pred = graph.NewNode();
-    ANode *succ = graph.NewNode();
-    AEdge *edge = graph.NewEdge( pred, succ);
+    ANode *pred = graph.newNode();
+    ANode *succ = graph.newNode();
+    AEdge *edge = graph.newEdge( pred, succ);
     Marker m = graph.newMarker();
     Marker m2 = graph.newMarker();
 
@@ -88,9 +88,79 @@ bool UTestMarkers()
 }
 
 /**
- * Unit tests for Graph library
+ * Check marker functionality
  */
-bool UTestGraph()
+static bool uTestNumerations()
+{
+    /** 
+     * Every class that can be a numerations manager should implement
+     * the routine for clearing numerations in objects
+     */
+    class NumMgrInst: public NumManager
+    {
+        /** Implementation of clearing - empty TODO: implement and test it */
+        void clearNumerationsInObjects()
+        {
+        
+        }
+    };
+    /**
+     * Check correct error reporting
+     *  1. Too many numerations
+     */
+    NumMgrInst mgr1;
+    try
+    {
+        for ( int i = 0; i < MAX_NUMERATIONS + 1; i++)
+        {
+            mgr1.newNum();
+        }
+    } catch ( NumErrorType error)
+    {
+        // thrown error type MUST match the expected one
+        assert( error == NUM_ERROR_OUT_OF_INDEXES);
+    }
+
+    /** 2. Too big number */
+    NumMgrInst mgr2;
+    Numeration num2 = mgr2.newNum();
+    Numbered obj2; 
+    try
+    {
+        obj2.setNumber( num2, -1);
+    } catch ( NumErrorType error)
+    {
+        // thrown error type MUST match the expected one
+        assert( error == NUM_ERROR_NUMBER_OUT_OF_RANGE);
+    }
+    mgr2.freeNum( num2);
+
+    /** 3. Functional testing */
+    NumMgrInst mgr;
+    for ( int i = 0; i < MAX_NUMERATIONS + 2; i++)
+    {
+        Numeration n = mgr.newNum();
+        mgr.freeNum( n);
+    } 
+    Numeration num = mgr.newNum();
+    Numeration num_unused = mgr.newNum();
+    Numbered obj; 
+    assert( obj.number( num) == NUMBER_NO_NUM);
+    assert( obj.number( num_unused) == NUMBER_NO_NUM);
+    obj.setNumber( num, 1);
+    assert( obj.isNumbered( num));
+    assert( obj.number( num) == 1);
+    assert( obj.number( num_unused) == NUMBER_NO_NUM);
+    obj.unNumber( num);
+    assert( obj.number( num) == NUMBER_NO_NUM);
+    assert( obj.number( num_unused) == NUMBER_NO_NUM);    
+    return true;
+}
+
+/**
+ * Create graph and save it to XML
+ */
+bool uTestSave()
 {
     AGraph graph;
 
@@ -102,39 +172,81 @@ bool UTestGraph()
     /** Create nodes and edges */
     for ( int i =0; i<20; i++)
     {
-        nodes.push_back( graph.NewNode());
+        nodes.push_back( graph.newNode());
         if ( i > 0)
         {
-            graph.NewEdge( nodes[ i - 1], nodes[ i]);
+            graph.newEdge( nodes[ i - 1], nodes[ i]);
         }
         if ( i > 1 && i % 2 == 0)
         {
-            graph.NewEdge( nodes[ i - 2], nodes[ i]);
+            graph.newEdge( nodes[ i - 2], nodes[ i]);
         }
     }
-    graph.NewEdge( nodes[ 8], nodes[ 4]);
+    graph.newEdge( nodes[ 8], nodes[ 4]);
     delete nodes[ 8];
     graph.DebugPrint();
-    graph.writeToXML();
+    graph.writeToXML( QString ( "test.xml"));
+    return true;
+}
 
+/**
+ * Load from XML
+ */
+bool uTestLoad()
+{
+    AGraph graph;
+    graph.readFromXML( QString( "test.xml"));
+    graph.DebugPrint();
+    return true;
+}
+
+/**
+ * Unit tests for Graph XML save/load
+ */
+bool uTestXML()
+{
+    if ( !uTestSave())
+        return false;
+    
+    if ( !uTestLoad())
+        return false;
+    return true;
+}
+
+/**
+ * Unit tests for Graph library
+ */
+bool uTestGraph()
+{
     /**
      * Check graph's data structures consistency
      */
-     if ( !UTestGraphOwn())
+     if ( !uTestGraphOwn())
          return false;
     /**
      * Check node-edge consistency
      */
-    if ( !UTestNodeEdge())
+    if ( !uTestNodeEdge())
          return false;
+
+    /**
+     * Check numerations 
+     */
+    if ( !uTestNumerations())
+        return false;
 
     /**
      * Check markers
      */
-    if ( !UTestMarkers())
+    if ( !uTestMarkers())
         return false;
 
-    /** Nodes traversal */
-    //assert<Error>( 0);
+    /**
+     * Check markers
+     */
+    if ( !uTestXML())
+        return false;
+
+//    assert<Error>( 0);
     return true;
 }

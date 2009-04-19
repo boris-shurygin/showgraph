@@ -47,8 +47,8 @@ void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if( event->button() & Qt::RightButton)
     {
-        GetGraph()->SetCreateEdge( true);
-        GetGraph()->SetTmpSrc( this);
+        graph()->SetCreateEdge( true);
+        graph()->SetTmpSrc( this);
     }
     update();
     QGraphicsItem::mousePressEvent(event);
