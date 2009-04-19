@@ -95,3 +95,37 @@ QVariant NodeItem::itemChange(GraphicsItemChange change, const QVariant &value)
 
     return QGraphicsItem::itemChange(change, value);
 }
+
+/**
+ * Update DOM tree element
+ */
+void
+NodeItem::updateElement()
+{
+    NodeT< GraphView, NodeItem, EdgeItem>::updateElement();// Base class method call
+    QDomElement e = elem();
+    e.setAttribute( "x", x());
+    e.setAttribute( "y", y());
+    e.setAttribute( "label", toPlainText());
+}
+
+/**
+ * read properties from DOM tree element
+ */
+void
+NodeItem::readFromElement( QDomElement e)
+{
+    assert( !e.isNull());
+    assert( e.tagName() == QString( "node"));
+    
+    if( e.hasAttribute( "x") && e.hasAttribute( "y"))
+    {
+        setPos( e.attribute( "x").toDouble(),
+                e.attribute( "y").toDouble());
+    }
+    if( e.hasAttribute( "label"))
+    {
+        setPlainText( e.attribute( "label"));
+    }
+    NodeT< GraphView, NodeItem, EdgeItem>::readFromElement( e); // Base class method
+}

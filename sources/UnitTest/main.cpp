@@ -10,9 +10,8 @@ int main(int argc, char **argv)
     if ( !uTestGraph())
         return -1;
 
-#if 0 
     //Test graph package
     if ( !uTestGUI(argc, argv))
         return -1;
-#endif
+
 }

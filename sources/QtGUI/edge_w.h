@@ -132,7 +132,7 @@ public:
 
 };
 
-class EdgeItem: public QGraphicsItem, EdgeT< GraphW, NodeItem, EdgeItem>
+class EdgeItem: public QGraphicsItem, EdgeT< GraphView, NodeItem, EdgeItem>
 {
 public:        
     typedef enum EdgeMode
@@ -157,8 +157,8 @@ private:
     EdgeMode curr_mode;
 
     /** Constructors are made private, only nodes and graph can create edges */
-    EdgeItem( GraphW *graph_p, int _id, NodeItem *_pred, NodeItem* _succ):
-        EdgeT< GraphW, NodeItem, EdgeItem>( graph_p, _id, _pred, _succ), arrowSize(10)
+    EdgeItem( GraphView *graph_p, int _id, NodeItem *_pred, NodeItem* _succ):
+        EdgeT< GraphView, NodeItem, EdgeItem>( graph_p, _id, _pred, _succ), arrowSize(10)
         {
             srcControl = 0;
             dstControl = 0;
@@ -173,9 +173,9 @@ private:
             delete control;
         }
     }
-    friend class GraphT< GraphW, NodeItem, EdgeItem>;
-    friend class NodeT< GraphW, NodeItem, EdgeItem>;
-    friend class GraphW;
+    friend class GraphT< GraphView, NodeItem, EdgeItem>;
+    friend class NodeT< GraphView, NodeItem, EdgeItem>;
+    friend class GraphView;
     friend class NodeItem;
 public:
     
