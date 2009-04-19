@@ -19,37 +19,45 @@ private:
     /* List of nodes and its iterator */
     NodeListIt* nodes;
     NodeListIt* n_it;
-    unsigned long int node_num;
+    GraphNum node_num;
     
     /** 
      *  Id of next node. Incremented each time you create a node,
      *  needed for nodes to have unique id. In DEBUG mode node id is not reused.
      */
-    GraphNum node_next_id;
+    GraphUid node_next_id;
 
     /* List of edges and its iterator */
     EdgeListIt* edges;
     EdgeListIt* e_it;
-    unsigned long int edge_num;
+    GraphNum edge_num;
     
     /** Id of next edge. Incremented each time you create an edge,
      *  needed for edges to have unique id. In DEBUG mode edge id is not reused.
      */
-    GraphNum edge_next_id;
+    GraphUid edge_next_id;
+
+    /**
+     * Implementation of node/edge creation
+     */
+    Node * newNodeImpl( GraphUid id);
+    Edge * newEdgeImpl( Node * pred, Node * succ);
 
 public:
     /** Constructor */
     GraphT();
     
     /** Create new node in graph */
-    Node * NewNode();
+    Node * newNode();
+    Node * newNode( QDomElement e);
 
     /**
      * Create edge between two nodes.
      * We do not support creation of edge with undefined endpoints
      */
-    Edge * NewEdge( Node * pred, Node * succ);
-    
+    Edge * newEdge( Node * pred, Node * succ);
+    Edge * newEdge( Node * pred, Node * succ, QDomElement e);
+
     /**
      * Remove node from node list of graph
      */
@@ -65,6 +73,7 @@ public:
             n_it = it->next();
         }
         it->Detach();
+
     }
 
     /**
@@ -107,7 +116,7 @@ public:
     inline Edge* firstEdge() 
     {
         e_it = edges;
-        return e_it->GetData();
+        return (e_it != NULL)? e_it->GetData() : NULL;
     }
     /**
      * Advance iterator to next edge and return this edge. If end reached return NULL
@@ -132,7 +141,7 @@ public:
     inline Node* firstNode()
     {
         n_it = nodes;
-        return n_it->GetData();
+        return ( n_it != NULL)? n_it->GetData() : NULL;
     }
     /** 
      * Advance iterator to next node and return this node. If end reached return NULL
@@ -172,7 +181,12 @@ public:
     /**
      * Save graph as an XML file
      */
-    void writeToXML();
+    void writeToXML( QString filename);
+
+    /**
+     * Build graph from XML description
+     */
+    void readFromXML( QString filename);
 };
 
 #include "graph.cpp"

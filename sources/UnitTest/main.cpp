@@ -7,12 +7,12 @@
 int main(int argc, char **argv)
 {
     //Test graph package
-    if ( !UTestGraph())
+    if ( !uTestGraph())
         return -1;
 
 #if 0 
     //Test graph package
-    if ( !UTestGUI(argc, argv))
+    if ( !uTestGUI(argc, argv))
         return -1;
 #endif
 }

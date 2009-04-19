@@ -22,6 +22,62 @@ GraphT< Graph, Node, Edge>::GraphT()
     appendChild( root);
 }
 
+/**
+ * Build graph from XML description
+ */
+template <class Graph, class Node, class Edge> 
+void
+GraphT< Graph, Node, Edge>::readFromXML( QString filename)
+{
+    QFile file( filename);
+
+    if ( !file.open( QIODevice::ReadOnly))
+        return;
+
+    if ( !setContent( &file))
+    {
+        file.close();
+        return;
+    }
+    file.close();
+
+    /**
+     * Read nodes and create them
+     */
+    QDomElement docElem = documentElement();
+
+    QDomNode n = docElem.firstChild();
+    QHash< GraphUid, Node *> n_hash;
+
+    while ( !n.isNull())
+    {
+        QDomElement e = n.toElement(); // try to convert the DOM tree node to an element.
+        
+        if ( !e.isNull() && e.tagName() == QString( "node"))
+        {
+            Node *node = newNode( e);
+            n_hash[ node->id()] = node;
+        }
+        n = n.nextSibling();
+    }
+    
+    n = docElem.firstChild();
+    while ( !n.isNull())
+    {
+        QDomElement e = n.toElement(); // try to convert the DOM tree node to an element.
+        
+        if ( !e.isNull() && e.tagName() == QString( "edge"))
+        {
+            GraphUid pred_id = e.attribute( "source").toLongLong();
+            GraphUid succ_id = e.attribute( "target").toLongLong();
+            Node *pred = n_hash[ pred_id];
+            Node *succ = n_hash[ succ_id];
+            Edge *edge = newEdge( pred, succ, e);    
+        }
+        n = n.nextSibling();
+    }
+}
+
 /** Node/Edge creation routines can be overloaded by derived class */
 template <class Graph, class Node, class Edge>
 void * 
@@ -42,20 +98,55 @@ GraphT< Graph, Node, Edge>::CreateEdge( Graph *graph_p, int _id, Node *_pred, No
  */
 template <class Graph, class Node, class Edge>
 Node * 
-GraphT< Graph, Node, Edge>::NewNode()
+GraphT< Graph, Node, Edge>::newNode()
+{
+    Node * node_p = newNodeImpl( node_next_id);
+    node_p->setElement( createElement( "node"));
+    documentElement().appendChild( node_p->elem());
+    return node_p;
+}
+
+/**
+ * Creation node in graph
+ */
+template <class Graph, class Node, class Edge>
+Node * 
+GraphT< Graph, Node, Edge>::newNodeImpl( GraphUid id)
 {
     /**
      * Check that we have available node id 
      */
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
-    NodeListIt* it;
-    Node *node_p = ( Node *) CreateNode( (Graph *)this, node_next_id++);
-    it = node_p->GetGraphIt();
+    
+    Node *node_p = ( Node *) CreateNode( (Graph *)this, id);
+    NodeListIt* it = node_p->GetGraphIt();
+    
+    /** Add node to graph's list of nodes */
     it->Attach( nodes);
     nodes = it;
+    
     node_num++;
-    node_p->setElement( createElement( "node"));
-    documentElement().appendChild( node_p->elem());
+    
+    /** Make sure that next automatically assigned id will be greater than given id */
+    if ( node_next_id <= id)
+        node_next_id = id + 1;
+    return node_p;
+}
+
+/**
+ * Creation node in graph
+ */
+template <class Graph, class Node, class Edge>
+Node * 
+GraphT< Graph, Node, Edge>::newNode( QDomElement e)
+{
+    assert( !e.isNull());
+    assert( e.tagName() == QString( "node"));
+    assert( e.hasAttribute( "id"));
+
+    Node *node_p = newNodeImpl( e.attribute( "id").toULong());
+    node_p->setElement( e);
+    node_p->readFromElement( e);
     return node_p;
 }
 
@@ -65,7 +156,7 @@ GraphT< Graph, Node, Edge>::NewNode()
  */
 template <class Graph, class Node, class Edge>
 Edge * 
-GraphT< Graph, Node, Edge>::NewEdge( Node * pred, Node * succ)
+GraphT< Graph, Node, Edge>::newEdgeImpl( Node * pred, Node * succ)
 {
     /**
      * Check that we have available edge id 
@@ -76,8 +167,34 @@ GraphT< Graph, Node, Edge>::NewEdge( Node * pred, Node * succ)
     it->Attach( edges);
     edges = it;
     edge_num++;
+    return edge_p;
+}
+
+/**
+ * Create edge between two nodes.
+ * We do not support creation of edge with undefined endpoints
+ */
+template <class Graph, class Node, class Edge>
+Edge * 
+GraphT< Graph, Node, Edge>::newEdge( Node * pred, Node * succ)
+{
+    Edge *edge_p = newEdgeImpl( pred, succ);
     edge_p->setElement( createElement( "edge"));
     documentElement().appendChild( edge_p->elem());
+    return edge_p;
+}
+
+/**
+ * Create edge between two nodes.
+ * We do not support creation of edge with undefined endpoints
+ */
+template <class Graph, class Node, class Edge>
+Edge * 
+GraphT< Graph, Node, Edge>::newEdge( Node * pred, Node * succ, QDomElement e)
+{
+    Edge *edge_p = newEdgeImpl( pred, succ);
+    edge_p->setElement( e);
+    edge_p->readFromElement( e);
     return edge_p;
 }
 
@@ -153,10 +270,9 @@ GraphT< Graph, Node, Edge>::clearMarkersInObjects()
  */
 template <class Graph, class Node, class Edge>
 void 
-GraphT< Graph, Node, Edge>::writeToXML()
+GraphT< Graph, Node, Edge>::writeToXML( QString filename)
 {
-    QString fileName( "test.xml");
-    QFile file( fileName);
+    QFile file( filename);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         assert( 0);
         return;

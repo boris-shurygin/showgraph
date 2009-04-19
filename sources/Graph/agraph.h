@@ -18,7 +18,7 @@ class AGraph;
 class ANode: public NodeT< AGraph, ANode, AEdge>
 {
     int dummy;
-    /** We can't create nodes separately, do it through NewNode method of graph */
+    /** We can't create nodes separately, do it through newNode method of graph */
     ANode( AGraph *graph_p, int _id):
         NodeT< AGraph, ANode, AEdge>( graph_p, _id){};
     friend class GraphT< AGraph, ANode, AEdge>;

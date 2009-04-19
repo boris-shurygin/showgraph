@@ -98,7 +98,7 @@ public:
         priv_pos = p;
     }
 private:
-    /** We can't create nodes separately, do it through NewNode method of graph */
+    /** We can't create nodes separately, do it through newNode method of graph */
     AuxNode( AuxGraph *graph_p, int _id):
         NodeT< AuxGraph, AuxNode, AuxEdge>( graph_p, _id),
         priv_x(0),

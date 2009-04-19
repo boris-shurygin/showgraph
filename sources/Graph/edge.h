@@ -20,8 +20,8 @@ private:
     QDomElement element;
 
     /** Graph part */
-    int uid; //Unique ID
-    Graph * graph; //Graph
+    GraphUid uid; //Unique ID
+    Graph * graph_p; //Graph
     EdgeListIt graph_it; //Position in Graph's list of edges
 
     /** Nodes */
@@ -34,7 +34,7 @@ protected:
     friend class Node;
 
     /** Constructors are made private, only nodes and graph can create edges */
-    EdgeT( Graph *graph_p, int _id, Node *_pred, Node* _succ): uid(_id), graph(graph_p), graph_it()
+    EdgeT( Graph *_graph_p, GraphUid _id, Node *_pred, Node* _succ): uid(_id), graph_p(_graph_p), graph_it()
     {
         graph_it.SetData( (Edge*) this);
         n_it[ GRAPH_DIR_UP] = EdgeListIt();
@@ -94,7 +94,7 @@ public:
     /**
      * Get edge's unique ID
      */
-    inline int id() const
+    inline GraphUid id() const
     {
         return uid;
     }
@@ -102,9 +102,9 @@ public:
     /**
      * Get edge's corresponding graph
      */
-    inline Graph * GetGraph() const
+    inline Graph * graph() const
     {
-        return graph;
+        return graph_p;
     }
 
     /** 
@@ -112,7 +112,7 @@ public:
      *  Deletion from node lists MUST be performed manually.
      *  Example: 
      *      Graph graph;
-     *      Edge * edge = graph.NewEdge();
+     *      Edge * edge = graph.newEdge();
      *  
      *      //Typical deletion of edge is done by consequent calls of
      *      edge->DetachFromNode( GRAPH_DIR_UP);
@@ -176,12 +176,17 @@ public:
     /**
      * Print edge in dot fomat to stdout
      */
-    void DebugPrint();
+    virtual void DebugPrint();
 
     /** 
      * Update DOM element
      */
-    void updateElement();
+    virtual void updateElement();
+
+    /**
+     * Read properties from XML
+     */
+    virtual void readFromElement( QDomElement elem);
 
 };
 

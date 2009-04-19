@@ -27,8 +27,11 @@ NodeT<Graph, Node, Edge>::~NodeT()
         delete edge;
         edge = next;
     }
+    
+    element.parentNode().removeChild( element);
+
     /** Delete myself from graph */
-    graph->DeleteNode( &my_it);
+    graph_p->DeleteNode( &my_it);
 }
 
 /**
@@ -81,4 +84,14 @@ void
 NodeT<Graph, Node, Edge>::updateElement()
 {
     element.setAttribute( "id", id());
+}
+
+/**
+ * read properties from DOM tree element
+ */
+template <class Graph, class Node, class Edge>
+void
+NodeT<Graph, Node, Edge>::readFromElement( QDomElement e)
+{
+    element = e;
 }

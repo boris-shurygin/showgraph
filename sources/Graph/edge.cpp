@@ -11,7 +11,8 @@
 template <class Graph, class Node, class Edge>
 EdgeT<Graph, Node, Edge>::~EdgeT()
 {
-    graph->DeleteEdge( &graph_it);
+    element.parentNode().removeChild( element);
+    graph_p->DeleteEdge( &graph_it);
 }
 
 /**
@@ -51,5 +52,15 @@ void
 EdgeT<Graph, Node, Edge>::updateElement()
 {
     element.setAttribute( "source", pred()->id());
-    element.setAttribute( "target", pred()->id());
+    element.setAttribute( "target", succ()->id());
+}
+
+/**
+ * read properties from DOM tree element
+ */
+template <class Graph, class Node, class Edge>
+void
+EdgeT<Graph, Node, Edge>::readFromElement( QDomElement e)
+{
+    element = e;
 }

@@ -35,17 +35,17 @@ GraphW::drawBackground(QPainter *painter, const QRectF &rect)
 }
 
 NodeItem*
-GraphW::NewNode()
+GraphW::newNode()
 {
-    NodeItem* n = GraphT< GraphW, NodeItem, EdgeItem>::NewNode();
+    NodeItem* n = GraphT< GraphW, NodeItem, EdgeItem>::newNode();
     scene()->addItem( n);
     return n;
 }
 
 EdgeItem*
-GraphW::NewEdge( NodeItem* pred, NodeItem* succ)
+GraphW::newEdge( NodeItem* pred, NodeItem* succ)
 {
-    EdgeItem* e = GraphT< GraphW, NodeItem, EdgeItem>::NewEdge( pred, succ);
+    EdgeItem* e = GraphT< GraphW, NodeItem, EdgeItem>::newEdge( pred, succ);
     scene()->addItem( e);
     e->initControls();
     return e;
@@ -59,7 +59,7 @@ GraphW::mouseDoubleClickEvent(QMouseEvent *ev)
         QPoint p = ev->pos();
         if ( !scene()->itemAt( mapToScene( ev->pos())))
         {
-            NodeItem* node = NewNode();
+            NodeItem* node = newNode();
             node->setPos( mapToScene( p));
         }
     } else if( ev->button() & Qt::RightButton)
@@ -89,7 +89,7 @@ void GraphW::mouseReleaseEvent(QMouseEvent *ev)
             {
                 if ( tmpSrc != qgraphicsitem_cast<NodeItem *>(item))
                 {
-                    NewEdge( tmpSrc, qgraphicsitem_cast<NodeItem *>(item));
+                    newEdge( tmpSrc, qgraphicsitem_cast<NodeItem *>(item));
                 }
             }
         }
