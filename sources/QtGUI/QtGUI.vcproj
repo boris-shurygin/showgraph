@@ -177,6 +177,17 @@
 			<File
 				RelativePath=".\graph_w.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for GraphView"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 graph_w.h -o moc_graphview.cpp"
+						AdditionalDependencies="graph_w.h"
+						Outputs="moc_graphview.cpp"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gui_iface.h"
@@ -215,7 +226,37 @@
 				>
 			</File>
 			<File
+				RelativePath=".\main_window.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\main_window.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for MainWindow"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 main_window.h -o moc_main_window.cpp"
+						Outputs="moc_main_window.cpp"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\node_w.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="moc result"
+			>
+			<File
+				RelativePath=".\moc_graphview.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\moc_main_window.cpp"
 				>
 			</File>
 		</Filter>

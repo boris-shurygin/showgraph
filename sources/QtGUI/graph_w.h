@@ -6,12 +6,20 @@
 #ifndef GRAPH_W_H
 #define GRAPH_W_H
 
+#include "gui_impl.h"
+
 class GraphView: public QGraphicsView, public GraphT< GraphView, NodeItem, EdgeItem>
 {
+    
+    Q_OBJECT
+
     QPoint src;
     QPoint dst;
     bool createEdge;
     NodeItem *tmpSrc;
+    
+public slots:
+
 public:
     /** Constructor */
     GraphView();

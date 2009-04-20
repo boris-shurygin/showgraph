@@ -25,8 +25,7 @@ GraphView::GraphView(): dst( 0, 0), src( 0, 0), createEdge( false)
 /** Destructor */
 GraphView::~GraphView()
 {
-    //FIXME: For testing purposes. Remove this when saving implemented
-    writeToXML( "graph.xml");
+
 }
 
 void 

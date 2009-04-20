@@ -30,6 +30,7 @@ enum {
 #include "node_w.h"
 #include "edge_w.h"
 #include "graph_w.h"
+#include "main_window.h"
 
 
 #endif

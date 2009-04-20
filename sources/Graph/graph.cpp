@@ -56,7 +56,7 @@ GraphT< Graph, Node, Edge>::readFromXML( QString filename)
         if ( !e.isNull() && e.tagName() == QString( "node"))
         {
             Node *node = newNode( e);
-            n_hash[ node->id()] = node;
+            n_hash[ e.attribute( "id").toLongLong()] = node;
         }
         n = n.nextSibling();
     }
@@ -144,7 +144,7 @@ GraphT< Graph, Node, Edge>::newNode( QDomElement e)
     assert( e.tagName() == QString( "node"));
     assert( e.hasAttribute( "id"));
 
-    Node *node_p = newNodeImpl( e.attribute( "id").toULong());
+    Node *node_p = newNodeImpl( node_next_id);
     node_p->setElement( e);
     node_p->readFromElement( e);
     return node_p;
