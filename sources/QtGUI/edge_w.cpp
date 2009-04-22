@@ -4,6 +4,7 @@
  * Copyright (C) 2009  Boris Shurygin
  */
 #include "gui_impl.h"
+#include <QVector>
 
 void EdgeItem::adjust()
 {
@@ -209,4 +210,72 @@ void EdgeItem::hideControls()
         control->setFixed( true);
         control->update();
     }
+}
+
+/**
+ * Update DOM tree element
+ */
+void
+EdgeItem::updateElement()
+{
+    QDomElement e = elem();
+    int i = 0;
+    QDomElement new_e = graph()->createElement( "edge");
+    QDomNode e2 = graph()->documentElement().removeChild( e);
+    assert( !e2.isNull());
+    graph()->documentElement().appendChild( new_e);
+    setElement( new_e);
+    e = new_e;
+
+    /* Base class method call to print generic edge properties */
+    EdgeT< GraphView, NodeItem, EdgeItem>::updateElement();
+    EdgeControl* src_ctrl = srcCtrl();
+    EdgeControl* dst_ctrl = dstCtrl();
+    
+    /* Save the control points of the edge */
+    for( EdgeControl* control = src_ctrl->succ()->dst();
+         control != dst_ctrl;
+         control = control->succ()->dst(), i++)
+    {
+        QDomElement point_elem = graph()->createElement( "point");
+        e.appendChild( point_elem);
+        point_elem.setAttribute( "id", i);
+        point_elem.setAttribute( "x", control->x());
+        point_elem.setAttribute( "y", control->y());
+    }
+    e.setAttribute("points_num", i);
+}
+
+/**
+ * read properties from DOM tree element
+ */
+void
+EdgeItem::readFromElement( QDomElement e)
+{
+    EdgeT< GraphView, NodeItem, EdgeItem>::readFromElement( e); // Base class method
+    QDomNode n = e.firstChild();
+    QVector< EdgeControl *> points;
+    points.resize( e.attribute("points_num").toUInt());
+    EdgeSegment* seg = srcCtrl()->succ();
+
+    while ( !n.isNull())
+    {
+        QDomElement e = n.toElement(); // try to convert the DOM tree node to an element.
+        
+        if ( !e.isNull() && e.tagName() == QString( "point"))
+        {
+            EdgeControl* ctrl = new EdgeControl( this, scene());
+            ctrl->setPos( e.attribute("x").toDouble(),
+                          e.attribute("y").toDouble());
+            points[ e.attribute("id").toUInt()] = ctrl;
+        }
+        n = n.nextSibling();
+    }
+    for ( int i =0; i < e.attribute("points_num").toUInt(); i++)
+    {
+        seg->addControl( points[ i]); // Divide segment by control
+        seg = seg->dst()->succ(); // Move on to newly created segment
+    }
+    hideControls();
+    adjust();
 }
