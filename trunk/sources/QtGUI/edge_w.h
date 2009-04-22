@@ -119,7 +119,9 @@ public:
     }
 
     void adjust();
+
     EdgeControl *addControl( QPointF p);
+    EdgeControl *addControl( EdgeControl* control);
 
     EdgeSegment( EdgeItem *e, EdgeControl *src, EdgeControl* dst, QGraphicsScene* scene);
     ~EdgeSegment();
@@ -218,5 +220,15 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+
+    /** 
+     * Update DOM element
+     */
+    virtual void updateElement();
+
+    /**
+     * Read properties from XML
+     */
+    virtual void readFromElement( QDomElement elem);
 };
 #endif

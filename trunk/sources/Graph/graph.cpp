@@ -56,6 +56,7 @@ GraphT< Graph, Node, Edge>::readFromXML( QString filename)
         if ( !e.isNull() && e.tagName() == QString( "node"))
         {
             Node *node = newNode( e);
+            node->readFromElement( e);
             n_hash[ e.attribute( "id").toLongLong()] = node;
         }
         n = n.nextSibling();
@@ -72,7 +73,8 @@ GraphT< Graph, Node, Edge>::readFromXML( QString filename)
             GraphUid succ_id = e.attribute( "target").toLongLong();
             Node *pred = n_hash[ pred_id];
             Node *succ = n_hash[ succ_id];
-            Edge *edge = newEdge( pred, succ, e);    
+            Edge *edge = newEdge( pred, succ, e);
+            edge->readFromElement( e);
         }
         n = n.nextSibling();
     }
@@ -146,7 +148,6 @@ GraphT< Graph, Node, Edge>::newNode( QDomElement e)
 
     Node *node_p = newNodeImpl( node_next_id);
     node_p->setElement( e);
-    node_p->readFromElement( e);
     return node_p;
 }
 
@@ -194,7 +195,6 @@ GraphT< Graph, Node, Edge>::newEdge( Node * pred, Node * succ, QDomElement e)
 {
     Edge *edge_p = newEdgeImpl( pred, succ);
     edge_p->setElement( e);
-    edge_p->readFromElement( e);
     return edge_p;
 }
 

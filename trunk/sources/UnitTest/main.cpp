@@ -13,5 +13,4 @@ int main(int argc, char **argv)
     //Test graph package
     if ( !uTestGUI(argc, argv))
         return -1;
-
 }

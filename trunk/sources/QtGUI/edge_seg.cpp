@@ -196,6 +196,19 @@ EdgeControl *EdgeSegment::addControl( QPointF p)
     return control;
 }
 
+EdgeControl *EdgeSegment::addControl( EdgeControl *control)
+{
+    EdgeSegment* seg = new EdgeSegment( edge, control, dst(), scene()); 
+    setDst( control);
+    
+    if ( IsNotNullP( edge))
+    {
+        edge->addControl( control);    
+    }
+    adjust();
+    return control;
+}
+
 void EdgeSegment::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     update();
