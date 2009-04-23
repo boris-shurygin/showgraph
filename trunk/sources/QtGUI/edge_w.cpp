@@ -89,13 +89,13 @@ EdgeItem::boundingRect() const
 QPainterPath 
 EdgeItem::shape() const
 {
-    QPainterPath path( sourcePoint);
+    /*QPainterPath path( sourcePoint);
     foreach( EdgeControl *control, controls)
     {
         path.lineTo( mapFromScene(control->pos()));
     }
-    path.lineTo( destPoint);
-    return path; 
+    path.lineTo( destPoint);*/
+    return QPainterPath(); 
 }
 
 void 

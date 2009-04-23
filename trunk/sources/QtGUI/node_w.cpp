@@ -7,7 +7,8 @@
 
 NodeItem::~NodeItem()
 {
-
+    removeFromIndex();
+    scene()->removeItem( this);
 }
 
 QRectF 
@@ -28,8 +29,8 @@ NodeItem::shape() const
 
 void 
 NodeItem::paint( QPainter *painter,
-              const QStyleOptionGraphicsItem *option,
-              QWidget *widget)
+                 const QStyleOptionGraphicsItem *option,
+                 QWidget *widget)
 {
     qreal adjust = 3;
     if (option->state & QStyle::State_Sunken)
@@ -39,8 +40,8 @@ NodeItem::paint( QPainter *painter,
     {
         painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     }
-    painter->drawRect( boundingRect());
     QGraphicsTextItem::paint( painter, option, widget);
+    painter->drawRect( boundingRect());
 }
 
 void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -62,9 +63,12 @@ void NodeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (textInteractionFlags() == Qt::NoTextInteraction)
-        setTextInteractionFlags(Qt::TextEditorInteraction);
-    QGraphicsTextItem::mouseDoubleClickEvent(event);
+    if ( event->button() & Qt::LeftButton)
+    {
+        if (textInteractionFlags() == Qt::NoTextInteraction)
+            setTextInteractionFlags(Qt::TextEditorInteraction);
+        QGraphicsTextItem::mouseDoubleClickEvent(event);
+    }
 }
 
 void NodeItem::focusOutEvent(QFocusEvent *event)

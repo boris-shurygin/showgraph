@@ -165,11 +165,13 @@ private:
             srcControl = 0;
             dstControl = 0;
             curr_mode = ModeShow;
-            setFlag( ItemIsSelectable);
+            //setFlag( ItemIsSelectable);
         };
         
     ~EdgeItem()
     {
+        removeFromIndex();
+        scene()->removeItem( this);
         foreach( EdgeControl* control, controls)
         {
             delete control;
