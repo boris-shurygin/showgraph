@@ -224,6 +224,6 @@ void EdgeSegment::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
             addControl( event->pos());
         }
     }
-    
+    edge->adjust();
     QGraphicsItem::mouseDoubleClickEvent(event);
 }

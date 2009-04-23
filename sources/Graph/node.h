@@ -124,7 +124,8 @@ public:
      */
     inline bool endOfEdgesInDir( GraphDir dir)
     {
-        return e_it [ dir] == NULL;
+        return edges[ dir] == NULL
+               || e_it [ dir] == NULL;
     }
 
     /** 
