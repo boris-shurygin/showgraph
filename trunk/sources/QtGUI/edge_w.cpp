@@ -178,6 +178,11 @@ void EdgeItem::addControl( EdgeControl* control)
     controls << control;
 }
 
+void EdgeItem::removeControl( EdgeControl* control)
+{
+    controls.removeOne( control);
+}
+
 void EdgeItem::initControls()
 {
     srcControl = new EdgeControl( this, scene());
@@ -271,7 +276,7 @@ EdgeItem::readFromElement( QDomElement e)
         }
         n = n.nextSibling();
     }
-    for ( int i =0; i < e.attribute("points_num").toUInt(); i++)
+    for ( unsigned int i =0; i < e.attribute("points_num").toUInt(); i++)
     {
         seg->addControl( points[ i]); // Divide segment by control
         seg = seg->dst()->succ(); // Move on to newly created segment

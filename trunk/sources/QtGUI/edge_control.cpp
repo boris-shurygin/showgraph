@@ -13,22 +13,29 @@ void EdgeControl::prepareRemove()
     if( IsNotNullP( predSeg))
     {
         srcControl = predSeg->src();
+        scene()->removeItem( predSeg);
     }
 
     if( IsNotNullP( succSeg))
     {
         dstControl = succSeg->dst();
+        scene()->removeItem( succSeg);
     }
 
     if( srcControl && dstControl)
     {
         EdgeSegment *seg = new EdgeSegment( edge, srcControl, dstControl, scene());
     }
-    this->deleteLater();
+    removeFromIndex();
+    scene()->removeItem( this);
+    edge->removeControl( this);
+    edge->adjust();
+    deleteLater();
 }
 
 EdgeControl::~EdgeControl()
 {
+    removeFromIndex();
     if( IsNotNullP( predSeg))
     {
         delete predSeg;
@@ -37,8 +44,6 @@ EdgeControl::~EdgeControl()
     {
         delete succSeg;    
     }
-    prepareGeometryChange();
-    update();
 }
 
 void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -46,7 +51,7 @@ void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     update();
     if ( event->button() & Qt::RightButton)
     {
-        //prepareRemove();
+        prepareRemove();
     } else if ( event->button() & Qt::LeftButton)
     {
          if ( IsNotNullP( edge) 
@@ -59,6 +64,7 @@ void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     {
         QGraphicsItem::mouseDoubleClickEvent(event);
     }
+    edge->adjust();
 }
 
 QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &value)

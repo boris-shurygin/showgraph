@@ -97,7 +97,7 @@ EdgeSegment::~EdgeSegment()
     {
         dst()->setPred( NULL);
     }
-    prepareGeometryChange();
+    removeFromIndex();
     update();
 }
 
