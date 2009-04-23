@@ -190,6 +190,7 @@ public:
 
     void adjust();
     void addControl( EdgeControl* control);
+    void removeControl( EdgeControl *control);
     void showControls();
     void hideControls();
 
