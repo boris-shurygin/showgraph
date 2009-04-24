@@ -78,26 +78,19 @@ void NodeItem::focusOutEvent(QFocusEvent *event)
     QGraphicsTextItem::focusOutEvent(event);
 }
 
-QVariant NodeItem::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
 {
     EdgeItem *edge = NULL;
 
-    switch (change) {
-    case ItemPositionHasChanged:
-        for ( edge = firstSucc(); !endOfSuccs(); edge = nextSucc())
-        {
-            edge->adjust();
-        }
-        for ( edge = firstPred(); !endOfPreds(); edge = nextPred())
-        {
-            edge->adjust();
-        }
-        break;
-    default:
-        break;
-    };
-
-    return QGraphicsItem::itemChange(change, value);
+    for ( edge = firstSucc(); IsNotNullP( edge); edge = edge->nextSucc())
+    {
+        edge->adjust();
+    }
+    for ( edge = firstPred(); IsNotNullP( edge); edge = edge->nextPred())
+    {
+        edge->adjust();
+    }
+    return QGraphicsTextItem::itemChange(change, value);
 }
 
 /**

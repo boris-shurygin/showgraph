@@ -16,6 +16,10 @@ void EdgeSegment::adjust()
     btmRight.setY( max< qreal>( srcP.y(), dstP.y()));
 
     QLineF mainLine = QLineF( srcP, dstP);
+        
+    if ( mainLine.length() < 1)
+        return;
+
     qreal size = Abs< qreal>(( min< qreal>( Abs< qreal>( mainLine.dx()),
                                             Abs< qreal>(mainLine.dy()))));
     //Stub
@@ -116,6 +120,10 @@ QRectF EdgeSegment::boundingRect() const
 QPainterPath EdgeSegment::shape() const
 {
     QPainterPath path( srcP);
+        
+    if ( srcP == dstP)
+        return path;
+    
     QPainterPathStroker stroker;
     path.cubicTo( cp1, cp2, dstP);
     stroker.setWidth( 2);
@@ -127,6 +135,11 @@ void EdgeSegment::paint( QPainter *painter,
 {
     QPainterPath path( srcP);
     QPainterPathStroker stroker;
+        
+    if ( srcP == dstP)
+    {
+        return;
+    }
     path.cubicTo( cp1, cp2, dstP);
     
     // Select the pen

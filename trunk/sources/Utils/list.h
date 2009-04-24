@@ -146,6 +146,8 @@ public:
     ListItem( ListItem<Data> *peer, Data* d)
     {
         SetData( d);
+        SetPeerInDir( NULL, LIST_DIR_DEFAULT);
+        SetPeerInDir( NULL, LIST_DIR_RDEFAULT);
         AttachInDir( peer, LIST_DIR_DEFAULT);
     }
 
@@ -153,6 +155,8 @@ public:
     ListItem( ListItem<Data> *peer, ListDir dir, Data *d)
     {
         SetData( d);
+        SetPeerInDir( NULL, LIST_DIR_DEFAULT);
+        SetPeerInDir( NULL, LIST_DIR_RDEFAULT);
         AttachInDir( peer, dir);
     }
 
