@@ -41,7 +41,8 @@ void
 EdgeT<Graph, Node, Edge>::DetachFromNode( GraphDir dir)
 {
     Node *n = node( dir);
-    n->DeleteEdgeInDir( RevDir( dir), &n_it[ dir]);
+    n->DeleteEdgeInDir( RevDir( dir), (Edge* )this);
+    n_it[ dir].Detach();
 }
 
 /**

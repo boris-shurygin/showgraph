@@ -60,12 +60,12 @@ void EdgeItem::adjust()
     p1 = endPolygon.first();
     p2;
     
-    for (int i = 1; i < endPolygon.count(); ++i) {
+    for ( int i = 1; i < endPolygon.count(); ++i) {
         p2 = endPolygon.at(i);
         polyLine = QLineF(p1, p2);
         QLineF::IntersectType intersectType =
              polyLine.intersect( line2, &destPoint);
-        if (intersectType == QLineF::BoundedIntersection)
+        if ( intersectType == QLineF::BoundedIntersection)
              break;
         p1 = p2;
     }
@@ -116,6 +116,9 @@ EdgeItem::paint( QPainter *painter,
 
     line.setP1( nextToDst);
     line.setP2( destPoint);
+
+    if ( nextToDst == destPoint)
+        return;
     // Draw the line itself
     if( option->state & QStyle::State_Selected)
     {
@@ -124,7 +127,6 @@ EdgeItem::paint( QPainter *painter,
     {
         painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     }
-    //painter->drawPath(path);
 
     // Draw the arrows if there's enough room
     double angle = ::acos(line.dx() / line.length());
