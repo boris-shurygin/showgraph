@@ -15,10 +15,6 @@ const Rank RANK_UNDEF = (Rank) (-1);
 /**
  * AuxGraph, AuxNode and AuxEdge classes represent auxiliary graph used for layout purposes
  */
-class AuxNode;
-class AuxEdge;
-class AuxGraph;
-
 class Level
 {
     Rank level_rank;
@@ -50,7 +46,7 @@ class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
     double priv_width;
     int priv_priority;
     Level * priv_level;
-    int priv_pos;
+    int priv_order;
 
 public:
     /** Get Height */
@@ -71,9 +67,9 @@ public:
     {
         return priv_level->rank();
     }
-    inline int pos() const
+    inline int order() const
     {
-        return priv_pos;
+        return priv_order;
     }
     /** Get Height */
     inline void setHeight( double h) 
@@ -93,9 +89,9 @@ public:
     {
         priv_level = l;
     }
-    inline void setPos( int p) 
+    inline void setOrder( int or) 
     {
-        priv_pos = p;
+        priv_order = or;
     }
 private:
     /** We can't create nodes separately, do it through newNode method of graph */
@@ -107,7 +103,7 @@ private:
         priv_width(0),
         priv_priority(-1),
         priv_level( NULL),
-        priv_pos(-1)
+        priv_order(-1)
     {
     }
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;

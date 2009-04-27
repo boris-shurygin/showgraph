@@ -17,8 +17,7 @@ public:
     typedef ListItem< Edge> EdgeListIt;
 private:
     /* List of nodes and its iterator */
-    NodeListIt* nodes;
-    NodeListIt* n_it;
+    Node* first_node;
     GraphNum node_num;
     
     /** 
@@ -28,8 +27,7 @@ private:
     GraphUid node_next_id;
 
     /* List of edges and its iterator */
-    EdgeListIt* edges;
-    EdgeListIt* e_it;
+    Edge* first_edge;
     GraphNum edge_num;
     
     /** Id of next edge. Incremented each time you create an edge,
@@ -61,36 +59,31 @@ public:
     /**
      * Remove node from node list of graph
      */
-    inline void DeleteNode( NodeListIt* it)
+    inline void deleteNode( Node* node)
     {
-        assert( IsNotNullP( it));
-        if( nodes == it)
-        {
-           nodes = it->next();
-        }
-        if( n_it == it)
-        {
-            n_it = it->next();
-        }
-        it->Detach();
+        assert( IsNotNullP( node));
+        assert( node->graph() == this);
 
+        if( first_node == node)
+        {
+           first_node = node->nextNode();
+        }
+        node->detachFromGraph();
     }
 
     /**
      * Remove edge from edge list of graph
      */
-    inline void DeleteEdge( EdgeListIt* it)
+    inline void deleteEdge( Edge * edge)
     {
-        assert( IsNotNullP( it));
-        if( edges == it)
+        assert( IsNotNullP( edge));
+        assert( edge->graph() == this);
+
+        if( first_edge == edge)
         {
-            edges = it->next();
+           first_edge = edge->nextEdge();
         }
-        if( e_it == it)
-        {
-            e_it = it->next();
-        }
-        it->Detach();
+        edge->detachFromGraph();
     }
 
     /**
@@ -115,24 +108,9 @@ public:
      */
     inline Edge* firstEdge() 
     {
-        e_it = edges;
-        return (e_it != NULL)? e_it->GetData() : NULL;
+        return first_edge;
     }
-    /**
-     * Advance iterator to next edge and return this edge. If end reached return NULL
-     */
-    inline Edge* nextEdge()
-    {
-        e_it = e_it->next();
-        return (e_it != NULL)? e_it->GetData() : NULL;
-    }
-    /**
-     * return true if end of edge list is reached
-     */
-    inline bool endOfEdges()
-    {
-        return e_it == NULL;
-    }
+    
     /*** 
      * Iteration through nodes implementation
      *
@@ -140,24 +118,7 @@ public:
      */
     inline Node* firstNode()
     {
-        n_it = nodes;
-        return ( n_it != NULL)? n_it->GetData() : NULL;
-    }
-    /** 
-     * Advance iterator to next node and return this node. If end reached return NULL
-     */
-    inline Node* nextNode()
-    {
-        n_it = n_it->next();
-        return ( n_it != NULL)? n_it->GetData() : NULL;
-    }
-    
-    /**
-     * return true if end of edge list is reached
-     */
-    inline bool endOfNodes()
-    {
-        return n_it == NULL;
+        return first_node;
     }
     /**
      * Print graph to stdout in DOT format

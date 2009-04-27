@@ -65,7 +65,7 @@ void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     if ( event->button() & Qt::LeftButton)
     {
-        if (textInteractionFlags() == Qt::NoTextInteraction)
+        if ( textInteractionFlags() == Qt::NoTextInteraction)
             setTextInteractionFlags(Qt::TextEditorInteraction);
         QGraphicsTextItem::mouseDoubleClickEvent(event);
     }
@@ -76,6 +76,20 @@ void NodeItem::focusOutEvent(QFocusEvent *event)
     setTextInteractionFlags(Qt::NoTextInteraction);
     //emit lostFocus(this);
     QGraphicsTextItem::focusOutEvent(event);
+}
+void  NodeItem::keyPressEvent(QKeyEvent *event)
+{
+    QGraphicsTextItem::keyPressEvent(event);
+    EdgeItem *edge = NULL;
+
+    for ( edge = firstSucc(); IsNotNullP( edge); edge = edge->nextSucc())
+    {
+        edge->adjust();
+    }
+    for ( edge = firstPred(); IsNotNullP( edge); edge = edge->nextPred())
+    {
+        edge->adjust();
+    }
 }
 
 QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)

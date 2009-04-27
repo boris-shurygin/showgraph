@@ -36,11 +36,11 @@ protected:
     /** Constructors are made private, only nodes and graph can create edges */
     EdgeT( Graph *_graph_p, GraphUid _id, Node *_pred, Node* _succ): uid(_id), graph_p(_graph_p), graph_it()
     {
-        graph_it.SetData( (Edge*) this);
+        graph_it.setData( (Edge*) this);
         n_it[ GRAPH_DIR_UP] = EdgeListIt();
         n_it[ GRAPH_DIR_DOWN] = EdgeListIt();
-        n_it[ GRAPH_DIR_UP].SetData( (Edge*)this);
-        n_it[ GRAPH_DIR_DOWN].SetData( (Edge*)this);
+        n_it[ GRAPH_DIR_UP].setData( (Edge*)this);
+        n_it[ GRAPH_DIR_DOWN].setData( (Edge*)this);
         setPred( _pred);
         setSucc( _succ);
     }
@@ -78,7 +78,11 @@ protected:
      * Detach edge from a node.
      * Made private as it is low-level routine needed for implementation of edge-node relationship
      */
-    void DetachFromNode( GraphDir dir);
+    void detachFromNode( GraphDir dir);
+    inline void detachFromGraph()
+    {
+        graph_it.Detach();
+    }
 public:
     
     inline QDomElement elem() const
@@ -108,7 +112,7 @@ public:
     }
 
     /** 
-     *  Destructor. Delete edge from list in graph.
+     *  Destructor. delete edge from list in graph.
      *  Deletion from node lists MUST be performed manually.
      *  Example: 
      *      Graph graph;
@@ -126,7 +130,7 @@ public:
      * Note that node treats this edge in opposite direction. I.e. an edge that has node in
      * GRAPH_DIR_UP is treated as edge in GRAPH_DIR_DOWN directions inside that node
      */
-    void SetNode( Node *n, GraphDir dir)
+    void setNode( Node *n, GraphDir dir)
     {
         assert( IsNotNullP( n));
         nodes[ dir] = n;
@@ -142,14 +146,14 @@ public:
      */
     inline void setPred( Node *n)
     {
-        SetNode( n, GRAPH_DIR_UP);
+        setNode( n, GRAPH_DIR_UP);
     }
     /**
      * Connect edge with given node as a successor
      */
     inline void setSucc( Node *n)
     {
-        SetNode( n, GRAPH_DIR_DOWN);
+        setNode( n, GRAPH_DIR_DOWN);
     }
 
     /**
@@ -179,7 +183,7 @@ public:
      */
     inline Edge* nextEdge()
     {
-        return ( graph_it.next() != NULL )? graph_it.next()->GetData() : NULL;
+        return ( graph_it.next() != NULL )? graph_it.next()->data() : NULL;
     }
 
     /**
@@ -188,7 +192,7 @@ public:
     inline Edge* nextEdgeInDir( GraphDir dir)
     {
         GraphDir rdir = RevDir( dir);
-        return ( n_it[ rdir].next() != NULL )? n_it[ rdir].next()->GetData() : NULL;
+        return ( n_it[ rdir].next() != NULL )? n_it[ rdir].next()->data() : NULL;
     }
     
     /** 

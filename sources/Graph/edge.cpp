@@ -6,13 +6,13 @@
 
 /**
  * Edge destructor.
- * Delete edge from graph's list of edges
+ * delete edge from graph's list of edges
  */
 template <class Graph, class Node, class Edge>
 EdgeT<Graph, Node, Edge>::~EdgeT()
 {
     element.parentNode().removeChild( element);
-    graph_p->DeleteEdge( &graph_it);
+    graph_p->deleteEdge( ( Edge *)this);
 }
 
 /**
@@ -38,10 +38,10 @@ EdgeT<Graph, Node, Edge>::DebugPrint()
  */
 template <class Graph, class Node, class Edge>
 void
-EdgeT<Graph, Node, Edge>::DetachFromNode( GraphDir dir)
+EdgeT<Graph, Node, Edge>::detachFromNode( GraphDir dir)
 {
     Node *n = node( dir);
-    n->DeleteEdgeInDir( RevDir( dir), (Edge* )this);
+    n->deleteEdgeInDir( RevDir( dir), (Edge* )this);
     n_it[ dir].Detach();
 }
 

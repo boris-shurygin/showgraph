@@ -148,16 +148,20 @@ void EdgeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         adjust();
     }
-    if (event->button() == Qt::LeftButton && (flags() & ItemIsSelectable)) {
-        bool multiSelect = (event->modifiers() & Qt::ControlModifier) != 0;
-        if (!multiSelect) {
-            if (!isSelected()) {
+    if ( event->button() == Qt::LeftButton && (flags() & ItemIsSelectable))
+    {
+        bool multiSelect = ( event->modifiers() & Qt::ControlModifier) != 0;
+        if ( !multiSelect)
+        {
+            if ( !isSelected())
+            {
                 if (scene())
                     scene()->clearSelection();
                 setSelected(true);
             }
         }
-    } else if (!(flags() & ItemIsMovable)) {
+    } else if ( !(flags() & ItemIsMovable))
+    {
 //            event->ignore();
     }
 }
