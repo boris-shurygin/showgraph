@@ -11,6 +11,8 @@ int main(int argc, char **argv)
         return -1;
 
     //Test graph package
-    if ( !uTestGUI(argc, argv))
+    if ( uTestGUI(argc, argv) != 0)
         return -1;
+    
+    return 0;
 }

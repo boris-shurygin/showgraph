@@ -80,9 +80,11 @@ bool uTestMarkers()
     graph.freeMarker( m);
     
     ANode *n;
-    for (  n = graph.firstNode(); !graph.endOfNodes(); n = graph.nextNode())
+    for (  n = graph.firstNode(); IsNotNullP( n);)
     {
-        delete n;
+        ANode *tmp = n;
+        n = n->nextNode();
+        delete tmp;
     }
     return true;
 }

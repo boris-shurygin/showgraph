@@ -6,7 +6,12 @@
 #ifndef LAYOUT_IFACE_H
 #define LAYOUT_IFACE_H
 
+class AuxNode;
+class AuxEdge;
+class AuxGraph;
+
 #include "../Graph/graph_iface.h"
+#include "../QTGui/gui_iface.h"
 #include "aux_graph.h"
 
 #endif /** LAYOUT_IFACE_H */

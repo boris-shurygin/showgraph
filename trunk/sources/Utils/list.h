@@ -43,12 +43,12 @@ template <class Data> class ListItem
 public:
     
     /**Get data */
-    inline Data *GetData() const
+    inline Data *data() const
     {
         return data_p;
     }
     /** Set data */
-    inline void SetData( Data* d)
+    inline void setData( Data* d)
     {
         data_p = d;
     }
@@ -129,7 +129,7 @@ public:
     /** Default constructor */
     ListItem()
     {
-        SetData( NULL);
+        setData( NULL);
         SetPeerInDir( NULL, LIST_DIR_DEFAULT);
         SetPeerInDir( NULL, LIST_DIR_RDEFAULT);
     };
@@ -137,7 +137,7 @@ public:
     /** Constructor from data pointer */
     ListItem( Data* d)
     {
-        SetData( d);
+        setData( d);
         SetPeerInDir( NULL, LIST_DIR_DEFAULT);
         SetPeerInDir( NULL, LIST_DIR_RDEFAULT);
     };
@@ -145,7 +145,7 @@ public:
     /** Insert element before the given one */
     ListItem( ListItem<Data> *peer, Data* d)
     {
-        SetData( d);
+        setData( d);
         SetPeerInDir( NULL, LIST_DIR_DEFAULT);
         SetPeerInDir( NULL, LIST_DIR_RDEFAULT);
         AttachInDir( peer, LIST_DIR_DEFAULT);
@@ -154,7 +154,7 @@ public:
     /** Insert element in given direction */
     ListItem( ListItem<Data> *peer, ListDir dir, Data *d)
     {
-        SetData( d);
+        setData( d);
         SetPeerInDir( NULL, LIST_DIR_DEFAULT);
         SetPeerInDir( NULL, LIST_DIR_RDEFAULT);
         AttachInDir( peer, dir);

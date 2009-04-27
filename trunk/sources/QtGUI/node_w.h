@@ -54,6 +54,8 @@ public:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     void focusOutEvent(QFocusEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     
     /** 

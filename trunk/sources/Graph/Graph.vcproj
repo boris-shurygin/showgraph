@@ -151,6 +151,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\dummy.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\edge.cpp"
 				>
 				<FileConfiguration

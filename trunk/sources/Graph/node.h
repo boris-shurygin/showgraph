@@ -21,7 +21,7 @@ private:
     /** Connection with inclusive graph */
     GraphUid uid; // Unique id
     Graph * graph_p;// Pointer to graph
-    NodeListIt my_it;//Item of graph's list
+    NodeListIt graph_it;//Item of graph's list
     
     //Lists of edges and iterators for them
     Edge *first_edge[ GRAPH_DIRS_NUM];
@@ -29,14 +29,18 @@ private:
 protected:
     NodeListIt* GetGraphIt()
     {
-        return &my_it;
+        return &graph_it;
     }
     /** We can't create nodes separately, do it through newNode method of graph */
-    NodeT( Graph *_graph_p, GraphUid _id):uid(_id), graph_p( _graph_p), my_it()
+    NodeT( Graph *_graph_p, GraphUid _id):uid(_id), graph_p( _graph_p), graph_it()
     {
         first_edge[ GRAPH_DIR_UP] = NULL;
         first_edge[ GRAPH_DIR_DOWN] = NULL;
-        my_it.SetData( ( Node*)this);
+        graph_it.setData( ( Node*)this);
+    }
+    inline void detachFromGraph()
+    {
+        graph_it.Detach();
     }
     friend class Graph;
 
@@ -74,7 +78,7 @@ public:
 
     inline Node* nextNode()
     {
-        return ( my_it.next() != NULL )? my_it.next()->Data() : NULL;
+        return ( graph_it.next() != NULL )? graph_it.next()->data() : NULL;
     }
 
     /**
@@ -122,22 +126,22 @@ public:
     /**
      * Deletion of edge in specified direction
      */
-    void DeleteEdgeInDir( GraphDir dir, Edge* edge);
+    void deleteEdgeInDir( GraphDir dir, Edge* edge);
     
     /**
-     * Delete predecessor edge
+     * delete predecessor edge
      */
-    inline void DeletePred( Edge* edge)
+    inline void deletePred( Edge* edge)
     {
-        DeleteEdgeInDir( GRAPH_DIR_UP, edge);
+        deleteEdgeInDir( GRAPH_DIR_UP, edge);
     }
     
     /**
-     * Delete successor edge
+     * delete successor edge
      */
-    inline void DeleteSucc( Edge* edge)
+    inline void deleteSucc( Edge* edge)
     {
-        DeleteEdgeInDir( GRAPH_DIR_DOWN, edge);
+        deleteEdgeInDir( GRAPH_DIR_DOWN, edge);
     }
 
     /**
