@@ -20,12 +20,16 @@ GraphView::GraphView(): dst( 0, 0), src( 0, 0), createEdge( false)
     setMinimumSize(400, 400);
     setWindowTitle(tr("ShowGraph"));
     tmpSrc = NULL;
+
+    ranking = newNum();
+    ordering = newNum();
 }
 
 /** Destructor */
 GraphView::~GraphView()
 {
-
+    freeNum( ranking);
+    freeNum( ordering);
 }
 
 void 
@@ -125,7 +129,19 @@ void GraphView::mouseMoveEvent(QMouseEvent *ev)
     QGraphicsView::mouseMoveEvent(ev);
 }
 
-void GraphView::drawForeground(QPainter *painter, const QRectF &rect)
+void GraphView::drawForeground( QPainter *painter, const QRectF &rect)
 {
 
+}
+
+/**
+ * Implementation of layout-oriented part of graph
+ */
+
+/**
+ * Ranking of nodes. Level distribution of nodes. Marks tree edges.
+ */
+Numeration GraphView::rankNodes()
+{
+    return ranking; 
 }

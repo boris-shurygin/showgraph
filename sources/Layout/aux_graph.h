@@ -145,7 +145,15 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
 {
     /** Array of node lists for ranks */
     QVector< Level*> levels;
+
+    /** Graph that is subject to layout */
+    GraphView *main_graph;
+
 public:
+    
+    /** Iheritance and contructors */
+    AuxGraph();
+    AuxGraph( GraphView *graph_p);
 
     void * CreateNode( AuxGraph *graph_p, int _id, NodeListIt it)
     {
