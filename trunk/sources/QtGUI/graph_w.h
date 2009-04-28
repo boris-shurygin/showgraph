@@ -17,6 +17,9 @@ class GraphView: public QGraphicsView, public GraphT< GraphView, NodeItem, EdgeI
     QPoint dst;
     bool createEdge;
     NodeItem *tmpSrc;
+
+    Numeration ranking;
+    Numeration ordering;
     
 public slots:
 
@@ -54,6 +57,10 @@ public:
     {
         return tmpSrc;
     }
+
+    /** Layout - oriented part */
+    Numeration rankNodes();
+
 };
 
 #endif

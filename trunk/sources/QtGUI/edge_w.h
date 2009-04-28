@@ -17,6 +17,7 @@ class EdgeControl: public QObject, public QGraphicsItem
     EdgeSegment* predSeg;
     EdgeSegment* succSeg;
     bool isFixed;
+    
 public: 
         
     enum {Type = TypeEdgeControl};
@@ -31,6 +32,7 @@ public:
     {
         return isFixed;
     }
+
 
     inline EdgeSegment* pred() const
     {
@@ -149,14 +151,14 @@ private:
     QPointF destPoint;
     QPointF topLeft;
     QPointF bottomRight;
-    QList< QPointF *> points;
     QList< EdgeControl*> controls;
     QList< EdgeSegment*> segments;
     EdgeControl* srcControl;
     EdgeControl* dstControl;
-    QList< AuxNode> aux_nodes;
-
     EdgeMode curr_mode;
+    
+    bool is_back;
+    QList< AuxNode> aux_nodes;
 
     /** Constructors are made private, only nodes and graph can create edges */
     EdgeItem( GraphView *graph_p, int _id, NodeItem *_pred, NodeItem* _succ):
@@ -188,6 +190,16 @@ public:
     int type() const
     {
         return Type;
+    }
+
+    inline bool isBack() const
+    {
+        return is_back;
+    }
+
+    inline setBack( bool back = true)
+    {
+        is_back = back;
     }
 
     void adjust();
