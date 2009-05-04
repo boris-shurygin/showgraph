@@ -92,10 +92,10 @@ public:
         SetPeerInDir( p, dir);
         SetPeerInDir( NULL, rdir);
 
-        if ( IsNotNullP( p))
+        if ( isNotNullP( p))
         {
             ListItem<Data>* rdir_peer = p->GetPeerInDir( rdir);
-            if ( IsNotNullP( rdir_peer))
+            if ( isNotNullP( rdir_peer))
             {
                 rdir_peer->SetPeerInDir( this, dir);
             }
@@ -114,11 +114,11 @@ public:
     inline void Detach()
     {
         /** Correct links in peers */
-        if ( IsNotNullP( peer[ LIST_DIR_DEFAULT]))
+        if ( isNotNullP( peer[ LIST_DIR_DEFAULT]))
         {
             peer[ LIST_DIR_DEFAULT]->SetPeerInDir( peer[ LIST_DIR_RDEFAULT], LIST_DIR_RDEFAULT);
         }
-        if ( IsNotNullP( peer[ LIST_DIR_RDEFAULT]))
+        if ( isNotNullP( peer[ LIST_DIR_RDEFAULT]))
         {
             peer[ LIST_DIR_RDEFAULT]->SetPeerInDir( peer[ LIST_DIR_DEFAULT], LIST_DIR_DEFAULT);
         }

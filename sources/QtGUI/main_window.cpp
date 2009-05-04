@@ -35,7 +35,12 @@ void MainWindow::open()
     setCentralWidget( graph_view);
 
     graph_view->readFromXML( fileName);
-    
+    /**
+     * FIXME: Part of layout added for testing purposes,
+     *        remove when layout algorithm is implemented.
+     */
+    graph_view->rankNodes();
+
     /*QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Graph Description"),
