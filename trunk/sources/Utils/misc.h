@@ -8,14 +8,14 @@
 /**
  * If pointer is not null
  */
-inline bool IsNotNullP( void *pointer)
+inline bool isNotNullP( void *pointer)
 {
     return pointer != NULL;
 }
 /**
  * If pointer is null
  */
-inline bool IsNullP( void *pointer)
+inline bool isNullP( void *pointer)
 {
     return pointer == NULL;
 }

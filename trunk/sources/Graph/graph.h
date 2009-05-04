@@ -61,7 +61,7 @@ public:
      */
     inline void deleteNode( Node* node)
     {
-        assert( IsNotNullP( node));
+        assert( isNotNullP( node));
         assert( node->graph() == this);
 
         if( first_node == node)
@@ -76,7 +76,7 @@ public:
      */
     inline void deleteEdge( Edge * edge)
     {
-        assert( IsNotNullP( edge));
+        assert( isNotNullP( edge));
         assert( edge->graph() == this);
 
         if( first_edge == edge)
@@ -89,7 +89,7 @@ public:
     /**
      * Return node quantity
      */
-    inline size_t GetNodeCount() const
+    inline GraphNum nodeCount() const
     {
         return node_num;
     }
@@ -97,7 +97,7 @@ public:
     /**
      * Return edge quantity
      */
-    inline size_t GetEdgeCount() const
+    inline GraphNum edgeCount() const
     {
         return edge_num;
     }

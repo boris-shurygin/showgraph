@@ -10,13 +10,13 @@ void EdgeControl::prepareRemove()
     EdgeControl* srcControl = NULL;
     EdgeControl* dstControl = NULL;
     
-    if( IsNotNullP( predSeg))
+    if( isNotNullP( predSeg))
     {
         srcControl = predSeg->src();
         scene()->removeItem( predSeg);
     }
 
-    if( IsNotNullP( succSeg))
+    if( isNotNullP( succSeg))
     {
         dstControl = succSeg->dst();
         scene()->removeItem( succSeg);
@@ -36,11 +36,11 @@ void EdgeControl::prepareRemove()
 EdgeControl::~EdgeControl()
 {
     removeFromIndex();
-    if( IsNotNullP( predSeg))
+    if( isNotNullP( predSeg))
     {
         delete predSeg;
     }
-    if( IsNotNullP( succSeg))
+    if( isNotNullP( succSeg))
     {
         delete succSeg;    
     }
@@ -54,7 +54,7 @@ void EdgeControl::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         prepareRemove();
     } else if ( event->button() & Qt::LeftButton)
     {
-         if ( IsNotNullP( edge) 
+         if ( isNotNullP( edge) 
               && edge->mode() == EdgeItem::ModeEdit)
          {
             edge->hideControls();
@@ -72,24 +72,24 @@ QVariant EdgeControl::itemChange(GraphicsItemChange change, const QVariant &valu
     
     switch (change) {
     case ItemPositionHasChanged:
-        if( IsNotNullP( edge) 
+        if( isNotNullP( edge) 
             && this != edge->srcCtrl()
             && this != edge->dstCtrl())
             edge->adjust();
-        if( IsNotNullP( predSeg))
+        if( isNotNullP( predSeg))
         {
             predSeg->adjust();
             EdgeSegment* seg = predSeg->src()->pred();
-            if( IsNotNullP( seg))
+            if( isNotNullP( seg))
             {
                 seg->adjust();
             }
         }
-        if( IsNotNullP( succSeg))
+        if( isNotNullP( succSeg))
         {
             succSeg->adjust();
             EdgeSegment* seg = succSeg->dst()->succ();
-            if( IsNotNullP( seg))
+            if( isNotNullP( seg))
             {
                 seg->adjust();
             }

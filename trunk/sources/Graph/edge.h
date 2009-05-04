@@ -132,7 +132,7 @@ public:
      */
     void setNode( Node *n, GraphDir dir)
     {
-        assert( IsNotNullP( n));
+        assert( isNotNullP( n));
         nodes[ dir] = n;
         if ( n != NULL)
         {

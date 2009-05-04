@@ -122,7 +122,7 @@ GraphT< Graph, Node, Edge>::newNodeImpl( GraphUid id)
     NodeListIt* it = node_p->GetGraphIt();
     
     /** Add node to graph's list of nodes */
-    if ( IsNotNullP( first_node))
+    if ( isNotNullP( first_node))
     {
         it->Attach( first_node->GetGraphIt());
     }
@@ -166,7 +166,7 @@ GraphT< Graph, Node, Edge>::newEdgeImpl( Node * pred, Node * succ)
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
     Edge *edge_p = ( Edge *) CreateEdge( (Graph *)this, edge_next_id++, pred, succ);
     EdgeListIt* it = edge_p->GetGraphIt();
-    if ( IsNotNullP( first_edge))
+    if ( isNotNullP( first_edge))
     {
         it->Attach( first_edge->GetGraphIt());
     }
@@ -215,12 +215,12 @@ GraphT< Graph, Node, Edge>::DebugPrint()
     Edge *e;
     out( "digraph{");
     /** Print nodes */
-    for (  n = firstNode(); IsNotNullP( n); n = n->nextNode())
+    for (  n = firstNode(); isNotNullP( n); n = n->nextNode())
     {
         n->DebugPrint();
     }
     /** Print edges */
-    for (  e = firstEdge(); IsNotNullP( e); e = e->nextEdge())
+    for (  e = firstEdge(); isNotNullP( e); e = e->nextEdge())
     {
         e->DebugPrint();
     }
@@ -237,12 +237,12 @@ GraphT< Graph, Node, Edge>::clearNumerationsInObjects()
     Node *n;
     Edge *e;
     /** Clean markers in nodes */
-    for (  n = firstNode(); IsNotNullP( n); n = n->nextNode())
+    for (  n = firstNode(); isNotNullP( n); n = n->nextNode())
     {
         clearUnusedNumerations( static_cast<Numbered *>(n));
     }
     /** Clean markers in edges */
-    for (  e = firstEdge(); IsNotNullP( e); e = e->nextEdge())
+    for (  e = firstEdge(); isNotNullP( e); e = e->nextEdge())
     {
         clearUnusedNumerations( static_cast<Numbered *>(n));
     }
@@ -258,12 +258,12 @@ GraphT< Graph, Node, Edge>::clearMarkersInObjects()
     Node *n;
     Edge *e;
     /** Clean markers in nodes */
-    for (  n = firstNode(); IsNotNullP( n); n = n->nextNode())
+    for (  n = firstNode(); isNotNullP( n); n = n->nextNode())
     {
         clearUnusedMarkers( static_cast<Marked *>(n));
     }
     /** Clean markers in edges */
-    for (  e = firstEdge(); IsNotNullP( e); e = e->nextEdge())
+    for (  e = firstEdge(); isNotNullP( e); e = e->nextEdge())
     {
         clearUnusedMarkers( static_cast<Marked *>(n));
     }
@@ -283,13 +283,13 @@ GraphT< Graph, Node, Edge>::writeToXML( QString filename)
     }
      
     /** Clean markers in nodes */
-    for ( Node *n = firstNode(); IsNotNullP( n); n = n->nextNode())
+    for ( Node *n = firstNode(); isNotNullP( n); n = n->nextNode())
     {
         n->updateElement();
     }
 
     /** Clean markers in edges */
-    for ( Edge *e = firstEdge(); IsNotNullP( e); e = e->nextEdge())
+    for ( Edge *e = firstEdge(); isNotNullP( e); e = e->nextEdge())
     {
         e->updateElement();
     }

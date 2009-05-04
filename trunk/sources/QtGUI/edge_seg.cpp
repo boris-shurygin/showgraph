@@ -33,7 +33,7 @@ void EdgeSegment::adjust()
     }
 
     /** Place cp1 */
-    if ( IsNotNullP( srcControl->pred()))
+    if ( isNotNullP( srcControl->pred()))
     {
         QPointF p1 = mapFromScene( srcControl->pred()->src()->pos());
         QLineF line( p1, dstP);
@@ -53,7 +53,7 @@ void EdgeSegment::adjust()
     btmRight.setY( max< qreal>( btmRight.y(), cp1.y()));
 
     /** Place cp2 */
-    if ( IsNotNullP( dstControl->succ()))
+    if ( isNotNullP( dstControl->succ()))
     {
         QPointF p2 = mapFromScene( dstControl->succ()->dst()->pos());
         QLineF line( p2, srcP);
@@ -81,8 +81,8 @@ EdgeSegment::EdgeSegment( EdgeItem *e, EdgeControl *src, EdgeControl* dst, QGrap
     srcControl(src),
     dstControl( dst)
 {
-    assert( IsNotNullP( src));
-    assert( IsNotNullP( dst));
+    assert( isNotNullP( src));
+    assert( isNotNullP( dst));
     //setCacheMode(DeviceCoordinateCache);
     //setFlag( ItemIsMovable);
     setZValue(0);
@@ -93,11 +93,11 @@ EdgeSegment::EdgeSegment( EdgeItem *e, EdgeControl *src, EdgeControl* dst, QGrap
 
 EdgeSegment::~EdgeSegment()
 {
-    if( IsNotNullP( src()) && src()->succ() == this)
+    if( isNotNullP( src()) && src()->succ() == this)
     {
         src()->setSucc( NULL);
     }
-    if( IsNotNullP( dst()) && dst()->pred() == this)
+    if( isNotNullP( dst()) && dst()->pred() == this)
     {
         dst()->setPred( NULL);
     }
@@ -143,7 +143,7 @@ void EdgeSegment::paint( QPainter *painter,
     path.cubicTo( cp1, cp2, dstP);
     
     // Select the pen
-    if( IsNotNullP( edge) && edge->mode() == EdgeItem::ModeEdit)
+    if( isNotNullP( edge) && edge->mode() == EdgeItem::ModeEdit)
     {
         painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     } else
@@ -201,7 +201,7 @@ EdgeControl *EdgeSegment::addControl( QPointF p)
     EdgeSegment* seg = new EdgeSegment( edge, control, dst(), scene()); 
     setDst( control);
     
-    if ( IsNotNullP( edge))
+    if ( isNotNullP( edge))
     {
         edge->addControl( control);    
     }
@@ -214,7 +214,7 @@ EdgeControl *EdgeSegment::addControl( EdgeControl *control)
     EdgeSegment* seg = new EdgeSegment( edge, control, dst(), scene()); 
     setDst( control);
     
-    if ( IsNotNullP( edge))
+    if ( isNotNullP( edge))
     {
         edge->addControl( control);    
     }
@@ -225,7 +225,7 @@ EdgeControl *EdgeSegment::addControl( EdgeControl *control)
 void EdgeSegment::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     update();
-    if ( IsNotNullP( edge) 
+    if ( isNotNullP( edge) 
          && event->button() & Qt::LeftButton)
     { 
         if ( edge->mode() == EdgeItem::ModeShow)

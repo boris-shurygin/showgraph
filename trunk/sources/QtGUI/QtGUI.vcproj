@@ -162,20 +162,21 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\edge_w.h"
+				RelativePath=".\edge_item.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="moc edge_w.h -o edge_w_h.cpp&#x0D;&#x0A;"
-						Outputs="edge_w_h.cpp"
+						Description="Running MOC for EdgeItem"
+						CommandLine="moc edge_item.h -o moc_edge_item.cpp&#x0D;&#x0A;"
+						Outputs="moc_edge_item.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\graph_w.h"
+				RelativePath=".\graph_view.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -183,9 +184,9 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Running MOC for GraphView"
-						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 graph_w.h -o moc_graphview.cpp"
-						AdditionalDependencies="graph_w.h"
-						Outputs="moc_graphview.cpp"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 graph_view.h -o moc_graph_view.cpp&#x0D;&#x0A;"
+						AdditionalDependencies="graph_view.h"
+						Outputs="moc_graph_view.cpp"
 					/>
 				</FileConfiguration>
 			</File>
@@ -194,7 +195,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\node_w.h"
+				RelativePath=".\node_item.h"
 				>
 			</File>
 		</Filter>
@@ -206,19 +207,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\edge_item.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\edge_seg.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\edge_w.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\edge_w_h.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\graph_w.cpp"
+				RelativePath=".\graph_view.cpp"
 				>
 			</File>
 			<File
@@ -238,13 +235,13 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Running MOC for MainWindow"
-						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 main_window.h -o moc_main_window.cpp"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 main_window.h -o moc_main_window.cpp&#x0D;&#x0A;"
 						Outputs="moc_main_window.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\node_w.cpp"
+				RelativePath=".\node_item.cpp"
 				>
 			</File>
 		</Filter>
@@ -252,7 +249,11 @@
 			Name="moc result"
 			>
 			<File
-				RelativePath=".\moc_graphview.cpp"
+				RelativePath=".\moc_edge_item.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\moc_graph_view.cpp"
 				>
 			</File>
 			<File
