@@ -33,15 +33,7 @@ void MainWindow::open()
 
     graph_view = new GraphView();
     setCentralWidget( graph_view);
-
-    graph_view->readFromXML( fileName);
-    /**
-     * FIXME: Part of layout added for testing purposes,
-     *        remove when layout algorithm is implemented.
-     */
-    graph_view->rankNodes();
-
-    /*QFile file(fileName);
+    QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Graph Description"),
                              tr("Cannot read file %1:\n%2.")
@@ -49,9 +41,24 @@ void MainWindow::open()
                              .arg(file.errorString()));
         return;
     }
+    file.close();
+    graph_view->readFromXML( fileName);
+    statusBar()->showMessage(tr("File loaded"), 2000);
+}
 
-    if (xbelTree->read(&file))
-        statusBar()->showMessage(tr("File loaded"), 2000);*/
+void MainWindow::newGraph()
+{
+    delete graph_view;
+
+    graph_view = new GraphView();
+    setCentralWidget( graph_view);
+    statusBar()->showMessage(tr("Created new"), 2000);
+}
+
+void MainWindow::runLayout()
+{
+    graph_view->rankNodes();
+    statusBar()->showMessage(tr("Layout done"), 2000);
 }
 
 void MainWindow::saveAs()
@@ -90,25 +97,41 @@ void MainWindow::createActions()
 
     saveAsAct = new QAction(tr("&Save As..."), this);
     saveAsAct->setShortcut(tr("Ctrl+S"));
-    connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+    connect( saveAsAct, SIGNAL(triggered()), this, SLOT( saveAs()));
 
     exitAct = new QAction(tr("E&xit"), this);
     exitAct->setShortcut(tr("Ctrl+Q"));
-    connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+    connect( exitAct, SIGNAL(triggered()), this, SLOT( close()));
 
     aboutAct = new QAction(tr("&About"), this);
-    connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
+    connect( aboutAct, SIGNAL(triggered()), this, SLOT( about()));
+
+    newGraphAct = new QAction(tr("&New"), this);
+    newGraphAct->setShortcut(tr("Ctrl+N"));
+    connect( newGraphAct, SIGNAL(triggered()), this, SLOT( newGraph()));
+
+    layoutRunAct = new QAction(tr("&Run"), this);
+    layoutRunAct->setShortcut(tr("F5"));
+    connect( layoutRunAct, SIGNAL(triggered()), this, SLOT( runLayout()));
+
+
 }
 
 void MainWindow::createMenus()
 {
-    fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(openAct);
-    fileMenu->addAction(saveAsAct);
-    fileMenu->addAction(exitAct);
+    fileMenu = menuBar()->addMenu( tr( "&File"));
+    fileMenu->addAction( newGraphAct);
+    fileMenu->addAction( openAct);
+    fileMenu->addAction( saveAsAct);
+    fileMenu->addAction( exitAct);
 
     menuBar()->addSeparator();
 
+    layoutMenu = menuBar()->addMenu( tr( "Layout"));
+    layoutMenu->addAction( layoutRunAct);
+
+    menuBar()->addSeparator();
+    
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
 }

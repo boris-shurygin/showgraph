@@ -18,6 +18,8 @@ public:
 
 public slots:
     void open();
+    void newGraph();
+    void runLayout();
     void saveAs();
     void about();
 
@@ -26,12 +28,15 @@ private:
     void createMenus();
 
     QMenu *fileMenu;
+    QMenu *layoutMenu;
     QMenu *helpMenu;
     QAction *openAct;
+    QAction *newGraphAct;
     QAction *saveAsAct;
     QAction *exitAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
+    QAction *layoutRunAct;
 };
 
 #endif
