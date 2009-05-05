@@ -168,6 +168,7 @@ private:
             dstControl = 0;
             curr_mode = ModeShow;
             //setFlag( ItemIsSelectable);
+            is_back = false;
         };
         
     ~EdgeItem()
@@ -200,6 +201,11 @@ public:
     inline void setBack( bool back = true)
     {
         is_back = back;
+    }
+    
+    inline bool isInverted() const
+    {
+        return isBack();
     }
 
     void adjust();

@@ -183,9 +183,9 @@ void GraphView::classifyEdges()
             NodeItem* succ_node = edge->succ();
             info->edge = edge->nextSucc();
             
-            if ( succ_node->isMarked( doneMarker))
+            if ( !succ_node->isMarked( doneMarker)
+                 && succ_node->isMarked( m))
             {
-                assert( succ_node->isMarked( m));
                 edge->setBack();
             }
             if ( succ_node->mark( m))
@@ -209,19 +209,116 @@ void GraphView::classifyEdges()
 Numeration GraphView::rankNodes()
 {
     QVector< int> pred_nums( nodeCount());
+    QStack< NodeItem *> stack; // Node stack
     classifyEdges();
     Numeration own = newNum();
     int i = 0;
 
-    /* Set numbers to nodes */
+    /**
+     *  Set numbers to nodes and count predecessors of each node.
+     *  predecessors include inverted edges 
+     */
     for ( NodeItem *n = firstNode();
           isNotNullP( n);
           n = n->nextNode())
     {
+        int pred_num = 0;
         n->setNumber( own, i);
+        for ( EdgeItem* e = n->firstPred();
+              isNotNullP( e);
+              e = e->nextPred())
+        {
+            if ( !e->isInverted())
+                pred_num++;
+        }
+        for ( EdgeItem* e = n->firstSucc();
+              isNotNullP( e);
+              e = e->nextSucc())
+        {
+            if ( e->isInverted())
+                pred_num++;
+        }
+        pred_nums[ i] = pred_num;
         i++;
     }
+    /* Fill ranking and ordering numerations by walking the nodes */
+    /* Add nodes with no preds to stack */
+    for ( NodeItem *n = firstNode();
+          isNotNullP( n);
+          n = n->nextNode())
+    {
+        if ( pred_nums[ n->number( own)] == 0)
+        {
+            stack.push( n);
+        }
+    }
+    while( !stack.isEmpty())
+    {
+        NodeItem* n = stack.pop();
+        GraphNum rank = 0;
 
+        /* Propagation part */
+        for ( EdgeItem* e = n->firstPred();
+              isNotNullP( e);
+              e = e->nextPred())
+        {
+            if ( !e->isInverted())
+            {
+                if ( rank < e->pred()->number( ranking) + 1)
+                {
+                    rank = e->pred()->number( ranking) + 1;
+                }
+            }
+        }
+        for ( EdgeItem* e = n->firstSucc();
+              isNotNullP( e);
+              e = e->nextSucc())
+        {
+            if ( e->isInverted())
+            {
+                if ( rank < e->succ()->number( ranking) + 1)
+                {
+                    rank = e->succ()->number( ranking) + 1;
+                }
+            }
+        }
+        n->setNumber( ranking, rank);
+        /* FIXME: just for debugging */
+        n->setPos( n->pos().x(), rank * 40);
+
+        /* Traversal continuation */
+        for ( EdgeItem* e = n->firstSucc();
+              isNotNullP( e);
+              e = e->nextSucc())
+        {
+            if ( !e->isInverted())
+            {
+                NodeItem* succ = e->succ();
+                pred_nums[ succ->number( own)] =
+                    pred_nums[ succ->number( own)] - 1;
+                
+                if ( pred_nums[ succ->number( own)] == 0)
+                {
+                    stack.push( succ);
+                }
+            }  
+        }
+        for ( EdgeItem* e = n->firstPred();
+              isNotNullP( e);
+              e = e->nextPred())
+        {
+            if ( e->isInverted())
+            {
+                NodeItem* succ = e->pred();
+                pred_nums[ succ->number( own)] =
+                    pred_nums[ succ->number( own)] - 1;
+                if ( pred_nums[ succ->number( own)] == 0)
+                {
+                    stack.push( succ);
+                }
+            }
+        }
+    }
     freeNum( own);
     return ranking; 
 }
