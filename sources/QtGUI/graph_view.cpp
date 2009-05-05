@@ -284,7 +284,7 @@ Numeration GraphView::rankNodes()
         }
         n->setNumber( ranking, rank);
         /* FIXME: just for debugging */
-        n->setPos( n->pos().x(), rank * 40);
+        n->setPos( n->pos().x(), rank * 60);
 
         /* Traversal continuation */
         for ( EdgeItem* e = n->firstSucc();

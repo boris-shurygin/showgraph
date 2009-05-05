@@ -171,6 +171,7 @@
 						Name="VCCustomBuildTool"
 						Description="Running MOC for EdgeItem"
 						CommandLine="moc edge_item.h -o moc_edge_item.cpp&#x0D;&#x0A;"
+						AdditionalDependencies=""
 						Outputs="moc_edge_item.cpp"
 					/>
 				</FileConfiguration>
@@ -185,7 +186,7 @@
 						Name="VCCustomBuildTool"
 						Description="Running MOC for GraphView"
 						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 graph_view.h -o moc_graph_view.cpp&#x0D;&#x0A;"
-						AdditionalDependencies="graph_view.h"
+						AdditionalDependencies=""
 						Outputs="moc_graph_view.cpp"
 					/>
 				</FileConfiguration>
