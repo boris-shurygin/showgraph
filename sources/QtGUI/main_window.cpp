@@ -69,8 +69,8 @@ void MainWindow::saveAs()
                                          tr("Graph Files ( *.xml)"));
     if (fileName.isEmpty())
         return;
-    graph_view->writeToXML( fileName);
-    /*QFile file(fileName);
+    
+    QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("SAX Bookmarks"),
                              tr("Cannot write file %1:\n%2.")
@@ -78,9 +78,10 @@ void MainWindow::saveAs()
                              .arg(file.errorString()));
         return;
     }
+    file.close();
+    graph_view->writeToXML( fileName);
 
-    if ( graph_view->write(&file))
-        statusBar()->showMessage(tr("File saved"), 2000);*/
+    statusBar()->showMessage(tr("File saved"), 2000);
 }
 
 void MainWindow::about()
@@ -127,7 +128,7 @@ void MainWindow::createMenus()
 
     menuBar()->addSeparator();
 
-    layoutMenu = menuBar()->addMenu( tr( "Layout"));
+    layoutMenu = menuBar()->addMenu( tr( "&Layout"));
     layoutMenu->addAction( layoutRunAct);
 
     menuBar()->addSeparator();
