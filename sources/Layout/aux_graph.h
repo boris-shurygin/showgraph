@@ -15,31 +15,9 @@ const Rank RANK_UNDEF = (Rank) (-1);
 /**
  * AuxGraph, AuxNode and AuxEdge classes represent auxiliary graph used for layout purposes
  */
-class Level
-{
-    Rank level_rank;
-    QLinkedList< AuxNode*> node_list;
-public:
-    Level(): level_rank( 0){};
-    Level( Rank r): level_rank( r){};
-
-    inline Rank rank() const
-    {
-        return level_rank;
-    }
-    inline void rank( Rank r)
-    {
-        level_rank = r;
-    }
-    inline QLinkedList< AuxNode*> nodes() const
-    {
-        return node_list;
-    }
-
-};
-
 class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
 {
+    NodeItem* orig_node;
     double priv_x;
     double priv_y;
     double priv_height;
@@ -47,6 +25,7 @@ class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
     int priv_priority;
     Level * priv_level;
     int priv_order;
+    Rank priv_rank;
 
 public:
     /** Get Height */
@@ -65,7 +44,7 @@ public:
     }
     inline int rank() const
     {
-        return priv_level->rank();
+        return priv_rank;
     }
     inline int order() const
     {
@@ -93,6 +72,18 @@ public:
     {
         priv_order = or;
     }
+    inline void setRank( Rank r)
+    {
+        priv_rank = r;
+    }
+    inline NodeItem* orig() const
+    {
+        return orig_node;
+    }
+    inline void setOrig( NodeItem *n)
+    {
+        orig_node = n;
+    }
 private:
     /** We can't create nodes separately, do it through newNode method of graph */
     AuxNode( AuxGraph *graph_p, int _id):
@@ -103,7 +94,8 @@ private:
         priv_width(0),
         priv_priority(-1),
         priv_level( NULL),
-        priv_order(-1)
+        priv_order(-1),
+        orig_node( NULL)
     {
     }
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;
@@ -154,6 +146,12 @@ public:
     /** Iheritance and contructors */
     AuxGraph();
     AuxGraph( GraphView *graph_p);
+    ~AuxGraph();
+    void initLevels( Rank max_level);
+    void deleteLevels();
+    
+    void reduceCrossings();
+    void arrangeHorizontally();
 
     void * CreateNode( AuxGraph *graph_p, int _id, NodeListIt it)
     {
@@ -164,4 +162,36 @@ public:
         return new AuxEdge( graph_p, _id, _pred, _succ);
     }
 };
+
+/**
+ * Representation of rank level - group of nodes that should have same/close vertical position
+ */
+class Level
+{
+    Rank level_rank;
+    QLinkedList< AuxNode*> node_list;
+public:
+    Level(): level_rank( 0), node_list(){};
+    Level( Rank r): level_rank( r), node_list(){};
+
+    inline Rank rank() const
+    {
+        return level_rank;
+    }
+    inline void rank( Rank r)
+    {
+        level_rank = r;
+    }
+    inline QLinkedList< AuxNode*> nodes() const
+    {
+        return node_list;
+    }
+    inline void add( AuxNode *node)
+    {
+        node_list.push_back( node);
+        node->setLevel( this);
+        node->setRank( level_rank);
+    }
+};
+
 #endif /** AUX_GRAPH_H */

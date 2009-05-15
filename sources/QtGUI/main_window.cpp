@@ -57,7 +57,7 @@ void MainWindow::newGraph()
 
 void MainWindow::runLayout()
 {
-    graph_view->rankNodes();
+    graph_view->doLayout();
     statusBar()->showMessage(tr("Layout done"), 2000);
 }
 
