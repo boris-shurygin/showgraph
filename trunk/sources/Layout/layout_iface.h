@@ -9,6 +9,7 @@
 class AuxNode;
 class AuxEdge;
 class AuxGraph;
+class Level;
 
 #include "../Graph/graph_iface.h"
 #include "../QTGui/gui_iface.h"

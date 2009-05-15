@@ -5,3 +5,23 @@
  */
 
 #include "layout_iface.h"
+
+void AuxGraph::reduceCrossings()
+{
+
+}
+
+void AuxGraph::arrangeHorizontally()
+{
+    for ( int i = 0; i < levels.size(); i++)
+    {
+        Level* level = levels[ i];
+        QLinkedList< AuxNode*> nodes = level->nodes();
+        qreal x = 0;
+        foreach ( AuxNode* node, nodes)
+        {
+            node->orig()->setPos( x, node->orig()->y());
+            x = x + node->orig()->boundingRect().width() + 20;
+        }
+    } 
+}

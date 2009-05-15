@@ -17,7 +17,9 @@ class GraphView: public QGraphicsView, public GraphT< GraphView, NodeItem, EdgeI
     QPoint dst;
     bool createEdge;
     NodeItem *tmpSrc;
-
+    
+    GraphNum max_rank;
+    
     Numeration ranking;
     Numeration ordering;
     
@@ -41,6 +43,7 @@ public:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void drawForeground(QPainter *painter, const QRectF &rect);
+    
     inline bool IsCreateEdge() const
     {
         return createEdge;
@@ -57,8 +60,19 @@ public:
     {
         return tmpSrc;
     }
+    inline Numeration ranks() const
+    {
+        return ranking;
+    }
+    inline GraphNum maxRank() const
+    {
+        return max_rank;
+    }
 
-    /** Layout - oriented part */
+    /** Perform layout */
+    void doLayout();
+    
+    /** Assign ranks to nodes in respect to maximum length of path from top */
     Numeration rankNodes();
 
     /** Assign edge types, mark edges that should be inverted */

@@ -10,7 +10,7 @@ GraphView::GraphView(): dst( 0, 0), src( 0, 0), createEdge( false)
 {
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    //scene->setSceneRect(-400, -400, 400, 400);
+    scene->setSceneRect(0, 0, 100, 100);
     setScene(scene);
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);
@@ -210,10 +210,10 @@ Numeration GraphView::rankNodes()
 {
     QVector< int> pred_nums( nodeCount());
     QStack< NodeItem *> stack; // Node stack
-    classifyEdges();
+    
     Numeration own = newNum();
-    int i = 0;
-
+    GraphNum i = 0;
+    max_rank = 0;
     /**
      *  Set numbers to nodes and count predecessors of each node.
      *  predecessors include inverted edges 
@@ -282,6 +282,10 @@ Numeration GraphView::rankNodes()
                 }
             }
         }
+
+        if ( rank > max_rank)
+            max_rank = rank;
+
         n->setNumber( ranking, rank);
         /* FIXME: just for debugging */
         n->setPos( n->pos().x(), rank * 60);
@@ -321,4 +325,30 @@ Numeration GraphView::rankNodes()
     }
     freeNum( own);
     return ranking; 
+}
+
+/**
+ * Perform layout
+ */
+void GraphView::doLayout()
+{
+    /** 1. Perfrom edge classification */
+    classifyEdges();
+    
+    /** 2. Rank nodes */
+    rankNodes();
+
+    /** 3. Build aux graph */
+    AuxGraph* agraph = new AuxGraph( this);
+
+    /** 4. Perform edge crossings minimization */
+    agraph->reduceCrossings();
+
+    /** 5. Perform horizontal arrangement of nodes */
+    agraph->arrangeHorizontally();
+
+    /** 6. Move edge controls to enchance the picture readability */
+
+    /** Delete temporary structures */
+    delete agraph;
 }
