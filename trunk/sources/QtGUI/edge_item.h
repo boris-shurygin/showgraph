@@ -136,7 +136,7 @@ public:
 
 };
 
-class EdgeItem: public QGraphicsItem, EdgeT< GraphView, NodeItem, EdgeItem>
+class EdgeItem: public QGraphicsItem, public EdgeT< GraphView, NodeItem, EdgeItem>
 {
 public:        
     typedef enum EdgeMode

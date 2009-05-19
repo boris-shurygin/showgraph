@@ -8,7 +8,8 @@
 
 class NodeItem: public QGraphicsTextItem, public NodeT< GraphView, NodeItem, EdgeItem>
 {    
-    QList< AuxNode> aux_nodes;
+    QList< AuxNode *> aux_nodes;
+    AuxNode *aux_node;
 
     /** Initialization */
     inline void SetInitFlags()
@@ -67,6 +68,16 @@ public:
      * Read properties from XML
      */
     virtual void readFromElement( QDomElement elem);
+
+    /** Set/Get aux node that represents node's start in aux graph */
+    inline void setAuxNode( AuxNode *n)
+    {
+        aux_node = n;
+    }
+    inline AuxNode *auxNode() const
+    {
+        return aux_node;
+    }
 };
 
 #endif

@@ -69,9 +69,9 @@ NodeT<Graph, Node, Edge>::deleteEdgeInDir( GraphDir dir, Edge* edge)
  */
 template <class Graph, class Node, class Edge>
 void
-NodeT<Graph, Node, Edge>::DebugPrint()
+NodeT<Graph, Node, Edge>::debugPrint()
 {
-    out("%u;", id());
+    out("%llu;", id());
 }
 
 /**

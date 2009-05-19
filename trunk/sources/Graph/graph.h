@@ -123,11 +123,11 @@ public:
     /**
      * Print graph to stdout in DOT format
      */
-    void DebugPrint();
+    virtual void debugPrint();
     
     /** Node/Edge creation routines can be overloaded by derived class */
-    void * CreateNode( Graph *graph_p, int _id);
-    void * CreateEdge( Graph *graph_p, int _id, Node *_pred, Node* _succ);
+    virtual void * CreateNode( Graph *graph_p, int _id);
+    virtual void * CreateEdge( Graph *graph_p, int _id, Node *_pred, Node* _succ);
     
     /**
      * Clear unused markers from marked objects

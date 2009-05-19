@@ -20,7 +20,7 @@ EdgeT<Graph, Node, Edge>::~EdgeT()
  */
 template <class Graph, class Node, class Edge>
 void
-EdgeT<Graph, Node, Edge>::DebugPrint()
+EdgeT<Graph, Node, Edge>::debugPrint()
 {
     /**
      * Check that edge is printable
@@ -30,7 +30,7 @@ EdgeT<Graph, Node, Edge>::DebugPrint()
     assert( isNotNullP( pred()));
     assert( isNotNullP( succ()));
 
-    out("%u->%u;", pred()->id(), succ()->id());
+    out("%llu->%llu;", pred()->id(), succ()->id());
 }
 
 /**

@@ -12,12 +12,23 @@
 typedef unsigned int Rank;
 const Rank RANK_UNDEF = (Rank) (-1);
 
+enum AuxNodeType
+{
+    /* Simple aux node that represents one node of processed graph */
+    AUX_NODE_SIMPLE,
+    /* Aux node that represents a control point of edge in processed graph */
+    AUX_EDGE_CONTROL,
+    /* Number of aux node types */
+    AUX_NODE_TYPES_NUM
+};
+
 /**
  * AuxGraph, AuxNode and AuxEdge classes represent auxiliary graph used for layout purposes
  */
 class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
 {
     NodeItem* orig_node;
+    EdgeItem* orig_edge;
     double priv_x;
     double priv_y;
     double priv_height;
@@ -26,6 +37,7 @@ class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
     Level * priv_level;
     int priv_order;
     Rank priv_rank;
+    AuxNodeType node_type;
 
 public:
     /** Get Height */
@@ -76,13 +88,56 @@ public:
     {
         priv_rank = r;
     }
-    inline NodeItem* orig() const
+    inline NodeItem* node() const
     {
         return orig_node;
     }
-    inline void setOrig( NodeItem *n)
+    inline void setNode( NodeItem *n)
     {
+        assert( isSimple());
         orig_node = n;
+    }
+    inline void setType( AuxNodeType t)
+    {
+        node_type = t;
+    }
+    inline AuxNodeType type() const
+    {
+        return node_type;
+    }
+    inline bool isSimple() const
+    {
+        return node_type == AUX_NODE_SIMPLE;
+    }
+    inline bool isEdgeControl() const
+    {
+        return node_type == AUX_EDGE_CONTROL;
+    }
+    inline EdgeItem* edge() const
+    {
+        return orig_edge;
+    }
+    inline void setEdge( EdgeItem *e)
+    {
+        assert( isEdgeControl());
+        orig_edge = e;
+    }
+    
+    inline void debugPrint()
+    {
+        switch( node_type)
+        {
+            case AUX_NODE_SIMPLE:
+                out("SIMPLE %llu;", id());
+                break;
+            case AUX_EDGE_CONTROL:
+                out("EDGE CONTROL %llu;", id());
+                break;
+            default:         
+                assert( 0);
+                out("NO_TYPE %llu;", id());
+                break;
+        }
     }
 private:
     /** We can't create nodes separately, do it through newNode method of graph */
@@ -95,7 +150,9 @@ private:
         priv_priority(-1),
         priv_level( NULL),
         priv_order(-1),
-        orig_node( NULL)
+        orig_node( NULL),
+        orig_edge( NULL),
+        node_type( AUX_NODE_SIMPLE)
     {
     }
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;
@@ -152,12 +209,18 @@ public:
     
     void reduceCrossings();
     void arrangeHorizontally();
+    
+    inline void debugPrint()
+    {
+        out( "AuxGraph debug print");
+        GraphT< AuxGraph, AuxNode, AuxEdge>::debugPrint();
+    }
 
-    void * CreateNode( AuxGraph *graph_p, int _id, NodeListIt it)
+    inline void * CreateNode( AuxGraph *graph_p, int _id, NodeListIt it)
     {
         return new AuxNode( graph_p, _id);
     }
-    void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
+    inline void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
     {
         return new AuxEdge( graph_p, _id, _pred, _succ);
     }

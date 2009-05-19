@@ -147,7 +147,7 @@ public:
     /**
      * Print node in DOT format to stdout
      */
-    void DebugPrint();
+    virtual void debugPrint();
 
     /** 
      * Update DOM element
