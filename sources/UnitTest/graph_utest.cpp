@@ -186,7 +186,7 @@ bool uTestSave()
     }
     graph.newEdge( nodes[ 8], nodes[ 4]);
     delete nodes[ 8];
-    graph.DebugPrint();
+    graph.debugPrint();
     graph.writeToXML( QString ( "test.xml"));
     return true;
 }
@@ -198,7 +198,7 @@ bool uTestLoad()
 {
     AGraph graph;
     graph.readFromXML( QString( "test.xml"));
-    graph.DebugPrint();
+    graph.debugPrint();
     return true;
 }
 

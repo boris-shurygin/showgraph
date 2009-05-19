@@ -1,5 +1,5 @@
 /**
- * File: misc.h - Wrapper for printing routines in ShowGraph
+ * File: print.h - Wrapper for printing routines in ShowGraph
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef PRINT_H
@@ -19,7 +19,7 @@ namespace PrintUtils
         va_start( args, format);
         vfprintf( stdout, format, args);
         va_end( args);
-        fprintf( stderr, "\n");
+        fprintf( stdout, "\n");
     }
     /** Print to console's STDERR */
     inline void err( const char* format, ...)

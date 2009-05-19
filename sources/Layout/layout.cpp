@@ -18,10 +18,23 @@ void AuxGraph::arrangeHorizontally()
         Level* level = levels[ i];
         QLinkedList< AuxNode*> nodes = level->nodes();
         qreal x = 0;
+        qreal y = 0;
         foreach ( AuxNode* node, nodes)
         {
-            node->orig()->setPos( x, node->orig()->y());
-            x = x + node->orig()->boundingRect().width() + 20;
+            if( node->isSimple())
+            {
+                node->node()->setPos( x, node->node()->y());
+                y = node->node()->y();
+                x = x + node->node()->boundingRect().width() + 20;
+            } else if ( node->isEdgeControl())
+            {
+                EdgeItem* edge = node->edge();
+                EdgeSegment* seg = edge->dstCtrl()->pred();
+                EdgeControl* ctrl = seg->addControl( QPointF(x, y));
+                ctrl->setFixed();
+                edge->adjust();
+                x = x + 10;
+            }
         }
     } 
 }

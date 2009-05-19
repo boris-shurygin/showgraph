@@ -209,7 +209,7 @@ GraphT< Graph, Node, Edge>::newEdge( Node * pred, Node * succ, QDomElement e)
  */
 template <class Graph, class Node, class Edge>
 void 
-GraphT< Graph, Node, Edge>::DebugPrint()
+GraphT< Graph, Node, Edge>::debugPrint()
 {
     Node *n;
     Edge *e;
@@ -217,12 +217,12 @@ GraphT< Graph, Node, Edge>::DebugPrint()
     /** Print nodes */
     for (  n = firstNode(); isNotNullP( n); n = n->nextNode())
     {
-        n->DebugPrint();
+        n->debugPrint();
     }
     /** Print edges */
     for (  e = firstEdge(); isNotNullP( e); e = e->nextEdge())
     {
-        e->DebugPrint();
+        e->debugPrint();
     }
     out( "}");
 }
