@@ -198,6 +198,9 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
     /** Graph that is subject to layout */
     GraphView *main_graph;
 
+    /** Order numeration */
+    Numeration order;
+
 public:
     
     /** Iheritance and contructors */
@@ -207,6 +210,7 @@ public:
     void initLevels( Rank max_level);
     void deleteLevels();
     
+    void orderNodesByDFS();
     void reduceCrossings();
     void arrangeHorizontally();
     
@@ -232,10 +236,12 @@ public:
 class Level
 {
     Rank level_rank;
-    QLinkedList< AuxNode*> node_list;
+    QList< AuxNode*> node_list;
 public:
     Level(): level_rank( 0), node_list(){};
     Level( Rank r): level_rank( r), node_list(){};
+    
+    void sortNodesByOrder();
 
     inline Rank rank() const
     {
@@ -245,7 +251,7 @@ public:
     {
         level_rank = r;
     }
-    inline QLinkedList< AuxNode*> nodes() const
+    inline QList< AuxNode*> nodes() const
     {
         return node_list;
     }

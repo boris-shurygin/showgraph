@@ -10,7 +10,7 @@
  */
 AuxGraph::AuxGraph(): levels() 
 {
-
+    order = newNum();
 }
 
 /**
@@ -44,7 +44,7 @@ AuxGraph::deleteLevels()
 AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p) 
 {
     initLevels( main_graph->maxRank());
-
+    order = newNum();
     Numeration ranks = main_graph->ranks();
     /** Create nodes from drawable prototypes */
     for ( NodeItem* n_item = main_graph->firstNode();
