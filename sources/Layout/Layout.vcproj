@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="Layout"
 	ProjectGUID="{4BCC63EF-794D-4DCA-B3B8-A04284AC6C69}"
 	RootNamespace="Layout"
@@ -160,6 +160,10 @@
 			</File>
 			<File
 				RelativePath=".\layout.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\node_group.cpp"
 				>
 			</File>
 		</Filter>

@@ -41,14 +41,22 @@ class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
 
 public:
     /** Get Height */
-    inline double h() const
+    inline double height() const
     {
         return priv_height;
     }
     /** Get Width */
-    inline double w() const
+    inline double width() const
     {
         return priv_width;
+    }
+    inline double x() const
+    {
+        return priv_x;
+    }
+    inline double y() const
+    {
+        return priv_y;
     }
     inline int priority() const
     {
@@ -62,12 +70,20 @@ public:
     {
         return priv_order;
     }
-    /** Get Height */
+    inline void setX( double x)
+    {
+        priv_x = x;
+    }
+    inline void setY( double y)
+    {
+        priv_y = y;
+    }
+    /** Set Height */
     inline void setHeight( double h) 
     {
         priv_height = h;
     }
-    /** Get Width */
+    /** Set Width */
     inline void setWidth( double w) 
     {
         priv_width = w;
