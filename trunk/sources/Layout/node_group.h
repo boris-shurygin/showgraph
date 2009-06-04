@@ -12,8 +12,8 @@
 class NodeGroup
 {
     QList< AuxNode *> node_list;
-    qreal border_left;
-    qreal border_right;
+    double border_left;
+    double border_right;
     float group_weight;
 public:
     inline void init()
@@ -22,9 +22,6 @@ public:
         border_right = 0;
         group_weight = 0;        
     }
-
-
-
     /** Get/Set routines */
     inline float weight() const
     {
@@ -58,12 +55,7 @@ public:
     {
         init();
     }
-    /** From a node */
-    NodeGroup( AuxNode *n) : node_list()
-    {
-        init();
-        addNode( n);
-        /** Compute coordinates */
-    }
+    /** Constructor of group from a node */
+    NodeGroup( AuxNode *n, GraphDir dir);
 };
 #endif
