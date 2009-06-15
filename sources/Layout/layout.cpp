@@ -11,6 +11,7 @@ bool compareOrders( AuxNode* node1,
 {
     return ( node1->order() < node2->order());
 }
+
 void Level::sortNodesByOrder()
 {
     qSort( node_list.begin(), node_list.end(), compareOrders);
@@ -112,4 +113,66 @@ void AuxGraph::arrangeHorizontally()
             }
         }
     } 
+//#ifdef LAYOUT
+    if (0)
+    {
+    for ( int i = 0; i < levels.size(); i++)
+    {
+        Level* level = levels[ i];
+        QList< AuxNode*> nodes = level->nodes();
+        QList< NodeGroup *> groups;
+        foreach ( AuxNode* node, nodes)
+        {
+            NodeGroup* group = new NodeGroup( node, GRAPH_DIR_DOWN);
+        }
+        QList< NodeGroup *>::iterator it;
+        /**
+         * For each group
+         */
+        while( 1)
+        {
+            /*
+             * 1. Look at the group to the right and left and see they interleave
+             *    if they do -> merge groups and repeat
+             */
+            NodeGroup* grp = *it;
+            QList< NodeGroup *>::iterator it_right = it;
+            it_right++;
+            bool no_merge = true; 
+
+            /** Group to the left */
+            if ( it != groups.begin())
+            {
+                QList< NodeGroup *>::iterator it_left = it;
+                it_left--;
+                NodeGroup* left_grp = *it_left;
+                if ( grp->interleaves( left_grp))
+                {
+                    groups.erase( it_left);
+                    grp->merge( left_grp);
+                    no_merge = false;
+                }
+            }
+            /** Group to the right */
+            if ( it_right != groups.end())
+            {
+                NodeGroup* right_grp = *it_right;
+                if ( grp->interleaves( right_grp))
+                {
+                    groups.erase( it_right);
+                    grp->merge( right_grp);
+                    no_merge = false;
+                }    
+            }
+            /** Proceed to the next group */
+            if ( no_merge)
+                it++;
+            /** End loop if we have processed all groups and merged everything we could */
+            if ( it == groups.end())
+                break;
+        }
+        
+    }
+    }
+//#endif
 }
