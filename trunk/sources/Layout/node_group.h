@@ -57,5 +57,20 @@ public:
     }
     /** Constructor of group from a node */
     NodeGroup( AuxNode *n, GraphDir dir);
+
+    /** Multiple group actions */
+    inline bool interleaves( NodeGroup *grp) const
+    {
+        return !( left() > grp->right() 
+                  || right() < grp->left());
+    }
+
+    void merge( NodeGroup *grp)
+    {
+        // Add nodes from group on the left
+        node_list += grp->nodes();
+
+        // Recalculate border coordinates
+    }
 };
 #endif
