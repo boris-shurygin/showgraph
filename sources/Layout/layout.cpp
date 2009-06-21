@@ -6,17 +6,124 @@
 
 #include "layout_iface.h"
 
+/**
+ * Compare orders of nodes
+ */
 bool compareOrders( AuxNode* node1,
                     AuxNode* node2)
 {
     return ( node1->order() < node2->order());
 }
 
+/**
+ * compare center coordinates of group
+ */
+bool compareGroups( NodeGroup* g1,
+                    NodeGroup* g2)
+{
+    /*
+     * center = g.left + width / 2 = g.left + ( g.right - g.left) / 2 = ( g.left + g.right)/2
+     *
+     *                g1.center < g2.center 
+     * (g1.left + g1.right) / 2 < (g2.left + g2.right) / 2
+     *       g1.left + g1.right < g2.left + g2.right
+     */
+    return ( g1->left() + g1->right() < g2->left() + g2->right());
+}
+
+/**
+ * Sort nodes in a level with respect to their order
+ */
 void Level::sortNodesByOrder()
 {
     qSort( node_list.begin(), node_list.end(), compareOrders);
 }
 
+/**
+ * Arranges nodes using group merge algorithm.
+ * NodeGroup is a group of nodes which interleave if we apply baricentric heuristic directly.
+ * These nodes are placed within group borders. If two groups interleave they are merged.
+ * Arrangement is performed iteratively starting with groups that have one node each.
+ */
+void Level::arrangeNodes()
+{
+    QList< NodeGroup *> list;
+    foreach ( AuxNode* node, node_list)
+    {
+        NodeGroup* group = new NodeGroup( node, GRAPH_DIR_DOWN);
+        list.push_back( group);
+    }
+    /** Sort groups with respect to their coordinates */
+    qSort( list.begin(), list.end(), compareGroups);
+    
+    QLinkedList< NodeGroup *> groups;
+    
+    foreach( NodeGroup *group, list)
+    {
+        groups.push_back( group);
+    }
+    QLinkedList< NodeGroup *>::iterator it = groups.begin();
+
+    /**
+     * For each group
+     */
+    while( groups.count())
+    {
+        /*
+         * 1. Look at the group to the right and left and see they interleave
+         *    if they do -> merge groups and repeat
+         */
+        NodeGroup* grp = *it;
+        QLinkedList< NodeGroup *>::iterator it_right = it;
+        it_right++;
+        bool no_merge = true; 
+
+        /** Group to the left */
+        if ( it != groups.begin())
+        {
+            QLinkedList< NodeGroup *>::iterator it_left = it;
+            it_left--;
+            NodeGroup* left_grp = *it_left;
+            if ( grp->interleaves( left_grp))
+            {
+                groups.erase( it_left);
+                grp->merge( left_grp);
+                no_merge = false;
+                delete ( left_grp);
+            }
+        }
+        /** Group to the right */
+        if ( it_right != groups.end())
+        {
+            NodeGroup* right_grp = *it_right;
+            if ( grp->interleaves( right_grp))
+            {
+                groups.erase( it_right);
+                grp->merge( right_grp);
+                no_merge = false;
+                delete ( right_grp);
+            }    
+        }
+        /** Proceed to the next group */
+        if ( no_merge)
+            it++;
+        /** End loop if we have processed all groups and merged everything we could */
+        if ( it == groups.end())
+            break;
+    }
+
+    /** Assign coordinates to nodes */
+    for ( it = groups.begin(); it != groups.end(); it++)
+    {
+        NodeGroup *grp = *it;
+        grp->placeNodes();
+        delete grp;
+    }
+}
+
+/**
+ * Assign order to nodes by numbering in a DFS traversal
+ */
 void AuxGraph::orderNodesByDFS()
 {
     /** Structure used for dfs traversal */
@@ -74,6 +181,10 @@ void AuxGraph::orderNodesByDFS()
     }
     freeMarker( m);
 }
+
+/**
+ * Try to reduce number of edge crossings between levels
+ */
 void AuxGraph::reduceCrossings()
 {
     /** Perform numeration and sort nodes to avoid tree edges crossings */
@@ -86,8 +197,12 @@ void AuxGraph::reduceCrossings()
     }
 }
 
+/**
+ * Assign X coordinates to the nodes
+ */
 void AuxGraph::arrangeHorizontally()
 {
+#if 0
     for ( int i = 0; i < levels.size(); i++)
     {
         Level* level = levels[ i];
@@ -113,67 +228,10 @@ void AuxGraph::arrangeHorizontally()
             }
         }
     } 
-
+#endif
+    
     for ( int i = 0; i < levels.size(); i++)
     {
-        Level* level = levels[ i];
-        QList< AuxNode*> nodes = level->nodes();
-        QList< NodeGroup *> groups;
-        foreach ( AuxNode* node, nodes)
-        {
-            NodeGroup* group = new NodeGroup( node, GRAPH_DIR_DOWN);
-            groups.push_back( group);
-        }
-        QList< NodeGroup *>::iterator it = groups.begin();
-
-        /** Sort groups with respect to their coordinates */
-
-        /**
-         * For each group
-         */
-        while( groups.count())
-        {
-            /*
-             * 1. Look at the group to the right and left and see they interleave
-             *    if they do -> merge groups and repeat
-             */
-            NodeGroup* grp = *it;
-            QList< NodeGroup *>::iterator it_right = it;
-            it_right++;
-            bool no_merge = true; 
-
-            /** Group to the left */
-            if ( it != groups.begin())
-            {
-                QList< NodeGroup *>::iterator it_left = it;
-                it_left--;
-                NodeGroup* left_grp = *it_left;
-                if ( grp->interleaves( left_grp))
-                {
-                    groups.erase( it_left);
-                    grp->merge( left_grp);
-                    no_merge = false;
-                    delete ( left_grp);
-                }
-            }
-            /** Group to the right */
-            if ( it_right != groups.end())
-            {
-                NodeGroup* right_grp = *it_right;
-                if ( grp->interleaves( right_grp))
-                {
-                    groups.erase( it_right);
-                    grp->merge( right_grp);
-                    no_merge = false;
-                    delete ( right_grp);
-                }    
-            }
-            /** Proceed to the next group */
-            if ( no_merge)
-                it++;
-            /** End loop if we have processed all groups and merged everything we could */
-            if ( it == groups.end())
-                break;
-        }
+        levels[ i]->arrangeNodes();
     }
 }

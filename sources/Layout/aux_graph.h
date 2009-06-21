@@ -155,6 +155,36 @@ public:
                 break;
         }
     }
+
+    /**
+     * Return value of spacing between previous and current node due to their types
+     */
+    inline qreal spacing( AuxNodeType prev_type) const
+    {
+        switch ( prev_type)
+        {
+            case AUX_NODE_SIMPLE:
+                if ( node_type == AUX_NODE_SIMPLE)
+                {
+                    return NODE_NODE_MARGIN;
+                } else
+                {
+                    return NODE_CONTROL_MARGIN;
+                }
+            case AUX_EDGE_CONTROL:
+                if ( node_type == AUX_NODE_SIMPLE)
+                {
+                    return NODE_CONTROL_MARGIN;
+                } else
+                {
+                    return CONTROL_CONTROL_MARGIN;
+                }
+            case AUX_NODE_TYPES_NUM:
+                return 0;
+        }
+        return NODE_NODE_MARGIN;
+    }
+
 private:
     /** We can't create nodes separately, do it through newNode method of graph */
     AuxNode( AuxGraph *graph_p, int _id):
@@ -257,6 +287,7 @@ public:
     Level(): level_rank( 0), node_list(){};
     Level( Rank r): level_rank( r), node_list(){};
     
+    void arrangeNodes();
     void sortNodesByOrder();
 
     inline Rank rank() const

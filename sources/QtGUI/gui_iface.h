@@ -11,8 +11,6 @@ class NodeItem;
 class EdgeItem;
 class GraphView;
 
-#include "../Graph/graph_iface.h"
-#include "../Layout/layout_iface.h"
 #include <QtGui>
 #include <QList>
 #include <QGraphicsItem>
@@ -20,6 +18,11 @@ class GraphView;
 #include <QGraphicsView>
 #include <QDebug>
 #include <QWheelEvent>
+
+const qreal RANK_SPACING = 60;
+
+#include "../Graph/graph_iface.h"
+#include "../Layout/layout_iface.h"
 
 enum { 
     TypeNode = QGraphicsItem::UserType + 1,

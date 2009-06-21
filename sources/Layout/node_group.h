@@ -76,5 +76,8 @@ public:
     
     /** Merge two groups correcting borders and nodes list of resulting group */
     void merge( NodeGroup *grp);
+
+    /** Place nodes inside group */
+    void placeNodes();
 };
 #endif

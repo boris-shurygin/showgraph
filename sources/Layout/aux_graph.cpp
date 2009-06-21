@@ -54,6 +54,7 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
         Rank rank = n_item->number( ranks);
         AuxNode *node = newNode();
         node->setNode( n_item);
+        node->setY( n_item->y());
         n_item->setAuxNode( node);
         node->setWidth( n_item->boundingRect().width());
         levels[ rank]->add( node);
@@ -70,16 +71,19 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
         Rank curr_rank = pred_rank + 1;
         AuxNode *pred_node = pred->auxNode();
         AuxNode *succ_node = succ->auxNode();
+        qreal y = pred->y();
         while ( curr_rank != succ_rank)
         {
             AuxNode *node = newNode();
             newEdge( pred_node, node);
             node->setType( AUX_EDGE_CONTROL);
             node->setEdge( e_item);
+            node->setY( y);
             node->setWidth( EDGE_CONTROL_WIDTH);
             levels[ curr_rank]->add( node);
             curr_rank++;
             pred_node = node;
+            y+=RANK_SPACING;
         }
         newEdge( pred_node, succ_node);
     }
