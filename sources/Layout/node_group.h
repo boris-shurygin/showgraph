@@ -12,8 +12,8 @@
 class NodeGroup
 {
     QList< AuxNode *> node_list;
-    double border_left;
-    double border_right;
+    qreal border_left;
+    qreal border_right;
     float group_weight;
 public:
     inline void init()
@@ -35,6 +35,14 @@ public:
     {
         return border_right;
     }
+    inline void setLeft( qreal pos)
+    {
+        border_left = pos;
+    }
+    inline void setRight( qreal pos)
+    {
+        border_right = pos;
+    }
     QList<AuxNode *> nodes() const
     {
         return node_list;
@@ -55,6 +63,7 @@ public:
     {
         init();
     }
+
     /** Constructor of group from a node */
     NodeGroup( AuxNode *n, GraphDir dir);
 
@@ -64,13 +73,8 @@ public:
         return !( left() > grp->right() 
                   || right() < grp->left());
     }
-
-    void merge( NodeGroup *grp)
-    {
-        // Add nodes from group on the left
-        node_list += grp->nodes();
-
-        // Recalculate border coordinates
-    }
+    
+    /** Merge two groups correcting borders and nodes list of resulting group */
+    void merge( NodeGroup *grp);
 };
 #endif

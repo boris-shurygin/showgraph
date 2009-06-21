@@ -113,9 +113,7 @@ void AuxGraph::arrangeHorizontally()
             }
         }
     } 
-//#ifdef LAYOUT
-    if (0)
-    {
+
     for ( int i = 0; i < levels.size(); i++)
     {
         Level* level = levels[ i];
@@ -124,12 +122,16 @@ void AuxGraph::arrangeHorizontally()
         foreach ( AuxNode* node, nodes)
         {
             NodeGroup* group = new NodeGroup( node, GRAPH_DIR_DOWN);
+            groups.push_back( group);
         }
-        QList< NodeGroup *>::iterator it;
+        QList< NodeGroup *>::iterator it = groups.begin();
+
+        /** Sort groups with respect to their coordinates */
+
         /**
          * For each group
          */
-        while( 1)
+        while( groups.count())
         {
             /*
              * 1. Look at the group to the right and left and see they interleave
@@ -151,6 +153,7 @@ void AuxGraph::arrangeHorizontally()
                     groups.erase( it_left);
                     grp->merge( left_grp);
                     no_merge = false;
+                    delete ( left_grp);
                 }
             }
             /** Group to the right */
@@ -162,6 +165,7 @@ void AuxGraph::arrangeHorizontally()
                     groups.erase( it_right);
                     grp->merge( right_grp);
                     no_merge = false;
+                    delete ( right_grp);
                 }    
             }
             /** Proceed to the next group */
@@ -171,8 +175,5 @@ void AuxGraph::arrangeHorizontally()
             if ( it == groups.end())
                 break;
         }
-        
     }
-    }
-//#endif
 }

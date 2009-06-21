@@ -36,3 +36,53 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
     border_left = center - n->width() / 2;
     border_right = center + n->width() / 2;
 }
+
+/**
+ * Merge two groups correcting borders and nodes list of resulting group
+ */
+void NodeGroup::merge( NodeGroup *grp)
+{
+    /** Add nodes from group on the left */
+    node_list += grp->nodes();
+    AuxNodeType prev_type = AUX_NODE_TYPES_NUM;
+
+    /** Recalculate border coordinates */
+    /* 1. calculate center coordinate */
+    qreal center = ( right() + left()) / 2; 
+    qreal merged_center = ( grp->right() + grp->left()) / 2; 
+    center = ( center + merged_center) / 2;
+    
+    /* 2. calculate width */
+    qreal width = 0;
+    foreach ( AuxNode* node, node_list)
+    {
+        switch ( prev_type)
+        {
+            case AUX_NODE_SIMPLE:
+                if ( node->type() == AUX_NODE_SIMPLE)
+                {
+                    width += NODE_NODE_MARGIN;
+                } else
+                {
+                    width += NODE_CONTROL_MARGIN;
+                }
+                break;
+            case AUX_EDGE_CONTROL:
+                if ( node->type() == AUX_NODE_SIMPLE)
+                {
+                    width += NODE_CONTROL_MARGIN;
+                } else
+                {
+                    width += CONTROL_CONTROL_MARGIN;
+                }
+                break;
+            case AUX_NODE_TYPES_NUM:
+                break;
+        }
+        width += node->width();
+
+        /* 3. set borders */
+        setLeft( center - width / 2);
+        setRight( center + width / 2 );
+    }
+}
