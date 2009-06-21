@@ -55,6 +55,7 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
         AuxNode *node = newNode();
         node->setNode( n_item);
         n_item->setAuxNode( node);
+        node->setWidth( n_item->boundingRect().width());
         levels[ rank]->add( node);
     }
     /** Create edges and additional nodes for representation of edge controls */
@@ -75,7 +76,7 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
             newEdge( pred_node, node);
             node->setType( AUX_EDGE_CONTROL);
             node->setEdge( e_item);
-
+            node->setWidth( EDGE_CONTROL_WIDTH);
             levels[ curr_rank]->add( node);
             curr_rank++;
             pred_node = node;
