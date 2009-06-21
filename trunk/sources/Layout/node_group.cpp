@@ -32,7 +32,11 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
         sum+=e->node( rdir)->x();
     }
     /** Barycenter heuristic */
-    double center = sum / num_peers;
+    double center = 0;
+    if ( num_peers > 0)
+    {
+        center = sum / num_peers;
+    }
     border_left = center - n->width() / 2;
     border_right = center + n->width() / 2;
 }
@@ -56,33 +60,42 @@ void NodeGroup::merge( NodeGroup *grp)
     qreal width = 0;
     foreach ( AuxNode* node, node_list)
     {
-        switch ( prev_type)
-        {
-            case AUX_NODE_SIMPLE:
-                if ( node->type() == AUX_NODE_SIMPLE)
-                {
-                    width += NODE_NODE_MARGIN;
-                } else
-                {
-                    width += NODE_CONTROL_MARGIN;
-                }
-                break;
-            case AUX_EDGE_CONTROL:
-                if ( node->type() == AUX_NODE_SIMPLE)
-                {
-                    width += NODE_CONTROL_MARGIN;
-                } else
-                {
-                    width += CONTROL_CONTROL_MARGIN;
-                }
-                break;
-            case AUX_NODE_TYPES_NUM:
-                break;
-        }
+        width += node->spacing( prev_type);
         width += node->width();
+        prev_type = node->type();
+    }
 
-        /* 3. set borders */
-        setLeft( center - width / 2);
-        setRight( center + width / 2 );
+    /* 3. set borders */
+    setLeft( center - width / 2);
+    setRight( center + width / 2 );
+}
+
+/**
+ * Place nodes withing the group
+ */
+void NodeGroup::placeNodes()
+{
+    AuxNodeType prev_type = AUX_NODE_TYPES_NUM;
+    
+    qreal curr_left = left();
+    out("Node placement: from %d to %d", left(), right());
+
+    foreach ( AuxNode* node, node_list)
+    {
+        out("Node %d", node->id()); 
+        curr_left += node->spacing( prev_type);
+        if( node->isSimple())
+        {
+            node->node()->setPos( curr_left, node->y());
+        } else if ( node->isEdgeControl())
+        {
+            EdgeItem* edge = node->edge();
+            EdgeSegment* seg = edge->dstCtrl()->pred();
+            EdgeControl* ctrl = seg->addControl( QPointF( curr_left, node->y()));
+            ctrl->setFixed();
+            edge->adjust();
+        }
+        curr_left += node->width();
+        prev_type = node->type();
     }
 }
