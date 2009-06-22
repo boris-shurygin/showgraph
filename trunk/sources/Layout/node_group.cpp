@@ -78,21 +78,29 @@ void NodeGroup::placeNodes()
     AuxNodeType prev_type = AUX_NODE_TYPES_NUM;
     
     qreal curr_left = left();
-    out("Node placement: from %e to %e", left(), right());
+    //out("Node placement: from %e to %e", left(), right());
 
     foreach ( AuxNode* node, node_list)
     {
-        out("Node %d", node->id()); 
+        //out("Node %d", node->id()); 
         curr_left += node->spacing( prev_type);
         node->setX( curr_left);
         if( node->isSimple())
         {
-            node->node()->setPos( curr_left, node->y());
+            node->node()->setPos( curr_left, node->y() - node->height() / 2 );
         } else if ( node->isEdgeControl())
         {
             EdgeItem* edge = node->edge();
-            EdgeSegment* seg = edge->dstCtrl()->pred();
-            EdgeControl* ctrl = seg->addControl( QPointF( curr_left, node->y()));
+            EdgeSegment* seg;
+            
+            if ( edge->isInverted())
+            {
+                seg = edge->srcCtrl()->succ();
+            } else
+            {
+                seg = edge->dstCtrl()->pred();
+            }
+            EdgeControl* ctrl = seg->addControl( QPointF( curr_left, node->y() - node->height() / 2));
             ctrl->setFixed();
             edge->adjust();
         }

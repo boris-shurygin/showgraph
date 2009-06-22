@@ -57,6 +57,7 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
         node->setY( n_item->y());
         n_item->setAuxNode( node);
         node->setWidth( n_item->boundingRect().width());
+        node->setHeight( n_item->boundingRect().height());
         levels[ rank]->add( node);
     }
     /** Create edges and additional nodes for representation of edge controls */
@@ -64,8 +65,19 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
           isNotNullP( e_item);
           e_item = e_item->nextEdge())
     {
-        NodeItem* pred = e_item->pred();
-        NodeItem* succ = e_item->succ();
+        NodeItem* pred;
+        NodeItem* succ;
+
+        if ( e_item->isInverted())
+        {
+            pred = e_item->succ();
+            succ = e_item->pred();
+        } else
+        {
+            pred = e_item->pred();
+            succ = e_item->succ();
+        }
+
         Rank pred_rank = pred->number( ranks);
         Rank succ_rank = succ->number( ranks);
         Rank curr_rank = pred_rank + 1;
@@ -80,6 +92,7 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
             node->setEdge( e_item);
             node->setY( y);
             node->setWidth( EDGE_CONTROL_WIDTH);
+            node->setHeight( EDGE_CONTROL_HEIGHT);
             levels[ curr_rank]->add( node);
             curr_rank++;
             pred_node = node;
