@@ -29,7 +29,7 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
           e = e->nextEdgeInDir( rdir))
     {
         num_peers++;
-        sum+=e->node( rdir)->x();
+        sum+= ( e->node( rdir)->x() + ( e->node( rdir)->width() / 2));
     }
     /** Barycenter heuristic */
     double center = 0;
@@ -78,12 +78,13 @@ void NodeGroup::placeNodes()
     AuxNodeType prev_type = AUX_NODE_TYPES_NUM;
     
     qreal curr_left = left();
-    out("Node placement: from %d to %d", left(), right());
+    out("Node placement: from %e to %e", left(), right());
 
     foreach ( AuxNode* node, node_list)
     {
         out("Node %d", node->id()); 
         curr_left += node->spacing( prev_type);
+        node->setX( curr_left);
         if( node->isSimple())
         {
             node->node()->setPos( curr_left, node->y());

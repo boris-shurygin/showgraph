@@ -71,7 +71,7 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
         Rank curr_rank = pred_rank + 1;
         AuxNode *pred_node = pred->auxNode();
         AuxNode *succ_node = succ->auxNode();
-        qreal y = pred->y();
+        qreal y = pred->y() + RANK_SPACING;
         while ( curr_rank != succ_rank)
         {
             AuxNode *node = newNode();
