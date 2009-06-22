@@ -18,6 +18,7 @@ const qreal NODE_NODE_MARGIN = 30;
 const qreal NODE_CONTROL_MARGIN = 5;
 const qreal CONTROL_CONTROL_MARGIN = 5;
 const qreal EDGE_CONTROL_WIDTH = 2;
+const qreal EDGE_CONTROL_HEIGHT = 5;
 
 #include "aux_graph.h"
 #include "node_group.h"
