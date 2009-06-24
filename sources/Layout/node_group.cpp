@@ -7,6 +7,15 @@
 #include "layout_iface.h"
 
 /**
+ * Compare orders of nodes
+ */
+bool compareBc( AuxNode* node1,
+                AuxNode* node2)
+{
+    return ( node1->bc() < node2->bc());
+}
+
+/**
  * Constructor of group from a node.
  * Coordinates are computed with respect to pass direction
  */
@@ -37,6 +46,7 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
     {
         center = sum / num_peers;
     }
+    n->setBc( center);
     border_left = center - n->width() / 2;
     border_right = center + n->width() / 2;
 }
@@ -60,6 +70,9 @@ void NodeGroup::merge( NodeGroup *grp)
     qreal width = 0;
     int num = 0;
     qreal barycenter = 0;
+    
+    qSort( node_list.begin(), node_list.end(), compareBc);
+    
     foreach ( AuxNode* node, node_list)
     {
         width += node->spacing( prev_type);

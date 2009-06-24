@@ -33,6 +33,7 @@ class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
     double priv_y;
     double priv_height;
     double priv_width;
+    qreal barycenter;
     int priv_priority;
     Level * priv_level;
     int priv_order;
@@ -77,6 +78,14 @@ public:
     inline void setY( double y)
     {
         priv_y = y;
+    }
+    inline qreal bc() const
+    {
+        return barycenter;
+    }
+    inline void setBc( qreal center)
+    {
+        barycenter = center;
     }
     /** Set Height */
     inline void setHeight( double h) 
