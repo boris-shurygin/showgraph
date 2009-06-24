@@ -1,4 +1,4 @@
 #summary Index
 
 For now you can only take a look at [Schedule Features in implementation] list
-
+http://code.google.com/p/showgraph/source/browse/wiki/screenshot.png
