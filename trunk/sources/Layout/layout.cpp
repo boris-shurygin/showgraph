@@ -202,34 +202,6 @@ void AuxGraph::reduceCrossings()
  */
 void AuxGraph::arrangeHorizontally()
 {
-#if 0
-    for ( int i = 0; i < levels.size(); i++)
-    {
-        Level* level = levels[ i];
-        QList< AuxNode*> nodes = level->nodes();
-        qreal x = 0;
-        qreal y = 0;
-        foreach ( AuxNode* node, nodes)
-        {
-            if( node->isSimple())
-            {
-                node->node()->setPos( x, node->node()->y());
-                y = node->node()->y();
-                x = x + node->node()->boundingRect().width() + 20;
-                
-            } else if ( node->isEdgeControl())
-            {
-                EdgeItem* edge = node->edge();
-                EdgeSegment* seg = edge->dstCtrl()->pred();
-                EdgeControl* ctrl = seg->addControl( QPointF(x, y));
-                ctrl->setFixed();
-                edge->adjust();
-                x = x + 10;
-            }
-        }
-    } 
-#endif
-    
     for ( int i = 0; i < levels.size(); i++)
     {
         levels[ i]->arrangeNodes();

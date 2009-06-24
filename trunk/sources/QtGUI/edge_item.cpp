@@ -201,6 +201,18 @@ void EdgeItem::initControls()
     adjust();
 }
 
+void EdgeItem::removeControls()
+{
+    foreach( EdgeControl* control, controls)
+    {
+        if ( control != srcControl
+             && control != dstControl)
+        {
+            control->prepareRemove();
+        }
+    }   
+}
+
 void EdgeItem::showControls()
 {
     foreach( EdgeControl* control, controls)
