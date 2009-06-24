@@ -177,7 +177,7 @@ private:
         scene()->removeItem( this);
         foreach( EdgeControl* control, controls)
         {
-            delete control;
+            control->prepareRemove();
         }
     }
     friend class GraphT< GraphView, NodeItem, EdgeItem>;
@@ -238,6 +238,7 @@ public:
     
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void initControls();
+    void removeControls();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);

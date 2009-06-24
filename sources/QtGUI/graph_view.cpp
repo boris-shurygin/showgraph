@@ -332,6 +332,18 @@ Numeration GraphView::rankNodes()
  */
 void GraphView::doLayout()
 {
+    /**
+     * 0. Remove all edge controls
+     * FIXME: This is a stub. we should not delete controls,
+     *        instead we should reuse them and create new ones only if necessary
+     */
+    for ( EdgeItem *e = firstEdge(); isNotNullP( e); e = e->nextEdge())
+    {    
+        e->hideControls();
+        e->removeControls();
+        e->setMode( EdgeItem::ModeShow);
+    }
+
     /** 1. Perfrom edge classification */
     classifyEdges();
     

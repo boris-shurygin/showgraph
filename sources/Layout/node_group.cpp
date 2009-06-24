@@ -58,16 +58,23 @@ void NodeGroup::merge( NodeGroup *grp)
     
     /* 2. calculate width */
     qreal width = 0;
+    int num = 0;
+    qreal barycenter = 0;
     foreach ( AuxNode* node, node_list)
     {
         width += node->spacing( prev_type);
+        barycenter += width + node->width() / 2; 
         width += node->width();
         prev_type = node->type();
+        num++;
     }
+    barycenter = barycenter / num;
 
     /* 3. set borders */
-    setLeft( center - width / 2);
-    setRight( center + width / 2 );
+    setLeft( center - barycenter);
+    setRight( left() + width);
+    //out("Width %e, center %e, barycenter %e", width, center, barycenter);
+
 }
 
 /**
