@@ -223,6 +223,11 @@ void AuxGraph::arrangeHorizontally()
     /* Ascending pass */
     for ( int i = levels.size() - 1; i >= 0; i--)
     {
-        levels[ i]->arrangeNodes( GRAPH_DIR_UP, true, false);
+        levels[ i]->arrangeNodes( GRAPH_DIR_UP, false, false);
+    }
+    /* Final pass */
+    for ( int i = 0; i < levels.size(); i++)
+    {
+        levels[ i]->arrangeNodes( GRAPH_DIR_DOWN, true, false);
     }
 }
