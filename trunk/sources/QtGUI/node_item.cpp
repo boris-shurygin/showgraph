@@ -96,13 +96,16 @@ QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
 {
     EdgeItem *edge = NULL;
 
-    for ( edge = firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
+    if ( change != QGraphicsItem::ItemSceneChange)
     {
-        edge->adjust();
-    }
-    for ( edge = firstPred(); isNotNullP( edge); edge = edge->nextPred())
-    {
-        edge->adjust();
+        for ( edge = firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
+        {
+            edge->adjust();
+        }
+        for ( edge = firstPred(); isNotNullP( edge); edge = edge->nextPred())
+        {
+            edge->adjust();
+        }
     }
     return QGraphicsTextItem::itemChange(change, value);
 }

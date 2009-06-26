@@ -17,7 +17,7 @@ GraphView::GraphView(): dst( 0, 0), src( 0, 0), createEdge( false)
     setRenderHint(QPainter::Antialiasing);
     setTransformationAnchor(AnchorUnderMouse);
     setResizeAnchor(AnchorViewCenter);
-    setMinimumSize(400, 400);
+    setMinimumSize(200, 200);
     setWindowTitle(tr("ShowGraph"));
     tmpSrc = NULL;
 
