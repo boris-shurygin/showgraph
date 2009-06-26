@@ -20,7 +20,8 @@ bool compareBc( AuxNode* node1,
  * Coordinates are computed with respect to pass direction
  */
 NodeGroup::NodeGroup( AuxNode *n,   // Parent node
-                      GraphDir dir) // Pass direction
+                      GraphDir dir, // Pass direction
+                      bool first_pass) // If this is the first run
                       : node_list()
 {
     init();
@@ -45,6 +46,9 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
     if ( num_peers > 0)
     {
         center = sum / num_peers;
+    } else if ( !first_pass)
+    {
+        center = n->x() + n->width() / 2;
     }
     n->setBc( center);
     border_left = center - n->width() / 2;
@@ -93,7 +97,24 @@ void NodeGroup::merge( NodeGroup *grp)
 /**
  * Place nodes withing the group
  */
-void NodeGroup::placeNodes( GraphDir dir)
+void NodeGroup::placeNodes()
+{
+    AuxNodeType prev_type = AUX_NODE_TYPES_NUM;
+    
+    qreal curr_left = left();
+    foreach ( AuxNode* node, node_list)
+    {
+        curr_left += node->spacing( prev_type);
+        node->setX( curr_left);
+        curr_left += node->width();
+        prev_type = node->type();
+    }
+}
+
+/**
+ * Place nodes withing the group
+ */
+void NodeGroup::placeNodesFinal( GraphDir dir)
 {
     AuxNodeType prev_type = AUX_NODE_TYPES_NUM;
     

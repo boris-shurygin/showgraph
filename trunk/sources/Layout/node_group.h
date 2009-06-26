@@ -65,7 +65,7 @@ public:
     }
 
     /** Constructor of group from a node */
-    NodeGroup( AuxNode *n, GraphDir dir);
+    NodeGroup( AuxNode *n, GraphDir dir, bool first_pass);
 
     /** Multiple group actions */
     inline bool interleaves( NodeGroup *grp) const
@@ -78,6 +78,8 @@ public:
     void merge( NodeGroup *grp);
 
     /** Place nodes inside group */
-    void placeNodes( GraphDir dir);
+    void placeNodes();
+    /** Place nodes and adjust the view */
+    void placeNodesFinal( GraphDir dir);
 };
 #endif
