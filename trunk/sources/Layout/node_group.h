@@ -78,6 +78,6 @@ public:
     void merge( NodeGroup *grp);
 
     /** Place nodes inside group */
-    void placeNodes();
+    void placeNodes( GraphDir dir);
 };
 #endif

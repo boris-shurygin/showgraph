@@ -296,7 +296,7 @@ public:
     Level(): level_rank( 0), node_list(){};
     Level( Rank r): level_rank( r), node_list(){};
     
-    void arrangeNodes();
+    void arrangeNodes( GraphDir dir, bool commit_placement);
     void sortNodesByOrder();
 
     inline Rank rank() const

@@ -45,12 +45,12 @@ void Level::sortNodesByOrder()
  * These nodes are placed within group borders. If two groups interleave they are merged.
  * Arrangement is performed iteratively starting with groups that have one node each.
  */
-void Level::arrangeNodes()
+void Level::arrangeNodes( GraphDir dir, bool commit_placement)
 {
     QList< NodeGroup *> list;
     foreach ( AuxNode* node, node_list)
     {
-        NodeGroup* group = new NodeGroup( node, GRAPH_DIR_DOWN);
+        NodeGroup* group = new NodeGroup( node, dir);
         list.push_back( group);
     }
     /** Sort groups with respect to their coordinates */
@@ -112,12 +112,15 @@ void Level::arrangeNodes()
             break;
     }
 
-    /** Assign coordinates to nodes */
-    for ( it = groups.begin(); it != groups.end(); it++)
+    if ( commit_placement)
     {
-        NodeGroup *grp = *it;
-        grp->placeNodes();
-        delete grp;
+        /** Assign coordinates to nodes */
+        for ( it = groups.begin(); it != groups.end(); it++)
+        {
+            NodeGroup *grp = *it;
+            grp->placeNodes( dir);
+            delete grp;
+        }
     }
 }
 
@@ -202,8 +205,25 @@ void AuxGraph::reduceCrossings()
  */
 void AuxGraph::arrangeHorizontally()
 {
-    for ( int i = 0; i < levels.size(); i++)
+    if ( levels.size() > 1)
     {
-        levels[ i]->arrangeNodes();
+        /* Descending pass */
+        for ( int i = 0; i < levels.size(); i++)
+        {
+            levels[ i]->arrangeNodes( GRAPH_DIR_DOWN, (i == levels.size() - 1));
+        }
+        
+        /* Ascending pass */
+        for ( int i = levels.size() - 2; i >= 0; i--)
+        {
+            levels[ i]->arrangeNodes( GRAPH_DIR_UP, true);
+        }
+    } else
+    {
+        /* Descending pass */
+        for ( int i = 0; i < levels.size(); i++)
+        {
+            levels[ i]->arrangeNodes( GRAPH_DIR_DOWN, true);
+        }    
     }
 }
