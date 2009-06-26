@@ -45,12 +45,12 @@ void Level::sortNodesByOrder()
  * These nodes are placed within group borders. If two groups interleave they are merged.
  * Arrangement is performed iteratively starting with groups that have one node each.
  */
-void Level::arrangeNodes( GraphDir dir, bool commit_placement)
+void Level::arrangeNodes( GraphDir dir, bool commit_placement, bool first_pass)
 {
     QList< NodeGroup *> list;
     foreach ( AuxNode* node, node_list)
     {
-        NodeGroup* group = new NodeGroup( node, dir);
+        NodeGroup* group = new NodeGroup( node, dir, first_pass);
         list.push_back( group);
     }
     /** Sort groups with respect to their coordinates */
@@ -118,7 +118,16 @@ void Level::arrangeNodes( GraphDir dir, bool commit_placement)
         for ( it = groups.begin(); it != groups.end(); it++)
         {
             NodeGroup *grp = *it;
-            grp->placeNodes( dir);
+            grp->placeNodesFinal( dir);
+            delete grp;
+        }
+    } else 
+    {
+        /** Assign coordinates to nodes */
+        for ( it = groups.begin(); it != groups.end(); it++)
+        {
+            NodeGroup *grp = *it;
+            grp->placeNodes();
             delete grp;
         }
     }
@@ -205,25 +214,15 @@ void AuxGraph::reduceCrossings()
  */
 void AuxGraph::arrangeHorizontally()
 {
-    if ( levels.size() > 1)
+    /* Descending pass */
+    for ( int i = 0; i < levels.size(); i++)
     {
-        /* Descending pass */
-        for ( int i = 0; i < levels.size(); i++)
-        {
-            levels[ i]->arrangeNodes( GRAPH_DIR_DOWN, (i == levels.size() - 1));
-        }
-        
-        /* Ascending pass */
-        for ( int i = levels.size() - 2; i >= 0; i--)
-        {
-            levels[ i]->arrangeNodes( GRAPH_DIR_UP, true);
-        }
-    } else
+        levels[ i]->arrangeNodes( GRAPH_DIR_DOWN, false, true);
+    }
+    
+    /* Ascending pass */
+    for ( int i = levels.size() - 1; i >= 0; i--)
     {
-        /* Descending pass */
-        for ( int i = 0; i < levels.size(); i++)
-        {
-            levels[ i]->arrangeNodes( GRAPH_DIR_DOWN, true);
-        }    
+        levels[ i]->arrangeNodes( GRAPH_DIR_UP, true, false);
     }
 }
