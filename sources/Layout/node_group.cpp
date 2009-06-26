@@ -93,7 +93,7 @@ void NodeGroup::merge( NodeGroup *grp)
 /**
  * Place nodes withing the group
  */
-void NodeGroup::placeNodes()
+void NodeGroup::placeNodes( GraphDir dir)
 {
     AuxNodeType prev_type = AUX_NODE_TYPES_NUM;
     
@@ -113,13 +113,26 @@ void NodeGroup::placeNodes()
             EdgeItem* edge = node->edge();
             EdgeSegment* seg;
             
-            if ( edge->isInverted())
+            if ( dir == GRAPH_DIR_DOWN)
             {
-                seg = edge->srcCtrl()->succ();
+                if ( edge->isInverted())
+                {
+                    seg = edge->srcCtrl()->succ();
+                } else
+                {
+                    seg = edge->dstCtrl()->pred();
+                }
             } else
             {
-                seg = edge->dstCtrl()->pred();
+                if ( edge->isInverted())
+                {
+                    seg = edge->dstCtrl()->pred();
+                } else
+                {
+                    seg = edge->srcCtrl()->succ();
+                }
             }
+                
             EdgeControl* ctrl = seg->addControl( QPointF( curr_left, node->y() - node->height() / 2));
             ctrl->setFixed();
             edge->adjust();

@@ -143,14 +143,19 @@ void EdgeSegment::paint( QPainter *painter,
     path.cubicTo( cp1, cp2, dstP);
     
     // Select the pen
-    if( isNotNullP( edge) && edge->mode() == EdgeItem::ModeEdit)
+    if ( edge->isInverted())
     {
-        painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter->setPen(QPen( Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     } else
     {
-        painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    }
-    
+        if( isNotNullP( edge) && edge->mode() == EdgeItem::ModeEdit)
+        {
+            painter->setPen(QPen( Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        } else
+        {
+            painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        }    
+    } 
     stroker.setWidth( 4);
     
     painter->drawPath(path);
