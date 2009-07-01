@@ -161,6 +161,13 @@ void GraphView::classifyEdges()
     Marker doneMarker = newMarker(); // Marker for nodes that are finished
     QStack< DfsStepInfo *> stack;
     
+    for ( EdgeItem* e=firstEdge();
+          isNotNullP( e);
+          e = e->nextEdge())
+    {
+        e->setBack( false);   
+    }
+
     /* Fill stack with nodes that have no predecessors */
     for ( NodeItem *n = firstNode();
           isNotNullP( n);
@@ -288,6 +295,7 @@ Numeration GraphView::rankNodes()
 
         n->setNumber( ranking, rank);
         /* FIXME: just for debugging */
+        out( "%llu node rank is %u", n->id(), rank);
         n->setPos( n->pos().x(), rank * RANK_SPACING);
 
         /* Traversal continuation */
