@@ -5,6 +5,9 @@
 #ifndef FE_IFACE_H
 #define FE_IFACE_H
 
+#include <QMessageBox>
+#include <QTextStream>
+#include "../Graph/graph_iface.h"
 #include "parser.h"
 #include "fe_gcc.h"
 

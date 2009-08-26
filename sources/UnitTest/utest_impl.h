@@ -6,6 +6,7 @@
 #include "../Graph/graph_iface.h"
 #include "../Utils/utils_iface.h"
 #include "../QtGUI/gui_iface.h"
+#include "../Frontend/fe_iface.h"
 
 /**
  * Graph library unit testing
@@ -16,3 +17,8 @@ bool uTestGraph();
  * UnitTesting of GUI
  */
 bool uTestGUI(int argc, char **argv);
+
+/**
+ * Frontend unit testing
+ */
+bool uTestFE();

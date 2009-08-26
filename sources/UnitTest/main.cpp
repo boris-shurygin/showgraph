@@ -10,6 +10,10 @@ int main(int argc, char **argv)
     if ( !uTestGraph())
         return -1;
 
+    //Test frontend
+    if ( !uTestFE())
+        return -1;
+    
     //Test graph package
     if ( uTestGUI(argc, argv) != 0)
         return -1;

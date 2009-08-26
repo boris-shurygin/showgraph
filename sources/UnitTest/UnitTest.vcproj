@@ -172,6 +172,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath=".\fe_utest.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\graph_utest.cpp"
 			>
 		</File>
