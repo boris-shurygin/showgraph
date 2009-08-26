@@ -155,7 +155,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\fe_gcc.c"
+				RelativePath=".\fe_gcc.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\parser.cpp"
 				>
 			</File>
 		</Filter>
