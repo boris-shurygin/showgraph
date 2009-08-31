@@ -37,8 +37,18 @@ Parser::convert2XML(QString xmlname)
     }
     /** Read file line by line */
     QTextStream in( &file);
+    QString line;
     do
     {
         curr_line = in.readLine();
+        if ( !nextLine( curr_line))
+        {
+            line.append( curr_line);
+        } else
+        {
+            if ( !line.isNull())
+                parseLine( line);
+            line = curr_line;
+        }
     } while ( !curr_line.isNull());
 }
