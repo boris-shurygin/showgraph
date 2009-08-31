@@ -17,14 +17,36 @@ bool uTestFE()
     }
     QTextStream outstream( &example_file);
     outstream << "Example file for parsing\n" 
-              << "Example file for parsing\n"
-              << "Example file for parsing\n"
-              << "Example file for parsing\n"
-              << "Example file for parsing\n";
+              << "newline\n"
+              << "  continue\n"
+              << "newline\n"
+              << "newline\n";
     example_file.close();
     
     /** Test generic parser */
-    Parser parser( example_name);
-    parser.convert2XML( QString( "xml.xml"));
+    {
+        class TestParser: public Parser
+        {
+        public:
+            TestParser( QString str): Parser( str)
+            {}
+
+            bool nextLine( QString line)
+            {
+                QRegExp rx("cont");
+                if ( rx.indexIn( line) != -1)
+                    return false;
+                return true;
+            }
+            void parseLine( QString line)
+            {
+                QTextStream stream( stdout);
+                stream << line << endl;
+            }
+        };
+
+        TestParser parser( example_name);
+        parser.convert2XML( QString( "xml.xml"));
+    }
     return true;
 }

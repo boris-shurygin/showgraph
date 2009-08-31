@@ -15,8 +15,14 @@ class Parser
     QFile file;
     QString curr_line;
 protected: 
-    /*virtual bool nextLine();
-    virtual void parseLine();*/
+    virtual bool nextLine( QString line)
+    {
+        return true;
+    }
+    virtual void parseLine( QString line)
+    {
+        return;
+    }
 public:
     Parser( QString filename);
     ~Parser();

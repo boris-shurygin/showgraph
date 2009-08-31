@@ -3,6 +3,7 @@
  * Copyright (C) 2009  Boris Shurygin
  */
 #include <stdio.h>
+#include <QRegExp>
 #include "../Graph/graph_iface.h"
 #include "../Utils/utils_iface.h"
 #include "../QtGUI/gui_iface.h"
