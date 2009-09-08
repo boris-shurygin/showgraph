@@ -180,6 +180,10 @@
 				RelativePath=".\parser.h"
 				>
 			</File>
+			<File
+				RelativePath=".\symtab.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
