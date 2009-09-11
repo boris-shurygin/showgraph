@@ -9,7 +9,13 @@
 enum SymType
 {
     /** Any symbol*/
-    GENERIC_SYMBOL,
+    SYM_GENERIC,
+
+    /** Node */
+    SYM_NODE,
+
+    /** Edge */
+    SYM_EDGE,
 
     /* Number of types */
     SYM_TYPES_NUM
@@ -23,18 +29,10 @@ class SymObj
     /** Symbolic name */
     QString sym_name; 
 
-    /** Object Type */
-    SymType sym_type;
-
 public:
     /** Full Constructor */
-    SymObj(QString name, SymType tp): sym_name( name), sym_type( tp){};
+    SymObj( QString name): sym_name( name){};
 
-    /** Access routines */
-    inline void setType( SymType tp)
-    {
-        sym_type = tp;
-    }
     inline void setName( QString name)
     {
         sym_name = name;
@@ -43,12 +41,21 @@ public:
     {
         return sym_name;
     }
-    inline SymType type() const
+    
+    virtual SymType type() const
     {
-        return sym_type;
+        return SYM_GENERIC;
     }
 };
 
-typedef QHash<QString, SymObj *> SymTab;
+/** Temporary implementation */
+class SymTab: public QHash<QString, SymObj *>
+{
+public:
+    ~SymTab()
+    {
+
+    }
+};
 
 #endif SYMTAB_H

@@ -52,6 +52,10 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
           n_item = n_item->nextNode())
     {
         Rank rank = n_item->number( ranks);
+        if ( rank == NUMBER_NO_NUM)
+        {
+            rank = 0;
+        } 
         AuxNode *node = newNode();
         node->setNode( n_item);
         node->setY( n_item->y());
@@ -67,6 +71,9 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
     {
         NodeItem* pred;
         NodeItem* succ;
+        
+        if ( e_item->pred() == e_item->succ())
+            continue;
 
         if ( e_item->isInverted())
         {
@@ -80,6 +87,14 @@ AuxGraph::AuxGraph( GraphView *graph_p): levels(), main_graph( graph_p)
 
         Rank pred_rank = pred->number( ranks);
         Rank succ_rank = succ->number( ranks);
+        if ( pred_rank == NUMBER_NO_NUM)
+        {
+            pred_rank = 0;
+        } 
+        if ( succ_rank == NUMBER_NO_NUM)
+        {
+            succ_rank = pred_rank + 1;
+        } 
         Rank curr_rank = pred_rank + 1;
         AuxNode *pred_node = pred->auxNode();
         AuxNode *succ_node = succ->auxNode();

@@ -14,7 +14,10 @@ class Parser
 {
     QFile file;
     QString curr_line;
+    
 protected: 
+    SymTab symtab;
+
     virtual bool nextLine( QString line)
     {
         return true;
@@ -27,7 +30,7 @@ public:
     Parser( QString filename);
     ~Parser();
     
-    void convert2XML( QString xmlname);
+    virtual void convert2XML( QString xmlname);
 
     inline QString curr() const
     {
