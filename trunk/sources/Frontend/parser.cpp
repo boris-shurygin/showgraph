@@ -51,4 +51,5 @@ Parser::convert2XML(QString xmlname)
             line = curr_line;
         }
     } while ( !curr_line.isNull());
+    xmlfile.close();
 }

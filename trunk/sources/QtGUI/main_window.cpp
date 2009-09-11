@@ -26,15 +26,23 @@ void MainWindow::open()
     QString fileName =
             QFileDialog::getOpenFileName(this, tr("Open graph File"),
                                          QDir::currentPath(),
-                                         tr("Graph Files ( *.xml)"));
+                                         tr("Graph XML Files ( *.xml);;All Files ( *.*)"));
     if (fileName.isEmpty())
         return;
     delete graph_view;
 
     graph_view = new GraphView();
     setCentralWidget( graph_view);
+    QRegExp rx("\\.xml$");
+    /** Not a graph description - run parser */
+    if ( rx.indexIn( fileName) == -1 )
+    {
+        TestParser parser( fileName);
+        parser.convert2XML( fileName.append(".xml"));
+    }
     QFile file(fileName);
-    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+    if (!file.open(QFile::ReadOnly | QFile::Text))
+    {
         QMessageBox::warning(this, tr("Graph Description"),
                              tr("Cannot read file %1:\n%2.")
                              .arg(fileName)

@@ -159,6 +159,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\fe_test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\parser.cpp"
 				>
 			</File>
@@ -174,6 +178,10 @@
 			</File>
 			<File
 				RelativePath=".\fe_iface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\fe_test.h"
 				>
 			</File>
 			<File

@@ -12,5 +12,6 @@
 #include "symtab.h"
 #include "parser.h"
 #include "fe_gcc.h"
+#include "fe_test.h"
 
 #endif /* #ifndef FE_IFACE_H */

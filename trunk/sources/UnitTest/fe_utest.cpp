@@ -25,10 +25,10 @@ bool uTestFE()
     
     /** Test generic parser */
     {
-        class TestParser: public Parser
+        class UTestParser: public Parser
         {
         public:
-            TestParser( QString str): Parser( str)
+            UTestParser( QString str): Parser( str)
             {}
 
             bool nextLine( QString line)
@@ -45,8 +45,13 @@ bool uTestFE()
             }
         };
 
-        TestParser parser( example_name);
+        UTestParser parser( example_name);
         parser.convert2XML( QString( "xml.xml"));
+    }
+    /** Test simple IR parser */
+    {
+        TestParser parser( "test1");
+        parser.convert2XML( QString( "test1.xml"));
     }
     return true;
 }

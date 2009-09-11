@@ -235,6 +235,9 @@ Numeration GraphView::rankNodes()
               isNotNullP( e);
               e = e->nextPred())
         {
+            if ( e->pred() == e->succ())
+                continue;
+
             if ( !e->isInverted())
                 pred_num++;
         }
@@ -242,6 +245,9 @@ Numeration GraphView::rankNodes()
               isNotNullP( e);
               e = e->nextSucc())
         {
+            if ( e->pred() == e->succ())
+                continue;
+
             if ( e->isInverted())
                 pred_num++;
         }
