@@ -6,7 +6,7 @@
 #ifndef NODE_W_H
 #define NODE_W_H
 
-class NodeItem: public QGraphicsTextItem, public NodeT< GraphView, NodeItem, EdgeItem>
+class NodeItem: public AuxNode, public QGraphicsTextItem
 {    
     QList< AuxNode *> aux_nodes;
     AuxNode *aux_node;
@@ -23,15 +23,14 @@ class NodeItem: public QGraphicsTextItem, public NodeT< GraphView, NodeItem, Edg
     }
 
     /** We can't create nodes separately, do it through newNode method of graph */
-    NodeItem( GraphView *graph_p, int _id):
-        NodeT< GraphView, NodeItem, EdgeItem>( graph_p, _id)
+    NodeItem( GraphView *graph_p, int _id): AuxNode( ( AuxGraph *)graph_p, _id)
     {
         SetInitFlags();
     }
 
     /** Contructor of node with specified position */
     NodeItem( GraphView *graph_p, int _id, QPointF _pos):
-        NodeT< GraphView, NodeItem, EdgeItem>( graph_p, _id)
+        AuxNode( ( AuxGraph *)graph_p, _id)
     {
         SetInitFlags();
         setPos( _pos);
@@ -40,7 +39,7 @@ class NodeItem: public QGraphicsTextItem, public NodeT< GraphView, NodeItem, Edg
     friend class GraphT< GraphView, NodeItem, EdgeItem>;
     friend class GraphView;
 public:
-    ~NodeItem();
+    virtual ~NodeItem();
 
     enum {Type = TypeNode};
 
@@ -77,6 +76,37 @@ public:
     inline AuxNode *auxNode() const
     {
         return aux_node;
+    }
+
+    /** Graph part */
+    GraphView * graph() const;
+    inline NodeItem* nextNode()
+    {
+        return static_cast< NodeItem*>( AuxNode::nextNode());
+    }
+    inline void AddEdgeInDir( EdgeItem *edge, GraphDir dir)
+    {
+        AuxNode::AddEdgeInDir( (AuxEdge *)edge, dir);
+    }
+    inline void AddPred( EdgeItem *edge)
+    {
+        AddEdgeInDir( edge, GRAPH_DIR_UP);
+    }
+    inline void AddSucc( EdgeItem *edge) 
+    {
+        AddEdgeInDir( edge, GRAPH_DIR_DOWN);
+    }
+    inline EdgeItem* firstEdgeInDir( GraphDir dir)
+    {
+        return static_cast< EdgeItem*>( AuxNode::first_edge[ dir]);
+    }
+    inline EdgeItem* firstSucc()
+    {
+        return firstEdgeInDir( GRAPH_DIR_DOWN);
+    }
+    inline EdgeItem* firstPred()
+    {
+        return firstEdgeInDir( GRAPH_DIR_UP);
     }
 };
 

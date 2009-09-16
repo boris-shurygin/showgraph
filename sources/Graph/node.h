@@ -22,17 +22,16 @@ private:
     GraphUid uid; // Unique id
     Graph * graph_p;// Pointer to graph
     NodeListIt graph_it;//Item of graph's list
-    
+protected:    
     //Lists of edges and iterators for them
     Edge *first_edge[ GRAPH_DIRS_NUM];
 
-protected:
     NodeListIt* GetGraphIt()
     {
         return &graph_it;
     }
     /** We can't create nodes separately, do it through newNode method of graph */
-    NodeT( Graph *_graph_p, GraphUid _id):uid(_id), graph_p( _graph_p), graph_it()
+    NodeT( Graph *_graph_p, GraphUid _id):uid(_id), graph_p( _graph_p), graph_it(), element()
     {
         first_edge[ GRAPH_DIR_UP] = NULL;
         first_edge[ GRAPH_DIR_DOWN] = NULL;
@@ -48,7 +47,7 @@ public:
     /**
      * Destructor
      */
-    ~NodeT();
+    virtual ~NodeT();
     
     inline QDomElement elem() const
     {

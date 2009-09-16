@@ -31,8 +31,8 @@ enum {
     TypeEdgeControl = QGraphicsItem::UserType + 3
 };
 
-#include "node_item.h"
 #include "edge_item.h"
+#include "node_item.h"
 #include "graph_view.h"
 #include "main_window.h"
 

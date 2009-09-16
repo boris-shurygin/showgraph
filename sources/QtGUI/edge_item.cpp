@@ -6,7 +6,14 @@
 #include "gui_impl.h"
 #include <QVector>
 
-void EdgeItem::adjust()
+NodeItem * 
+EdgeItem::node( GraphDir dir) const 
+{
+    return static_cast< NodeItem *>(AuxEdge::node( dir));
+}
+
+void
+EdgeItem::adjust()
 {
     sourcePoint = mapFromItem( pred(), pred()->boundingRect().center());
     destPoint = mapFromItem( succ(), succ()->boundingRect().center());
@@ -251,7 +258,7 @@ EdgeItem::updateElement()
     e = new_e;
 
     /* Base class method call to print generic edge properties */
-    EdgeT< GraphView, NodeItem, EdgeItem>::updateElement();
+    AuxEdge::updateElement();
     EdgeControl* src_ctrl = srcCtrl();
     EdgeControl* dst_ctrl = dstCtrl();
     
@@ -275,7 +282,7 @@ EdgeItem::updateElement()
 void
 EdgeItem::readFromElement( QDomElement e)
 {
-    EdgeT< GraphView, NodeItem, EdgeItem>::readFromElement( e); // Base class method
+    AuxEdge::readFromElement( e); // Base class method
     QDomNode n = e.firstChild();
     QVector< EdgeControl *> points;
     points.resize( e.attribute("points_num").toUInt());

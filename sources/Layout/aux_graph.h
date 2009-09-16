@@ -27,8 +27,6 @@ enum AuxNodeType
  */
 class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
 {
-    NodeItem* orig_node;
-    EdgeItem* orig_edge;
     double priv_x;
     double priv_y;
     double priv_height;
@@ -113,15 +111,6 @@ public:
     {
         priv_rank = r;
     }
-    inline NodeItem* node() const
-    {
-        return orig_node;
-    }
-    inline void setNode( NodeItem *n)
-    {
-        assert( isSimple());
-        orig_node = n;
-    }
     inline void setType( AuxNodeType t)
     {
         node_type = t;
@@ -137,15 +126,6 @@ public:
     inline bool isEdgeControl() const
     {
         return node_type == AUX_EDGE_CONTROL;
-    }
-    inline EdgeItem* edge() const
-    {
-        return orig_edge;
-    }
-    inline void setEdge( EdgeItem *e)
-    {
-        assert( isEdgeControl());
-        orig_edge = e;
     }
     
     inline void debugPrint()
@@ -194,7 +174,7 @@ public:
         return NODE_NODE_MARGIN;
     }
 
-private:
+protected:
     /** We can't create nodes separately, do it through newNode method of graph */
     AuxNode( AuxGraph *graph_p, int _id):
         NodeT< AuxGraph, AuxNode, AuxEdge>( graph_p, _id),
@@ -205,8 +185,6 @@ private:
         priv_priority(-1),
         priv_level( NULL),
         priv_order(-1),
-        orig_node( NULL),
-        orig_edge( NULL),
         node_type( AUX_NODE_SIMPLE)
     {
     }
@@ -217,7 +195,7 @@ private:
 class AuxEdge: public EdgeT< AuxGraph, AuxNode, AuxEdge>
 {
     bool priv_fixed;
-
+protected:
     /** Constructors are made private, only nodes and graph can create edges */
     AuxEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ):
         EdgeT< AuxGraph, AuxNode, AuxEdge>( graph_p, _id, _pred, _succ),
@@ -250,9 +228,6 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
     /** Array of node lists for ranks */
     QVector< Level*> levels;
 
-    /** Graph that is subject to layout */
-    GraphView *main_graph;
-
     /** Order numeration */
     Numeration order;
 
@@ -260,7 +235,6 @@ public:
     
     /** Iheritance and contructors */
     AuxGraph();
-    AuxGraph( GraphView *graph_p);
     ~AuxGraph();
     void initLevels( Rank max_level);
     void deleteLevels();
@@ -269,17 +243,17 @@ public:
     void reduceCrossings();
     void arrangeHorizontally();
     
-    inline void debugPrint()
+    virtual void debugPrint()
     {
         out( "AuxGraph debug print");
         GraphT< AuxGraph, AuxNode, AuxEdge>::debugPrint();
     }
 
-    inline void * CreateNode( AuxGraph *graph_p, int _id, NodeListIt it)
+    virtual void * CreateNode( AuxGraph *graph_p, int _id)
     {
         return new AuxNode( graph_p, _id);
     }
-    inline void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
+    virtual void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
     {
         return new AuxEdge( graph_p, _id, _pred, _succ);
     }
