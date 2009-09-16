@@ -41,7 +41,7 @@ GraphView::drawBackground(QPainter *painter, const QRectF &rect)
 NodeItem*
 GraphView::newNode()
 {
-    NodeItem* n = GraphT< GraphView, NodeItem, EdgeItem>::newNode();
+    NodeItem* n = static_cast< NodeItem *>( AuxGraph::newNode());
     scene()->addItem( n);
     return n;
 }
@@ -49,7 +49,8 @@ GraphView::newNode()
 EdgeItem*
 GraphView::newEdge( NodeItem* pred, NodeItem* succ)
 {
-    EdgeItem* e = GraphT< GraphView, NodeItem, EdgeItem>::newEdge( pred, succ);
+    EdgeItem* e = 
+        static_cast< EdgeItem *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ));
     scene()->addItem( e);
     e->initControls();
     return e;
@@ -58,7 +59,7 @@ GraphView::newEdge( NodeItem* pred, NodeItem* succ)
 NodeItem*
 GraphView::newNode( QDomElement e)
 {
-    NodeItem* n = GraphT< GraphView, NodeItem, EdgeItem>::newNode( e);
+    NodeItem* n =  static_cast< NodeItem *>( AuxGraph::newNode( e));
     scene()->addItem( n);
     return n;
 }
@@ -66,7 +67,8 @@ GraphView::newNode( QDomElement e)
 EdgeItem*
 GraphView::newEdge( NodeItem* pred, NodeItem* succ, QDomElement e)
 {
-    EdgeItem* edge_p = GraphT< GraphView, NodeItem, EdgeItem>::newEdge( pred, succ, e);
+    EdgeItem* edge_p = 
+        static_cast< EdgeItem *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ, e));
     scene()->addItem( edge_p);
     edge_p->initControls();
     return edge_p;
@@ -365,16 +367,13 @@ void GraphView::doLayout()
     rankNodes();
 
     /** 3. Build aux graph */
-    AuxGraph* agraph = new AuxGraph( this);
+    //AuxGraph* agraph = new AuxGraph();
 
     /** 4. Perform edge crossings minimization */
-    agraph->reduceCrossings();
+    reduceCrossings();
 
     /** 5. Perform horizontal arrangement of nodes */
-    agraph->arrangeHorizontally();
+    arrangeHorizontally();
 
     /** 6. Move edge controls to enchance the picture readability */
-
-    /** Delete temporary structures */
-    delete agraph;
 }

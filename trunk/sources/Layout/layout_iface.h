@@ -11,8 +11,8 @@ class AuxEdge;
 class AuxGraph;
 class Level;
 
-#include "../Graph/graph_iface.h"
-#include "../QTGui/gui_iface.h"
+#include <QtGui>
+#include <QList>
 
 const qreal NODE_NODE_MARGIN = 30;
 const qreal NODE_CONTROL_MARGIN = 5;
@@ -20,7 +20,9 @@ const qreal CONTROL_CONTROL_MARGIN = 5;
 const qreal EDGE_CONTROL_WIDTH = 5;
 const qreal EDGE_CONTROL_HEIGHT = 5;
 
+#include "../Graph/graph_iface.h"
 #include "aux_graph.h"
 #include "node_group.h"
+#include "../QTGui/gui_iface.h"
 
 #endif /** LAYOUT_IFACE_H */

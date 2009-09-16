@@ -123,7 +123,7 @@ public:
      *      edge->DetachFromNode( GRAPH_DIR_DOWN);
      *      delete edge;
      */
-    ~EdgeT();
+    virtual ~EdgeT();
 
     /**
      * Connect edge to a node in specified direction.

@@ -136,7 +136,7 @@ public:
 
 };
 
-class EdgeItem: public QGraphicsItem, public EdgeT< GraphView, NodeItem, EdgeItem>
+class EdgeItem: public AuxEdge, public QGraphicsItem
 {
 public:        
     typedef enum EdgeMode
@@ -162,16 +162,16 @@ private:
 
     /** Constructors are made private, only nodes and graph can create edges */
     EdgeItem( GraphView *graph_p, int _id, NodeItem *_pred, NodeItem* _succ):
-        EdgeT< GraphView, NodeItem, EdgeItem>( graph_p, _id, _pred, _succ), arrowSize(10)
-        {
-            srcControl = 0;
-            dstControl = 0;
-            curr_mode = ModeShow;
-            //setFlag( ItemIsSelectable);
-            is_back = false;
-        };
+        AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ), arrowSize(10)
+    {
+        srcControl = 0;
+        dstControl = 0;
+        curr_mode = ModeShow;
+        //setFlag( ItemIsSelectable);
+        is_back = false;
+    };
         
-    ~EdgeItem()
+    virtual ~EdgeItem()
     {
         removeFromIndex();
         scene()->removeItem( this);
@@ -252,5 +252,45 @@ public:
      * Read properties from XML
      */
     virtual void readFromElement( QDomElement elem);
+
+    /** Graph part */
+    void setNode( NodeItem *n, GraphDir dir)
+    {
+        AuxEdge::setNode( ( AuxNode *)n, dir);
+    }
+    inline void setPred( NodeItem *n)
+    {
+        setNode( n, GRAPH_DIR_UP);
+    }
+    inline void setSucc( NodeItem *n)
+    {
+        setNode( n, GRAPH_DIR_DOWN);
+    }
+    inline NodeItem *node( GraphDir dir) const;
+    inline NodeItem *pred() const 
+    {
+        return node( GRAPH_DIR_UP);
+    }
+    inline NodeItem *succ() const 
+    {
+        return node( GRAPH_DIR_DOWN);
+    }
+    inline EdgeItem* nextEdge()
+    {
+        return static_cast< EdgeItem *>(AuxEdge::nextEdge());
+    }
+    inline EdgeItem* nextEdgeInDir( GraphDir dir)
+    {
+        return static_cast< EdgeItem *>(AuxEdge::nextEdgeInDir( dir));
+    }
+    inline EdgeItem* nextSucc()
+    {
+        return nextEdgeInDir( GRAPH_DIR_DOWN);
+    }
+    inline EdgeItem* nextPred()
+    {
+        return nextEdgeInDir( GRAPH_DIR_UP);
+    }
+    
 };
 #endif

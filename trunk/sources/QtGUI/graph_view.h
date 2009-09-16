@@ -8,11 +8,8 @@
 
 #include "gui_impl.h"
 
-class GraphView: public QGraphicsView, public GraphT< GraphView, NodeItem, EdgeItem>
+class GraphView: public AuxGraph, public QGraphicsView
 {
-    
-    Q_OBJECT
-
     QPoint src;
     QPoint dst;
     bool createEdge;
@@ -23,8 +20,6 @@ class GraphView: public QGraphicsView, public GraphT< GraphView, NodeItem, EdgeI
     Numeration ranking;
     Numeration ordering;
     
-public slots:
-
 public:
     /** Constructor */
     GraphView();
@@ -77,6 +72,28 @@ public:
 
     /** Assign edge types, mark edges that should be inverted */
     void classifyEdges();
+
+    /** Graph part */
+    virtual void * CreateNode( AuxGraph *graph_p, int _id)
+    {
+        NodeItem* node_p = new NodeItem( static_cast<GraphView *>(graph_p), _id);
+        return node_p;
+    }
+    virtual void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
+    {
+        return new EdgeItem(  static_cast<GraphView *>( graph_p), _id,
+                              static_cast<NodeItem *>( _pred), 
+                              static_cast<NodeItem *>( _succ));
+    }
+
+    inline EdgeItem* firstEdge() 
+    {
+        return static_cast< EdgeItem *>( AuxGraph::firstEdge());
+    }
+    inline NodeItem* firstNode()
+    {
+        return static_cast< NodeItem *>( AuxGraph::firstNode());
+    }
 
 };
 

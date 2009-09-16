@@ -118,7 +118,9 @@ GraphT< Graph, Node, Edge>::newNodeImpl( GraphUid id)
      */
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
     
-    Node *node_p = ( Node *) CreateNode( (Graph *)this, id);
+    Graph *gp = (Graph *)this;
+    void *some_p = ( void *) gp->CreateNode( (Graph *)this, id);
+    Node *node_p = ( Node *)some_p;
     NodeListIt* it = node_p->GetGraphIt();
     
     /** Add node to graph's list of nodes */
@@ -164,7 +166,7 @@ GraphT< Graph, Node, Edge>::newEdgeImpl( Node * pred, Node * succ)
      * Check that we have available edge id 
      */
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
-    Edge *edge_p = ( Edge *) CreateEdge( (Graph *)this, edge_next_id++, pred, succ);
+    Edge *edge_p = ( Edge *) this->CreateEdge( (Graph *)this, edge_next_id++, pred, succ);
     EdgeListIt* it = edge_p->GetGraphIt();
     if ( isNotNullP( first_edge))
     {

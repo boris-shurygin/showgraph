@@ -50,7 +50,7 @@ class AGraph: public GraphT< AGraph, ANode, AEdge>
 
     public:
 
-    void * CreateNode( AGraph *graph_p, int _id, NodeListIt it)
+    void * CreateNode( AGraph *graph_p, int _id)
     {
         return new ANode( graph_p, _id);
     }

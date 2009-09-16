@@ -5,6 +5,11 @@
  */
 #include "gui_impl.h"
 
+GraphView * NodeItem::graph() const
+{
+    return static_cast< GraphView *>( AuxNode::graph());
+}
+
 NodeItem::~NodeItem()
 {
     removeFromIndex();
@@ -116,10 +121,10 @@ QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
 void
 NodeItem::updateElement()
 {
-    NodeT< GraphView, NodeItem, EdgeItem>::updateElement();// Base class method call
+    AuxNode::updateElement();// Base class method call
     QDomElement e = elem();
-    e.setAttribute( "x", x());
-    e.setAttribute( "y", y());
+    e.setAttribute( "x", QGraphicsItem::x());
+    e.setAttribute( "y", QGraphicsItem::y());
     e.setAttribute( "label", toPlainText());
 }
 
@@ -141,5 +146,5 @@ NodeItem::readFromElement( QDomElement e)
     {
         setPlainText( e.attribute( "label"));
     }
-    NodeT< GraphView, NodeItem, EdgeItem>::readFromElement( e); // Base class method
+    AuxNode::readFromElement( e); // Base class method
 }
