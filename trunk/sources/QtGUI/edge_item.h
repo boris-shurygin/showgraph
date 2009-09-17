@@ -151,21 +151,15 @@ private:
     QPointF destPoint;
     QPointF topLeft;
     QPointF bottomRight;
-    QList< EdgeControl*> controls;
-    QList< EdgeSegment*> segments;
-    EdgeControl* srcControl;
-    EdgeControl* dstControl;
     EdgeMode curr_mode;
     
+    /** Whether an edge should be inverted */
     bool is_back;
-    QList< AuxNode> aux_nodes;
-
+   
     /** Constructors are made private, only nodes and graph can create edges */
     EdgeItem( GraphView *graph_p, int _id, NodeItem *_pred, NodeItem* _succ):
         AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ), arrowSize(10)
     {
-        srcControl = 0;
-        dstControl = 0;
         curr_mode = ModeShow;
         //setFlag( ItemIsSelectable);
         is_back = false;
@@ -175,10 +169,6 @@ private:
     {
         removeFromIndex();
         scene()->removeItem( this);
-        foreach( EdgeControl* control, controls)
-        {
-            control->prepareRemove();
-        }
     }
     friend class GraphT< GraphView, NodeItem, EdgeItem>;
     friend class NodeT< GraphView, NodeItem, EdgeItem>;
@@ -209,20 +199,7 @@ public:
     }
 
     void adjust();
-    void addControl( EdgeControl* control);
-    void removeControl( EdgeControl *control);
-    void showControls();
-    void hideControls();
-
-    inline EdgeControl *srcCtrl() const
-    {
-        return srcControl;
-    }
-    inline EdgeControl *dstCtrl() const
-    {
-        return dstControl;
-    }
-
+   
     inline EdgeMode mode() const
     {
         return curr_mode;
@@ -237,8 +214,6 @@ public:
     QPainterPath shape() const;
     
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void initControls();
-    void removeControls();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);

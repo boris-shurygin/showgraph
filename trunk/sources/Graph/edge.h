@@ -222,6 +222,18 @@ public:
      */
     virtual void readFromElement( QDomElement elem);
 
+    /**
+     * Transformations
+     */
+    inline Node *insertNode()
+    {
+        Node *tmp_succ = succ();
+        Node *new_node = graph()->newNode();
+        detachFromNode( GRAPH_DIR_DOWN);
+        setSucc( new_node);
+        graph()->newEdge( new_node, tmp_succ);
+        return new_node;
+    }
 };
 
 #include "edge.cpp"

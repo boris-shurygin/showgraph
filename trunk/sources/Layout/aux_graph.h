@@ -127,7 +127,15 @@ public:
     {
         return node_type == AUX_EDGE_CONTROL;
     }
-    
+    inline void setTypeEdgeControl()
+    {
+        node_type = AUX_EDGE_CONTROL;
+    }
+    inline void setTypeSimple()
+    {
+        node_type = AUX_NODE_SIMPLE;
+    }
+
     inline void debugPrint()
     {
         switch( node_type)

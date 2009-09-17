@@ -32,7 +32,13 @@ public:
     NodeItem* newNode( QDomElement e);
     EdgeItem* newEdge( NodeItem* pred, NodeItem* succ);
     EdgeItem* newEdge( NodeItem* pred, NodeItem* succ, QDomElement e);
-        
+    
+    AuxEdge* newEdge( AuxNode * pred, AuxNode *succ)
+    {
+        return ( AuxEdge*)newEdge( static_cast< NodeItem *>( pred),
+                                    static_cast< NodeItem *> (succ));
+    }
+
     void mouseDoubleClickEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

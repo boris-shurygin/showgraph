@@ -13,6 +13,26 @@ using namespace std;
   */
 bool uTestGraphOwn()
 {
+    AGraph graph;
+    ANode *dummy = graph.newNode();
+    delete dummy;
+    ANode *pred = graph.newNode();
+    ANode *succ = graph.newNode();
+    AEdge *edge = graph.newEdge( pred, succ);
+    
+    /** Check node insertion */
+    ANode *new_node = edge->insertNode();
+    AEdge *edge2 = new_node->firstSucc();
+    assert( AreEqP( new_node->firstPred(), pred->firstSucc())); 
+    assert( AreEqP( new_node->firstSucc(), succ->firstPred()));
+    assert( AreEqP( edge->pred(), pred));
+    assert( AreEqP( pred->firstSucc(), edge));
+    assert( AreEqP( edge->succ(), new_node));
+    assert( AreEqP( new_node->firstPred(), edge));
+    assert( AreEqP( edge2->pred(), new_node));
+    assert( AreEqP( edge2->succ(), succ));
+    assert( AreEqP( succ->firstPred(), edge2));
+
     return true;
 }
 /**
