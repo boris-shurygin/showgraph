@@ -21,6 +21,14 @@ inline bool isNullP( void *pointer)
 }
 
 /**
+ * If pointers are equal
+ */
+inline bool AreEqP( void *p1, void *p2)
+{
+    return p1 == p2;
+}
+
+/**
  * Abs template 
  * operators "<" and "-" must be defined for parameter class
  */

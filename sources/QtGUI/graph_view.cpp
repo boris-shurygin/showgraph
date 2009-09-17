@@ -52,7 +52,7 @@ GraphView::newEdge( NodeItem* pred, NodeItem* succ)
     EdgeItem* e = 
         static_cast< EdgeItem *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ));
     scene()->addItem( e);
-    e->initControls();
+    e->adjust();
     return e;
 }
 
@@ -70,7 +70,7 @@ GraphView::newEdge( NodeItem* pred, NodeItem* succ, QDomElement e)
     EdgeItem* edge_p = 
         static_cast< EdgeItem *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ, e));
     scene()->addItem( edge_p);
-    edge_p->initControls();
+    edge_p->adjust();
     return edge_p;
 }
 
@@ -353,12 +353,6 @@ void GraphView::doLayout()
      * FIXME: This is a stub. we should not delete controls,
      *        instead we should reuse them and create new ones only if necessary
      */
-    for ( EdgeItem *e = firstEdge(); isNotNullP( e); e = e->nextEdge())
-    {    
-        e->hideControls();
-        e->removeControls();
-        e->setMode( EdgeItem::ModeShow);
-    }
 
     /** 1. Perfrom edge classification */
     classifyEdges();

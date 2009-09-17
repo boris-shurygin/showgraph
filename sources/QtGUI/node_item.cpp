@@ -19,17 +19,33 @@ NodeItem::~NodeItem()
 QRectF 
 NodeItem::boundingRect() const
 {
-    qreal adjust = 5;
-    return QGraphicsTextItem::boundingRect()
-               .adjusted( -adjust, -adjust, adjust, adjust);
+    if ( isEdgeControl())
+    {
+        qreal adjust = 2;
+        return QRectF( -EdgeControlSize - adjust, -EdgeControlSize - adjust,
+              2*( EdgeControlSize + adjust), 2*( EdgeControlSize + adjust));
+    } else
+    {
+        qreal adjust = 5;
+        return QGraphicsTextItem::boundingRect()
+            .adjusted( -adjust, -adjust, adjust, adjust);
+    }
 }
 
 QPainterPath 
 NodeItem::shape() const
 {
-    QPainterPath path;
-    path.addRect( boundingRect());
-    return path; 
+    if ( isEdgeControl())
+    {
+        QPainterPath path;
+        path.addEllipse( -EdgeControlSize, -EdgeControlSize, 2*EdgeControlSize, 2*EdgeControlSize);
+        return path; 
+    } else
+    {
+        QPainterPath path;
+        path.addRect( boundingRect());
+        return path;
+    }
 }
 
 void 
@@ -37,21 +53,37 @@ NodeItem::paint( QPainter *painter,
                  const QStyleOptionGraphicsItem *option,
                  QWidget *widget)
 {
-    qreal adjust = 3;
-    if (option->state & QStyle::State_Sunken)
+    if ( isSimple())
     {
-        painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    } else
+        qreal adjust = 3;
+        if (option->state & QStyle::State_Sunken)
+        {
+            painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        } else
+        {
+            painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        }
+        QGraphicsTextItem::paint( painter, option, widget);
+        painter->drawRect( boundingRect());
+    } else if ( isEdgeControl())
     {
-        painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        if (option->state & QStyle::State_Sunken) 
+        {
+            painter->setBrush( Qt::gray);
+            painter->setPen( QPen( Qt::black, 0));
+        } else
+        {
+            painter->setBrush( Qt::lightGray);
+            painter->setPen( QPen(Qt::darkGray, 0));
+        }
+        painter->drawEllipse(-EdgeControlSize, -EdgeControlSize,
+                              2*EdgeControlSize, 2*EdgeControlSize);
     }
-    QGraphicsTextItem::paint( painter, option, widget);
-    painter->drawRect( boundingRect());
 }
 
 void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if( event->button() & Qt::RightButton)
+    if( event->button() & Qt::RightButton && !isEdgeControl())
     {
         graph()->SetCreateEdge( true);
         graph()->SetTmpSrc( this);
@@ -68,7 +100,7 @@ void NodeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    if ( event->button() & Qt::LeftButton)
+    if ( event->button() & Qt::LeftButton && !isEdgeControl())
     {
         if ( textInteractionFlags() == Qt::NoTextInteraction)
             setTextInteractionFlags(Qt::TextEditorInteraction);
