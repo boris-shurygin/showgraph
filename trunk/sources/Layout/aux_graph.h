@@ -40,20 +40,20 @@ class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
 
 public:
     /** Get Height */
-    inline double height() const
+    virtual double height() const
     {
         return priv_height;
     }
     /** Get Width */
-    inline double width() const
+    virtual double width() const
     {
         return priv_width;
     }
-    inline double x() const
+    inline double modelX() const
     {
         return priv_x;
     }
-    inline double y() const
+    inline double modelY() const
     {
         return priv_y;
     }
@@ -203,14 +203,15 @@ protected:
 class AuxEdge: public EdgeT< AuxGraph, AuxNode, AuxEdge>
 {
     bool priv_fixed;
+
+    /** Whether an edge should be inverted */
+    bool is_back;
+   
 protected:
     /** Constructors are made private, only nodes and graph can create edges */
     AuxEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ):
         EdgeT< AuxGraph, AuxNode, AuxEdge>( graph_p, _id, _pred, _succ),
-        priv_fixed( true)
-    {
-        
-    }
+        priv_fixed( true), is_back( false) {};
 public:
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;
     friend class NodeT< AuxGraph, AuxNode, AuxEdge>;
@@ -225,7 +226,18 @@ public:
     {
         priv_fixed = fx;
     }
-
+    inline bool isBack() const
+    {
+        return is_back;
+    }
+    inline void setBack( bool back = true)
+    {
+        is_back = back;
+    }
+    inline bool isInverted() const
+    {
+        return isBack();
+    }
 };
 
 /**
@@ -238,6 +250,12 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
 
     /** Order numeration */
     Numeration order;
+    
+    /** Ranking numeration */
+    Numeration ranking;
+
+    /** Maximum used for ranking */
+    GraphNum max_rank;
 
 public:
     
@@ -265,6 +283,23 @@ public:
     {
         return new AuxEdge( graph_p, _id, _pred, _succ);
     }
+    inline Numeration ranks() const
+    {
+        return ranking;
+    }
+    inline GraphNum maxRank() const
+    {
+        return max_rank;
+    }
+
+    /** Perform layout */
+    void doLayout();
+    
+    /** Assign ranks to nodes in respect to maximum length of path from top */
+    Numeration rankNodes();
+
+    /** Assign edge types, mark edges that should be inverted */
+    void classifyEdges();
 };
 
 /**

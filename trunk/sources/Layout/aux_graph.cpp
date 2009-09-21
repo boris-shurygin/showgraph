@@ -10,6 +10,7 @@
  */
 AuxGraph::AuxGraph(): levels() 
 {
+    ranking = newNum();
     order = newNum();
 }
 
@@ -45,4 +46,6 @@ AuxGraph::deleteLevels()
 AuxGraph::~AuxGraph()
 {
     deleteLevels();
+    freeNum( ranking);
+    freeNum( order);
 }

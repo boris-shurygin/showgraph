@@ -134,6 +134,317 @@ void Level::arrangeNodes( GraphDir dir, bool commit_placement, bool first_pass)
 }
 
 /**
+ * Perform edge classification
+ */
+void AuxGraph::classifyEdges()
+{
+    /** Structure used for dfs traversal */
+    struct DfsStepInfo
+    {
+        AuxNode *node; // Node in consideration
+        AuxEdge *edge; // Next edge
+
+        /* Constructor */
+        DfsStepInfo( AuxNode *n)
+        {
+            node = n;
+            edge = n->firstSucc();
+        }
+    };
+
+    Marker m = newMarker(); // Marker for visiting nodes
+    Marker doneMarker = newMarker(); // Marker for nodes that are finished
+    QStack< DfsStepInfo *> stack;
+    
+    for ( AuxEdge* e=firstEdge();
+          isNotNullP( e);
+          e = e->nextEdge())
+    {
+        e->setBack( false);   
+    }
+
+    /* Fill stack with nodes that have no predecessors */
+    for ( AuxNode *n = firstNode();
+          isNotNullP( n);
+          n = n->nextNode())
+    {
+        if ( isNullP( n->firstPred()))
+        {
+            stack.push( new DfsStepInfo( n));
+        }
+    }
+    /* Walk graph with marker and perform classification */
+    while( !stack.isEmpty())
+    {
+        DfsStepInfo *info = stack.top();
+        AuxNode *node = info->node;
+       AuxEdge *edge = info->edge;
+        
+        if ( isNotNullP( edge)) // Add successor to stack
+        {
+            AuxNode* succ_node = edge->succ();
+            info->edge = edge->nextSucc();
+            
+            if ( !succ_node->isMarked( doneMarker)
+                 && succ_node->isMarked( m))
+            {
+                edge->setBack();
+            }
+            if ( succ_node->mark( m))
+                 stack.push( new DfsStepInfo( succ_node));
+        } else // We're done with this node
+        {
+            node->mark( doneMarker);
+            delete info;
+            stack.pop();
+        }
+    }
+
+    freeMarker( m);
+    freeMarker( doneMarker);
+    return;
+}
+
+/**
+ * Ranking of nodes. Level distribution of nodes. Marks tree edges.
+ */
+Numeration AuxGraph::rankNodes()
+{
+    QVector< int> pred_nums( nodeCount());
+    QStack< AuxNode *> stack; // Node stack
+    
+    Numeration own = newNum();
+    GraphNum i = 0;
+    max_rank = 0;
+    /**
+     *  Set numbers to nodes and count predecessors of each node.
+     *  predecessors include inverted edges 
+     */
+    for ( AuxNode *n = firstNode();
+          isNotNullP( n);
+          n = n->nextNode())
+    {
+        int pred_num = 0;
+        n->setNumber( own, i);
+        for (AuxEdge* e = n->firstPred();
+              isNotNullP( e);
+              e = e->nextPred())
+        {
+            if ( e->pred() == e->succ())
+                continue;
+
+            if ( !e->isInverted())
+                pred_num++;
+        }
+        for (AuxEdge* e = n->firstSucc();
+              isNotNullP( e);
+              e = e->nextSucc())
+        {
+            if ( e->pred() == e->succ())
+                continue;
+
+            if ( e->isInverted())
+                pred_num++;
+        }
+        pred_nums[ i] = pred_num;
+        i++;
+    }
+    /* Fill ranking and ordering numerations by walking the nodes */
+    /* Add nodes with no preds to stack */
+    for ( AuxNode *n = firstNode();
+          isNotNullP( n);
+          n = n->nextNode())
+    {
+        if ( pred_nums[ n->number( own)] == 0)
+        {
+            stack.push( n);
+        }
+    }
+    while( !stack.isEmpty())
+    {
+        AuxNode* n = stack.pop();
+        GraphNum rank = 0;
+
+        /* Propagation part */
+        for (AuxEdge* e = n->firstPred();
+              isNotNullP( e);
+              e = e->nextPred())
+        {
+            if ( !e->isInverted())
+            {
+                if ( rank < e->pred()->number( ranking) + 1)
+                {
+                    rank = e->pred()->number( ranking) + 1;
+                }
+            }
+        }
+        for (AuxEdge* e = n->firstSucc();
+              isNotNullP( e);
+              e = e->nextSucc())
+        {
+            if ( e->isInverted())
+            {
+                if ( rank < e->succ()->number( ranking) + 1)
+                {
+                    rank = e->succ()->number( ranking) + 1;
+                }
+            }
+        }
+
+        if ( rank > max_rank)
+            max_rank = rank;
+
+        n->setNumber( ranking, rank);
+        /* FIXME: just for debugging */
+        out( "%llu node rank is %u", n->id(), rank);
+        n->setY( rank * RANK_SPACING);
+
+        /* Traversal continuation */
+        for (AuxEdge* e = n->firstSucc();
+              isNotNullP( e);
+              e = e->nextSucc())
+        {
+            if ( !e->isInverted())
+            {
+                AuxNode* succ = e->succ();
+                pred_nums[ succ->number( own)] =
+                    pred_nums[ succ->number( own)] - 1;
+                
+                if ( pred_nums[ succ->number( own)] == 0)
+                {
+                    stack.push( succ);
+                }
+            }  
+        }
+        for (AuxEdge* e = n->firstPred();
+              isNotNullP( e);
+              e = e->nextPred())
+        {
+            if ( e->isInverted())
+            {
+                AuxNode* succ = e->pred();
+                pred_nums[ succ->number( own)] =
+                    pred_nums[ succ->number( own)] - 1;
+                if ( pred_nums[ succ->number( own)] == 0)
+                {
+                    stack.push( succ);
+                }
+            }
+        }
+    }
+    freeNum( own);
+
+    /** Fill levels */
+    initLevels( maxRank());
+    for ( AuxNode* n =firstNode();
+          isNotNullP( n);
+          n = n->nextNode())
+    {
+        Rank rank = n->number( ranking);
+        if ( rank == NUMBER_NO_NUM)
+        {
+            rank = 0;
+            assert( 0); // Shouldn't be here. Means ranking did not cover all nodes
+        } 
+        levels[ rank]->add( n);
+    }
+    /** Create edge control nodes */
+    for ( AuxEdge* e = firstEdge();
+          isNotNullP( e);
+          e = e->nextEdge())
+    {
+        AuxNode* pred;
+        AuxNode* succ;
+        
+        if ( e->pred() == e->succ())
+            continue;
+
+        if ( e->isInverted())
+        {
+            pred = e->succ();
+            succ = e->pred();
+        } else
+        {
+            pred = e->pred();
+            succ = e->succ();
+        }
+
+        Rank pred_rank = pred->number( ranking);
+        Rank succ_rank = succ->number( ranking);
+        if ( pred_rank == NUMBER_NO_NUM)
+        {
+            pred_rank = 0;
+        } 
+        if ( succ_rank == NUMBER_NO_NUM)
+        {
+            succ_rank = pred_rank + 1;
+        } 
+        Rank curr_rank = pred_rank + 1;
+        AuxEdge *curr_edge = e;
+        while ( curr_rank != succ_rank)
+        {
+            AuxNode *node = curr_edge->insertNode();
+            if ( e->isInverted())
+            {
+                curr_edge = node->firstPred();
+            } else
+            {
+                curr_edge = node->firstSucc();
+            }
+            node->firstSucc()->setBack( e->isBack());
+            node->setType( AUX_EDGE_CONTROL);
+            node->setY( pred->modelY() + RANK_SPACING);
+            levels[ curr_rank]->add( node);
+            node->setNumber( ranking, curr_rank);
+            pred = node;
+            curr_rank++;
+        }
+    }
+    debugPrint();
+    return ranking; 
+}
+
+/**
+ * Perform layout
+ */
+void AuxGraph::doLayout()
+{
+    /**
+     * 0. Remove all edge controls
+     * FIXME: This is a stub. we should not delete controls,
+     *        instead we should reuse them and create new ones only if necessary
+     */
+    for ( AuxNode* n = firstNode();
+          isNotNullP( n);
+          )
+    {
+        AuxNode *next = n->nextNode();
+        if ( n->isEdgeControl())
+        {
+            delete n;
+        }
+        n = next;
+    }
+
+    /** 1. Perfrom edge classification */
+    classifyEdges();
+    
+    /** 2. Rank nodes */
+    rankNodes();
+
+    /** 3. Build aux graph */
+    //AuxGraph* agraph = new AuxGraph();
+
+    /** 4. Perform edge crossings minimization */
+    reduceCrossings();
+
+    /** 5. Perform horizontal arrangement of nodes */
+    arrangeHorizontally();
+
+    /** 6. Move edge controls to enchance the picture readability */
+}
+
+/**
  * Assign order to nodes by numbering in a DFS traversal
  */
 void AuxGraph::orderNodesByDFS()
@@ -151,7 +462,7 @@ void AuxGraph::orderNodesByDFS()
             edge = n->firstSucc();
         }
     };
-
+    
     Marker m = newMarker(); // Marker for visiting nodes
     QStack< DfsStepInfo *> stack;
     GraphNum num = 0;

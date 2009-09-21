@@ -14,12 +14,6 @@ class GraphView: public AuxGraph, public QGraphicsView
     QPoint dst;
     bool createEdge;
     NodeItem *tmpSrc;
-    
-    GraphNum max_rank;
-    
-    Numeration ranking;
-    Numeration ordering;
-    
 public:
     /** Constructor */
     GraphView();
@@ -37,6 +31,11 @@ public:
     {
         return ( AuxEdge*)newEdge( static_cast< NodeItem *>( pred),
                                     static_cast< NodeItem *> (succ));
+    }
+    AuxEdge* newEdge( AuxNode * pred, AuxNode *succ, QDomElement e)
+    {
+        return ( AuxEdge*)newEdge( static_cast< NodeItem *>( pred),
+                                    static_cast< NodeItem *> (succ), e);
     }
 
     void mouseDoubleClickEvent(QMouseEvent *event);
@@ -61,23 +60,6 @@ public:
     {
         return tmpSrc;
     }
-    inline Numeration ranks() const
-    {
-        return ranking;
-    }
-    inline GraphNum maxRank() const
-    {
-        return max_rank;
-    }
-
-    /** Perform layout */
-    void doLayout();
-    
-    /** Assign ranks to nodes in respect to maximum length of path from top */
-    Numeration rankNodes();
-
-    /** Assign edge types, mark edges that should be inverted */
-    void classifyEdges();
 
     /** Graph part */
     virtual void * CreateNode( AuxGraph *graph_p, int _id)
@@ -100,7 +82,16 @@ public:
     {
         return static_cast< NodeItem *>( AuxGraph::firstNode());
     }
-
+    void doLayout()
+    {
+        AuxGraph::doLayout();
+        for ( NodeItem* n = firstNode();
+              isNotNullP( n);
+              n = n->nextNode())
+        {
+            n->setPos( n->modelX(), n->modelY());
+        }
+    }
 };
 
 #endif

@@ -13,6 +13,8 @@ EdgeT<Graph, Node, Edge>::~EdgeT()
 {
     element.parentNode().removeChild( element);
     graph_p->deleteEdge( ( Edge *)this);
+    detachFromNode( GRAPH_DIR_UP);
+    detachFromNode( GRAPH_DIR_DOWN);
 }
 
 /**
@@ -40,9 +42,13 @@ template <class Graph, class Node, class Edge>
 void
 EdgeT<Graph, Node, Edge>::detachFromNode( GraphDir dir)
 {
-    Node *n = node( dir);
-    n->deleteEdgeInDir( RevDir( dir), (Edge* )this);
-    n_it[ dir].Detach();
+    if ( isNotNullP( node( dir)))
+    {
+        Node *n = node( dir);
+        n->deleteEdgeInDir( RevDir( dir), (Edge* )this);
+        n_it[ dir].Detach();
+        nodes[ dir] = 0;
+    }
 }
 
 /**
