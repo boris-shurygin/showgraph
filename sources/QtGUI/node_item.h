@@ -8,9 +8,6 @@
 
 class NodeItem: public AuxNode, public QGraphicsTextItem
 {    
-    QList< AuxNode *> aux_nodes;
-    AuxNode *aux_node;
-
     /** Initialization */
     inline void SetInitFlags()
     {
@@ -68,16 +65,6 @@ public:
      */
     virtual void readFromElement( QDomElement elem);
 
-    /** Set/Get aux node that represents node's start in aux graph */
-    inline void setAuxNode( AuxNode *n)
-    {
-        aux_node = n;
-    }
-    inline AuxNode *auxNode() const
-    {
-        return aux_node;
-    }
-
     /** Graph part */
     GraphView * graph() const;
     inline NodeItem* nextNode()
@@ -107,6 +94,14 @@ public:
     inline EdgeItem* firstPred()
     {
         return firstEdgeInDir( GRAPH_DIR_UP);
+    }
+    virtual inline double width() const
+    {
+        return boundingRect().width();
+    }
+    virtual inline double height() const
+    {
+        return boundingRect().height();
     }
 };
 

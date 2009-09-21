@@ -12,6 +12,14 @@ GraphView * NodeItem::graph() const
 
 NodeItem::~NodeItem()
 {
+    if ( isEdgeControl() 
+         && isNotNullP( firstPred()) 
+         && isNotNullP( firstSucc())
+         && isNotNullP( firstPred()->pred())
+         && isNotNullP( firstSucc()->succ()))
+    {
+        graph()->newEdge( firstPred()->pred(), firstSucc()->succ());
+    }
     removeFromIndex();
     scene()->removeItem( this);
 }
@@ -67,6 +75,7 @@ NodeItem::paint( QPainter *painter,
         painter->drawRect( boundingRect());
     } else if ( isEdgeControl())
     {
+#if 0        
         if (option->state & QStyle::State_Sunken) 
         {
             painter->setBrush( Qt::gray);
@@ -78,6 +87,7 @@ NodeItem::paint( QPainter *painter,
         }
         painter->drawEllipse(-EdgeControlSize, -EdgeControlSize,
                               2*EdgeControlSize, 2*EdgeControlSize);
+#endif
     }
 }
 
@@ -158,6 +168,10 @@ NodeItem::updateElement()
     e.setAttribute( "x", QGraphicsItem::x());
     e.setAttribute( "y", QGraphicsItem::y());
     e.setAttribute( "label", toPlainText());
+    if ( isEdgeControl())
+    {
+        e.setAttribute( "edge_control", 1);
+    }
 }
 
 /**
@@ -169,14 +183,18 @@ NodeItem::readFromElement( QDomElement e)
     assert( !e.isNull());
     assert( e.tagName() == QString( "node"));
     
-    if( e.hasAttribute( "x") && e.hasAttribute( "y"))
+    if ( e.hasAttribute( "x") && e.hasAttribute( "y"))
     {
         setPos( e.attribute( "x").toDouble(),
                 e.attribute( "y").toDouble());
     }
-    if( e.hasAttribute( "label"))
+    if ( e.hasAttribute( "label"))
     {
         setPlainText( e.attribute( "label"));
+    }
+    if ( e.hasAttribute("edge_control"))
+    {
+        setTypeEdgeControl();
     }
     AuxNode::readFromElement( e); // Base class method
 }

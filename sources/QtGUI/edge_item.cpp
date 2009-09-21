@@ -15,16 +15,16 @@ EdgeItem::node( GraphDir dir) const
 void
 EdgeItem::adjust()
 {
-    sourcePoint = mapFromItem( pred(), pred()->boundingRect().center());
-    destPoint = mapFromItem( succ(), succ()->boundingRect().center());
-    topLeft = sourcePoint;
-    bottomRight = destPoint;
+    srcP = mapFromItem( pred(), pred()->boundingRect().center());
+    dstP = mapFromItem( succ(), succ()->boundingRect().center());
+    topLeft = srcP;
+    btmRight = dstP;
     if ( pred()->isEdgeControl())
     {
 
     } else
     {
-        QLineF line( sourcePoint, destPoint);
+        QLineF line( srcP, dstP);
         QPolygonF endPolygon = mapFromItem( pred(), pred()->boundingRect());
         QPointF p1 = endPolygon.first();
         QPointF p2;
@@ -35,7 +35,7 @@ EdgeItem::adjust()
             p2 = endPolygon.at(i);
             polyLine = QLineF(p1, p2);
             QLineF::IntersectType intersectType =
-                 polyLine.intersect( line, &sourcePoint);
+                 polyLine.intersect( line, &srcP);
             if (intersectType == QLineF::BoundedIntersection)
                  break;
             p1 = p2;
@@ -46,7 +46,7 @@ EdgeItem::adjust()
     
     } else
     {
-        QLineF line2( sourcePoint, destPoint);
+        QLineF line2( srcP, dstP);
         QPolygonF endPolygon = mapFromItem( succ(), succ()->boundingRect());
         QPointF p1 = endPolygon.first();;
         QPointF p2;
@@ -56,12 +56,85 @@ EdgeItem::adjust()
             p2 = endPolygon.at(i);
             polyLine = QLineF(p1, p2);
             QLineF::IntersectType intersectType =
-                 polyLine.intersect( line2, &destPoint);
+                 polyLine.intersect( line2, &dstP);
             if ( intersectType == QLineF::BoundedIntersection)
                  break;
             p1 = p2;
         }
     }
+    topLeft.setX( min< qreal>( srcP.x(), dstP.x()));
+    topLeft.setY( min< qreal>( srcP.y(), dstP.y()));
+    btmRight.setX( max< qreal>( srcP.x(), dstP.x()));
+    btmRight.setY( max< qreal>( srcP.y(), dstP.y()));
+
+    QLineF mainLine = QLineF( srcP, dstP);
+        
+    if ( mainLine.length() < 1)
+        return;
+
+    qreal size = Abs< qreal>(( min< qreal>( Abs< qreal>( mainLine.dx()),
+                                            Abs< qreal>(mainLine.dy()))));
+    //Stub
+    if( size < 2* EdgeControlSize)
+    {
+        size = 2* EdgeControlSize;
+    }
+    if( size > 20 * EdgeControlSize)
+    {
+        size = 20 * EdgeControlSize;
+    }
+    
+    NodeItem *next_pred = NULL;
+    NodeItem *next_succ = NULL;
+
+    if ( pred()->isEdgeControl())
+    {
+        next_pred = pred()->firstPred()->pred();
+    } 
+    if ( succ()->isEdgeControl())
+    {
+        next_succ = succ()->firstSucc()->succ();
+    } 
+    /** Place cp1 */
+    if ( isNotNullP( next_pred))
+    {
+        QPointF p1 = mapFromScene( next_pred->pos());
+        QLineF line( p1, dstP);
+        QPointF cp1_offset = QPointF( (line.dx() * size)/ line.length(),
+                                      (line.dy() * size)/ line.length());
+        cp1 = srcP + cp1_offset;
+    } else
+    {
+        QPointF cp1_offset = QPointF( (mainLine.dx() * size)/ mainLine.length(),
+                                      (mainLine.dy() * size)/ mainLine.length());
+        cp1 = srcP + cp1_offset;
+    }
+    
+    topLeft.setX( min< qreal>( topLeft.x(), cp1.x()));
+    topLeft.setY( min< qreal>( topLeft.y(), cp1.y()));
+    btmRight.setX( max< qreal>( btmRight.x(), cp1.x()));
+    btmRight.setY( max< qreal>( btmRight.y(), cp1.y()));
+
+    /** Place cp2 */
+    if ( isNotNullP( next_succ))
+    {
+        QPointF p2 = mapFromScene( next_succ->pos());
+        QLineF line( p2, srcP);
+        QPointF cp2_offset = QPointF( (line.dx() * size)/ line.length(),
+                                      (line.dy() * size)/ line.length());
+        cp2 = dstP + cp2_offset;
+    } else
+    {
+        QPointF cp2_offset = QPointF( -(mainLine.dx() * size)/ mainLine.length(),
+                                      -(mainLine.dy() * size)/ mainLine.length());
+        cp2 = dstP + cp2_offset;
+    }
+    
+    topLeft.setX( min< qreal>( topLeft.x(), cp2.x()));
+    topLeft.setY( min< qreal>( topLeft.y(), cp2.y()));
+    btmRight.setX( max< qreal>( btmRight.x(), cp2.x()));
+    btmRight.setY( max< qreal>( btmRight.y(), cp2.y()));
+
     prepareGeometryChange();
 }
 
@@ -69,20 +142,25 @@ QRectF
 EdgeItem::boundingRect() const
 {
     qreal penWidth = 1;
-    qreal extra = (penWidth + arrowSize) / 2.0;
+    qreal extra = penWidth / 2.0;
 
-    return QRectF(topLeft, QSizeF(bottomRight.x() - topLeft.x(),
-                                      bottomRight.y() - topLeft.y()))
-        .normalized()
-        .adjusted(-extra, -extra, extra, extra);
+    return QRectF( topLeft,
+                   QSizeF( btmRight.x() - topLeft.x(),
+                           btmRight.y() - topLeft.y()))
+           .normalized()
+           .adjusted(-extra, -extra, extra, extra);
 }
 
 QPainterPath 
 EdgeItem::shape() const
 {
-    QPainterPath path( sourcePoint);
+    QPainterPath path( srcP);
+        
+    if ( srcP == dstP)
+        return path;
+    
     QPainterPathStroker stroker;
-    path.lineTo( destPoint);
+    path.cubicTo( cp1, cp2, dstP);
     stroker.setWidth( 2);
     return stroker.createStroke( path); 
 }
@@ -94,21 +172,38 @@ EdgeItem::paint( QPainter *painter,
 {
     QPointF curr_point;
     QLineF line = QLineF();
-    curr_point = sourcePoint;
-    QPointF nextToDst = sourcePoint;
+    curr_point = srcP;
+    QPointF nextToDst = srcP;
     
     line.setP1( nextToDst);
-    line.setP2( destPoint);
+    line.setP2( dstP);
+    
+    QPainterPath path( srcP);
+    QPainterPathStroker stroker;
+    path.cubicTo( cp1, cp2, dstP);
 
-    if ( nextToDst == destPoint)
+    if ( nextToDst == dstP)
         return;
+
     // Draw the line itself
     if( option->state & QStyle::State_Selected)
     {
-        painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        if( !isInverted())
+        {
+            painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        } else
+        {
+            painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        }
     } else
     {
-        painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        if( !isInverted())
+        {
+            painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        } else
+        {
+            painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        }
     }
 
     // Draw the arrows if there's enough room
@@ -116,13 +211,13 @@ EdgeItem::paint( QPainter *painter,
     if (line.dy() >= 0)
         angle = TwoPi - angle;
 
-    QPointF destArrowP1 = destPoint + QPointF(sin(angle - Pi / 3) * arrowSize,
+    QPointF destArrowP1 = dstP + QPointF(sin(angle - Pi / 3) * arrowSize,
                                               cos(angle - Pi / 3) * arrowSize);
-    QPointF destArrowP2 = destPoint + QPointF(sin(angle - Pi + Pi / 3) * arrowSize,
+    QPointF destArrowP2 = dstP + QPointF(sin(angle - Pi + Pi / 3) * arrowSize,
                                               cos(angle - Pi + Pi / 3) * arrowSize);
-
+    painter->drawPath(path);
     painter->setBrush(Qt::black);
-    painter->drawLine( line);
+    //painter->drawLine( line);
     if ( !succ()->isEdgeControl())
         painter->drawPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2); 
 }

@@ -38,8 +38,21 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
           isNotNullP( e);
           e = e->nextEdgeInDir( rdir))
     {
-        num_peers++;
-        sum+= ( e->node( rdir)->x() + ( e->node( rdir)->width() / 2));
+        if ( !e->isInverted())
+        {
+            num_peers++;
+            sum+= ( e->node( rdir)->modelX() + ( e->node( rdir)->width() / 2));
+        }
+    }
+    for ( AuxEdge* e = n->firstEdgeInDir( dir);
+          isNotNullP( e);
+          e = e->nextEdgeInDir( dir))
+    {
+        if ( e->isInverted())
+        {
+            num_peers++;
+            sum+= ( e->node( dir)->modelX() + ( e->node( dir)->width() / 2));
+        }
     }
     /** Barycenter heuristic */
     double center = 0;
@@ -48,7 +61,7 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
         center = sum / num_peers;
     } else if ( !first_pass)
     {
-        center = n->x() + n->width() / 2;
+        center = n->modelX() + n->width() / 2;
     }
     n->setBc( center);
     border_left = center - n->width() / 2;
@@ -128,5 +141,6 @@ void NodeGroup::placeNodesFinal( GraphDir dir)
         node->setX( curr_left);
         curr_left += node->width();
         prev_type = node->type();
+        node->setY( node->modelY() - node->height() / 2 );
     }
 }

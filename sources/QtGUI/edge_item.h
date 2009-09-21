@@ -9,135 +9,9 @@
 #define EdgeControlSize 5
 #include "gui_impl.h"
 
-class EdgeSegment;
-
-class EdgeControl: public QObject, public QGraphicsItem
-{
-    EdgeItem *edge; 
-    EdgeSegment* predSeg;
-    EdgeSegment* succSeg;
-    bool isFixed;
-    
-public: 
-        
-    enum {Type = TypeEdgeControl};
-
-    inline void setFixed( bool fixed = true)
-    {
-        isFixed = fixed;
-        setFlag( ItemIsMovable, !fixed);
-    }
-
-    inline bool fixed()
-    {
-        return isFixed;
-    }
-
-
-    inline EdgeSegment* pred() const
-    {
-        return predSeg;
-    }
-    
-    inline EdgeSegment* succ() const
-    {
-        return succSeg;
-    }
-
-    inline void setPred( EdgeSegment* p)
-    {
-        predSeg = p;
-    }
-
-    inline void setSucc( EdgeSegment* s)
-    {
-        succSeg = s;
-    }
-
-    int type() const
-    {
-        return Type;
-    }
-
-    EdgeControl( EdgeItem* e, QGraphicsScene* scene);
-    ~EdgeControl();
-
-    QRectF boundingRect() const;
-    QPainterPath shape() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void prepareRemove();
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-};
-
-class EdgeSegment: public QGraphicsItem
-{
-    EdgeItem* edge;
-    QPointF srcP;
-    QPointF cp1;
-    QPointF cp2;
-    QPointF dstP;
-    EdgeControl* srcControl;
-    EdgeControl* dstControl;
-    QPointF topLeft;
-    QPointF btmRight;
-
-    enum SegmentType
-    {
-        LineSegment,
-        CurveSegment
-    };
-
-public:
-    
-    inline EdgeControl* src() const
-    {
-        return srcControl;
-    }
-
-    inline EdgeControl* dst() const
-    {
-        return dstControl;
-    }
-
-    inline void setSrc( EdgeControl* s)
-    {
-        srcControl = s;
-        if ( isNotNullP( s))
-        {
-            s->setSucc( this);
-        }  
-    }
-
-    inline void setDst( EdgeControl* d)
-    {
-        dstControl = d;
-        if ( isNotNullP( d))
-        {
-            d->setPred( this);
-        } 
-    }
-
-    void adjust();
-
-    EdgeControl *addControl( QPointF p);
-    EdgeControl *addControl( EdgeControl* control);
-
-    EdgeSegment( EdgeItem *e, EdgeControl *src, EdgeControl* dst, QGraphicsScene* scene);
-    ~EdgeSegment();
-    QRectF boundingRect() const;
-    QPainterPath shape() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-
-};
-
 class EdgeItem: public AuxEdge, public QGraphicsItem
 {
+
 public:        
     typedef enum EdgeMode
     {
@@ -146,23 +20,21 @@ public:
     } EdgeMode;
 
 private:
-    qreal arrowSize;
-    QPointF sourcePoint;
-    QPointF destPoint;
+    QPointF srcP;
+    QPointF cp1;
+    QPointF cp2;
+    QPointF dstP;
     QPointF topLeft;
-    QPointF bottomRight;
+    QPointF btmRight;
+    qreal arrowSize;
     EdgeMode curr_mode;
     
-    /** Whether an edge should be inverted */
-    bool is_back;
-   
     /** Constructors are made private, only nodes and graph can create edges */
     EdgeItem( GraphView *graph_p, int _id, NodeItem *_pred, NodeItem* _succ):
         AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ), arrowSize(10)
     {
         curr_mode = ModeShow;
         //setFlag( ItemIsSelectable);
-        is_back = false;
     };
         
     virtual ~EdgeItem()
@@ -181,21 +53,6 @@ public:
     int type() const
     {
         return Type;
-    }
-
-    inline bool isBack() const
-    {
-        return is_back;
-    }
-
-    inline void setBack( bool back = true)
-    {
-        is_back = back;
-    }
-    
-    inline bool isInverted() const
-    {
-        return isBack();
     }
 
     void adjust();
