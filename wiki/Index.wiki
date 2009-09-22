@@ -1,3 +1,0 @@
-#summary Index
-
-For now you can only take a look at [Schedule Features in implementation] list
