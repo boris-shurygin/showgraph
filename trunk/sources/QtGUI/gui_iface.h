@@ -19,8 +19,6 @@ class GraphView;
 #include <QDebug>
 #include <QWheelEvent>
 
-const qreal RANK_SPACING = 60;
-
 #include "../Graph/graph_iface.h"
 #include "../Layout/layout_iface.h"
 #include "../Frontend/fe_iface.h"

@@ -6,11 +6,25 @@
 #include "gui_impl.h"
 #include <QVector>
 
+//#define SHOW_CONTROL_POINTS
+//#define SHOW_BACKEDGES
+
 NodeItem * 
 EdgeItem::node( GraphDir dir) const 
 {
     return static_cast< NodeItem *>(AuxEdge::node( dir));
 }
+
+QVariant
+EdgeItem::itemChange( GraphicsItemChange change, const QVariant &value)
+{
+    if ( change == QGraphicsItem::ItemSelectedChange)
+    {
+        pred()->update();
+        succ()->update();
+    }
+    return QGraphicsItem::itemChange( change, value);
+}    
 
 void
 EdgeItem::adjust()
@@ -19,6 +33,8 @@ EdgeItem::adjust()
     dstP = mapFromItem( succ(), succ()->boundingRect().center());
     topLeft = srcP;
     btmRight = dstP;
+    QPointF srcCP = srcP;
+    QPointF dstCP = dstP;
     if ( pred()->isEdgeControl())
     {
 
@@ -87,19 +103,21 @@ EdgeItem::adjust()
     NodeItem *next_pred = NULL;
     NodeItem *next_succ = NULL;
 
-    if ( pred()->isEdgeControl())
+    if ( pred()->isEdgeControl() 
+         && isNotNullP( pred()->firstPred()))
     {
         next_pred = pred()->firstPred()->pred();
     } 
-    if ( succ()->isEdgeControl())
+    if ( succ()->isEdgeControl()
+         && isNotNullP( succ()->firstSucc()))
     {
         next_succ = succ()->firstSucc()->succ();
     } 
     /** Place cp1 */
     if ( isNotNullP( next_pred))
     {
-        QPointF p1 = mapFromScene( next_pred->pos());
-        QLineF line( p1, dstP);
+        QPointF p1 = mapFromItem( next_pred, next_pred->boundingRect().center());
+        QLineF line( p1, dstCP);
         QPointF cp1_offset = QPointF( (line.dx() * size)/ line.length(),
                                       (line.dy() * size)/ line.length());
         cp1 = srcP + cp1_offset;
@@ -118,8 +136,8 @@ EdgeItem::adjust()
     /** Place cp2 */
     if ( isNotNullP( next_succ))
     {
-        QPointF p2 = mapFromScene( next_succ->pos());
-        QLineF line( p2, srcP);
+        QPointF p2 = mapFromItem( next_succ, next_succ->boundingRect().center());
+        QLineF line( p2, srcCP);
         QPointF cp2_offset = QPointF( (line.dx() * size)/ line.length(),
                                       (line.dy() * size)/ line.length());
         cp2 = dstP + cp2_offset;
@@ -186,29 +204,33 @@ EdgeItem::paint( QPainter *painter,
         return;
 
     // Draw the line itself
-    if( option->state & QStyle::State_Selected)
+    if ( option->state & QStyle::State_Selected)
     {
-        if( !isInverted())
-        {
-            painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        } else
+#ifdef SHOW_BACKEDGES
+        if ( isInverted())
         {
             painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        } else
+#endif
+        {
+            painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         }
     } else
     {
-        if( !isInverted())
-        {
-            painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        } else
+#ifdef SHOW_BACKEDGES
+        if ( isInverted())
         {
             painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        } else
+#endif
+        {
+            painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         }
     }
 
     // Draw the arrows if there's enough room
     double angle = ::acos(line.dx() / line.length());
-    if (line.dy() >= 0)
+    if ( line.dy() >= 0)
         angle = TwoPi - angle;
 
     QPointF destArrowP1 = dstP + QPointF(sin(angle - Pi / 3) * arrowSize,
@@ -220,6 +242,14 @@ EdgeItem::paint( QPainter *painter,
     //painter->drawLine( line);
     if ( !succ()->isEdgeControl())
         painter->drawPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2); 
+     
+#ifdef SHOW_CONTROL_POINTS
+    /** For illustrative purposes */
+    painter->setPen(QPen(Qt::gray, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->drawLine( srcP, dstP);
+    painter->drawLine( srcP, cp1);
+    painter->drawLine( cp2, dstP);
+#endif
 }
 void EdgeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
