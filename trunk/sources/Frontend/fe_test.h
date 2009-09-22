@@ -7,15 +7,15 @@
 
 class SymNode: public SymObj
 {
-    ANode *graph_node;
+    NodeItem *graph_node;
 public:
     SymNode( QString name): SymObj( name){};
   
-    inline void setNode( ANode* n)
+    inline void setNode( NodeItem* n)
     {
         graph_node = n;
     }
-    inline ANode* node() const
+    inline NodeItem* node() const
     {
         return graph_node;
     }
@@ -30,7 +30,7 @@ class SymEdge: public SymObj
 {
     QString pred_name;
     QString succ_name;
-    AEdge* graph_edge;
+    EdgeItem* graph_edge;
 public:
     SymEdge( QString name): SymObj( name){};
 
@@ -59,18 +59,14 @@ public:
 
 class TestParser: public Parser
 {
-    AGraph graph;
+    GraphView *graph;
 public:
-    TestParser( QString str): Parser( str), graph()
-    {}
+    TestParser( QString str);
+    ~TestParser();
 
     void parseLine( QString line);
 
-    void convert2XML( QString xmlname)
-    {
-        Parser::convert2XML( xmlname);
-        graph.writeToXML( xmlname);
-    }
+    void convert2XML( QString xmlname);
 };
 
 #endif

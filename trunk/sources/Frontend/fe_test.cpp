@@ -4,6 +4,24 @@
  */
 #include "fe_iface.h"
 
+TestParser::TestParser( QString str):
+    Parser( str)
+{
+    graph = new GraphView();
+}
+
+TestParser::~TestParser()
+{
+    delete graph;
+}
+
+void
+TestParser::convert2XML( QString xmlname)
+{
+    Parser::convert2XML( xmlname);
+    graph->writeToXML( xmlname);
+}
+
 void
 TestParser::parseLine( QString line)
 {
@@ -18,12 +36,15 @@ TestParser::parseLine( QString line)
             
     if ( node_rx.indexIn( line) != -1 )
     {
+        QString text = QString("Node ").append( node_rx.cap(1));
         QString name = n_str.append( node_rx.cap(1));
         /** Add node to symtab */
         if ( symtab.find( name ) == symtab.end())
         {
             SymNode* node = new SymNode( name);
-            node->setNode( graph.newNode());
+            node->setNode( graph->newNode());
+            node->node()->setPlainText( text);
+        
             symtab[ name] = node;
             stream << name << endl;
         }
@@ -49,9 +70,9 @@ TestParser::parseLine( QString line)
         if ( symtab.find( pred_name) != symtab.end() 
              && symtab.find( succ_name) != symtab.end())
         {
-            ANode* pred = static_cast< SymNode *>( symtab[ pred_name])->node();
-            ANode* succ = static_cast< SymNode *>( symtab[ succ_name])->node();
-            graph.newEdge( pred, succ);
+            NodeItem* pred = static_cast< SymNode *>( symtab[ pred_name])->node();
+            NodeItem* succ = static_cast< SymNode *>( symtab[ succ_name])->node();
+            graph->newEdge( pred, succ);
         }
     }
 }

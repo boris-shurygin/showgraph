@@ -9,6 +9,7 @@
 #include <QTextStream>
 #include <QRegExp>
 #include "../Graph/graph_iface.h"
+#include "../QtGUI/gui_iface.h"
 #include "symtab.h"
 #include "parser.h"
 #include "fe_gcc.h"

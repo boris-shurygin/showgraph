@@ -48,10 +48,5 @@ bool uTestFE()
         UTestParser parser( example_name);
         parser.convert2XML( QString( "xml.xml"));
     }
-    /** Test simple IR parser */
-    {
-        TestParser parser( "test1");
-        parser.convert2XML( QString( "test1.xml"));
-    }
     return true;
 }
