@@ -150,6 +150,8 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="false"
+				VerboseOutput="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
