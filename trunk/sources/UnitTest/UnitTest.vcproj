@@ -136,9 +136,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmain.lib QtGui4.lib QtCore4.lib QtXml4.lib"
+				OutputFile="$(OutDir)\Showgraph.exe"
+				Version="0.2"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"

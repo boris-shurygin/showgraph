@@ -6,6 +6,7 @@
 
 int main(int argc, char **argv)
 {
+#ifdef _DEBUG
     //Test graph package
     if ( !uTestGraph())
         return -1;
@@ -19,4 +20,13 @@ int main(int argc, char **argv)
         return -1;
     
     return 0;
+#else
+    QApplication app(argc, argv);
+    app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+    
+    MainWindow mainWin;
+    mainWin.show();
+    
+    return app.exec();
+#endif
 }
