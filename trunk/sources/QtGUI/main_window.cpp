@@ -95,8 +95,14 @@ void MainWindow::saveAs()
 
 void MainWindow::about()
 {
-   QMessageBox::about(this, tr("About Showgraph"),
-                      tr("The <b>ShowGraph</b> implements a simple graph editor currently."));
+   QMessageBox::about( this,
+                       tr("About Showgraph"),
+#ifdef _DEBUG
+       tr("The <b>ShowGraph</b> implements a simple graph editor currently. <b>DEBUG VERSION</b>")
+#else
+       tr("The <b>ShowGraph</b> implements a simple graph editor currently.")
+#endif
+                        );
 }
 
 void MainWindow::createActions()
