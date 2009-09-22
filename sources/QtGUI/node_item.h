@@ -15,8 +15,8 @@ class NodeItem: public AuxNode, public QGraphicsTextItem
         setPlainText( text);
         setFlag( ItemIsMovable);
         //setFlag(ItemIsSelectable);
-        setCacheMode( DeviceCoordinateCache);
-        setZValue(1);
+        //setCacheMode( DeviceCoordinateCache);
+        setZValue(2);
     }
 
     /** We can't create nodes separately, do it through newNode method of graph */

@@ -51,6 +51,7 @@ void MainWindow::open()
     }
     file.close();
     graph_view->readFromXML( fileName);
+    //graph_view->doLayout();
     statusBar()->showMessage(tr("File loaded"), 2000);
 }
 

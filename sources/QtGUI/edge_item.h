@@ -34,7 +34,9 @@ private:
         AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ), arrowSize(10)
     {
         curr_mode = ModeShow;
-        //setFlag( ItemIsSelectable);
+        setFlag( ItemIsSelectable);
+        //setCacheMode( DeviceCoordinateCache);
+        setZValue(1);
     };
         
     virtual ~EdgeItem()
@@ -70,6 +72,7 @@ public:
     QRectF boundingRect() const;
     QPainterPath shape() const;
     
+    QVariant itemChange( GraphicsItemChange change, const QVariant &value);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);

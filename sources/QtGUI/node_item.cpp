@@ -12,6 +12,7 @@ GraphView * NodeItem::graph() const
 
 NodeItem::~NodeItem()
 {
+    
     if ( isEdgeControl() 
          && isNotNullP( firstPred()) 
          && isNotNullP( firstSucc())
@@ -19,6 +20,39 @@ NodeItem::~NodeItem()
          && isNotNullP( firstSucc()->succ()))
     {
         graph()->newEdge( firstPred()->pred(), firstSucc()->succ());
+    } else if ( isSimple())
+    {
+        QList< NodeItem *> nodes;
+        EdgeItem* edge;
+        for ( edge = firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
+        {
+            edge->adjust();
+            NodeItem* succ = edge->succ();
+
+            while ( succ->isEdgeControl())
+            {
+                assert( isNotNullP( succ->firstSucc()));
+                nodes << succ;
+                succ = succ->firstSucc()->succ();
+            }
+        }
+        for ( edge = firstPred(); isNotNullP( edge); edge = edge->nextPred())
+        {
+            edge->adjust();
+            NodeItem* pred = edge->pred();
+
+            while ( pred->isEdgeControl())
+            {
+                assert( isNotNullP( pred->firstPred()));
+                nodes << pred;
+                pred = pred->firstPred()->pred();
+            }
+        }
+        
+        foreach ( NodeItem *n, nodes)
+        {
+            delete n;
+        }
     }
     removeFromIndex();
     scene()->removeItem( this);
@@ -71,23 +105,25 @@ NodeItem::paint( QPainter *painter,
         {
             painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         }
-        QGraphicsTextItem::paint( painter, option, widget);
         painter->drawRect( boundingRect());
+        QGraphicsTextItem::paint( painter, option, widget);
     } else if ( isEdgeControl())
     {
-#if 0        
-        if (option->state & QStyle::State_Sunken) 
+        if ( firstPred()->isSelected()
+             || firstSucc()->isSelected())
         {
-            painter->setBrush( Qt::gray);
-            painter->setPen( QPen( Qt::black, 0));
-        } else
-        {
-            painter->setBrush( Qt::lightGray);
-            painter->setPen( QPen(Qt::darkGray, 0));
+            if (option->state & QStyle::State_Sunken) 
+            {
+                painter->setBrush( Qt::gray);
+                painter->setPen( QPen( Qt::black, 0));
+            } else
+            {
+                painter->setBrush( Qt::lightGray);
+                painter->setPen( QPen(Qt::darkGray, 0));
+            }
+            painter->drawEllipse(-EdgeControlSize, -EdgeControlSize,
+                                  2*EdgeControlSize, 2*EdgeControlSize);
         }
-        painter->drawEllipse(-EdgeControlSize, -EdgeControlSize,
-                              2*EdgeControlSize, 2*EdgeControlSize);
-#endif
     }
 }
 
@@ -143,15 +179,30 @@ QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
 {
     EdgeItem *edge = NULL;
 
-    if ( change != QGraphicsItem::ItemSceneChange)
+    if ( change != QGraphicsItem::ItemSceneChange 
+         || change != QGraphicsItem::ItemSceneHasChanged)
     {
         for ( edge = firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
         {
             edge->adjust();
+            NodeItem* succ = edge->succ();
+
+            if ( succ->isEdgeControl())
+            {
+                assert( isNotNullP( succ->firstSucc()));
+                succ->firstSucc()->adjust();
+            }
         }
         for ( edge = firstPred(); isNotNullP( edge); edge = edge->nextPred())
         {
             edge->adjust();
+            NodeItem* pred = edge->pred();
+
+            if ( pred->isEdgeControl())
+            {
+                assert( isNotNullP( pred->firstPred()));
+                pred->firstPred()->adjust();
+            }
         }
     }
     return QGraphicsTextItem::itemChange(change, value);
