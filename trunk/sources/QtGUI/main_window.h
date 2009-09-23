@@ -13,6 +13,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
     GraphView* graph_view;
+    qreal zoom_scale;
 public:
     MainWindow();
 
@@ -22,21 +23,27 @@ public slots:
     void runLayout();
     void saveAs();
     void about();
+    void zoomIn();
+    void zoomOut();
+    void zoomOrig();
 
 private:
     void createActions();
     void createMenus();
+    void updateMatrix();
 
     QMenu *fileMenu;
-    QMenu *layoutMenu;
+    QMenu *viewMenu;
     QMenu *helpMenu;
     QAction *openAct;
     QAction *newGraphAct;
     QAction *saveAsAct;
     QAction *exitAct;
     QAction *aboutAct;
-    QAction *aboutQtAct;
     QAction *layoutRunAct;
+    QAction *zoomInAct;
+    QAction *zoomOutAct;
+    QAction *zoomOrigAct;
 };
 
 #endif
