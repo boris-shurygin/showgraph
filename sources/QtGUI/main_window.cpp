@@ -19,6 +19,7 @@ MainWindow::MainWindow()
 
     setWindowTitle(tr("ShowGraph"));
     resize(480, 320);
+    zoom_scale = 0;
 }
 
 void MainWindow::open()
@@ -53,6 +54,33 @@ void MainWindow::open()
     graph_view->readFromXML( fileName);
     //graph_view->doLayout();
     statusBar()->showMessage(tr("File loaded"), 2000);
+}
+
+void MainWindow::zoomIn()
+{
+    zoom_scale++;
+    updateMatrix();
+}
+
+void MainWindow::zoomOut()
+{
+    zoom_scale--;
+    updateMatrix();
+}
+
+void MainWindow::zoomOrig()
+{
+    zoom_scale = 0;
+    updateMatrix();
+}
+
+void MainWindow::updateMatrix()
+{
+     qreal scale_val = qPow( qreal(2), zoom_scale / qreal(20)); 
+     QMatrix matrix;
+     matrix.scale(scale_val, scale_val);
+   
+     graph_view->setMatrix(matrix);
 }
 
 void MainWindow::newGraph()
@@ -130,6 +158,17 @@ void MainWindow::createActions()
     layoutRunAct->setShortcut(tr("F5"));
     connect( layoutRunAct, SIGNAL(triggered()), this, SLOT( runLayout()));
 
+    zoomInAct = new QAction(tr("&Zoom In"), this);
+    zoomInAct->setShortcut(Qt::Key_Plus);
+    connect( zoomInAct, SIGNAL(triggered()), this, SLOT( zoomIn()));
+
+    zoomOutAct = new QAction(tr("&Zoom Out"), this);
+    zoomOutAct->setShortcut(Qt::Key_Minus);
+    connect( zoomOutAct, SIGNAL(triggered()), this, SLOT( zoomOut()));
+
+    zoomOrigAct = new QAction(tr("&Original"), this);
+    zoomOrigAct->setShortcut(tr("Ctrl+A"));
+    connect( zoomOrigAct, SIGNAL(triggered()), this, SLOT( zoomOrig()));
 
 }
 
@@ -143,8 +182,12 @@ void MainWindow::createMenus()
 
     menuBar()->addSeparator();
 
-    layoutMenu = menuBar()->addMenu( tr( "&Layout"));
-    layoutMenu->addAction( layoutRunAct);
+    viewMenu = menuBar()->addMenu( tr( "&View"));
+    viewMenu->addAction( layoutRunAct);
+    viewMenu->addSeparator();
+    viewMenu->addAction( zoomInAct);
+    viewMenu->addAction( zoomOutAct);
+    viewMenu->addAction( zoomOrigAct);
 
     menuBar()->addSeparator();
     

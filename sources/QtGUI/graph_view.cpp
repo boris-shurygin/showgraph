@@ -10,7 +10,7 @@ GraphView::GraphView(): dst( 0, 0), src( 0, 0), createEdge( false)
 {
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    //scene->setSceneRect(0, 0, 100, 100);
+    //scene->setSceneRect(0, 0, 10000, 10000);
     setScene(scene);
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);
