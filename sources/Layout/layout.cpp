@@ -270,6 +270,9 @@ Numeration AuxGraph::rankNodes()
               isNotNullP( e);
               e = e->nextPred())
         {
+            if ( e->pred() == e->succ())
+                continue;
+
             if ( !e->isInverted())
             {
                 if ( rank < e->pred()->number( ranking) + 1)
@@ -278,10 +281,13 @@ Numeration AuxGraph::rankNodes()
                 }
             }
         }
-        for (AuxEdge* e = n->firstSucc();
+        for ( AuxEdge* e = n->firstSucc();
               isNotNullP( e);
               e = e->nextSucc())
         {
+            if ( e->pred() == e->succ())
+                continue;
+
             if ( e->isInverted())
             {
                 if ( rank < e->succ()->number( ranking) + 1)
@@ -295,8 +301,9 @@ Numeration AuxGraph::rankNodes()
             max_rank = rank;
 
         n->setNumber( ranking, rank);
-        /* FIXME: just for debugging */
+#ifdef _DEBUG
         out( "%llu node rank is %u", n->id(), rank);
+#endif
         n->setY( rank * RANK_SPACING);
 
         /* Traversal continuation */
@@ -304,6 +311,9 @@ Numeration AuxGraph::rankNodes()
               isNotNullP( e);
               e = e->nextSucc())
         {
+            if ( e->pred() == e->succ())
+                continue;
+
             if ( !e->isInverted())
             {
                 AuxNode* succ = e->succ();
@@ -320,6 +330,8 @@ Numeration AuxGraph::rankNodes()
               isNotNullP( e);
               e = e->nextPred())
         {
+            if ( e->pred() == e->succ())
+                continue;
             if ( e->isInverted())
             {
                 AuxNode* succ = e->pred();
@@ -400,7 +412,9 @@ Numeration AuxGraph::rankNodes()
             curr_rank++;
         }
     }
-    debugPrint();
+#ifdef _DEBUG
+    //debugPrint();
+#endif
     return ranking; 
 }
 

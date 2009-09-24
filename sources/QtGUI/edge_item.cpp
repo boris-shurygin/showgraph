@@ -9,10 +9,63 @@
 //#define SHOW_CONTROL_POINTS
 //#define SHOW_BACKEDGES
 
-NodeItem * 
-EdgeItem::node( GraphDir dir) const 
+GEdge::GEdge( GraphView *graph_p, int _id, GNode *_pred, GNode* _succ):
+    AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ)
 {
-    return static_cast< NodeItem *>(AuxEdge::node( dir));
+    item_p = new EdgeItem( this);
+}
+   
+GEdge::~GEdge()
+{
+    item()->remove();
+    //delete item();
+}
+
+GNode * 
+GEdge::node( GraphDir dir) const 
+{
+    return static_cast< GNode *>(AuxEdge::node( dir));
+}
+
+/**
+ * Update DOM tree element
+ */
+void
+GEdge::updateElement()
+{
+    QDomElement e = elem();
+    int i = 0;
+    QDomElement new_e = graph()->createElement( "edge");
+    QDomNode e2 = graph()->documentElement().removeChild( e);
+    assert( !e2.isNull());
+    graph()->documentElement().appendChild( new_e);
+    setElement( new_e);
+    e = new_e;
+
+    /* Base class method call to print generic edge properties */
+    AuxEdge::updateElement();
+}
+
+/**
+ * read properties from DOM tree element
+ */
+void
+GEdge::readFromElement( QDomElement e)
+{
+    AuxEdge::readFromElement( e); // Base class method
+    item()->adjust();
+}
+
+/**
+ * EdgeItem implementaion
+ */
+/** Constructor */
+EdgeItem::EdgeItem( GEdge *e_p): edge_p( e_p)
+{
+    curr_mode = ModeShow;
+    setFlag( ItemIsSelectable);
+    //setCacheMode( DeviceCoordinateCache);
+    setZValue(1);
 }
 
 QVariant
@@ -20,8 +73,8 @@ EdgeItem::itemChange( GraphicsItemChange change, const QVariant &value)
 {
     if ( change == QGraphicsItem::ItemSelectedChange)
     {
-        pred()->update();
-        succ()->update();
+        pred()->item()->update();
+        succ()->item()->update();
     }
     return QGraphicsItem::itemChange( change, value);
 }    
@@ -29,8 +82,8 @@ EdgeItem::itemChange( GraphicsItemChange change, const QVariant &value)
 void
 EdgeItem::adjust()
 {
-    srcP = mapFromItem( pred(), pred()->boundingRect().center());
-    dstP = mapFromItem( succ(), succ()->boundingRect().center());
+    srcP = mapFromItem( pred()->item(), pred()->item()->boundingRect().center());
+    dstP = mapFromItem( succ()->item(), succ()->item()->boundingRect().center());
     topLeft = srcP;
     btmRight = dstP;
     QPointF srcCP = srcP;
@@ -41,7 +94,7 @@ EdgeItem::adjust()
     } else
     {
         QLineF line( srcP, dstP);
-        QPolygonF endPolygon = mapFromItem( pred(), pred()->boundingRect());
+        QPolygonF endPolygon = mapFromItem( pred()->item(), pred()->item()->boundingRect());
         QPointF p1 = endPolygon.first();
         QPointF p2;
         QPointF intersectPoint;
@@ -63,7 +116,7 @@ EdgeItem::adjust()
     } else
     {
         QLineF line2( srcP, dstP);
-        QPolygonF endPolygon = mapFromItem( succ(), succ()->boundingRect());
+        QPolygonF endPolygon = mapFromItem( succ()->item(), succ()->item()->boundingRect());
         QPointF p1 = endPolygon.first();;
         QPointF p2;
         QLineF polyLine;
@@ -106,12 +159,12 @@ EdgeItem::adjust()
     if ( pred()->isEdgeControl() 
          && isNotNullP( pred()->firstPred()))
     {
-        next_pred = pred()->firstPred()->pred();
+        next_pred = pred()->firstPred()->pred()->item();
     } 
     if ( succ()->isEdgeControl()
          && isNotNullP( succ()->firstSucc()))
     {
-        next_succ = succ()->firstSucc()->succ();
+        next_succ = succ()->firstSucc()->succ()->item();
     } 
     /** Place cp1 */
     if ( isNotNullP( next_pred))
@@ -160,7 +213,7 @@ QRectF
 EdgeItem::boundingRect() const
 {
     qreal penWidth = 1;
-    qreal extra = penWidth / 2.0;
+    qreal extra = arrowSize;
 
     return QRectF( topLeft,
                    QSizeF( btmRight.x() - topLeft.x(),
@@ -285,37 +338,8 @@ void EdgeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
 {
     if( ev->button() & Qt::LeftButton)
     {
-        NodeItem* new_node = static_cast<NodeItem *>( insertNode());
+        GNode* new_node = static_cast<GNode *>( edge()->insertNode());
         new_node->setTypeEdgeControl();
-        new_node->setPos( ev->pos());
+        new_node->item()->setPos( ev->pos());
     }
-}
-
-/**
- * Update DOM tree element
- */
-void
-EdgeItem::updateElement()
-{
-    QDomElement e = elem();
-    int i = 0;
-    QDomElement new_e = graph()->createElement( "edge");
-    QDomNode e2 = graph()->documentElement().removeChild( e);
-    assert( !e2.isNull());
-    graph()->documentElement().appendChild( new_e);
-    setElement( new_e);
-    e = new_e;
-
-    /* Base class method call to print generic edge properties */
-    AuxEdge::updateElement();
-}
-
-/**
- * read properties from DOM tree element
- */
-void
-EdgeItem::readFromElement( QDomElement e)
-{
-    AuxEdge::readFromElement( e); // Base class method
-    adjust();
 }

@@ -13,7 +13,7 @@ class GraphView: public AuxGraph, public QGraphicsView
     QPoint src;
     QPoint dst;
     bool createEdge;
-    NodeItem *tmpSrc;
+    GNode *tmpSrc;
 public:
     /** Constructor */
     GraphView();
@@ -22,27 +22,26 @@ public:
     void drawBackground(QPainter *painter, const QRectF &rect);
     
     /** New node/edge overloads */
-    NodeItem* newNode();
-    NodeItem* newNode( QDomElement e);
-    EdgeItem* newEdge( NodeItem* pred, NodeItem* succ);
-    EdgeItem* newEdge( NodeItem* pred, NodeItem* succ, QDomElement e);
+    GNode* newNode();
+    GNode* newNode( QDomElement e);
+    GEdge* newEdge( GNode* pred, GNode* succ);
+    GEdge* newEdge( GNode* pred, GNode* succ, QDomElement e);
     
     AuxEdge* newEdge( AuxNode * pred, AuxNode *succ)
     {
-        return ( AuxEdge*)newEdge( static_cast< NodeItem *>( pred),
-                                    static_cast< NodeItem *> (succ));
+        return ( AuxEdge*)newEdge( static_cast< GNode *>( pred),
+                                    static_cast< GNode *> (succ));
     }
     AuxEdge* newEdge( AuxNode * pred, AuxNode *succ, QDomElement e)
     {
-        return ( AuxEdge*)newEdge( static_cast< NodeItem *>( pred),
-                                    static_cast< NodeItem *> (succ), e);
+        return ( AuxEdge*)newEdge( static_cast< GNode *>( pred),
+                                    static_cast< GNode *> (succ), e);
     }
 
     void mouseDoubleClickEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
-    void drawForeground(QPainter *painter, const QRectF &rect);
     
     inline bool IsCreateEdge() const
     {
@@ -52,11 +51,11 @@ public:
     {
         createEdge = val;
     }
-    inline void SetTmpSrc( NodeItem* node)
+    inline void SetTmpSrc( GNode* node)
     {
         tmpSrc = node;
     }
-    inline NodeItem* GetTmpSrc()
+    inline GNode* GetTmpSrc()
     {
         return tmpSrc;
     }
@@ -64,32 +63,32 @@ public:
     /** Graph part */
     virtual void * CreateNode( AuxGraph *graph_p, int _id)
     {
-        NodeItem* node_p = new NodeItem( static_cast<GraphView *>(graph_p), _id);
+        GNode* node_p = new GNode( static_cast<GraphView *>(graph_p), _id);
         return node_p;
     }
     virtual void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
     {
-        return new EdgeItem(  static_cast<GraphView *>( graph_p), _id,
-                              static_cast<NodeItem *>( _pred), 
-                              static_cast<NodeItem *>( _succ));
+        return new GEdge(  static_cast<GraphView *>( graph_p), _id,
+                              static_cast<GNode *>( _pred), 
+                              static_cast<GNode *>( _succ));
     }
 
-    inline EdgeItem* firstEdge() 
+    inline GEdge* firstEdge() 
     {
-        return static_cast< EdgeItem *>( AuxGraph::firstEdge());
+        return static_cast< GEdge *>( AuxGraph::firstEdge());
     }
-    inline NodeItem* firstNode()
+    inline GNode* firstNode()
     {
-        return static_cast< NodeItem *>( AuxGraph::firstNode());
+        return static_cast< GNode *>( AuxGraph::firstNode());
     }
     void doLayout()
     {
         AuxGraph::doLayout();
-        for ( NodeItem* n = firstNode();
+        for ( GNode* n = firstNode();
               isNotNullP( n);
               n = n->nextNode())
         {
-            n->setPos( n->modelX(), n->modelY());
+            n->item()->setPos( n->modelX(), n->modelY());
         }
     }
 };

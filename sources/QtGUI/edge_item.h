@@ -9,9 +9,79 @@
 #define EdgeControlSize 5
 #include "gui_impl.h"
 
-class EdgeItem: public AuxEdge, public QGraphicsItem
+class GEdge: public AuxEdge
 {
+    EdgeItem *item_p;
 
+    /** Constructors are made private, only nodes and graph can create edges */
+    GEdge( GraphView *graph_p, int _id, GNode *_pred, GNode* _succ);
+    virtual ~GEdge();
+
+    friend class GraphT< GraphView, GNode, GEdge>;
+    friend class NodeT< GraphView, GNode, GEdge>;
+    friend class GraphView;
+    friend class Node;
+public:
+
+    /**
+     * Return associated graphics item
+     */
+    inline EdgeItem *item() const
+    {
+        return item_p;
+    }
+    /** 
+     * Update DOM element
+     */
+    virtual void updateElement();
+
+    /**
+     * Read properties from XML
+     */
+    virtual void readFromElement( QDomElement elem);
+
+    /** Graph part */
+    void setNode( GNode *n, GraphDir dir)
+    {
+        AuxEdge::setNode( ( AuxNode *)n, dir);
+    }
+    inline void setPred( GNode *n)
+    {
+        setNode( n, GRAPH_DIR_UP);
+    }
+    inline void setSucc( GNode *n)
+    {
+        setNode( n, GRAPH_DIR_DOWN);
+    }
+    inline GNode *node( GraphDir dir) const;
+    inline GNode *pred() const 
+    {
+        return node( GRAPH_DIR_UP);
+    }
+    inline GNode *succ() const 
+    {
+        return node( GRAPH_DIR_DOWN);
+    }
+    inline GEdge* nextEdge()
+    {
+        return static_cast< GEdge *>(AuxEdge::nextEdge());
+    }
+    inline GEdge* nextEdgeInDir( GraphDir dir)
+    {
+        return static_cast< GEdge *>(AuxEdge::nextEdgeInDir( dir));
+    }
+    inline GEdge* nextSucc()
+    {
+        return nextEdgeInDir( GRAPH_DIR_DOWN);
+    }
+    inline GEdge* nextPred()
+    {
+        return nextEdgeInDir( GRAPH_DIR_UP);
+    } 
+};
+
+class EdgeItem: public QGraphicsItem
+{
 public:        
     typedef enum EdgeMode
     {
@@ -20,37 +90,21 @@ public:
     } EdgeMode;
 
 private:
+    /** Graph connection */
+    GEdge* edge_p;
+
     QPointF srcP;
     QPointF cp1;
     QPointF cp2;
     QPointF dstP;
     QPointF topLeft;
     QPointF btmRight;
-    qreal arrowSize;
     EdgeMode curr_mode;
-    
-    /** Constructors are made private, only nodes and graph can create edges */
-    EdgeItem( GraphView *graph_p, int _id, NodeItem *_pred, NodeItem* _succ):
-        AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ), arrowSize(10)
-    {
-        curr_mode = ModeShow;
-        setFlag( ItemIsSelectable);
-        //setCacheMode( DeviceCoordinateCache);
-        setZValue(1);
-    };
-        
-    virtual ~EdgeItem()
-    {
-        removeFromIndex();
-        scene()->removeItem( this);
-    }
-    friend class GraphT< GraphView, NodeItem, EdgeItem>;
-    friend class NodeT< GraphView, NodeItem, EdgeItem>;
-    friend class GraphView;
-    friend class NodeItem;
 public:
     
     enum {Type = TypeEdge};
+
+    inline EdgeItem( GEdge *e_p);
 
     int type() const
     {
@@ -58,7 +112,12 @@ public:
     }
 
     void adjust();
-   
+    
+    inline GEdge* edge() const
+    {
+        return edge_p;    
+    }
+    
     inline EdgeMode mode() const
     {
         return curr_mode;
@@ -78,54 +137,20 @@ public:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
-    /** 
-     * Update DOM element
-     */
-    virtual void updateElement();
-
-    /**
-     * Read properties from XML
-     */
-    virtual void readFromElement( QDomElement elem);
-
-    /** Graph part */
-    void setNode( NodeItem *n, GraphDir dir)
+    inline GNode* pred() const
     {
-        AuxEdge::setNode( ( AuxNode *)n, dir);
+        return edge()->pred();
     }
-    inline void setPred( NodeItem *n)
+    inline GNode* succ() const
     {
-        setNode( n, GRAPH_DIR_UP);
+        return edge()->succ();
     }
-    inline void setSucc( NodeItem *n)
+    inline void remove()
     {
-        setNode( n, GRAPH_DIR_DOWN);
+        setVisible( false);
+        removeFromIndex();
+        scene()->removeItem( this);
+        edge_p = NULL;
     }
-    inline NodeItem *node( GraphDir dir) const;
-    inline NodeItem *pred() const 
-    {
-        return node( GRAPH_DIR_UP);
-    }
-    inline NodeItem *succ() const 
-    {
-        return node( GRAPH_DIR_DOWN);
-    }
-    inline EdgeItem* nextEdge()
-    {
-        return static_cast< EdgeItem *>(AuxEdge::nextEdge());
-    }
-    inline EdgeItem* nextEdgeInDir( GraphDir dir)
-    {
-        return static_cast< EdgeItem *>(AuxEdge::nextEdgeInDir( dir));
-    }
-    inline EdgeItem* nextSucc()
-    {
-        return nextEdgeInDir( GRAPH_DIR_DOWN);
-    }
-    inline EdgeItem* nextPred()
-    {
-        return nextEdgeInDir( GRAPH_DIR_UP);
-    }
-    
 };
 #endif

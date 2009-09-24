@@ -6,41 +6,28 @@
 #ifndef NODE_W_H
 #define NODE_W_H
 
-class NodeItem: public AuxNode, public QGraphicsTextItem
+
+class NodeItem: public QGraphicsTextItem
 {    
+    GNode *node_p;    
+    
     /** Initialization */
-    inline void SetInitFlags()
-    {
-        QString text = QString("Node %1").arg( id());
-        setPlainText( text);
-        setFlag( ItemIsMovable);
-        //setFlag(ItemIsSelectable);
-        //setCacheMode( DeviceCoordinateCache);
-        setZValue(2);
-    }
-
-    /** We can't create nodes separately, do it through newNode method of graph */
-    NodeItem( GraphView *graph_p, int _id): AuxNode( ( AuxGraph *)graph_p, _id)
-    {
-        SetInitFlags();
-    }
-
-    /** Contructor of node with specified position */
-    NodeItem( GraphView *graph_p, int _id, QPointF _pos):
-        AuxNode( ( AuxGraph *)graph_p, _id)
-    {
-        SetInitFlags();
-        setPos( _pos);
-    }
-
-    friend class GraphT< GraphView, NodeItem, EdgeItem>;
-    friend class GraphView;
+    void SetInitFlags();
 public:
-    virtual ~NodeItem();
-
     enum {Type = TypeNode};
 
-    int type() const
+    /** Constructor */
+    inline NodeItem( GNode *n_p)
+    {
+        node_p = n_p;
+        SetInitFlags();
+    }
+
+    inline GNode *node() const
+    {
+        return node_p;
+    }
+    inline int type() const
     {
         return Type;
     }
@@ -55,6 +42,35 @@ public:
 
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     
+    inline void remove()
+    {
+        setVisible( false);
+        removeFromIndex();
+        scene()->removeItem( this);
+        node_p = NULL;
+    }
+};
+
+class GNode: public AuxNode
+{
+    NodeItem *item_p;
+    
+    /** We can't create nodes separately, do it through newNode method of graph */
+    GNode( GraphView *graph_p, int _id);
+    /** Contructor of node with specified position */
+    GNode( GraphView *graph_p, int _id, QPointF _pos);
+
+    friend class GraphT< GraphView, GNode, GEdge>;
+    friend class GraphView;
+    
+public:
+    virtual ~GNode();
+
+    inline NodeItem* item() const
+    {
+        return item_p;
+    }
+
     /** 
      * Update DOM element
      */
@@ -65,44 +81,43 @@ public:
      */
     virtual void readFromElement( QDomElement elem);
 
-    /** Graph part */
     GraphView * graph() const;
-    inline NodeItem* nextNode()
+
+    inline GNode* nextNode()
     {
-        return static_cast< NodeItem*>( AuxNode::nextNode());
+        return static_cast< GNode*>( AuxNode::nextNode());
     }
-    inline void AddEdgeInDir( EdgeItem *edge, GraphDir dir)
+    inline void AddEdgeInDir( GEdge *edge, GraphDir dir)
     {
         AuxNode::AddEdgeInDir( (AuxEdge *)edge, dir);
     }
-    inline void AddPred( EdgeItem *edge)
+    inline void AddPred( GEdge *edge)
     {
         AddEdgeInDir( edge, GRAPH_DIR_UP);
     }
-    inline void AddSucc( EdgeItem *edge) 
+    inline void AddSucc( GEdge *edge) 
     {
         AddEdgeInDir( edge, GRAPH_DIR_DOWN);
     }
-    inline EdgeItem* firstEdgeInDir( GraphDir dir)
+    inline GEdge* firstEdgeInDir( GraphDir dir)
     {
-        return static_cast< EdgeItem*>( AuxNode::first_edge[ dir]);
+        return static_cast< GEdge*>( AuxNode::first_edge[ dir]);
     }
-    inline EdgeItem* firstSucc()
+    inline GEdge* firstSucc()
     {
         return firstEdgeInDir( GRAPH_DIR_DOWN);
     }
-    inline EdgeItem* firstPred()
+    inline GEdge* firstPred()
     {
         return firstEdgeInDir( GRAPH_DIR_UP);
     }
     virtual inline double width() const
     {
-        return boundingRect().width();
+        return item()->boundingRect().width();
     }
     virtual inline double height() const
     {
-        return boundingRect().height();
+        return item()->boundingRect().height();
     }
 };
-
 #endif
