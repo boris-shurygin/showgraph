@@ -5,14 +5,23 @@
  */
 #include "gui_impl.h"
 
-GraphView * NodeItem::graph() const
+/** We can't create nodes separately, do it through newNode method of graph */
+GNode::GNode( GraphView *graph_p, int _id):
+    AuxNode( ( AuxGraph *)graph_p, _id)
 {
-    return static_cast< GraphView *>( AuxNode::graph());
+    item_p = new NodeItem( this);
 }
 
-NodeItem::~NodeItem()
+/** Contructor of node with specified position */
+GNode::GNode( GraphView *graph_p, int _id, QPointF _pos):
+    AuxNode( ( AuxGraph *)graph_p, _id)
 {
-    
+    item_p = new NodeItem( this);
+    item_p->setPos( _pos);
+}
+
+GNode::~GNode()
+{
     if ( isEdgeControl() 
          && isNotNullP( firstPred()) 
          && isNotNullP( firstSucc())
@@ -22,12 +31,12 @@ NodeItem::~NodeItem()
         graph()->newEdge( firstPred()->pred(), firstSucc()->succ());
     } else if ( isSimple())
     {
-        QList< NodeItem *> nodes;
-        EdgeItem* edge;
+        QList< GNode *> nodes;
+        GEdge* edge;
         for ( edge = firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
         {
-            edge->adjust();
-            NodeItem* succ = edge->succ();
+            edge->item()->adjust();
+            GNode* succ = edge->succ();
 
             while ( succ->isEdgeControl())
             {
@@ -38,8 +47,8 @@ NodeItem::~NodeItem()
         }
         for ( edge = firstPred(); isNotNullP( edge); edge = edge->nextPred())
         {
-            edge->adjust();
-            NodeItem* pred = edge->pred();
+            edge->item()->adjust();
+            GNode* pred = edge->pred();
 
             while ( pred->isEdgeControl())
             {
@@ -49,19 +58,83 @@ NodeItem::~NodeItem()
             }
         }
         
-        foreach ( NodeItem *n, nodes)
+        foreach ( GNode *n, nodes)
         {
             delete n;
         }
     }
-    removeFromIndex();
-    scene()->removeItem( this);
+    item()->remove();
+}
+
+GraphView * GNode::graph() const
+{
+    return static_cast< GraphView *>( AuxNode::graph());
+}
+
+/**
+ * Update DOM tree element
+ */
+void
+GNode::updateElement()
+{
+    AuxNode::updateElement();// Base class method call
+    QDomElement e = elem();
+    e.setAttribute( "x", item()->x());
+    e.setAttribute( "y", item()->y());
+    e.setAttribute( "label", item()->toPlainText());
+    if ( isEdgeControl())
+    {
+        e.setAttribute( "edge_control", 1);
+    }
+}
+
+/**
+ * read properties from DOM tree element
+ */
+void
+GNode::readFromElement( QDomElement e)
+{
+    assert( !e.isNull());
+    assert( e.tagName() == QString( "node"));
+    
+    if ( e.hasAttribute( "x") && e.hasAttribute( "y"))
+    {
+        item()->setPos( e.attribute( "x").toDouble(),
+                        e.attribute( "y").toDouble());
+    }
+    if ( e.hasAttribute( "label"))
+    {
+        item()->setPlainText( e.attribute( "label"));
+    }
+    if ( e.hasAttribute("edge_control"))
+    {
+        setTypeEdgeControl();
+    }
+    AuxNode::readFromElement( e); // Base class method
+}
+
+/**
+ * NodeItem implementation
+ */
+/** Initialization */
+void 
+NodeItem::SetInitFlags()
+{
+    QString text = QString("Node %1").arg( node()->id());
+    setPlainText( text);
+    setFlag( ItemIsMovable);
+    //setFlag(ItemIsSelectable);
+    //setCacheMode( DeviceCoordinateCache);
+    setZValue(2);
 }
 
 QRectF 
 NodeItem::boundingRect() const
 {
-    if ( isEdgeControl())
+    if ( isNullP( node_p))
+        return QRectF();
+
+    if ( node()->isEdgeControl())
     {
         qreal adjust = 2;
         return QRectF( -EdgeControlSize - adjust, -EdgeControlSize - adjust,
@@ -77,7 +150,10 @@ NodeItem::boundingRect() const
 QPainterPath 
 NodeItem::shape() const
 {
-    if ( isEdgeControl())
+    if ( isNullP( node_p))
+        return QPainterPath();
+
+    if ( node()->isEdgeControl())
     {
         QPainterPath path;
         path.addEllipse( -EdgeControlSize, -EdgeControlSize, 2*EdgeControlSize, 2*EdgeControlSize);
@@ -95,7 +171,10 @@ NodeItem::paint( QPainter *painter,
                  const QStyleOptionGraphicsItem *option,
                  QWidget *widget)
 {
-    if ( isSimple())
+    if ( isNullP( node_p))
+        return;
+
+    if ( node()->isSimple())
     {
         qreal adjust = 3;
         if (option->state & QStyle::State_Sunken)
@@ -107,10 +186,10 @@ NodeItem::paint( QPainter *painter,
         }
         painter->drawRect( boundingRect());
         QGraphicsTextItem::paint( painter, option, widget);
-    } else if ( isEdgeControl())
+    } else if ( node()->isEdgeControl())
     {
-        if ( firstPred()->isSelected()
-             || firstSucc()->isSelected())
+        if ( node()->firstPred()->item()->isSelected()
+             || node()->firstSucc()->item()->isSelected())
         {
             if (option->state & QStyle::State_Sunken) 
             {
@@ -129,10 +208,10 @@ NodeItem::paint( QPainter *painter,
 
 void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if( event->button() & Qt::RightButton && !isEdgeControl())
+    if( event->button() & Qt::RightButton && !node()->isEdgeControl())
     {
-        graph()->SetCreateEdge( true);
-        graph()->SetTmpSrc( this);
+        node()->graph()->SetCreateEdge( true);
+        node()->graph()->SetTmpSrc( node());
     }
     update();
     QGraphicsItem::mousePressEvent(event);
@@ -146,7 +225,7 @@ void NodeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    if ( event->button() & Qt::LeftButton && !isEdgeControl())
+    if ( event->button() & Qt::LeftButton && !node()->isEdgeControl())
     {
         if ( textInteractionFlags() == Qt::NoTextInteraction)
             setTextInteractionFlags(Qt::TextEditorInteraction);
@@ -163,89 +242,47 @@ void NodeItem::focusOutEvent(QFocusEvent *event)
 void  NodeItem::keyPressEvent(QKeyEvent *event)
 {
     QGraphicsTextItem::keyPressEvent(event);
-    EdgeItem *edge = NULL;
+    GEdge *edge = NULL;
 
-    for ( edge = firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
+    for ( edge = node()->firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
     {
-        edge->adjust();
+        edge->item()->adjust();
     }
-    for ( edge = firstPred(); isNotNullP( edge); edge = edge->nextPred())
+    for ( edge = node()->firstPred(); isNotNullP( edge); edge = edge->nextPred())
     {
-        edge->adjust();
+        edge->item()->adjust();
     }
 }
 
 QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
 {
-    EdgeItem *edge = NULL;
+    GEdge *edge = NULL;
 
     if ( change != QGraphicsItem::ItemSceneChange 
          || change != QGraphicsItem::ItemSceneHasChanged)
     {
-        for ( edge = firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
+        for ( edge = node()->firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
         {
-            edge->adjust();
-            NodeItem* succ = edge->succ();
+            edge->item()->adjust();
+            GNode* succ = edge->succ();
 
             if ( succ->isEdgeControl())
             {
                 assert( isNotNullP( succ->firstSucc()));
-                succ->firstSucc()->adjust();
+                succ->firstSucc()->item()->adjust();
             }
         }
-        for ( edge = firstPred(); isNotNullP( edge); edge = edge->nextPred())
+        for ( edge = node()->firstPred(); isNotNullP( edge); edge = edge->nextPred())
         {
-            edge->adjust();
-            NodeItem* pred = edge->pred();
+            edge->item()->adjust();
+            GNode* pred = edge->pred();
 
             if ( pred->isEdgeControl())
             {
                 assert( isNotNullP( pred->firstPred()));
-                pred->firstPred()->adjust();
+                pred->firstPred()->item()->adjust();
             }
         }
     }
     return QGraphicsTextItem::itemChange(change, value);
-}
-
-/**
- * Update DOM tree element
- */
-void
-NodeItem::updateElement()
-{
-    AuxNode::updateElement();// Base class method call
-    QDomElement e = elem();
-    e.setAttribute( "x", QGraphicsItem::x());
-    e.setAttribute( "y", QGraphicsItem::y());
-    e.setAttribute( "label", toPlainText());
-    if ( isEdgeControl())
-    {
-        e.setAttribute( "edge_control", 1);
-    }
-}
-
-/**
- * read properties from DOM tree element
- */
-void
-NodeItem::readFromElement( QDomElement e)
-{
-    assert( !e.isNull());
-    assert( e.tagName() == QString( "node"));
-    
-    if ( e.hasAttribute( "x") && e.hasAttribute( "y"))
-    {
-        setPos( e.attribute( "x").toDouble(),
-                e.attribute( "y").toDouble());
-    }
-    if ( e.hasAttribute( "label"))
-    {
-        setPlainText( e.attribute( "label"));
-    }
-    if ( e.hasAttribute("edge_control"))
-    {
-        setTypeEdgeControl();
-    }
-    AuxNode::readFromElement( e); // Base class method
 }

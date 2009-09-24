@@ -7,15 +7,15 @@
 
 class SymNode: public SymObj
 {
-    NodeItem *graph_node;
+    GNode *graph_node;
 public:
     SymNode( QString name): SymObj( name){};
   
-    inline void setNode( NodeItem* n)
+    inline void setNode( GNode* n)
     {
         graph_node = n;
     }
-    inline NodeItem* node() const
+    inline GNode* node() const
     {
         return graph_node;
     }
@@ -30,7 +30,7 @@ class SymEdge: public SymObj
 {
     QString pred_name;
     QString succ_name;
-    EdgeItem* graph_edge;
+    GEdge* graph_edge;
 public:
     SymEdge( QString name): SymObj( name){};
 

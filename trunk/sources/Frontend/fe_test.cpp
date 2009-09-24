@@ -43,7 +43,7 @@ TestParser::parseLine( QString line)
         {
             SymNode* node = new SymNode( name);
             node->setNode( graph->newNode());
-            node->node()->setPlainText( text);
+            node->node()->item()->setPlainText( text);
         
             symtab[ name] = node;
             stream << name << endl;
@@ -70,8 +70,8 @@ TestParser::parseLine( QString line)
         if ( symtab.find( pred_name) != symtab.end() 
              && symtab.find( succ_name) != symtab.end())
         {
-            NodeItem* pred = static_cast< SymNode *>( symtab[ pred_name])->node();
-            NodeItem* succ = static_cast< SymNode *>( symtab[ succ_name])->node();
+            GNode* pred = static_cast< SymNode *>( symtab[ pred_name])->node();
+            GNode* succ = static_cast< SymNode *>( symtab[ succ_name])->node();
             graph->newEdge( pred, succ);
         }
     }

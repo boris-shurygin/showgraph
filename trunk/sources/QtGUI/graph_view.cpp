@@ -8,28 +8,29 @@
 /** Contructor */
 GraphView::GraphView(): dst( 0, 0), src( 0, 0), createEdge( false)
 {
-    QGraphicsScene *scene = new QGraphicsScene(this);
-    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+    QGraphicsScene *scene = new QGraphicsScene( this);
+    //scene->setItemIndexMethod( QGraphicsScene::NoIndex);
     //scene->setSceneRect(0, 0, 10000, 10000);
-    setScene(scene);
-    setCacheMode(CacheBackground);
-    setViewportUpdateMode(BoundingRectViewportUpdate);
-    setRenderHint(QPainter::Antialiasing);
-    setTransformationAnchor(AnchorUnderMouse);
-    setResizeAnchor(AnchorViewCenter);
-    setMinimumSize(200, 200);
-    setWindowTitle(tr("ShowGraph"));
+    setScene( scene);
+    //setCacheMode( CacheBackground);
+    setViewportUpdateMode( BoundingRectViewportUpdate);
+    setRenderHint( QPainter::Antialiasing);
+    setTransformationAnchor( AnchorUnderMouse);
+    setResizeAnchor( AnchorViewCenter);
+    setMinimumSize( 200, 200);
+    setWindowTitle( tr("ShowGraph"));
+    //setDragMode( ScrollHandDrag);
     tmpSrc = NULL;
 }
 
 /** Destructor */
 GraphView::~GraphView()
 {
-    for ( NodeItem *node = firstNode();
+    for ( GNode *node = firstNode();
           isNotNullP( node);
           )
     {
-        NodeItem* next = node->nextNode();
+        GNode* next = node->nextNode();
         delete node;
         node = next;
     }
@@ -41,39 +42,39 @@ GraphView::drawBackground(QPainter *painter, const QRectF &rect)
 
 }
 
-NodeItem*
+GNode*
 GraphView::newNode()
 {
-    NodeItem* n = static_cast< NodeItem *>( AuxGraph::newNode());
-    scene()->addItem( n);
+    GNode* n = static_cast< GNode *>( AuxGraph::newNode());
+    scene()->addItem( n->item());
     return n;
 }
 
-EdgeItem*
-GraphView::newEdge( NodeItem* pred, NodeItem* succ)
+GEdge*
+GraphView::newEdge( GNode* pred, GNode* succ)
 {
-    EdgeItem* e = 
-        static_cast< EdgeItem *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ));
-    scene()->addItem( e);
-    e->adjust();
+    GEdge* e = 
+        static_cast< GEdge *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ));
+    scene()->addItem( e->item());
+    e->item()->adjust();
     return e;
 }
 
-NodeItem*
+GNode*
 GraphView::newNode( QDomElement e)
 {
-    NodeItem* n =  static_cast< NodeItem *>( AuxGraph::newNode( e));
-    scene()->addItem( n);
+    GNode* n =  static_cast< GNode *>( AuxGraph::newNode( e));
+    scene()->addItem( n->item());
     return n;
 }
 
-EdgeItem*
-GraphView::newEdge( NodeItem* pred, NodeItem* succ, QDomElement e)
+GEdge*
+GraphView::newEdge( GNode* pred, GNode* succ, QDomElement e)
 {
-    EdgeItem* edge_p = 
-        static_cast< EdgeItem *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ, e));
-    scene()->addItem( edge_p);
-    edge_p->adjust();
+    GEdge* edge_p = 
+        static_cast< GEdge *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ, e));
+    scene()->addItem( edge_p->item());
+    edge_p->item()->adjust();
     return edge_p;
 }
 
@@ -85,15 +86,15 @@ GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
         QPoint p = ev->pos();
         if ( !scene()->itemAt( mapToScene( ev->pos())))
         {
-            NodeItem* node = newNode();
-            node->setPos( mapToScene( p));
+            GNode* node = newNode();
+            node->item()->setPos( mapToScene( p));
         }
     } else if( ev->button() & Qt::RightButton)
     {
         QGraphicsItem *node = scene()->itemAt( mapToScene( ev->pos()));
         if ( isNotNullP( node) && qgraphicsitem_cast<NodeItem *>( node))
         {
-            delete qgraphicsitem_cast<NodeItem *>( node);
+            delete qgraphicsitem_cast<NodeItem *>( node)->node();
         }
     }
     QGraphicsView::mouseDoubleClickEvent( ev);   
@@ -113,9 +114,9 @@ void GraphView::mouseReleaseEvent(QMouseEvent *ev)
             QGraphicsItem* item = scene()->itemAt( mapToScene( ev->pos()));
             if ( isNotNullP( item) && qgraphicsitem_cast<NodeItem *>(item))
             {
-                if ( tmpSrc != qgraphicsitem_cast<NodeItem *>(item))
+                if ( tmpSrc != qgraphicsitem_cast<NodeItem *>(item)->node())
                 {
-                    newEdge( tmpSrc, qgraphicsitem_cast<NodeItem *>(item));
+                    newEdge( tmpSrc, qgraphicsitem_cast<NodeItem *>(item)->node());
                 }
             }
         }
@@ -132,9 +133,4 @@ void GraphView::mouseMoveEvent(QMouseEvent *ev)
         dst = ev->pos();
     }
     QGraphicsView::mouseMoveEvent(ev);
-}
-
-void GraphView::drawForeground( QPainter *painter, const QRectF &rect)
-{
-
 }
