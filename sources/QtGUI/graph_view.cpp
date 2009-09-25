@@ -13,7 +13,7 @@ GraphView::GraphView(): dst( 0, 0), src( 0, 0), createEdge( false)
     //scene->setSceneRect(0, 0, 10000, 10000);
     setScene( scene);
     //setCacheMode( CacheBackground);
-    setViewportUpdateMode( BoundingRectViewportUpdate);
+    setViewportUpdateMode( SmartViewportUpdate);
     setRenderHint( QPainter::Antialiasing);
     setTransformationAnchor( AnchorUnderMouse);
     setResizeAnchor( AnchorViewCenter);
@@ -100,12 +100,14 @@ GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
     QGraphicsView::mouseDoubleClickEvent( ev);   
 }
 
-void GraphView::mousePressEvent(QMouseEvent *ev)
+void
+GraphView::mousePressEvent(QMouseEvent *ev)
 {
     QGraphicsView::mousePressEvent( ev);
 }
 
-void GraphView::mouseReleaseEvent(QMouseEvent *ev)
+void
+GraphView::mouseReleaseEvent(QMouseEvent *ev)
 {
     if( ev->button() & Qt::RightButton)
     {
@@ -126,11 +128,32 @@ void GraphView::mouseReleaseEvent(QMouseEvent *ev)
     QGraphicsView::mouseReleaseEvent(ev);
 }
 
-void GraphView::mouseMoveEvent(QMouseEvent *ev)
+void
+GraphView::mouseMoveEvent(QMouseEvent *ev)
 {
     if ( createEdge)
     {
         dst = ev->pos();
     }
     QGraphicsView::mouseMoveEvent(ev);
+}
+
+void
+GraphView::deleteItems()
+{
+    int depth = scene()->bspTreeDepth();
+    scene()->setBspTreeDepth( 1);
+    scene()->setItemIndexMethod( QGraphicsScene::NoIndex);
+    foreach ( NodeItem* item, del_node_items)
+    {
+        del_node_items.removeAll( item);  
+        delete item;
+    }
+    foreach ( EdgeItem* item, del_edge_items)
+    {
+        del_edge_items.removeAll( item);  
+        delete item;  
+    }
+    scene()->setItemIndexMethod( QGraphicsScene::BspTreeIndex);
+    scene()->setBspTreeDepth( depth);
 }

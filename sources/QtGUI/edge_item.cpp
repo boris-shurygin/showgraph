@@ -18,13 +18,19 @@ GEdge::GEdge( GraphView *graph_p, int _id, GNode *_pred, GNode* _succ):
 GEdge::~GEdge()
 {
     item()->remove();
-    //delete item();
+    graph()->deleteLaterEdgeItem( item());
 }
 
 GNode * 
 GEdge::node( GraphDir dir) const 
 {
     return static_cast< GNode *>(AuxEdge::node( dir));
+}
+
+GraphView *
+GEdge::graph() const
+{
+    return static_cast< GraphView *>( AuxEdge::graph());
 }
 
 /**
@@ -94,7 +100,7 @@ EdgeItem::adjust()
     } else
     {
         QLineF line( srcP, dstP);
-        QPolygonF endPolygon = mapFromItem( pred()->item(), pred()->item()->boundingRect());
+        QPolygonF endPolygon = mapFromItem( pred()->item(), pred()->item()->borderRect());
         QPointF p1 = endPolygon.first();
         QPointF p2;
         QPointF intersectPoint;
@@ -116,7 +122,7 @@ EdgeItem::adjust()
     } else
     {
         QLineF line2( srcP, dstP);
-        QPolygonF endPolygon = mapFromItem( succ()->item(), succ()->item()->boundingRect());
+        QPolygonF endPolygon = mapFromItem( succ()->item(), succ()->item()->borderRect());
         QPointF p1 = endPolygon.first();;
         QPointF p2;
         QLineF polyLine;

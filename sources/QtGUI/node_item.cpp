@@ -20,6 +20,9 @@ GNode::GNode( GraphView *graph_p, int _id, QPointF _pos):
     item_p->setPos( _pos);
 }
 
+/**
+ * Destructor for node - removes edge controls on incidient edges and disconnects item from scene
+ */
 GNode::~GNode()
 {
     if ( isEdgeControl() 
@@ -64,6 +67,7 @@ GNode::~GNode()
         }
     }
     item()->remove();
+    graph()->deleteLaterNodeItem( item());
 }
 
 GraphView * GNode::graph() const
@@ -124,12 +128,15 @@ NodeItem::SetInitFlags()
     setPlainText( text);
     setFlag( ItemIsMovable);
     //setFlag(ItemIsSelectable);
-    //setCacheMode( DeviceCoordinateCache);
+    setCacheMode( DeviceCoordinateCache);
     setZValue(2);
 }
 
+/**
+ * Rectangle that marks border of node
+ */
 QRectF 
-NodeItem::boundingRect() const
+NodeItem::borderRect() const
 {
     if ( isNullP( node_p))
         return QRectF();
@@ -147,6 +154,19 @@ NodeItem::boundingRect() const
     }
 }
 
+/**
+ * Overload of QGraphicsItem::bounding rectangle
+ */
+QRectF 
+NodeItem::boundingRect() const
+{
+    qreal adjust = 2;
+    return borderRect().adjusted( -adjust, -adjust, adjust, adjust);
+}
+
+/**
+ * Shape of NodeItem: circle for EdgeControl and rectangle for simple
+ */
 QPainterPath 
 NodeItem::shape() const
 {
@@ -161,11 +181,14 @@ NodeItem::shape() const
     } else
     {
         QPainterPath path;
-        path.addRect( boundingRect());
+        path.addRect( borderRect());
         return path;
     }
 }
 
+/**
+ * Painting procedure for NodeItem
+ */
 void 
 NodeItem::paint( QPainter *painter,
                  const QStyleOptionGraphicsItem *option,
@@ -184,7 +207,7 @@ NodeItem::paint( QPainter *painter,
         {
             painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         }
-        painter->drawRect( boundingRect());
+        painter->drawRect( borderRect());
         QGraphicsTextItem::paint( painter, option, widget);
     } else if ( node()->isEdgeControl())
     {
@@ -206,6 +229,9 @@ NodeItem::paint( QPainter *painter,
     }
 }
 
+/**
+ * Right button press starts edge drawing process 
+ */
 void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if( event->button() & Qt::RightButton && !node()->isEdgeControl())
@@ -217,12 +243,18 @@ void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mousePressEvent(event);
 }
 
+/**
+ * On mouse release we do nothing - graph will handle it for us
+ */
 void NodeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     update();
     QGraphicsItem::mouseReleaseEvent(event);
 }
 
+/**
+ * Double click enables text edition for simple nodes
+ */
 void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     if ( event->button() & Qt::LeftButton && !node()->isEdgeControl())
@@ -239,6 +271,10 @@ void NodeItem::focusOutEvent(QFocusEvent *event)
     //emit lostFocus(this);
     QGraphicsTextItem::focusOutEvent(event);
 }
+
+/**
+ * We should adjust edges when entering the text as the size of item changes
+ */
 void  NodeItem::keyPressEvent(QKeyEvent *event)
 {
     QGraphicsTextItem::keyPressEvent(event);
@@ -254,6 +290,9 @@ void  NodeItem::keyPressEvent(QKeyEvent *event)
     }
 }
 
+/**
+ * Adjust edges when node changes
+ */
 QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
 {
     GEdge *edge = NULL;

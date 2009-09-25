@@ -63,6 +63,17 @@ template<class Excpt> inline void assert( bool asrt, Excpt e)
  */
 inline void assert( bool asrt)
 {
-    return assert< int>( asrt);
+    assert< int>( asrt);
 }
+
+/**
+ * Debug assert
+ */
+inline void assertd( bool asrt)
+{
+#ifdef _DEBUG
+    assert< int>( asrt);
 #endif
+}
+
+#endif /* ASRT_H */
