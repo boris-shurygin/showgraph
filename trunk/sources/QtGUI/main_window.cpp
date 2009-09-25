@@ -77,7 +77,7 @@ void MainWindow::zoomOrig()
 
 void MainWindow::updateMatrix()
 {
-     qreal scale_val = qPow( qreal(2), zoom_scale / qreal(20)); 
+     qreal scale_val = qPow( qreal(2), zoom_scale / qreal(5)); 
      QMatrix matrix;
      matrix.scale(scale_val, scale_val);
    
