@@ -45,6 +45,9 @@ public:
     /** Constructor */
     GraphT();
     
+    /** Destructor */
+    virtual ~GraphT();
+
     /** Create new node in graph */
     virtual Node * newNode();
     virtual Node * newNode( QDomElement e);

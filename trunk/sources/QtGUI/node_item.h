@@ -31,6 +31,7 @@ public:
     {
         return Type;
     }
+    QRectF borderRect() const;
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -39,7 +40,7 @@ public:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     void focusOutEvent(QFocusEvent *event);
     void keyPressEvent(QKeyEvent *event);
-
+    
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     
     inline void remove()

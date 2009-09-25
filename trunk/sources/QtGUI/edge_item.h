@@ -22,6 +22,10 @@ class GEdge: public AuxEdge
     friend class GraphView;
     friend class Node;
 public:
+    /**
+     * Return pointer to graph
+     */
+    GraphView * graph() const;
 
     /**
      * Return associated graphics item

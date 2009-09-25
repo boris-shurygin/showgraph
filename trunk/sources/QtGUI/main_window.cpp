@@ -71,6 +71,7 @@ void MainWindow::zoomOut()
 void MainWindow::zoomOrig()
 {
     zoom_scale = 0;
+    graph_view->checkDelItems();
     updateMatrix();
 }
 

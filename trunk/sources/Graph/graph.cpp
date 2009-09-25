@@ -21,6 +21,22 @@ GraphT< Graph, Node, Edge>::GraphT()
 }
 
 /**
+ * Destructor - removes all nodes
+ */
+template <class Graph, class Node, class Edge> 
+GraphT< Graph, Node, Edge>::~GraphT()
+{
+    for ( Node *node = firstNode();
+          isNotNullP( node);
+          )
+    {
+        Node* next = node->nextNode();
+        delete node;
+        node = next;
+    }
+}
+
+/**
  * Build graph from XML description
  */
 template <class Graph, class Node, class Edge> 
