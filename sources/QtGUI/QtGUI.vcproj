@@ -177,11 +177,23 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\graph_widget.h"
+				>
+			</File>
+			<File
 				RelativePath=".\gui_iface.h"
 				>
 			</File>
 			<File
 				RelativePath=".\node_item.h"
+				>
+			</File>
+			<File
+				RelativePath=".\text_view.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\text_view.h"
 				>
 			</File>
 		</Filter>

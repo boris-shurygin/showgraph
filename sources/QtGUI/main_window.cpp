@@ -20,6 +20,10 @@ MainWindow::MainWindow()
     setWindowTitle(tr("ShowGraph"));
     resize(480, 320);
     zoom_scale = 0;
+
+    dock = new QDockWidget(tr("Text"), this);
+    dock->setWidget( new TextView());
+    addDockWidget(Qt::RightDockWidgetArea, dock);
 }
 
 void MainWindow::open()
@@ -35,9 +39,18 @@ void MainWindow::open()
     graph_view = new GraphView();
     setCentralWidget( graph_view);
     QRegExp rx("\\.xml$");
+    
     /** Not a graph description - run parser */
     if ( rx.indexIn( fileName) == -1 )
     {
+        delete dock;
+        dock = new QDockWidget(tr("Text ").append( fileName), this);
+       
+        TextView* text_view = new TextView();
+        dock->setWidget( text_view);
+        text_view->openFile( fileName);
+        addDockWidget(Qt::RightDockWidgetArea, dock);
+
         TestParser parser( fileName);
         parser.convert2XML( fileName.append(".xml"));
     }

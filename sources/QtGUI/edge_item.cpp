@@ -235,7 +235,6 @@ EdgeItem::shape() const
         
     if ( srcP == dstP)
         return path;
-    
     QPainterPathStroker stroker;
     path.cubicTo( cp1, cp2, dstP);
     stroker.setWidth( 2);

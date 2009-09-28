@@ -13,6 +13,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
     GraphView* graph_view;
+    QDockWidget *dock;
     qreal zoom_scale;
 public:
     MainWindow();

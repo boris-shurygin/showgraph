@@ -45,7 +45,7 @@ public:
     virtual void readFromElement( QDomElement elem);
 
     /** Graph part */
-    void setNode( GNode *n, GraphDir dir)
+    inline void setNode( GNode *n, GraphDir dir)
     {
         AuxEdge::setNode( ( AuxNode *)n, dir);
     }
