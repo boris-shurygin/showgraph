@@ -21,9 +21,7 @@ MainWindow::MainWindow()
     resize(480, 320);
     zoom_scale = 0;
 
-    dock = new QDockWidget(tr("Text"), this);
-    dock->setWidget( new TextView());
-    addDockWidget(Qt::RightDockWidgetArea, dock);
+    dock = NULL;
 }
 
 void MainWindow::open()
@@ -32,19 +30,27 @@ void MainWindow::open()
             QFileDialog::getOpenFileName(this, tr("Open graph File"),
                                          QDir::currentPath(),
                                          tr("Graph XML Files ( *.xml);;All Files ( *.*)"));
-    if (fileName.isEmpty())
+    if ( fileName.isEmpty())
         return;
+
+    /** Delete old graph and text views */
     delete graph_view;
+
+    if ( isNotNullP( dock))
+        delete dock;
+
+    dock = NULL;
 
     graph_view = new GraphView();
     setCentralWidget( graph_view);
     QRegExp rx("\\.xml$");
     
+    bool do_layout = false;
+
     /** Not a graph description - run parser */
     if ( rx.indexIn( fileName) == -1 )
     {
-        delete dock;
-        dock = new QDockWidget(tr("Text ").append( fileName), this);
+        dock = new QDockWidget( tr("Text ").append( fileName), this);
        
         TextView* text_view = new TextView();
         dock->setWidget( text_view);
@@ -53,6 +59,7 @@ void MainWindow::open()
 
         TestParser parser( fileName);
         parser.convert2XML( fileName.append(".xml"));
+        do_layout = true;
     }
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text))
@@ -65,7 +72,11 @@ void MainWindow::open()
     }
     file.close();
     graph_view->readFromXML( fileName);
-    //graph_view->doLayout();
+    
+    /** Run layout automatically */
+    if ( do_layout)
+        graph_view->doLayout();
+
     statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
@@ -104,6 +115,12 @@ void MainWindow::newGraph()
     graph_view = new GraphView();
     setCentralWidget( graph_view);
     statusBar()->showMessage(tr("Created new"), 2000);
+
+    if ( isNotNullP( dock))
+    {
+        delete dock;
+        dock = NULL;
+    }
 }
 
 void MainWindow::runLayout()
