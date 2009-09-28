@@ -1,10 +1,10 @@
 /**
- * File: graph_w.h - Graph Widget class definition.
+ * File: graph_w.h - Graph View class definition.
  * GUI for ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
-#ifndef GRAPH_W_H
-#define GRAPH_W_H
+#ifndef GRAPH_VIEW_H
+#define GRAPH_VIEW_H
 
 #include "gui_impl.h"
 
