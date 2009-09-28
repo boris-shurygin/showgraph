@@ -12,6 +12,8 @@ MainWindow::MainWindow()
     graph_view = new GraphView();
     setCentralWidget( graph_view);
 
+    dock = new QDockWidget( tr("Text "), this);
+    
     createActions();
     createMenus();
 
@@ -21,7 +23,7 @@ MainWindow::MainWindow()
     resize(480, 320);
     zoom_scale = 0;
 
-    dock = NULL;
+    
 }
 
 void MainWindow::open()
@@ -36,10 +38,8 @@ void MainWindow::open()
     /** Delete old graph and text views */
     delete graph_view;
 
-    if ( isNotNullP( dock))
-        delete dock;
-
-    dock = NULL;
+    if ( isNotNullP( dock->widget()))
+        delete dock->widget();
 
     graph_view = new GraphView();
     setCentralWidget( graph_view);
@@ -50,8 +50,6 @@ void MainWindow::open()
     /** Not a graph description - run parser */
     if ( rx.indexIn( fileName) == -1 )
     {
-        dock = new QDockWidget( tr("Text ").append( fileName), this);
-       
         TextView* text_view = new TextView();
         dock->setWidget( text_view);
         text_view->openFile( fileName);
@@ -95,6 +93,7 @@ void MainWindow::zoomOut()
 void MainWindow::zoomOrig()
 {
     zoom_scale = 0;
+    graph_view->ensureVisible( 0,0,0,0);
     graph_view->checkDelItems();
     updateMatrix();
 }
@@ -115,12 +114,6 @@ void MainWindow::newGraph()
     graph_view = new GraphView();
     setCentralWidget( graph_view);
     statusBar()->showMessage(tr("Created new"), 2000);
-
-    if ( isNotNullP( dock))
-    {
-        delete dock;
-        dock = NULL;
-    }
 }
 
 void MainWindow::runLayout()
@@ -219,7 +212,9 @@ void MainWindow::createMenus()
     viewMenu->addAction( zoomInAct);
     viewMenu->addAction( zoomOutAct);
     viewMenu->addAction( zoomOrigAct);
-
+    viewMenu->addSeparator();
+    viewMenu->addAction( dock->toggleViewAction());
+    
     menuBar()->addSeparator();
     
     helpMenu = menuBar()->addMenu(tr("&Help"));
