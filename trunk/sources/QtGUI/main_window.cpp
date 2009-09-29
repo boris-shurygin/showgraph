@@ -40,6 +40,7 @@ void MainWindow::open()
 
     if ( isNotNullP( dock->widget()))
         delete dock->widget();
+    dock->hide();
 
     graph_view = new GraphView();
     setCentralWidget( graph_view);
@@ -58,6 +59,7 @@ void MainWindow::open()
         TestParser parser( fileName);
         parser.convert2XML( fileName.append(".xml"));
         do_layout = true;
+        dock->show();
     }
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text))
@@ -114,6 +116,7 @@ void MainWindow::newGraph()
     graph_view = new GraphView();
     setCentralWidget( graph_view);
     statusBar()->showMessage(tr("Created new"), 2000);
+    dock->hide();
 }
 
 void MainWindow::runLayout()
