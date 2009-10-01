@@ -1,0 +1,10 @@
+<graph>
+    <node x="14" y="-167" id="1" label="End" />
+    <node x="-96" y="-221" id="3" label="Begin" />
+    <edge points_num="1" target="3" source="1" >
+        <point x="16" y="-209" id="0" />
+    </edge>
+    <edge points_num="1" target="1" source="3" >
+        <point x="-73" y="-160" id="0" />
+    </edge>
+</graph>

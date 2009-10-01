@@ -1,0 +1,12 @@
+<graph>
+    <node x="-24" y="-14" id="0" label="Node 0" />
+    <node x="-6" y="46" id="1" label="Node 1" />
+    <node x="-6" y="106" id="2" label="Node 2" />
+    <node x="-6" y="166" id="3" label="Node 3" />
+    <node x="-24" y="226" id="4" label="Node 4" />
+    <edge target="4" source="0" />
+    <edge target="4" source="3" />
+    <edge target="3" source="2" />
+    <edge target="2" source="1" />
+    <edge target="1" source="0" />
+</graph>
