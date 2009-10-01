@@ -32,7 +32,8 @@ MainWindow::MainWindow()
 void MainWindow::showNodeText( GNode *node)
 {
     TextView* text_view = ( TextView* )dock->widget();
-    text_view->setPlainText( node->doc()->toPlainText());
+    if ( isNotNullP( node->doc()))
+        text_view->setPlainText( node->doc()->toPlainText());
 }
 
 void MainWindow::removeGraphView()
