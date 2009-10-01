@@ -9,7 +9,7 @@
 //#define SHOW_CONTROL_POINTS
 //#define SHOW_BACKEDGES
 
-GEdge::GEdge( GraphView *graph_p, int _id, GNode *_pred, GNode* _succ):
+GEdge::GEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ):
     AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ)
 {
     item_p = new EdgeItem( this);
@@ -18,7 +18,7 @@ GEdge::GEdge( GraphView *graph_p, int _id, GNode *_pred, GNode* _succ):
 GEdge::~GEdge()
 {
     item()->remove();
-    graph()->deleteLaterEdgeItem( item());
+    graph()->view()->deleteLaterEdgeItem( item());
 }
 
 GNode * 
@@ -27,10 +27,10 @@ GEdge::node( GraphDir dir) const
     return static_cast< GNode *>(AuxEdge::node( dir));
 }
 
-GraphView *
+GGraph *
 GEdge::graph() const
 {
-    return static_cast< GraphView *>( AuxEdge::graph());
+    return static_cast< GGraph *>( AuxEdge::graph());
 }
 
 /**

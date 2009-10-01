@@ -11,7 +11,7 @@ template <class Graph, class Node, class Edge>
 NodeT<Graph, Node, Edge>::~NodeT()
 {
     Edge *edge;
-    out("Deleted Node");
+    //out("Deleted Node");
 
     /** delete incidient edges */
     for ( edge = firstSucc(); isNotNullP( edge);)

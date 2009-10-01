@@ -14,18 +14,18 @@ class GEdge: public AuxEdge
     EdgeItem *item_p;
 
     /** Constructors are made private, only nodes and graph can create edges */
-    GEdge( GraphView *graph_p, int _id, GNode *_pred, GNode* _succ);
+    GEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ);
     virtual ~GEdge();
 
-    friend class GraphT< GraphView, GNode, GEdge>;
-    friend class NodeT< GraphView, GNode, GEdge>;
-    friend class GraphView;
+    friend class GraphT< GGraph, GNode, GEdge>;
+    friend class NodeT< GGraph, GNode, GEdge>;
+    friend class GGraph;
     friend class Node;
 public:
     /**
      * Return pointer to graph
      */
-    GraphView * graph() const;
+    GGraph *graph() const;
 
     /**
      * Return associated graphics item

@@ -7,6 +7,7 @@
 #define GUI_IFACE_H
 
 /** Predeclarations */
+class GGraph;
 class GNode;
 class GEdge;
 class NodeItem;

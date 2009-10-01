@@ -8,29 +8,19 @@
 
 #include "gui_impl.h"
 
-class GraphView: public AuxGraph, public QGraphicsView
+/**
+ * Graph for graphics. Graph model layer of GraphView.
+ */
+class GGraph: public AuxGraph
 {
-    QPoint src;
-    QPoint dst;
-    bool createEdge;
-    GNode *tmpSrc;
-
-    QList< NodeItem* > del_node_items;
-    QList< EdgeItem* > del_edge_items;
+    GraphView *view_p;
 public:
-    /** Constants */
-#ifdef _DEBUG
-    static const int MAX_DELETED_ITEMS_COUNT = 10000;
-#else
-    static const int MAX_DELETED_ITEMS_COUNT = 10000;
-#endif
-
     /** Constructor */
-    GraphView();
-    ~GraphView();
-
-    void drawBackground(QPainter *painter, const QRectF &rect);
+    inline GGraph( GraphView *v): view_p( v){};
     
+    /** Destructor */
+    ~GGraph();
+
     /** New node/edge overloads */
     GNode* newNode();
     GNode* newNode( QDomElement e);
@@ -47,38 +37,15 @@ public:
         return ( AuxEdge*)newEdge( static_cast< GNode *>( pred),
                                     static_cast< GNode *> (succ), e);
     }
-
-    void mouseDoubleClickEvent(QMouseEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    
-    inline bool IsCreateEdge() const
-    {
-        return createEdge;
-    }
-    inline void SetCreateEdge( bool val)
-    {
-        createEdge = val;
-    }
-    inline void SetTmpSrc( GNode* node)
-    {
-        tmpSrc = node;
-    }
-    inline GNode* GetTmpSrc()
-    {
-        return tmpSrc;
-    }
-
     /** Graph part */
     virtual void * CreateNode( AuxGraph *graph_p, int _id)
     {
-        GNode* node_p = new GNode( static_cast<GraphView *>(graph_p), _id);
+        GNode* node_p = new GNode( static_cast<GGraph *>(graph_p), _id);
         return node_p;
     }
     virtual void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
     {
-        return new GEdge(  static_cast<GraphView *>( graph_p), _id,
+        return new GEdge(  static_cast<GGraph *>( graph_p), _id,
                               static_cast<GNode *>( _pred), 
                               static_cast<GNode *>( _succ));
     }
@@ -103,6 +70,76 @@ public:
             n->item()->setPos( n->modelX(), n->modelY());
         }
     }
+    /** View connection */
+    inline GraphView *view() const
+    {
+        return view_p;
+    }
+};
+
+/**
+ * Graph visualization class
+ */
+class GraphView: public QGraphicsView
+{
+    Q_OBJECT; /** For MOC */
+
+    QPoint src;
+    QPoint dst;
+    bool createEdge;
+    GNode *tmpSrc;
+    GGraph * graph_p;
+
+    QList< NodeItem* > del_node_items;
+    QList< EdgeItem* > del_edge_items;
+    
+signals:
+    void nodeClicked( GNode *n);
+
+public:
+    /** Constants */
+#ifdef _DEBUG
+    static const int MAX_DELETED_ITEMS_COUNT = 100;
+#else
+    static const int MAX_DELETED_ITEMS_COUNT = 10000;
+#endif
+    /** Constructor */
+    GraphView();
+    ~GraphView();
+
+    inline void showNodeText( GNode * n)
+    {
+        emit nodeClicked( n);
+    }
+    inline GGraph *graph() const
+    {
+        return graph_p;
+    }
+    
+    void drawBackground(QPainter *painter, const QRectF &rect);
+    
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    
+    inline bool IsCreateEdge() const
+    {
+        return createEdge;
+    }
+    inline void SetCreateEdge( bool val)
+    {
+        createEdge = val;
+    }
+    inline void SetTmpSrc( GNode* node)
+    {
+        tmpSrc = node;
+    }
+    inline GNode* GetTmpSrc()
+    {
+        return tmpSrc;
+    }
+
     /**
      * Schedule node item for deletion
      */

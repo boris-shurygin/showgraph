@@ -10,7 +10,6 @@
 class NodeItem: public QGraphicsTextItem
 {    
     GNode *node_p;    
-    
     /** Initialization */
     void SetInitFlags();
 public:
@@ -22,7 +21,6 @@ public:
         node_p = n_p;
         SetInitFlags();
     }
-
     inline GNode *node() const
     {
         return node_p;
@@ -54,15 +52,19 @@ public:
 
 class GNode: public AuxNode
 {
-    NodeItem *item_p;
+    /** Representation of node in graph view */
+    NodeItem *item_p; 
+
+    /** Representation of node as text */
+    QTextDocument* _doc;
     
     /** We can't create nodes separately, do it through newNode method of graph */
-    GNode( GraphView *graph_p, int _id);
+    GNode( GGraph *graph_p, int _id);
     /** Contructor of node with specified position */
-    GNode( GraphView *graph_p, int _id, QPointF _pos);
+    GNode( GGraph *graph_p, int _id, QPointF _pos);
 
-    friend class GraphT< GraphView, GNode, GEdge>;
-    friend class GraphView;
+    friend class GraphT< GGraph, GNode, GEdge>;
+    friend class GGraph;
     
 public:
     virtual ~GNode();
@@ -72,6 +74,15 @@ public:
         return item_p;
     }
 
+    inline QTextDocument *doc() const
+    {
+        return _doc;
+    }
+    inline void setDoc( QTextDocument* doc)
+    {
+        _doc = doc;
+    }
+    
     /** 
      * Update DOM element
      */
@@ -82,7 +93,7 @@ public:
      */
     virtual void readFromElement( QDomElement elem);
 
-    GraphView * graph() const;
+    GGraph * graph() const;
 
     inline GNode* nextNode()
     {

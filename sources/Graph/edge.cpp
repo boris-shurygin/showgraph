@@ -11,7 +11,7 @@
 template <class Graph, class Node, class Edge>
 EdgeT<Graph, Node, Edge>::~EdgeT()
 {
-    out("Deleted edge");
+    //out("Deleted edge");
     element.parentNode().removeChild( element);
     graph_p->deleteEdge( ( Edge *)this);
     detachFromNode( GRAPH_DIR_UP);

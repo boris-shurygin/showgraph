@@ -6,11 +6,11 @@
 #include "fe_iface.h"
 
 /**
- * Contructor
+ * Constructor
  */
 Parser::Parser( QString filename): file( filename)
 {
-    
+    setStateInit();
 }
 
 /**
@@ -21,23 +21,20 @@ Parser::~Parser()
     
 }
 
-void
-Parser::convert2XML(QString xmlname)
+void 
+Parser::mainLoop()
 {
-    QFile xmlfile( xmlname);
-    
     if ( !file.open( QIODevice::ReadOnly))
-    {
-        return;
-    }
-
-    if ( !xmlfile.open( QFile::WriteOnly | QFile::Text))
     {
         return;
     }
     /** Read file line by line */
     QTextStream in( &file);
     QString line;
+
+    /** Init state */
+    setStateInit();
+
     do
     {
         curr_line = in.readLine();
@@ -47,9 +44,31 @@ Parser::convert2XML(QString xmlname)
         } else
         {
             if ( !line.isNull())
+            {
+                if ( nodeStop( line))
+                {
+                    endNode();
+                    setStateDefault();
+                }
+                if ( nodeStart( line))
+                {
+                    setStateNode();
+                    startNode();
+                }             
                 parseLine( line);
+            }
             line = curr_line;
         }
     } while ( !curr_line.isNull());
-    xmlfile.close();
+    if ( isStateNode())
+    {
+        endNode();
+    }
+}
+
+
+void
+Parser::convert2XML( QString xmlname)
+{
+    mainLoop();
 }

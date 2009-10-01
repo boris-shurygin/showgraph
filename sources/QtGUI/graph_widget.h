@@ -6,12 +6,4 @@
 #ifndef GRAPH_WIDGET_H
 #define GRAPH_WIDGET_H
 
-/**
- * Class for connecting GraphView to other parts of GUI
- */
-class GraphWidget
-{
-    GraphView view;
-};
-
 #endif /* GRAPH_WIDGET_H */

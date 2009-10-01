@@ -22,8 +22,38 @@ MainWindow::MainWindow()
     setWindowTitle(tr("ShowGraph"));
     resize(480, 320);
     zoom_scale = 0;
-
     
+    TextView* text_view = new TextView();
+    dock->setWidget( text_view);
+    addDockWidget(Qt::RightDockWidgetArea, dock);
+    dock->hide();
+}
+
+void MainWindow::showNodeText( GNode *node)
+{
+    TextView* text_view = ( TextView* )dock->widget();
+    text_view->setPlainText( node->doc()->toPlainText());
+}
+
+void MainWindow::removeGraphView()
+{
+    /** Delete old graph and text views */
+    delete graph_view;
+
+    /*if ( isNotNullP( dock->widget()))
+        delete dock->widget();*/
+    dock->hide();
+}
+
+void MainWindow::connectToGraphView( GraphView *view)
+{
+    graph_view = view;
+    
+    /** Connect signals */
+    connect( view, SIGNAL( nodeClicked( GNode*)), this, SLOT( showNodeText( GNode*)));
+
+    /** Place graph view in window */
+    setCentralWidget( graph_view);
 }
 
 void MainWindow::open()
@@ -31,19 +61,12 @@ void MainWindow::open()
     QString fileName =
             QFileDialog::getOpenFileName(this, tr("Open graph File"),
                                          QDir::currentPath(),
-                                         tr("Graph XML Files ( *.xml);;All Files ( *.*)"));
+                                         tr("Dump/Text Files ( *.txt);;Graph XML Files ( *.xml);;All Files ( *.*)"));
     if ( fileName.isEmpty())
         return;
 
-    /** Delete old graph and text views */
-    delete graph_view;
+    removeGraphView();
 
-    if ( isNotNullP( dock->widget()))
-        delete dock->widget();
-    dock->hide();
-
-    graph_view = new GraphView();
-    setCentralWidget( graph_view);
     QRegExp rx("\\.xml$");
     
     bool do_layout = false;
@@ -51,32 +74,32 @@ void MainWindow::open()
     /** Not a graph description - run parser */
     if ( rx.indexIn( fileName) == -1 )
     {
-        TextView* text_view = new TextView();
-        dock->setWidget( text_view);
-        text_view->openFile( fileName);
-        addDockWidget(Qt::RightDockWidgetArea, dock);
-
+        //TextView* text_view = dock->widget();
+        //text_view->openFile( fileName);
         TestParser parser( fileName);
-        parser.convert2XML( fileName.append(".xml"));
+        parser.mainLoop();
+        connectToGraphView( parser.graphView());
         do_layout = true;
         dock->show();
-    }
-    QFile file(fileName);
-    if (!file.open(QFile::ReadOnly | QFile::Text))
+    } else
     {
-        QMessageBox::warning(this, tr("Graph Description"),
-                             tr("Cannot read file %1:\n%2.")
-                             .arg(fileName)
-                             .arg(file.errorString()));
-        return;
+        QFile file(fileName);
+        if ( !file.open(QFile::ReadOnly | QFile::Text))
+        {
+            QMessageBox::warning(this, tr("Graph Description"),
+                                 tr("Cannot read file %1:\n%2.")
+                                 .arg(fileName)
+                                 .arg(file.errorString()));
+            return;
+        }
+        file.close();
+        connectToGraphView( new GraphView());
+        graph_view->graph()->readFromXML( fileName);
     }
-    file.close();
-    graph_view->readFromXML( fileName);
     
     /** Run layout automatically */
     if ( do_layout)
-        graph_view->doLayout();
-
+        graph_view->graph()->doLayout();
     statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
@@ -121,7 +144,7 @@ void MainWindow::newGraph()
 
 void MainWindow::runLayout()
 {
-    graph_view->doLayout();
+    graph_view->graph()->doLayout();
     statusBar()->showMessage(tr("Layout done"), 2000);
 }
 
@@ -143,7 +166,7 @@ void MainWindow::saveAs()
         return;
     }
     file.close();
-    graph_view->writeToXML( fileName);
+    graph_view->graph()->writeToXML( fileName);
 
     statusBar()->showMessage(tr("File saved"), 2000);
 }

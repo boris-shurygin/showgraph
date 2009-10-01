@@ -6,15 +6,15 @@
 #include "gui_impl.h"
 
 /** We can't create nodes separately, do it through newNode method of graph */
-GNode::GNode( GraphView *graph_p, int _id):
-    AuxNode( ( AuxGraph *)graph_p, _id)
+GNode::GNode( GGraph *graph_p, int _id):
+    AuxNode( ( AuxGraph *)graph_p, _id), _doc( NULL)
 {
     item_p = new NodeItem( this);
 }
 
 /** Contructor of node with specified position */
-GNode::GNode( GraphView *graph_p, int _id, QPointF _pos):
-    AuxNode( ( AuxGraph *)graph_p, _id)
+GNode::GNode( GGraph *graph_p, int _id, QPointF _pos):
+    AuxNode( ( AuxGraph *)graph_p, _id), _doc( NULL)
 {
     item_p = new NodeItem( this);
     item_p->setPos( _pos);
@@ -67,12 +67,12 @@ GNode::~GNode()
         }
     }
     item()->remove();
-    graph()->deleteLaterNodeItem( item());
+    graph()->view()->deleteLaterNodeItem( item());
 }
 
-GraphView * GNode::graph() const
+GGraph* GNode::graph() const
 {
-    return static_cast< GraphView *>( AuxNode::graph());
+    return static_cast< GGraph *>( AuxNode::graph());
 }
 
 /**
@@ -214,7 +214,7 @@ NodeItem::paint( QPainter *painter,
         if ( node()->firstPred()->item()->isSelected()
              || node()->firstSucc()->item()->isSelected())
         {
-            if (option->state & QStyle::State_Sunken) 
+            if ( option->state & QStyle::State_Sunken) 
             {
                 painter->setBrush( Qt::gray);
                 painter->setPen( QPen( Qt::black, 0));
@@ -223,7 +223,7 @@ NodeItem::paint( QPainter *painter,
                 painter->setBrush( Qt::lightGray);
                 painter->setPen( QPen(Qt::darkGray, 0));
             }
-            painter->drawEllipse(-EdgeControlSize, -EdgeControlSize,
+            painter->drawEllipse( -EdgeControlSize, -EdgeControlSize,
                                   2*EdgeControlSize, 2*EdgeControlSize);
         }
     }
@@ -232,12 +232,15 @@ NodeItem::paint( QPainter *painter,
 /**
  * Right button press starts edge drawing process 
  */
-void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
 {
     if( event->button() & Qt::RightButton && !node()->isEdgeControl())
     {
-        node()->graph()->SetCreateEdge( true);
-        node()->graph()->SetTmpSrc( node());
+        node()->graph()->view()->SetCreateEdge( true);
+        node()->graph()->view()->SetTmpSrc( node());
+    } else if ( event->button() & Qt::LeftButton && !node()->isEdgeControl())
+    {
+        node()->graph()->view()->showNodeText( node());
     }
     update();
     QGraphicsItem::mousePressEvent(event);
@@ -246,10 +249,10 @@ void NodeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 /**
  * On mouse release we do nothing - graph will handle it for us
  */
-void NodeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
 {
     update();
-    QGraphicsItem::mouseReleaseEvent(event);
+    QGraphicsItem::mouseReleaseEvent( event);
 }
 
 /**

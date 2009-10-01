@@ -5,8 +5,61 @@
  */
 #include "gui_impl.h"
 
-/** Contructor */
-GraphView::GraphView(): dst( 0, 0), src( 0, 0), createEdge( false)
+/** Destructor */
+GGraph::~GGraph()
+{
+    for ( GNode *node = firstNode();
+          isNotNullP( node);
+          )
+    {
+        GNode* next = node->nextNode();
+        delete node;
+        node = next;
+    }
+}
+
+GNode*
+GGraph::newNode()
+{
+    GNode* n = static_cast< GNode *>( AuxGraph::newNode());
+    view()->scene()->addItem( n->item());
+    return n;
+}
+
+GEdge*
+GGraph::newEdge( GNode* pred, GNode* succ)
+{
+    GEdge* e = 
+        static_cast< GEdge *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ));
+    view()->scene()->addItem( e->item());
+    e->item()->adjust();
+    return e;
+}
+
+GNode*
+GGraph::newNode( QDomElement e)
+{
+    GNode* n =  static_cast< GNode *>( AuxGraph::newNode( e));
+    view()->scene()->addItem( n->item());
+    return n;
+}
+
+GEdge*
+GGraph::newEdge( GNode* pred, GNode* succ, QDomElement e)
+{
+    GEdge* edge_p = 
+        static_cast< GEdge *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ, e));
+    view()->scene()->addItem( edge_p->item());
+    edge_p->item()->adjust();
+    return edge_p;
+}
+
+
+/** Constructor */
+GraphView::GraphView(): 
+    dst( 0, 0), src( 0, 0),
+    createEdge( false),
+    graph_p( new GGraph( this))
 {
     QGraphicsScene *scene = new QGraphicsScene( this);
     //scene->setItemIndexMethod( QGraphicsScene::NoIndex);
@@ -26,56 +79,14 @@ GraphView::GraphView(): dst( 0, 0), src( 0, 0), createEdge( false)
 /** Destructor */
 GraphView::~GraphView()
 {
-    for ( GNode *node = firstNode();
-          isNotNullP( node);
-          )
-    {
-        GNode* next = node->nextNode();
-        delete node;
-        node = next;
-    }
+
 }
+
 
 void 
 GraphView::drawBackground(QPainter *painter, const QRectF &rect)
 {
 
-}
-
-GNode*
-GraphView::newNode()
-{
-    GNode* n = static_cast< GNode *>( AuxGraph::newNode());
-    scene()->addItem( n->item());
-    return n;
-}
-
-GEdge*
-GraphView::newEdge( GNode* pred, GNode* succ)
-{
-    GEdge* e = 
-        static_cast< GEdge *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ));
-    scene()->addItem( e->item());
-    e->item()->adjust();
-    return e;
-}
-
-GNode*
-GraphView::newNode( QDomElement e)
-{
-    GNode* n =  static_cast< GNode *>( AuxGraph::newNode( e));
-    scene()->addItem( n->item());
-    return n;
-}
-
-GEdge*
-GraphView::newEdge( GNode* pred, GNode* succ, QDomElement e)
-{
-    GEdge* edge_p = 
-        static_cast< GEdge *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ, e));
-    scene()->addItem( edge_p->item());
-    edge_p->item()->adjust();
-    return edge_p;
 }
 
 void 
@@ -86,7 +97,7 @@ GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
         QPoint p = ev->pos();
         if ( !scene()->itemAt( mapToScene( ev->pos())))
         {
-            GNode* node = newNode();
+            GNode* node = graph()->newNode();
             node->item()->setPos( mapToScene( p));
         }
     } else if( ev->button() & Qt::RightButton)
@@ -118,7 +129,7 @@ GraphView::mouseReleaseEvent(QMouseEvent *ev)
             {
                 if ( tmpSrc != qgraphicsitem_cast<NodeItem *>(item)->node())
                 {
-                    newEdge( tmpSrc, qgraphicsitem_cast<NodeItem *>(item)->node());
+                    graph()->newEdge( tmpSrc, qgraphicsitem_cast<NodeItem *>(item)->node());
                 }
             }
         }
