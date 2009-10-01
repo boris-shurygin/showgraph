@@ -5,21 +5,40 @@
 #include "fe_iface.h"
 
 TestParser::TestParser( QString str):
-    Parser( str)
+    Parser( str), curr_node( NULL)
 {
     graph = new GraphView();
 }
 
 TestParser::~TestParser()
 {
-    delete graph;
+
 }
 
 void
 TestParser::convert2XML( QString xmlname)
 {
     Parser::convert2XML( xmlname);
-    graph->writeToXML( xmlname);
+    graph->graph()->writeToXML( xmlname);
+}
+
+bool TestParser::nodeStart( QString line)
+{
+    /** Node recognition */
+    QRegExp node_rx("Node (\\d+)");
+    return  node_rx.indexIn( line) != -1;
+}
+
+void
+TestParser::startNode()
+{
+    node_text.clear();
+}
+void
+TestParser::endNode()
+{
+    assert( isNotNullP( curr_node));
+    curr_node->doc()->setPlainText( node_text);
 }
 
 void
@@ -42,11 +61,15 @@ TestParser::parseLine( QString line)
         if ( symtab.find( name ) == symtab.end())
         {
             SymNode* node = new SymNode( name);
-            node->setNode( graph->newNode());
+            curr_node = graph->graph()->newNode();
+            curr_node->setDoc( new QTextDocument());
+            node->setNode( curr_node);
             node->node()->item()->setPlainText( text);
         
             symtab[ name] = node;
-            stream << name << endl;
+#ifdef _DEBUG
+            //stream << name << endl;
+#endif
         }
     } else if (  edge_rx.indexIn( line) != -1 )
     {
@@ -63,7 +86,9 @@ TestParser::parseLine( QString line)
             edge->setPred( pred_name);
             edge->setSucc( succ_name);
             symtab[ name] = edge;
-            stream << name << ": " << pred_name << "->" << succ_name << endl;
+#ifdef _DEBUG            
+            //stream << name << ": " << pred_name << "->" << succ_name << endl;
+#endif
         }
 
         /** Add edge to graph */
@@ -72,8 +97,16 @@ TestParser::parseLine( QString line)
         {
             GNode* pred = static_cast< SymNode *>( symtab[ pred_name])->node();
             GNode* succ = static_cast< SymNode *>( symtab[ succ_name])->node();
-            graph->newEdge( pred, succ);
+            graph->graph()->newEdge( pred, succ);
         }
+    } else
+    {
+        if ( !isStateNode())
+            setStateDefault();
+    }
+    if ( isStateNode())
+    {
+        node_text.append( line).append( "\n");
     }
 }
 

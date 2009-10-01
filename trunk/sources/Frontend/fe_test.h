@@ -60,13 +60,21 @@ public:
 class TestParser: public Parser
 {
     GraphView *graph;
+    GNode *curr_node;
 public:
     TestParser( QString str);
     ~TestParser();
 
     void parseLine( QString line);
-
+    bool nodeStart( QString line);
+    void startNode();
+    void endNode();
     void convert2XML( QString xmlname);
+
+    inline GraphView* graphView() const
+    {
+        return graph;
+    }
 };
 
 #endif

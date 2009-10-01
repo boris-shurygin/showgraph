@@ -27,11 +27,14 @@ public slots:
     void zoomIn();
     void zoomOut();
     void zoomOrig();
+    void showNodeText( GNode *node);
 
 private:
     void createActions();
     void createMenus();
     void updateMatrix();
+    void removeGraphView();
+    void connectToGraphView( GraphView *view);
 
     QMenu *fileMenu;
     QMenu *viewMenu;

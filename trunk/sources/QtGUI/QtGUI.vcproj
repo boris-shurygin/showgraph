@@ -179,6 +179,16 @@
 			<File
 				RelativePath=".\graph_widget.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for GraphWidget"
+						CommandLine="moc edge_item.h -o moc_graph_widget.cpp"
+						Outputs="moc_graph_widget.cpp"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gui_iface.h"
