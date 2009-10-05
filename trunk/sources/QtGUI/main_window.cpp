@@ -21,8 +21,7 @@ MainWindow::MainWindow()
 
     setWindowTitle(tr("ShowGraph"));
     resize(480, 320);
-    zoom_scale = 0;
-    
+        
     TextView* text_view = new TextView();
     dock->setWidget( text_view);
     addDockWidget(Qt::RightDockWidgetArea, dock);
@@ -106,31 +105,17 @@ void MainWindow::open()
 
 void MainWindow::zoomIn()
 {
-    zoom_scale++;
-    updateMatrix();
+    graph_view->zoomIn();
 }
 
 void MainWindow::zoomOut()
 {
-    zoom_scale--;
-    updateMatrix();
+	graph_view->zoomOut();
 }
 
 void MainWindow::zoomOrig()
 {
-    zoom_scale = 0;
-    graph_view->ensureVisible( 0,0,0,0);
-    graph_view->checkDelItems();
-    updateMatrix();
-}
-
-void MainWindow::updateMatrix()
-{
-     qreal scale_val = qPow( qreal(2), zoom_scale / qreal(5)); 
-     QMatrix matrix;
-     matrix.scale(scale_val, scale_val);
-   
-     graph_view->setMatrix(matrix);
+	graph_view->zoomOrig();
 }
 
 void MainWindow::newGraph()
