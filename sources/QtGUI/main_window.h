@@ -14,7 +14,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     GraphView* graph_view;
     QDockWidget *dock;
-    qreal zoom_scale;
 public:
     MainWindow();
 
@@ -32,7 +31,6 @@ public slots:
 private:
     void createActions();
     void createMenus();
-    void updateMatrix();
     void removeGraphView();
     void connectToGraphView( GraphView *view);
 

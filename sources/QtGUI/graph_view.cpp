@@ -59,7 +59,8 @@ GGraph::newEdge( GNode* pred, GNode* succ, QDomElement e)
 GraphView::GraphView(): 
     dst( 0, 0), src( 0, 0),
     createEdge( false),
-    graph_p( new GGraph( this))
+    graph_p( new GGraph( this)),
+	zoom_scale( 0)
 {
     QGraphicsScene *scene = new QGraphicsScene( this);
     //scene->setItemIndexMethod( QGraphicsScene::NoIndex);
@@ -147,6 +148,44 @@ GraphView::mouseMoveEvent(QMouseEvent *ev)
         dst = ev->pos();
     }
     QGraphicsView::mouseMoveEvent(ev);
+}
+
+/**
+ * Actions for wheel event
+ */
+void GraphView::wheelEvent(QWheelEvent *event)
+{
+    zoom_scale += event->delta() / 100;
+	updateMatrix();
+}
+
+void GraphView::zoomIn()
+{
+    zoom_scale++;
+    updateMatrix();
+}
+
+void GraphView::zoomOut()
+{
+	zoom_scale--;
+    updateMatrix();
+}
+
+void GraphView::zoomOrig()
+{
+    zoom_scale = 0;
+    ensureVisible( 0,0,0,0);
+    checkDelItems();
+    updateMatrix();
+}
+
+void GraphView::updateMatrix()
+{
+     qreal scale_val = qPow( qreal(2), zoom_scale / qreal(5)); 
+     QMatrix matrix;
+     matrix.scale(scale_val, scale_val);
+   
+     setMatrix(matrix);
 }
 
 void

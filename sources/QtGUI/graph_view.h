@@ -89,6 +89,7 @@ class GraphView: public QGraphicsView
     bool createEdge;
     GNode *tmpSrc;
     GGraph * graph_p;
+    qreal zoom_scale;
 
     QList< NodeItem* > del_node_items;
     QList< EdgeItem* > del_edge_items;
@@ -122,7 +123,14 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
-    
+   
+	/** Zooming-related methods */
+	void wheelEvent(QWheelEvent *event);
+    void zoomIn();
+    void zoomOut();
+    void zoomOrig();
+	void updateMatrix();
+
     inline bool IsCreateEdge() const
     {
         return createEdge;
