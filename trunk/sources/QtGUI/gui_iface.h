@@ -1,7 +1,11 @@
 /**
- * File: gui_iface.h - Interface of GUI project
- * GUI for ShowGraph tool.
+ * @file: gui_iface.h 
+ * GUI implementation.
  * Copyright (C) 2009  Boris Shurygin
+ *
+ * @defgroup GUI Graphical User Interface
+ *
+ * Graphical part of ShowGraph is arranged around MainWindow wich has GraphView as a center widget.
  */
 #ifndef GUI_IFACE_H
 #define GUI_IFACE_H
@@ -26,10 +30,13 @@ class GraphView;
 #include "../Layout/layout_iface.h"
 #include "../Frontend/fe_iface.h"
 
+/**
+ * Subclasses of QGraphicsItem types
+ */
 enum { 
-    TypeNode = QGraphicsItem::UserType + 1,
-    TypeEdge = QGraphicsItem::UserType + 2,
-    TypeEdgeControl = QGraphicsItem::UserType + 3
+    TypeNode = QGraphicsItem::UserType + 1, /** Node item */
+    TypeEdge = QGraphicsItem::UserType + 2, /** Edge item */
+    TypeEdgeControl = QGraphicsItem::UserType + 3 /** EdgeControl item */
 };
 
 #include "edge_item.h"
