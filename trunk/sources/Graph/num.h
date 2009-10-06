@@ -1,9 +1,13 @@
 /**
- * File: num.h - Interface and implementation of numeration functionality.
+ * @file: num.h 
+ * Interface and implementation of numeration functionality.
+ *
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  *
+ * @defgroup Nums Numeration of objects
  *
+ * @ingroup Graph
  * Numerations can be used to assign numbers to objects.
  * Usage model is following. To make an object numerable you derive it from 'Numbered' class.
  * Then if you have some class representing a container for this objects you derive it from
@@ -21,6 +25,8 @@ typedef unsigned int NumValue;
 
 /**
  * Possible num errors
+ *
+ * @ingroup Nums
  */
 typedef enum NumErrorType_e
 {
@@ -37,7 +43,9 @@ typedef enum NumErrorType_e
 } NumErrorType;
 
 /**
- * Num description
+ * Numeration description
+ *
+ * @ingroup Nums
  */
 class Numeration
 {
@@ -53,6 +61,8 @@ class Numeration
 
 /**
  * Num-related constants
+ *
+ * @ingroup Nums
  */
 const short int MAX_NUMERATIONS = 10; /** How many numerations are allowed simultaneously */
 const NumValue NUM_VAL_CLEAN = 0;
@@ -63,6 +73,8 @@ const GraphNum NUMBER_MAX = (( GraphNum) -1) - 1;
 
 /**
  * Represents an object that can be involved in numeration
+ *
+ * @ingroup Nums
  */
 class Numbered
 {
@@ -151,6 +163,8 @@ public:
 
 /**
  * Class that creates/frees nums
+ *
+ * @ingroup Nums
  */
 class NumManager
 {

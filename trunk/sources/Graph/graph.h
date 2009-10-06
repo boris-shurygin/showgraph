@@ -1,14 +1,25 @@
 /**
- * File: graph.h - Graph class definition/implementation, part of
- * Graph library, internal representation of graphs in ShowGraph tool.
+ * @file: graph.h 
+ * Graph class definition/implementation, part of Graph library,
+ * internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef GRAPH_H
 #define GRAPH_H
 
 /**
- * Graph class decribes a graph.
+ * @defgroup Graph Graph representation
+ *
+ * Graph representation is implemented through 3 tightly connected classes Graph, Node and Edge.
+ */
+
+/**
+ *  Graph representation  
+ *
+ *  @ingroup Graph
  *  Like classical definition G = ( N, E) where N is set of nodes n and E is set of edges e = {n_i, n_j}
+ *  A graph has pointers to its first edge and node which allows iteration through them using nextEdge
+ *  and nextNode methods of Node and Edge classes
  */
 template <class Graph, class Node, class Edge > class GraphT: public MarkerManager, public NumManager, public QDomDocument
 {
@@ -16,8 +27,9 @@ public:
     typedef ListItem< Node> NodeListIt;
     typedef ListItem< Edge> EdgeListIt;
 private:
-    /* List of nodes and its iterator */
+    /** First node */
     Node* first_node;
+    /** Number of nodes */
     GraphNum node_num;
     
     /** 
@@ -50,6 +62,8 @@ public:
 
     /** Create new node in graph */
     virtual Node * newNode();
+
+    /** Create new node in graph and fills it with info in element */
     virtual Node * newNode( QDomElement e);
 
     /**

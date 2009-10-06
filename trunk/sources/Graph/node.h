@@ -1,5 +1,5 @@
 /**
- * File: node.h - Node class definition, part of
+ * @file: node.h - Node class definition, part of
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
@@ -7,7 +7,11 @@
 #define NODE_H
 
 /**
- * Node representation class. 
+ * Representation of graph node. 
+ *
+ * @ingroup Graph
+ * A graph node has two lists of edges which represent predecessors and successors.
+ * It is also a member of node list in graph.
  */
 template <class Graph, class Node, class Edge> class NodeT: public Marked, public Numbered
 {
