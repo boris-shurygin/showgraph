@@ -1,7 +1,11 @@
 /**
- * File: layout_iface.h - Layout interface file
+ * @file: layout_iface.h 
+ * Layout interface
+ *
  * Layout library, 2d graph placement of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
+ *
+ * @defgroup Layout 2D Graph layout
  */
 #ifndef LAYOUT_IFACE_H
 #define LAYOUT_IFACE_H
@@ -25,6 +29,5 @@ const qreal RANK_SPACING = 60;
 #include "../Graph/graph_iface.h"
 #include "aux_graph.h"
 #include "node_group.h"
-//#include "../QTGui/gui_iface.h"
 
 #endif /** LAYOUT_IFACE_H */

@@ -1,5 +1,7 @@
 /**
- * File: node_group.h - Abstraction that aids multiple nodes manipulation inside a level
+ * @file: node_group.h
+ * Group of nodes
+ *
  * Layout library, 2d graph placement of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
@@ -8,6 +10,10 @@
 
 /**
  * Group of nodes
+ *
+ * Abstraction that aids multiple nodes manipulation inside a level.
+ *
+ * @ingroup Layout
  */
 class NodeGroup
 {

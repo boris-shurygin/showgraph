@@ -1,7 +1,9 @@
 /**
- * File: aux_graph.h - Layout Graph class - Graph for performing layouts, consists of dummy nodes.
+ * @file: aux_graph.h - Layout Graph class - Graph for performing layouts, consists of dummy nodes.
  * Layout library, 2d graph placement of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
+ *
+ * AuxGraph, AuxNode and AuxEdge classes represent auxiliary graph used for layout purposes
  */
 #ifndef AUX_GRAPH_H
 #define AUX_GRAPH_H
@@ -12,6 +14,11 @@
 typedef unsigned int Rank;
 const Rank RANK_UNDEF = (Rank) (-1);
 
+/**
+ * Types of a node
+ *
+ * @ingroup Layout
+ */
 enum AuxNodeType
 {
     /* Simple aux node that represents one node of processed graph */
@@ -23,7 +30,9 @@ enum AuxNodeType
 };
 
 /**
- * AuxGraph, AuxNode and AuxEdge classes represent auxiliary graph used for layout purposes
+ * Represents nodes and edge controls in Layout
+ * 
+ * @ingroup Layout
  */
 class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
 {
@@ -199,7 +208,11 @@ protected:
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;
     friend class AuxGraph;
 };
-
+/**
+ * Edge of model graph used in Layout
+ *
+ * @ingroup Layout
+ */
 class AuxEdge: public EdgeT< AuxGraph, AuxNode, AuxEdge>
 {
     bool priv_fixed;
@@ -241,7 +254,9 @@ public:
 };
 
 /**
- * Testing-purpose graph
+ * Graph with nodes of two types: simple nodes and edge controls
+ *
+ * @ingroup Layout
  */
 class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
 {
