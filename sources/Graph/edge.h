@@ -1,5 +1,5 @@
 /**
- * File: edge.h - Edge class definition, part of
+ * @file: edge.h - Edge class definition, part of
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
@@ -7,9 +7,12 @@
 #define EDGE_H
 
 /**
+ *  Representation of graph edge
+ *
+ *  @ingroup Graph  
  *  Edge class implements basic concept of graph edge.
  *  It has two Nodes as its end points. As edge is member of 3 lists it
- *  has 3 corresponding iterators pointing to it in theses lists
+ *  has 3 corresponding pointers to items of these lists
  */
 template <class Graph, class Node, class Edge> class EdgeT: public Marked, public Numbered
 {

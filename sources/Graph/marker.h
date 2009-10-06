@@ -1,7 +1,22 @@
 /**
- * File: marker.h - Interface and implementation of marker functionality.
+ * @file: marker.h 
+ * Interface and implementation of marker functionality.
+ *
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
+ *
+ * @defgroup Mark Markers
+ *
+ * @ingroup Graph
+ *
+ * Markers are used to mark objects. An object can be marked with several markers.
+ * For each marker we can test if an object is marked with it.
+ * To use this functinality you have to subclass Marked class to obtain marked 
+ * object and subclass MarkerManager class to create and free markers.
+ *
+ * When implementing an algorithm with markers you first create it by MarkerManager::newMarker,
+ * pass it around in your algorithm marking objects with Marked::mark and testing them with 
+ * Marked::isMarked. After your done free marker with MarkerManager::freeMarker
  */
 
 typedef unsigned short int MarkerIndex;
@@ -9,6 +24,8 @@ typedef unsigned int MarkerValue;
 
 /**
  * Possible marker errors
+ *
+ * @ingroup Mark
  */
 typedef enum MarkerErrorType_e
 {
@@ -24,6 +41,8 @@ typedef enum MarkerErrorType_e
 
 /**
  * Marker description
+ *
+ * @ingroup Mark
  */
 class Marker
 {
@@ -47,6 +66,8 @@ const MarkerValue GRAPH_MARKER_LAST = ( MarkerValue)( (int)-1);
 
 /**
  * Represents a marked object
+ *
+ * @ingroup Mark
  */
 class Marked
 {
@@ -114,6 +135,8 @@ public:
 
 /**
  * Class that creates/frees markers
+ *
+ * @ingroup Mark
  */
 class MarkerManager
 {

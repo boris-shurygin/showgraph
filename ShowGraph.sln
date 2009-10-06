@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Layout", "sources\Layout\La
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Frontend", "sources\Frontend\Frontend.vcproj", "{018AA859-1723-4B2D-9A33-56F52F5871D0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "autodoc", "autodoc\autodoc.vcproj", "{A3C0BAE2-5AA8-4A8A-8C08-6A56A531E521}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -61,6 +63,10 @@ Global
 		{018AA859-1723-4B2D-9A33-56F52F5871D0}.Debug|Win32.Build.0 = Debug|Win32
 		{018AA859-1723-4B2D-9A33-56F52F5871D0}.Release|Win32.ActiveCfg = Release|Win32
 		{018AA859-1723-4B2D-9A33-56F52F5871D0}.Release|Win32.Build.0 = Release|Win32
+		{A3C0BAE2-5AA8-4A8A-8C08-6A56A531E521}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A3C0BAE2-5AA8-4A8A-8C08-6A56A531E521}.Debug|Win32.Build.0 = Debug|Win32
+		{A3C0BAE2-5AA8-4A8A-8C08-6A56A531E521}.Release|Win32.ActiveCfg = Release|Win32
+		{A3C0BAE2-5AA8-4A8A-8C08-6A56A531E521}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
