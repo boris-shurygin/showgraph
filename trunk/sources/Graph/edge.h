@@ -20,6 +20,7 @@
 template <class Graph, class Node, class Edge> class EdgeT: public Marked, public Numbered
 {
 public:
+	/** Edge list item type */
     typedef ListItem< Edge> EdgeListIt;
 private:
     /** Representation in document */
@@ -35,9 +36,10 @@ private:
     EdgeListIt n_it[ GRAPH_DIRS_NUM];//Position in each node's list
 
 protected:
-    /** Graph and Node have access to Edge's members */
+    /** Graph should have access to Edge's members */
     friend class Graph;
-    friend class Node;
+    /** Node should have access to Edge's members */
+	friend class Node;
 
     /** Constructors are made private, only nodes and graph can create edges */
     EdgeT( Graph *_graph_p, GraphUid _id, Node *_pred, Node* _succ): uid(_id), graph_p(_graph_p), graph_it()
