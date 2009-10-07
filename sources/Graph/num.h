@@ -2,9 +2,6 @@
  * @file: num.h 
  * Interface and implementation of numeration functionality.
  *
- * Graph library, internal representation of graphs in ShowGraph tool.
- * Copyright (C) 2009  Boris Shurygin
- *
  * @defgroup Nums Numeration of objects
  *
  * @ingroup Graph
@@ -19,6 +16,10 @@
  * You can have not more than MAX_NUMERATIONS ( usually 10) at one time so if you forget to 
  * free a numeration you'll run into exception telling you that there are no free numeration
  * indexes left.
+ */
+/*
+ * Graph library, internal representation of graphs in ShowGraph tool.
+ * Copyright (C) 2009  Boris Shurygin
  */
 typedef unsigned short int NumIndex;
 typedef unsigned int NumValue;
@@ -64,11 +65,17 @@ class Numeration
  *
  * @ingroup Nums
  */
-const short int MAX_NUMERATIONS = 10; /** How many numerations are allowed simultaneously */
+/** How many numerations are allowed simultaneously */
+const short int MAX_NUMERATIONS = 10;
+/** Clean value */
 const NumValue NUM_VAL_CLEAN = 0;
+/** First value */
 const NumValue NUM_VAL_FIRST = 1;
+/** Last value */
 const NumValue NUM_VAL_LAST = ( NumValue)( (int)-1);
+/** Value that means object is unnumbered */
 const GraphNum NUMBER_NO_NUM = ( GraphNum) -1;
+/** Maximal number of object */
 const GraphNum NUMBER_MAX = (( GraphNum) -1) - 1;
 
 /**

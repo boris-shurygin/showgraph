@@ -1,9 +1,11 @@
 /**
- * File: graph.cpp - Graph class implementation, part of
+ * @file: graph.cpp
+ * Graph class implementation
+ */
+/*
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
-
 /**
  * Constructor.
  */
@@ -123,7 +125,7 @@ GraphT< Graph, Node, Edge>::newNode()
 }
 
 /**
- * Creation node in graph
+ * Creation node in graph implementation
  */
 template <class Graph, class Node, class Edge>
 Node * 
@@ -134,7 +136,8 @@ GraphT< Graph, Node, Edge>::newNodeImpl( GraphUid id)
      */
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
     
-    Graph *gp = (Graph *)this;
+    /** Create node */
+	Graph *gp = (Graph *)this;
     void *some_p = ( void *) gp->CreateNode( (Graph *)this, id);
     Node *node_p = ( Node *)some_p;
     NodeListIt* it = node_p->GetGraphIt();

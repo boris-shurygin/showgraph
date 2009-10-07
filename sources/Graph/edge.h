@@ -1,5 +1,8 @@
 /**
- * @file: edge.h - Edge class definition, part of
+ * @file: edge.h
+ * Edge class definition
+ */
+/*
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
@@ -82,17 +85,25 @@ protected:
      * Made private as it is low-level routine needed for implementation of edge-node relationship
      */
     void detachFromNode( GraphDir dir);
-    inline void detachFromGraph()
+    /**
+	 * Remove myself from graph's list of edges
+	 */
+	inline void detachFromGraph()
     {
         graph_it.Detach();
     }
 public:
-    
+    /**
+	 * Return corresponding document element
+	 */
     inline QDomElement elem() const
     {
         return element;
     }
-    
+
+    /**
+	 * Set document element
+	 */    
     inline void setElement( QDomElement elem)
     {
         element = elem;
@@ -115,7 +126,8 @@ public:
     }
 
     /** 
-     *  Destructor. delete edge from list in graph.
+     *  Destructor.
+	 *  Delete edge from list in graph.
      *  Deletion from node lists MUST be performed manually.
      *  Example: 
      *      Graph graph;
@@ -199,12 +211,15 @@ public:
     }
     
     /** 
-     * Next edge defaults
+     * Next successor
      */
     inline Edge* nextSucc()
     {
         return nextEdgeInDir( GRAPH_DIR_DOWN);
     }
+	/** 
+     * Next predecessor
+     */
     inline Edge* nextPred()
     {
         return nextEdgeInDir( GRAPH_DIR_UP);
@@ -226,8 +241,12 @@ public:
     virtual void readFromElement( QDomElement elem);
 
     /**
-     * Transformations
-     */
+     * Insert a node on this edge
+	 *
+	 * Creates a node on edge and a new edge from new node to former successor of original edge.
+	 * Original edge goes to new node. 
+	 * Return new node.
+	 */
     inline Node *insertNode()
     {
         Node *tmp_succ = succ();

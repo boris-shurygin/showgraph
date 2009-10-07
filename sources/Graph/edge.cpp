@@ -1,5 +1,8 @@
 /**
- * File: edge.cpp - Edge class implementation, part of
+ * @file: edge.cpp 
+ * Edge class implementation
+ */
+/*
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */

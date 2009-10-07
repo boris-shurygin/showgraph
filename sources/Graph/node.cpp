@@ -1,9 +1,11 @@
 /**
- * File: node.cpp - Node class implementation, part of Graph library, 
- * an internal representation of graphs in ShowGraph tool.
+ * @file: node.cpp
+ * Node class implementation
+ */
+/*
+ * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
-
 /** 
  * Destructor. Corrects list of nodes in corresponding graph and deletes adjacent edges
  */

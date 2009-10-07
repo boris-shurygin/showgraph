@@ -1,5 +1,8 @@
 /**
- * @file: node.h - Node class definition, part of
+ * @file: node.h 
+ * Node class definition
+ */
+/*
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
@@ -16,8 +19,10 @@
 template <class Graph, class Node, class Edge> class NodeT: public Marked, public Numbered
 {
 public:
-    typedef ListItem< Node> NodeListIt;
-    typedef ListItem< Edge> EdgeListIt;
+    /** Node list item type */
+	typedef ListItem< Node> NodeListIt;
+    /** Edge list item type */
+	typedef ListItem< Edge> EdgeListIt;
 private:
     /** Representation in document */
     QDomElement element;
@@ -27,10 +32,11 @@ private:
     Graph * graph_p;// Pointer to graph
     NodeListIt graph_it;//Item of graph's list
 protected:    
-    //Lists of edges and iterators for them
+    /** First edges in graph's directions */
     Edge *first_edge[ GRAPH_DIRS_NUM];
 
-    NodeListIt* GetGraphIt()
+    /** Return pointer to graph's list item */
+	NodeListIt* GetGraphIt()
     {
         return &graph_it;
     }
@@ -41,10 +47,16 @@ protected:
         first_edge[ GRAPH_DIR_DOWN] = NULL;
         graph_it.setData( ( Node*)this);
     }
+	/**
+	 * Detach myself from graph's node list
+	 */
     inline void detachFromGraph()
     {
         graph_it.Detach();
     }
+	/**
+	 * Graph class controls nodes
+	 */
     friend class Graph;
 
 public:
@@ -53,11 +65,16 @@ public:
      */
     virtual ~NodeT();
     
-    inline QDomElement elem() const
+    /**
+	 * Return corresponding element
+	 */
+	inline QDomElement elem() const
     {
         return element;
     }
-    
+    /**
+	 * Set element
+	 */
     inline void setElement( QDomElement elem)
     {
         element = elem;
@@ -78,7 +95,9 @@ public:
     {
         return graph_p;
     }
-
+    /**
+	 * Next node in graph's list
+	 */
     inline Node* nextNode()
     {
         return ( graph_it.next() != NULL )? graph_it.next()->data() : NULL;
@@ -105,22 +124,22 @@ public:
         AddEdgeInDir( edge, GRAPH_DIR_DOWN);
     }
     /**
-     *  Iteration through edges routines.
-     *
-     *  Set iterator to beginning of edge list and return first edge
-     */
+     * First edge in given direction
+	 */
     inline Edge* firstEdgeInDir( GraphDir dir)
     {
         return first_edge[ dir];
     }
     /** 
-     * Corresponding iterators for successors/predeccessors.
-     * NOTE: See firstEdgeInDir and other ...InDir routines for details
-     */
+     * First successor edge
+	 */
     inline Edge* firstSucc()
     {
         return firstEdgeInDir( GRAPH_DIR_DOWN);
     }
+    /** 
+     * First predecessor edge
+	 */
     inline Edge* firstPred()
     {
         return firstEdgeInDir( GRAPH_DIR_UP);

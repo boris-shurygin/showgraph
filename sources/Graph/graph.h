@@ -1,18 +1,17 @@
 /**
  * @file: graph.h 
- * Graph class definition/implementation, part of Graph library,
- * internal representation of graphs in ShowGraph tool.
- * Copyright (C) 2009  Boris Shurygin
- */
-#ifndef GRAPH_H
-#define GRAPH_H
-
-/**
+ * Graph class definition/implementation.
+ *
  * @defgroup Graph Graph representation
  *
  * Graph representation is implemented through 3 tightly connected classes Graph, Node and Edge.
  */
-
+/*
+ * Graph library, internal representation of graphs in ShowGraph tool.
+ * Copyright (C) 2009  Boris Shurygin
+ */
+#ifndef GRAPH_H
+#define GRAPH_H
 /**
  *  Graph representation  
  *
@@ -24,8 +23,10 @@
 template <class Graph, class Node, class Edge > class GraphT: public MarkerManager, public NumManager, public QDomDocument
 {
 public:
-    typedef ListItem< Node> NodeListIt;
-    typedef ListItem< Edge> EdgeListIt;
+    /** Node list item type */
+	typedef ListItem< Node> NodeListIt;
+	/** Edge list item type */
+	typedef ListItem< Edge> EdgeListIt;
 private:
     /** First node */
     Node* first_node;
@@ -48,10 +49,13 @@ private:
     GraphUid edge_next_id;
 
     /**
-     * Implementation of node/edge creation
+     * Implementation of node creation
      */
     Node * newNodeImpl( GraphUid id);
-    Edge * newEdgeImpl( Node * pred, Node * succ);
+    /**
+     * Implementation of edge creation
+     */
+	Edge * newEdgeImpl( Node * pred, Node * succ);
 
 public:
     /** Constructor */
@@ -71,7 +75,11 @@ public:
      * We do not support creation of edge with undefined endpoints
      */
     virtual Edge * newEdge( Node * pred, Node * succ);
-    virtual Edge * newEdge( Node * pred, Node * succ, QDomElement e);
+    /**
+     * Create edge between two nodes from an XML description
+     * We do not support creation of edge with undefined endpoints
+     */
+	virtual Edge * newEdge( Node * pred, Node * succ, QDomElement e);
 
     /**
      * Remove node from node list of graph
@@ -118,21 +126,17 @@ public:
     {
         return edge_num;
     }
-    /*** 
-     * Iteration through edges implementation
-     *
-     * Initialize iterator with first edge and return this edge
+    /** 
+     * Get first edge
      */
     inline Edge* firstEdge() 
     {
         return first_edge;
     }
     
-    /*** 
-     * Iteration through nodes implementation
-     *
-     * Initialize iterator with first node and return this node
-     */
+    /**
+	 * Get first node
+	 */
     inline Node* firstNode()
     {
         return first_node;
@@ -142,8 +146,9 @@ public:
      */
     virtual void debugPrint();
     
-    /** Node/Edge creation routines can be overloaded by derived class */
-    virtual void * CreateNode( Graph *graph_p, int _id);
+    /** Node creation routine is to be overloaded by derived class */
+	virtual void * CreateNode( Graph *graph_p, int _id);
+	/** Edge creation routine is to be overloaded by derived class */
     virtual void * CreateEdge( Graph *graph_p, int _id, Node *_pred, Node* _succ);
     
     /**

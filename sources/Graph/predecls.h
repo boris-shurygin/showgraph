@@ -1,6 +1,9 @@
 /**
- * File: Graph/predecls.h - Predeclarations for interface of Graph library,
- * an internal representation of graphs in ShowGraph tool.
+ * @file: predecls.h
+ * Predeclarations for interface of Graph library
+ */
+/*
+ * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef GRAPH_PREDECLS_H
@@ -26,8 +29,11 @@ using namespace Utils;
  */
 enum GraphDir
 {
-    GRAPH_DIR_UP,
+    /** Upward direction */
+	GRAPH_DIR_UP,
+	/** Downward direction */
     GRAPH_DIR_DOWN,
+	/** Number of directions in graph */
     GRAPH_DIRS_NUM
 };
 
@@ -43,9 +49,12 @@ RevDir( GraphDir dir)
 
 /** Number type used for numbering nodes and edges in graph */
 typedef unsigned int GraphNum;
+/** Node/edge ID type */
 typedef unsigned long long GraphUid;
 
+/** Maximum number of nodes */
 const GraphNum GRAPH_MAX_NODE_NUM = ( GraphNum)( -1);
+/** Maximum number of edges */
 const GraphNum GRAPH_MAX_EDGE_NUM = ( GraphNum)( -1);
 
 template <class Graph, class Node, class Edge> class GraphT;

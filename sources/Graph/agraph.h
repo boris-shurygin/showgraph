@@ -1,20 +1,30 @@
 /**
- * File: agraph.h - Abstract Graph class - testing of graph's properties and usage model.
- * Graph library, internal representation of graphs in ShowGraph tool.
+ * @file: agraph.h 
+ * Abstract Graph for testing of graph's properties and usage model.
+ *
+ * @defgroup AGr Test Graph
+ *
+ * @ingroup Graph
+ * AGraph, ANode and AEdge classes present mimnimal code
+ * that you need to write to employ Graph Library functionality.
+ * AGraph classes differ from base in only one member of ( int) type
+ */
+/*
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef AGRAPH_H
 #define AGRAPH_H
 
-/**
- * AGraph, ANode and AEdge classes present mimnimal code
- * that you need to write to employ Graph Library functionality.
- * AGraph classes differ from base in only one member of ( int) type
- */
+/* Predeclarations */
 class ANode;
 class AEdge;
 class AGraph;
 
+/**
+ * Abstract node
+ *
+ * @ingroup AGr
+ */
 class ANode: public NodeT< AGraph, ANode, AEdge>
 {
     int dummy;
@@ -25,6 +35,11 @@ class ANode: public NodeT< AGraph, ANode, AEdge>
     friend class AGraph;
 };
 
+/**
+ * Abstract edge
+ *
+ * @ingroup AGr
+ */
 class AEdge: public EdgeT< AGraph, ANode, AEdge>
 {
     int dummy;
@@ -43,6 +58,8 @@ public:
 
 /**
  * Testing-purpose graph
+ *
+ * @ingroup AGr
  */
 class AGraph: public GraphT< AGraph, ANode, AEdge>
 {
@@ -50,10 +67,12 @@ class AGraph: public GraphT< AGraph, ANode, AEdge>
 
     public:
 
+    /** Node creation overload */
     void * CreateNode( AGraph *graph_p, int _id)
     {
         return new ANode( graph_p, _id);
     }
+	/** Edge creation overload */
     void * CreateEdge( AGraph *graph_p, int _id, ANode *_pred, ANode* _succ)
     {
         return new AEdge( graph_p, _id, _pred, _succ);
