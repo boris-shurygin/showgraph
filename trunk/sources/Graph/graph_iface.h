@@ -1,6 +1,9 @@
 /**
- * File: graph_iface.h - Interface of Graph library,
- * an internal representation of graphs in ShowGraph tool.
+ * @file: graph_iface.h
+ * Interface of Graph library
+ */
+/*
+ * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef GRAPH_IFACE_H

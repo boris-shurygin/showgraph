@@ -2,9 +2,6 @@
  * @file: marker.h 
  * Interface and implementation of marker functionality.
  *
- * Graph library, internal representation of graphs in ShowGraph tool.
- * Copyright (C) 2009  Boris Shurygin
- *
  * @defgroup Mark Markers
  *
  * @ingroup Graph
@@ -18,7 +15,10 @@
  * pass it around in your algorithm marking objects with Marked::mark and testing them with 
  * Marked::isMarked. After your done free marker with MarkerManager::freeMarker
  */
-
+/*
+ * Graph library, internal representation of graphs in ShowGraph tool.
+ * Copyright (C) 2009  Boris Shurygin
+ */
 typedef unsigned short int MarkerIndex;
 typedef unsigned int MarkerValue;
 
@@ -59,9 +59,13 @@ class Marker
 /**
  * Marker-related constants
  */
-const short int MAX_GRAPH_MARKERS = 10; /** How many markers are allowed simultaneously */
+/** How many markers are allowed simultaneously */
+const short int MAX_GRAPH_MARKERS = 10;
+/** Clean value of markers */
 const MarkerValue GRAPH_MARKER_CLEAN = 0;
+/** First value of markers */
 const MarkerValue GRAPH_MARKER_FIRST = 1;
+/** Last value of markers */
 const MarkerValue GRAPH_MARKER_LAST = ( MarkerValue)( (int)-1);
 
 /**
@@ -75,7 +79,10 @@ class Marked
     MarkerValue markers[ MAX_GRAPH_MARKERS];
 public:
     
-    Marked()
+    /**
+	 * Default constructor
+	 */
+	Marked()
     {
         MarkerIndex i;
 
@@ -182,7 +189,7 @@ class MarkerManager
     }
  
     /**
-     * MUST BE implemented in inhereted class 
+     * Clear markers in marked objects, MUST BE implemented in inhereted class 
      */
     virtual void clearMarkersInObjects() = 0;
 
