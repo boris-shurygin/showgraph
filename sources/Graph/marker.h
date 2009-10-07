@@ -19,7 +19,9 @@
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
+/** Marker index type */
 typedef unsigned short int MarkerIndex;
+/** Marker value type */
 typedef unsigned int MarkerValue;
 
 /**

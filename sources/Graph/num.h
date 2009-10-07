@@ -21,7 +21,9 @@
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
+/** Numeration index type */
 typedef unsigned short int NumIndex;
+/** Numeration value type */
 typedef unsigned int NumValue;
 
 /**
