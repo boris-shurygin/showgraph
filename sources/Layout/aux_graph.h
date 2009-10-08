@@ -8,10 +8,9 @@
 #ifndef AUX_GRAPH_H
 #define AUX_GRAPH_H
 
-/**
- * Rank type and its undefined constant
- */
+/** Rank type and its undefined constant */
 typedef unsigned int Rank;
+/** Rank undefined value constant */
 const Rank RANK_UNDEF = (Rank) (-1);
 
 /**
@@ -58,38 +57,47 @@ public:
     {
         return priv_width;
     }
+    /** Get x coordinate */
     inline double modelX() const
     {
         return priv_x;
     }
+    /** Get y coordinate */
     inline double modelY() const
     {
         return priv_y;
     }
+    /** Get node's priority */
     inline int priority() const
     {
         return priv_priority;
     }
+    /** Get rank */
     inline int rank() const
     {
         return priv_rank;
     }
+    /** Get order */
     inline int order() const
     {
         return priv_order;
     }
+    /** Set horizontal coordinate */
     inline void setX( double x)
     {
         priv_x = x;
     }
+    /** Set vertical coordinate */
     inline void setY( double y)
     {
         priv_y = y;
     }
+    /** Get barycenter horizontal coordinate */
     inline qreal bc() const
     {
         return barycenter;
     }
+    /** Set barycenter horizontal coordinate */
     inline void setBc( qreal center)
     {
         barycenter = center;
@@ -104,47 +112,57 @@ public:
     {
         priv_width = w;
     }
+    /** Set priority */
     inline void setPriority( int p) 
     {
         priv_priority = p;
     }
+    /** Set level */
     inline void setLevel( Level* l) 
     {
         priv_level = l;
     }
+    /** Set order */
     inline void setOrder( int or) 
     {
         priv_order = or;
     }
+    /** Set rank */
     inline void setRank( Rank r)
     {
         priv_rank = r;
     }
+    /** Set type */
     inline void setType( AuxNodeType t)
     {
         node_type = t;
     }
+    /** Get type */
     inline AuxNodeType type() const
     {
         return node_type;
     }
+    /** Check if this node is a simple one */
     inline bool isSimple() const
     {
         return node_type == AUX_NODE_SIMPLE;
     }
+    /** Check if this node is an edge control */
     inline bool isEdgeControl() const
     {
         return node_type == AUX_EDGE_CONTROL;
     }
+    /** Set node to be an edge control */
     inline void setTypeEdgeControl()
     {
         node_type = AUX_EDGE_CONTROL;
     }
+    /** Set node's type to simple */
     inline void setTypeSimple()
     {
         node_type = AUX_NODE_SIMPLE;
     }
-
+    /** Print node's debug info */
     inline void debugPrint()
     {
         switch( node_type)
@@ -231,22 +249,27 @@ public:
     friend class AuxGraph;
     friend class AuxNode;
 
+    /** Check if an edge is fixed */
     inline bool isFixed() const
     {
         return priv_fixed;
     }
+    /** Set edge to be fixed */
     inline void setFixed( bool fx)
     {
         priv_fixed = fx;
     }
+    /** Check if edge was classified as a 'Backedge' */
     inline bool isBack() const
     {
         return is_back;
     }
+    /** Set edge to be a backedge */
     inline void setBack( bool back = true)
     {
         is_back = back;
     }
+    /** Check whether this edge is inverted */
     inline bool isInverted() const
     {
         return isBack();
@@ -274,34 +297,42 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
 
 public:
     
-    /** Iheritance and contructors */
+    /** Default constructor */
     AuxGraph();
+    /** Destructor */
     ~AuxGraph();
+    /** Initialize levels */
     void initLevels( Rank max_level);
+    /** Delete levels */
     void deleteLevels();
-    
+    /** Set order of every node using DFS */
     void orderNodesByDFS();
+    /** Try to reduce crossings */
     void reduceCrossings();
+    /** Arrange nodes horizontally */
     void arrangeHorizontally();
-    
+    /** Debug info print */
     virtual void debugPrint()
     {
         out( "AuxGraph debug print");
         GraphT< AuxGraph, AuxNode, AuxEdge>::debugPrint();
     }
-
+    /** Create node overload */
     virtual void * CreateNode( AuxGraph *graph_p, int _id)
     {
         return new AuxNode( graph_p, _id);
     }
+    /** Create edge overload */
     virtual void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
     {
         return new AuxEdge( graph_p, _id, _pred, _succ);
     }
+    /** Get numeration that describes ranks in graph */
     inline Numeration ranks() const
     {
         return ranking;
     }
+    /** Get max rank number */
     inline GraphNum maxRank() const
     {
         return max_rank;
@@ -325,24 +356,30 @@ class Level
     Rank level_rank;
     QList< AuxNode*> node_list;
 public:
+    /** Default constructor */
     Level(): level_rank( 0), node_list(){};
+    /** Constructor with rank parameter */
     Level( Rank r): level_rank( r), node_list(){};
-    
+    /** Arrange nodes with respect to adjacent level*/
     void arrangeNodes( GraphDir dir, bool commit_placement, bool first_pass);
+    /** Sort nodes by their order */
     void sortNodesByOrder();
-
+    /** Get level's rank */
     inline Rank rank() const
     {
         return level_rank;
     }
-    inline void rank( Rank r)
+    /** Set level's rank */
+    inline void setRank( Rank r)
     {
         level_rank = r;
     }
+    /** Get node list */
     inline QList< AuxNode*> nodes() const
     {
         return node_list;
     }
+    /** Add a node to list */
     inline void add( AuxNode *node)
     {
         node_list.push_back( node);
