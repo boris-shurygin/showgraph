@@ -1,5 +1,6 @@
 /**
- * File: aux_graph.cpp - Implementation of auxiliary graph
+ * @file: aux_graph.cpp
+ * Implementation of auxiliary graph
  * Layout library, 2d graph placement of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */

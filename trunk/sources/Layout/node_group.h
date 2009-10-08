@@ -4,6 +4,8 @@
  *
  * Layout library, 2d graph placement of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
+ * @defgroup HLayout Horizontal placement
+ * @ingroup Layout
  */
 #ifndef NODE_GROUP_H
 #define NODE_GROUP_H
@@ -13,7 +15,7 @@
  *
  * Abstraction that aids multiple nodes manipulation inside a level.
  *
- * @ingroup Layout
+ * @ingroup HLayout
  */
 class NodeGroup
 {
