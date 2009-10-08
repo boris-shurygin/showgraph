@@ -17,54 +17,61 @@
  */
 class NodeGroup
 {
+    /** List of group's nodes */
     QList< AuxNode *> node_list;
+    /** Horizontal coordinate of left border */
     qreal border_left;
+    /** Horizontal coordinate of right border */
     qreal border_right;
+    /** The heuristic weight of the group */
     float group_weight;
 public:
+    /** Initialize attributes of the group */
     inline void init()
     {
         border_left = 0;
         border_right = 0;
         group_weight = 0;        
     }
-    /** Get/Set routines */
+    /** Get weight */
     inline float weight() const
     {
         return group_weight;
     }
+    /** Get left border coordinate */
     inline qreal left() const
     {
         return border_left;
     }
+    /** Get right border coordinate */
     inline qreal right() const
     {
         return border_right;
     }
+    /** Set left border coordinate */
     inline void setLeft( qreal pos)
     {
         border_left = pos;
     }
+    /** Set right border coordinate */
     inline void setRight( qreal pos)
     {
         border_right = pos;
     }
+    /** Get node list */
     QList<AuxNode *> nodes() const
     {
         return node_list;
     }
 
-    /** Work with node list */
+    /** Add node to list */
     inline void addNode( AuxNode *node)
     {
         node_list.push_back( node);
         group_weight += 1;
     }
 
-    /**
-     * Constructors
-     */
-    /** Default */
+    /** Default constructor */
     NodeGroup() : node_list()
     {
         init();
@@ -73,7 +80,7 @@ public:
     /** Constructor of group from a node */
     NodeGroup( AuxNode *n, GraphDir dir, bool first_pass);
 
-    /** Multiple group actions */
+    /** Check if this groups interleaves with the given one */
     inline bool interleaves( NodeGroup *grp) const
     {
         return !( left() > grp->right() 
