@@ -1,5 +1,8 @@
 /**
- * @file: aux_graph.h - Layout Graph class - Graph for performing layouts, consists of dummy nodes.
+ * @file: aux_graph.h
+ * Layout Graph class
+ *
+ * Graph for performing layouts, consists of dummy nodes.
  * Layout library, 2d graph placement of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  *
@@ -349,7 +352,10 @@ public:
 };
 
 /**
- * Representation of rank level - group of nodes that should have same/close vertical position
+ * Representation of rank level
+ *
+ * @ingroup HLayout
+ * A level rpresents a group of nodes that should have same/close vertical position
  */
 class Level
 {

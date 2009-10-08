@@ -1,5 +1,6 @@
 /**
- * File: node_group.cpp - Implementation of node group class
+ * @file: node_group.cpp 
+ * Implementation of node group class
  * Layout library, 2d graph placement of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
