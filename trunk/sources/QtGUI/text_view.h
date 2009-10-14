@@ -1,11 +1,17 @@
 /**
- * File: text_view.h - TextView ( IR dump browser) class definition.
+ * @file: text_view.h 
+ * TextView ( IR dump browser) class definition
+ */
+/* 
  * GUI for ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef TEXT_VIEW_H
 #define TEXT_VIEW_H
 
+/**
+ * IR dump browser class
+ */
 class TextView: public QTextBrowser
 {
 public:

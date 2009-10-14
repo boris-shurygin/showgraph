@@ -1,5 +1,8 @@
 /**
- * File: text_view.cpp - TextView class implementation.
+ * @file: text_view.cpp
+ * TextView class implementation
+ */
+/*
  * GUI for ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */

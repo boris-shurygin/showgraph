@@ -1,5 +1,9 @@
 /**
- * File: fe_gcc.c - Implementation of GCC Frontend in ShowGraph tool.
+ * @file: fe_gcc.cpp
+ * Implementation of GCC Frontend
+ */
+/* 
+ * Frontend in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
 #include "fe_iface.h"

@@ -1,7 +1,10 @@
 /**
- * File: graph_w.cpp - Graph Widget implementation.
+ * @file: graph_view.cpp
+ * Graph View Widget implementation.
+ */
+/*
  * GUI for ShowGraph tool.
- * Copyright (C) 2009  Boris Shurygin
+ * Copyright (C) 2009 Boris Shurygin
  */
 #include "gui_impl.h"
 

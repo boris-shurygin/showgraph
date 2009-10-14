@@ -1,8 +1,13 @@
 /**
- * @file: fe_iface.h - Interface of Frontend in ShowGraph tool.
- * Copyright (C) 2009  Boris Shurygin
+ * @file: fe_iface.h 
+ * Interface of Frontend in ShowGraph tool
  *
  * @defgroup FE Input file parsing
+ * Frontend for parsing the graph dumps form various compiers
+ */
+/*
+ * Frontend in ShowGraph tool.
+ * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef FE_IFACE_H
 #define FE_IFACE_H

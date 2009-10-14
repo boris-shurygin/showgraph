@@ -1,6 +1,9 @@
 /**
- * File: edge_w.cpp - Edge Widget implementation.
+ * @file: edge_item.cpp 
+ * Drawable edge implementation.
  * GUI for ShowGraph tool.
+ */
+/*
  * Copyright (C) 2009  Boris Shurygin
  */
 #include "gui_impl.h"

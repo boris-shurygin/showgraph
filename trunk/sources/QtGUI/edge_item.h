@@ -1,5 +1,5 @@
 /**
- * @file: edge_w.h 
+ * @file: edge_item.h 
  * Edge Widget class definition.
  */
 /*
@@ -15,7 +15,7 @@ const qreal EdgeControlSize  = 5;
 
 /**
  * Representation of drawable edge
- * @ingroup GUI
+ * @ingroup GUIGraph
  */
 class GEdge: public AuxEdge
 {
@@ -104,7 +104,7 @@ public:
 };
 /**
  * Graphics item for visualizing a graph edge
- * @ingroup GUI
+ * @ingroup GUIGraph
  */
 class EdgeItem: public QGraphicsItem
 {
