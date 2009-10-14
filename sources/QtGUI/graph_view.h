@@ -1,6 +1,10 @@
 /**
- * File: graph_w.h - Graph View class definition.
- * GUI for ShowGraph tool.
+ * @file: graph_view.h 
+ * Graph View class definition.
+ * @defgroup GUIGraph Graph Visualization System
+ * @ingroup GUI
+ */
+/* GUI for ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef GRAPH_VIEW_H
@@ -10,6 +14,7 @@
 
 /**
  * Graph for graphics. Graph model layer of GraphView.
+ * @ingroup GUIGraph
  */
 class GGraph: public AuxGraph
 {
@@ -21,38 +26,46 @@ public:
     /** Destructor */
     ~GGraph();
 
-    /** New node/edge overloads */
+    /** New graphical node */
     GNode* newNode();
+    /** New graphical node */
     GNode* newNode( QDomElement e);
+    /** New graphical edge */
     GEdge* newEdge( GNode* pred, GNode* succ);
+    /** New graphical edge */
     GEdge* newEdge( GNode* pred, GNode* succ, QDomElement e);
     
+    /** Reimplementation of newEdge virtual function of base class */
     AuxEdge* newEdge( AuxNode * pred, AuxNode *succ)
     {
         return ( AuxEdge*)newEdge( static_cast< GNode *>( pred),
                                     static_cast< GNode *> (succ));
     }
+    /** Reimplementation of newEdge virtual function of base class */
     AuxEdge* newEdge( AuxNode * pred, AuxNode *succ, QDomElement e)
     {
         return ( AuxEdge*)newEdge( static_cast< GNode *>( pred),
                                     static_cast< GNode *> (succ), e);
     }
-    /** Graph part */
+    /** Node creation reimplementaiton */
     virtual void * CreateNode( AuxGraph *graph_p, int _id)
     {
         GNode* node_p = new GNode( static_cast<GGraph *>(graph_p), _id);
         return node_p;
     }
+    /** Edge creation reimplementation */
     virtual void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
     {
         return new GEdge(  static_cast<GGraph *>( graph_p), _id,
                               static_cast<GNode *>( _pred), 
                               static_cast<GNode *>( _succ));
     }
+    /** Get graph's first edge */
     inline GEdge* firstEdge() 
     {
         return static_cast< GEdge *>( AuxGraph::firstEdge());
     }
+    /** Get graph's first node */
     inline GNode* firstNode()
     {
         return static_cast< GNode *>( AuxGraph::firstNode());
@@ -70,7 +83,7 @@ public:
             n->item()->setPos( n->modelX(), n->modelY());
         }
     }
-    /** View connection */
+    /** Get corresponding graph view widget */
     inline GraphView *view() const
     {
         return view_p;
@@ -95,6 +108,7 @@ class GraphView: public QGraphicsView
     QList< EdgeItem* > del_edge_items;
     
 signals:
+    /** Signal that node is clicked */
     void nodeClicked( GNode *n);
 
 public:
@@ -106,43 +120,55 @@ public:
 #endif
     /** Constructor */
     GraphView();
+    /** Destructor */
     ~GraphView();
-
+    /** Show text of the clicked node */
     inline void showNodeText( GNode * n)
     {
         emit nodeClicked( n);
     }
+    /** Get pointer to model graph */
     inline GGraph *graph() const
     {
         return graph_p;
     }
-    
+    /** draw background reimplementation */
     void drawBackground(QPainter *painter, const QRectF &rect);
-    
+    /** Mouse double click event handler reimplementation */
     void mouseDoubleClickEvent(QMouseEvent *event);
+    /** Mouse press event handler reimplementation */
     void mousePressEvent(QMouseEvent *event);
+    /** Mouse move event handler reimplementation */
     void mouseMoveEvent(QMouseEvent *event);
+    /** Mouse release event handler reimplementation */
     void mouseReleaseEvent(QMouseEvent *event);
    
-	/** Zooming-related methods */
-	void wheelEvent(QWheelEvent *event);
+	/** Mouse wheel event handler reimplementation */
+    void wheelEvent(QWheelEvent *event);
+    /** Zoom the view in */
     void zoomIn();
+    /** Zoom the view out */
     void zoomOut();
+    /** Restore original zoom */
     void zoomOrig();
+    /** Do the transofrmation( scale) */
 	void updateMatrix();
-
+    /** Check if we are in the process of the edge creation */
     inline bool IsCreateEdge() const
     {
         return createEdge;
     }
+    /** Set the state of ege creation */
     inline void SetCreateEdge( bool val)
     {
         createEdge = val;
     }
+    /** Save the pointer to source node for new edge */
     inline void SetTmpSrc( GNode* node)
     {
         tmpSrc = node;
     }
+    /** Get the pointer to source node of new edge */
     inline GNode* GetTmpSrc()
     {
         return tmpSrc;

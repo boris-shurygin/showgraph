@@ -1,5 +1,8 @@
 /**
- * File: node_w.cpp - Node Widget implementation.
+ * @file: node_item.cpp 
+ * Drawable node implementation
+ */
+/* 
  * GUI for ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
@@ -69,7 +72,9 @@ GNode::~GNode()
     item()->remove();
     graph()->view()->deleteLaterNodeItem( item());
 }
-
+/**
+ * Get the pointer to graph
+ */
 GGraph* GNode::graph() const
 {
     return static_cast< GGraph *>( AuxNode::graph());

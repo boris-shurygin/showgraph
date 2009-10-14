@@ -1,5 +1,10 @@
 /**
- * File: utils_iface.h - Interface of Utils library in ShowGraph
+ * @file: utils_iface.h 
+ * Interface of Utils library in ShowGraph
+ * @defgroup Utils Low level utils
+ */
+/*
+ * Utils library in Showgraph tool
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef UTILS_IFACE_H

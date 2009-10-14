@@ -1,5 +1,13 @@
 /**
- * File: list.h - Some expiriments with list implementation. Not fully implemented. NOT FOR USE.
+ * @file: list.h 
+ * Some expiriments with list implementation
+ * @defgroup List Two-way linked list
+ *
+ * Implementation of two-way linked list
+ * @ingroup Utils
+ */
+/*
+ * Utils library in Showgraph tool
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef LIST_H
@@ -9,6 +17,7 @@
  * Types of direction in lists.
  * Lists are built from left to right by default.
  * That means if you take next in default direction - it will be element to the right.
+ * @ingroup List
  */
 enum ListDir
 {
@@ -23,6 +32,7 @@ enum ListDir
 
 /**
  * Return direction that is reverse to given one
+ * @ingroup List
  */
 inline ListDir
 ListRDir( ListDir dir)
@@ -33,8 +43,9 @@ ListRDir( ListDir dir)
 
 
 /**
- * Class for objects that should have pointers to next/prev objects of their type( i.e. behave like list elements)
+ * Class for objects that should have pointers to next/prev objects of their type( behave like list elements)
  * Implements headless list data structure
+ * @ingroup List
  */
 template <class Data> class ListItem
 {
@@ -75,11 +86,12 @@ public:
     {
         return GetPeerInDir( LIST_DIR_RDEFAULT);
     }
-    /** Default peer sets */
+    /** Set next peer */
     inline void SetNext( ListItem<Data> *n)
     {
         SetPeerInDir( n, LIST_DIR_DEFAULT);
     }
+    /** Set previous peer */
     inline void SetPrev( ListItem<Data> *p)
     {
         SetPeerInDir( p, LIST_DIR_RDEFAULT);

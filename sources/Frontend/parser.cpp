@@ -1,5 +1,8 @@
 /**
- * File: parser.c - Implementation of generic IR parser
+ * @file: parser.cpp
+ * Implementation of generic IR parser
+ */
+/* 
  * Frontend in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */

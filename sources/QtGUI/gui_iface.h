@@ -1,11 +1,14 @@
 /**
  * @file: gui_iface.h 
+ * Interface of Showgraph GUI package
+ * @defgroup GUI Graphical User Interface 
+ *
+ * Graphical part of ShowGraph is arranged around MainWindow wich has 
+ * GraphView as a center widget.
+ */
+/**
  * GUI implementation.
  * Copyright (C) 2009  Boris Shurygin
- *
- * @defgroup GUI Graphical User Interface
- *
- * Graphical part of ShowGraph is arranged around MainWindow wich has GraphView as a center widget.
  */
 #ifndef GUI_IFACE_H
 #define GUI_IFACE_H

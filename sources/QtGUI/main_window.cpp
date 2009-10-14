@@ -1,5 +1,8 @@
 /**
- * File: gui_impl.h - Implementational header for QtGUI project
+ * @file: main_window.cpp 
+ * Implementation of MainWindow class
+ */
+/*
  * GUI for ShowGraph tool. Adaptaion from XML example of QT toolkit.
  * Copyright (C) 2009  Boris Shurygin
  */
