@@ -132,7 +132,7 @@ NodeItem::SetInitFlags()
     QString text = QString("Node %1").arg( node()->id());
     setPlainText( text);
     setFlag( ItemIsMovable);
-    //setFlag(ItemIsSelectable);
+    //setFlag( ItemIsSelectable);
     setCacheMode( DeviceCoordinateCache);
     setZValue(2);
 }
@@ -257,7 +257,13 @@ void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
 void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
 {
     update();
-    QGraphicsItem::mouseReleaseEvent( event);
+    /** Select this node */
+	node()->graph()->emptySelection();
+	node()->graph()->selectNode( this->node());
+	/** Show context menu */
+	if (event->button() & Qt::RightButton)
+		node()->graph()->view()->nodeMenu()->exec( event->screenPos());
+	QGraphicsItem::mouseReleaseEvent( event);
 }
 
 /**
@@ -333,3 +339,12 @@ QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
     }
     return QGraphicsTextItem::itemChange(change, value);
 }
+
+/**
+ * Context menu event handler
+ */
+void NodeItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+	//QGraphicsTextItem::contextMenuEvent( event);
+}
+

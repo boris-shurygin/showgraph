@@ -58,6 +58,9 @@ public:
     void keyPressEvent(QKeyEvent *event);
     /** Item change event handler */
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+	/** Handler for context menu event */
+	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+    
     /** Remove from scene */
     inline void remove()
     {

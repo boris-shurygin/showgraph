@@ -21,10 +21,13 @@
  */
 enum ListDir
 {
-    LIST_DIR_RIGHT = 0,
-    /** Defult direction */
+    /** Right direction */
+	LIST_DIR_RIGHT = 0,
+    /** Default direction */
     LIST_DIR_DEFAULT = LIST_DIR_RIGHT,
+	/** Left Direction */
     LIST_DIR_LEFT = 1,
+	/** Direction reverse to default */
     LIST_DIR_RDEFAULT = LIST_DIR_LEFT,
     /** Number of directions */
     LIST_DIR_NUM = 2

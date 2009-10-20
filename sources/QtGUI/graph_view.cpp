@@ -78,6 +78,8 @@ GraphView::GraphView():
     setWindowTitle( tr("ShowGraph"));
     //setDragMode( ScrollHandDrag);
     tmpSrc = NULL;
+	createActions();
+	createMenus();
 }
 
 /** Destructor */
@@ -124,7 +126,8 @@ GraphView::mousePressEvent(QMouseEvent *ev)
 void
 GraphView::mouseReleaseEvent(QMouseEvent *ev)
 {
-    if( ev->button() & Qt::RightButton)
+    bool pass_event = true;
+	if( ev->button() & Qt::RightButton)
     {
         if ( createEdge)
         {
@@ -134,13 +137,16 @@ GraphView::mouseReleaseEvent(QMouseEvent *ev)
                 if ( tmpSrc != qgraphicsitem_cast<NodeItem *>(item)->node())
                 {
                     graph()->newEdge( tmpSrc, qgraphicsitem_cast<NodeItem *>(item)->node());
+					pass_event = false;
                 }
             }
+			
         }
     }
-    tmpSrc = NULL;
-    createEdge = false;
-    QGraphicsView::mouseReleaseEvent(ev);
+    if ( pass_event)
+		QGraphicsView::mouseReleaseEvent(ev);
+	createEdge = false;
+	tmpSrc = NULL;
 }
 
 void
@@ -209,4 +215,26 @@ GraphView::deleteItems()
     }
     scene()->setItemIndexMethod( QGraphicsScene::BspTreeIndex);
     scene()->setBspTreeDepth( depth);
+}
+
+void GraphView::deleteSelected()
+{
+    graph()->deleteNodes();
+	graph()->deleteEdges();
+}
+
+void GraphView::createActions()
+{
+    deleteItemAct = new QAction(tr("&Delete"), this);
+    deleteItemAct->setShortcut(tr("Ctrl+D"));
+    connect(deleteItemAct, SIGNAL(triggered()), this, SLOT( deleteSelected()));
+}
+
+void GraphView::createMenus()
+{
+    nodeItemMenu = new QMenu( tr( "&Node Item"));
+    nodeItemMenu->addAction( deleteItemAct);
+
+	edgeItemMenu = new QMenu( tr( "&Edge Item"));
+    edgeItemMenu->addAction( deleteItemAct);
 }
