@@ -19,6 +19,8 @@
 class GGraph: public AuxGraph
 {
     GraphView *view_p;
+	QList< GNode* > sel_nodes;
+	QList< GEdge* > sel_edges;
 public:
     /** Constructor */
     inline GGraph( GraphView *v): view_p( v){};
@@ -88,6 +90,48 @@ public:
     {
         return view_p;
     }
+	/**
+     * Add node to selection
+     */
+    inline void selectNode( GNode *n)
+    {
+        sel_nodes << n;
+    }
+	/**
+	 * Clear list of selected nodes
+	 */
+	inline void emptySelection()
+	{
+		sel_nodes.clear();
+		sel_edges.clear();
+	}
+	/**
+     * Add node to selection
+     */
+    inline void selectEdge( GEdge *e)
+    {
+        sel_edges << e;
+    }
+	/**
+	 * Delete scheduled nodes
+	 */
+	void deleteNodes()
+	{
+		foreach (GNode *n, sel_nodes)
+		{
+			delete n;
+		}
+	}
+	/**
+	 * Delete scheduled edges
+	 */
+	void deleteEdges()
+	{
+		foreach (GEdge *e, sel_edges)
+		{
+			delete e;
+		}
+	}
 };
 
 /**
@@ -96,7 +140,7 @@ public:
 class GraphView: public QGraphicsView
 {
     Q_OBJECT; /** For MOC */
-
+private:
     QPoint src;
     QPoint dst;
     bool createEdge;
@@ -106,10 +150,24 @@ class GraphView: public QGraphicsView
 
     QList< NodeItem* > del_node_items;
     QList< EdgeItem* > del_edge_items;
-    
+
+	/** Actions */
+	QAction *deleteItemAct;
+	
+	/** Context menus */
+	QMenu *nodeItemMenu;
+	QMenu *edgeItemMenu;
+private:
+	void createActions();
+	void createMenus();
 signals:
     /** Signal that node is clicked */
     void nodeClicked( GNode *n);
+public slots:
+	/**
+	 * Delete one item
+	 */
+	void deleteSelected();
 
 public:
     /** Constants */
@@ -132,6 +190,16 @@ public:
     {
         return graph_p;
     }
+	/** Get context menu for nodes */
+	inline QMenu *nodeMenu() const
+	{
+		return nodeItemMenu;
+	}
+	/** Get context menu for edges */
+	inline QMenu *edgeMenu() const
+	{
+		return edgeItemMenu;
+	}
     /** draw background reimplementation */
     void drawBackground(QPainter *painter, const QRectF &rect);
     /** Mouse double click event handler reimplementation */

@@ -55,7 +55,7 @@ private:
     /** Connect signals and slots to newly created graph view */
     void connectToGraphView( GraphView *view);
 
-    QMenu *fileMenu;
+	QMenu *fileMenu;
     QMenu *viewMenu;
     QMenu *helpMenu;
     QAction *openAct;

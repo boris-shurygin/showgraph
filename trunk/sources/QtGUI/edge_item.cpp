@@ -339,6 +339,12 @@ void EdgeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void EdgeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 {
     update();
+    /** Select this edge */
+	edge()->graph()->emptySelection();
+	edge()->graph()->selectEdge( this->edge());
+	/** Show context menu */
+	if (ev->button() & Qt::RightButton)
+		edge()->graph()->view()->edgeMenu()->exec( ev->screenPos());
     QGraphicsItem::mouseReleaseEvent( ev);
 }
 
