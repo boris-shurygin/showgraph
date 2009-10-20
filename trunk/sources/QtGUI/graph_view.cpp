@@ -57,6 +57,39 @@ GGraph::newEdge( GNode* pred, GNode* succ, QDomElement e)
     return edge_p;
 }
 
+void GGraph::deleteEdgeWithControls( GEdge *edge)
+{
+	QList< GNode *> nodes;
+	QList< GEdge *> edges;
+    
+    /** Check successor */
+    GNode * succ = edge->succ();
+	while ( succ->isEdgeControl())
+    {
+        assert( isNotNullP( succ->firstSucc()));
+        nodes << succ;
+        edges << succ->firstSucc();
+		succ = succ->firstSucc()->succ();
+    }
+    GNode * pred = edge->pred(); 
+    while ( pred->isEdgeControl())
+    {
+        assert( isNotNullP( pred->firstPred()));
+        nodes << pred;
+		edges << pred->firstPred();
+        pred = pred->firstPred()->pred();
+    }
+    delete edge;
+	foreach ( GEdge *e, edges)
+    {
+        delete e;
+    }
+    foreach ( GNode *n, nodes)
+    {
+        delete n;
+    }
+	
+}
 
 /** Constructor */
 GraphView::GraphView(): 

@@ -122,6 +122,10 @@ public:
 			delete n;
 		}
 	}
+
+	/** Delete edge with all of the edge controls on it */
+	void deleteEdgeWithControls( GEdge *e);
+
 	/**
 	 * Delete scheduled edges
 	 */
@@ -129,9 +133,11 @@ public:
 	{
 		foreach (GEdge *e, sel_edges)
 		{
-			delete e;
+			deleteEdgeWithControls( e);
 		}
 	}
+
+	
 };
 
 /**
