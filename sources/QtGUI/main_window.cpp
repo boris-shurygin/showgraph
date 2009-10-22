@@ -15,7 +15,7 @@ MainWindow::MainWindow()
     graph_view = new GraphView();
     setCentralWidget( graph_view);
 
-    dock = new QDockWidget( tr("Text "), this);
+    dock = new QDockWidget( tr("Text"), this);
     
     createActions();
     createMenus();
