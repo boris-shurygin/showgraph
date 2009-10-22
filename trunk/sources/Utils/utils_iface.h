@@ -14,6 +14,7 @@
 #include "asrt.h"
 #include "print.h"
 #include "list.h"
+#include "mem.h"
 
 
 namespace Utils

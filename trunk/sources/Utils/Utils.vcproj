@@ -139,6 +139,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\mem.h"
+			>
+		</File>
+		<File
 			RelativePath=".\misc.h"
 			>
 		</File>
