@@ -31,6 +31,49 @@ MainWindow::MainWindow()
     dock->hide();
 }
 
+void MainWindow::printContents()
+{
+    QPrinter printer;
+
+    QPrintDialog *dialog = new QPrintDialog( &printer, this);
+    dialog->setWindowTitle( tr( "Print Graph"));
+    if ( dialog->exec() != QDialog::Accepted)
+        return;
+    QPainter painter( &printer);
+    graph_view->render(&painter);
+}
+
+void MainWindow::exportImage()
+{
+    QString fileName =
+        QFileDialog::getSaveFileName( this, tr("Export Image"),
+                                      QDir::currentPath(),
+                                      tr("Windows Bitmap ( *.bmp);;").
+                                      append( tr("Joint Photographic Experts Group (*.jpg);;")).
+                                      append( tr("Joint Photographic Experts Group (*.jpeg);;")).
+                                      append( tr("Portable Network Graphics( *.png);;")).
+                                      append( tr("Tagged Image File Format( *.tiff)")));
+    if (fileName.isEmpty())
+        return;
+    
+    QImage image;
+    QPainter pp( &image);
+    pp.drawRect( graph_view->rect());
+    graph_view->scene()->render(&pp);
+    QImageWriter writer( fileName);
+    if ( writer.canWrite() && writer.write( image))
+    {
+        statusBar()->showMessage(tr("Image exported"), 2000);
+    } else
+    {
+        QMessageBox::warning( this, tr("Export Image"),
+                              tr("Cannot write file %1:\n%2")
+                              .arg( fileName)
+                              .arg( writer.errorString()));
+        statusBar()->showMessage(tr("Image write failed"), 2000);
+    }
+}
+
 void MainWindow::showNodeText( GNode *node)
 {
     TextView* text_view = ( TextView* )dock->widget();
@@ -148,7 +191,7 @@ void MainWindow::saveAs()
     
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("SAX Bookmarks"),
+        QMessageBox::warning(this, tr("Showgraph"),
                              tr("Cannot write file %1:\n%2.")
                              .arg(fileName)
                              .arg(file.errorString()));
@@ -209,6 +252,14 @@ void MainWindow::createActions()
     zoomOrigAct->setShortcut(tr("Ctrl+A"));
     connect( zoomOrigAct, SIGNAL(triggered()), this, SLOT( zoomOrig()));
 
+    exportImageAct = new QAction(tr("&Export Image..."), this);
+    exportImageAct->setShortcut(tr("Ctrl+E"));
+    connect( exportImageAct, SIGNAL(triggered()), this, SLOT( exportImage()));
+
+    printAct = new QAction( tr("&Print"), this);
+    printAct->setShortcut( tr("Ctrl+P"));
+    connect( printAct, SIGNAL( triggered()), this, SLOT( printContents()));
+
 }
 
 void MainWindow::createMenus()
@@ -217,8 +268,12 @@ void MainWindow::createMenus()
     fileMenu->addAction( newGraphAct);
     fileMenu->addAction( openAct);
     fileMenu->addAction( saveAsAct);
+    fileMenu->addSeparator();
+    fileMenu->addAction( exportImageAct);
+    fileMenu->addAction( printAct);
+    fileMenu->addSeparator();
     fileMenu->addAction( exitAct);
-
+    
     menuBar()->addSeparator();
 
     viewMenu = menuBar()->addMenu( tr( "&View"));
