@@ -44,6 +44,10 @@ public slots:
     void zoomOrig();
     /** Show text window for selected node */
     void showNodeText( GNode *node);
+    /** Export picture */
+    void exportImage();
+    /** Print picture */
+    void printContents();
 
 private:
     /** Create actions */
@@ -67,6 +71,8 @@ private:
     QAction *zoomInAct;
     QAction *zoomOutAct;
     QAction *zoomOrigAct;
+    QAction *exportImageAct;
+    QAction *printAct;
 };
 
 #endif
