@@ -10,6 +10,11 @@
 #include "../Frontend/fe_iface.h"
 
 /**
+ * Test memory manager
+ */
+bool uTestMem();
+
+/**
  * Graph library unit testing
  */
 bool uTestGraph();

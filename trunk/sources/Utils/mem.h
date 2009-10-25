@@ -3,7 +3,7 @@
  * Some experiments with memory manager
  * @defgroup Mem Memory Manager
  *
- * Implementation of memory manager. In Process of Design.
+ * Implementation of memory manager, In Process of Design&Implementation.
  *
  * Memory manager should solve the following memory-related problems
  * - Dangling pointers. Solution: reference counting via smart pointers
@@ -25,40 +25,8 @@
 #  define USE_REF_COUNTERS
 #endif
 
-/**
- * Namespace for memory manager
- * @ingroup Mem
- */
-namespace Mem
-{
-   /**
-    * Base class for all memory-managed objects
-    * @ingroup Mem
-    */
-    class Obj
-    {
-#ifdef USE_REF_COUNTERS
+#include "mem_obj.h" /** Memory object base class */
+#include "mem_ref.h" /** Memory reference */
+#include "mem_pool.h" /** Memory pool */
 
-#endif
-    };
-
-    /**
-     * Smart pointer template
-     * @ingroup Mem
-     */
-     template < class RefObj> class Ref
-     {
-     
-     };
-
-     /**
-      * Template of memory pool with fixed-size chunks
-      * @ingroup Mem
-      */
-     template < class Data> class FixedPool
-     {
-     
-     };
-
-}; /* namespace Mem */
 #endif /* MEM_H */

@@ -7,15 +7,19 @@
 int main(int argc, char **argv)
 {
 #ifdef _DEBUG
-    //Test graph package
+	/** Test memory management */
+    if ( !uTestMem())
+		return -1;
+
+	/** Test graph package */
     if ( !uTestGraph())
         return -1;
 
-    //Test frontend
+    /** Test frontend */
     if ( !uTestFE())
         return -1;
     
-    //Test graph package
+    /** Test graph package */
     if ( uTestGUI(argc, argv) != 0)
         return -1;
     
