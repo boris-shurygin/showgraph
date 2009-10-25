@@ -57,9 +57,8 @@ namespace Mem
 		/** Destructor */
 		~Obj()
 		{
-			assertd( ref_count == 1);
+			assertd( ref_count == 0);
 		}
-
     };
 };
 

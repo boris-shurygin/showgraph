@@ -22,12 +22,12 @@ class TestObj: public Obj
  */
 typedef Ref< TestObj> ObjRef;
 
-
 /**
  * Test smart pointers, objects and pools
  */
 bool uTestMem()
 {
+	/** #Test smart pointers behaviour */
 	ObjRef ref = new TestObj(); /** Test constructor from pointer */
     ObjRef ref2; /** Test default constructor */
 	
@@ -42,5 +42,21 @@ bool uTestMem()
 
 	/** Test operator -> */
 	assertd( ref->refCount() == 2);
+	
+	bool catched = false;
+	
+	/** Test exception generation */
+	try
+	{
+		delete ref;
+	} catch( int a)
+	{
+		catched = true;
+	}
+	assertd( catched);
+	
+	/** Test ref to pointer conversion and Obj destructor */
+	delete ref2;
+
 	return true;
 }

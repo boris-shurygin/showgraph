@@ -59,31 +59,61 @@ namespace Mem
 		 * Assignement of pointer
 		 * Used in Ref ref; ref = new Obj(...) expression
 		 */
-		Ref< RefObj> & operator=( const RefObj* p)
+		Ref< RefObj> & operator=( RefObj* p)
 		{
+#ifdef USE_REF_COUNTERS
+			/** Decrement object's ref count */
+			if ( ptr != 0)
+				ptr->decRefCount();
+#endif	
+			/** Assign a new pointer */
 			ptr = p;
 #ifdef USE_REF_COUNTERS
+			/** Increment ref count */
 			if ( ptr != 0)
 				ptr->incRefCount();
 #endif	
+			return *this;
 		}
+		/** Destructor */
 		~Ref()
 		{
 #ifdef USE_REF_COUNTERS
-			ptr->decRefCount();
+			if ( ptr != 0)
+				ptr->decRefCount();
 #endif
 		}
+		/** Member access operator */
 		inline RefObj* operator->()
 		{
 			return ptr;
 		}
+		/** Equals operator */
 		inline bool operator == ( Ref< RefObj> &r)
 		{
 			return ptr == r.ptr;
 		}
+		/** Conversion to boolean */
 		inline operator bool()
 		{
 			return ptr != NULL;
+		}
+		/**
+		 * Conversion to Pointer
+		 * For using ref as delete operator argument.
+		 * Use in other expressions is prohibited. Unfortunatelly this is not ( can't be?) enforced.
+		 */
+		inline operator RefObj*()
+		{
+			RefObj *ret_val = ptr;
+			assertd( ret_val != NULL);
+			/** Decrement object's ref count */
+			if ( ptr != 0)
+			{
+				ptr->decRefCount();	
+				ptr = 0;
+			}
+			return ret_val;
 		}
     };
 };
