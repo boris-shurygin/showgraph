@@ -10,6 +10,8 @@
 
 #include "main_window.h"
 
+const int IMAGE_EXPORT_SCALE_FACTOR = 2;
+
 MainWindow::MainWindow()
 {
     graph_view = new GraphView();
@@ -56,10 +58,15 @@ void MainWindow::exportImage()
     if (fileName.isEmpty())
         return;
     
-    QImage image;
+    QRectF scene_rect( graph_view->scene()->itemsBoundingRect());
+	/** We render */
+	QImage image( scene_rect.width() * IMAGE_EXPORT_SCALE_FACTOR,
+		          scene_rect.height() * IMAGE_EXPORT_SCALE_FACTOR,
+				  QImage::Format_RGB32);
+	image.fill( QColor( "white").rgb());
     QPainter pp( &image);
-    pp.drawRect( graph_view->rect());
-    graph_view->scene()->render(&pp);
+	pp.setRenderHints( graph_view->renderHints());
+    graph_view->scene()->render( &pp);
     QImageWriter writer( fileName);
     if ( writer.canWrite() && writer.write( image))
     {

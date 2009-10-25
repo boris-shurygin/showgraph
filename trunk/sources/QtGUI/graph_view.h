@@ -150,6 +150,7 @@ private:
     QPoint src;
     QPoint dst;
     bool createEdge;
+	bool show_menus;
     GNode *tmpSrc;
     GGraph * graph_p;
     qreal zoom_scale;
@@ -228,9 +229,14 @@ public:
     /** Do the transofrmation( scale) */
 	void updateMatrix();
     /** Check if we are in the process of the edge creation */
-    inline bool IsCreateEdge() const
+    inline bool isCreateEdge() const
     {
         return createEdge;
+    }
+/** Check if we are in the process of the edge creation */
+    inline bool isShowContextMenus() const
+    {
+        return show_menus;
     }
     /** Set the state of ege creation */
     inline void SetCreateEdge( bool val)

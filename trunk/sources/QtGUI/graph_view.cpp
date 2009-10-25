@@ -109,10 +109,11 @@ GraphView::GraphView():
     setResizeAnchor( AnchorViewCenter);
     setMinimumSize( 200, 200);
     setWindowTitle( tr("ShowGraph"));
-    //setDragMode( ScrollHandDrag);
+    //setDragMode( RubberBandDrag);
     tmpSrc = NULL;
 	createActions();
 	createMenus();
+	show_menus = true;
 }
 
 /** Destructor */
@@ -157,10 +158,9 @@ GraphView::mousePressEvent(QMouseEvent *ev)
 }
 
 void
-GraphView::mouseReleaseEvent(QMouseEvent *ev)
+GraphView::mouseReleaseEvent( QMouseEvent *ev)
 {
-    bool pass_event = true;
-	if( ev->button() & Qt::RightButton)
+    if( ev->button() & Qt::RightButton)
     {
         if ( createEdge)
         {
@@ -170,15 +170,15 @@ GraphView::mouseReleaseEvent(QMouseEvent *ev)
                 if ( tmpSrc != qgraphicsitem_cast<NodeItem *>(item)->node())
                 {
                     graph()->newEdge( tmpSrc, qgraphicsitem_cast<NodeItem *>(item)->node());
-					pass_event = false;
-                }
+					show_menus = false;
+				}
             }
 			
         }
     }
-    if ( pass_event)
-		QGraphicsView::mouseReleaseEvent(ev);
+    QGraphicsView::mouseReleaseEvent(ev);
 	createEdge = false;
+	show_menus = true;
 	tmpSrc = NULL;
 }
 
