@@ -1,6 +1,8 @@
 /**
- * File: graph_utest.cpp - Implementation of testing of Graph library, 
- * internal representation of graphs in ShowGraph tool.
+ * @file: graph_utest.cpp 
+ * Implementation of testing of Graph library
+ */
+/*
  * Copyright (C) 2009  Boris Shurygin
  */
 #include "utest_impl.h"
@@ -264,7 +266,7 @@ bool uTestGraph()
         return false;
 
     /**
-     * Check markers
+     * Check xml I/O
      */
     if ( !uTestXML())
         return false;
