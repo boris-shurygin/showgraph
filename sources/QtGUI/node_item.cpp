@@ -132,7 +132,7 @@ NodeItem::SetInitFlags()
     QString text = QString("Node %1").arg( node()->id());
     setPlainText( text);
     setFlag( ItemIsMovable);
-    //setFlag( ItemIsSelectable);
+    setFlag( ItemIsFocusable, false);
     setCacheMode( DeviceCoordinateCache);
     setZValue(2);
 }
@@ -248,7 +248,7 @@ void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
     {
         node()->graph()->view()->showNodeText( node());
     }
-    QGraphicsItem::mousePressEvent(event);
+    QGraphicsTextItem::mousePressEvent(event);
 	update();
 }
 
@@ -266,7 +266,7 @@ void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
 		 && ( event->button() & Qt::RightButton) )
 		 node()->graph()->view()->nodeMenu()->exec( event->screenPos());
 	
-	QGraphicsItem::mouseReleaseEvent( event);
+	QGraphicsTextItem::mouseReleaseEvent( event);
 	update();
 }
 
@@ -279,13 +279,14 @@ void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     {
         if ( textInteractionFlags() == Qt::NoTextInteraction)
             setTextInteractionFlags(Qt::TextEditorInteraction);
-        QGraphicsTextItem::mouseDoubleClickEvent(event);
+			//QGraphicsTextItem::mousePressEvent(event);
     }
 }
 
 void NodeItem::focusOutEvent(QFocusEvent *event)
 {
     setTextInteractionFlags(Qt::NoTextInteraction);
+	setFlag( ItemIsFocusable, false);
     QGraphicsTextItem::focusOutEvent(event);
 }
 
