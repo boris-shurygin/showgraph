@@ -205,7 +205,7 @@ NodeItem::paint( QPainter *painter,
     if ( node()->isSimple())
     {
         qreal adjust = 3;
-        if (option->state & QStyle::State_Sunken)
+        if ( bold_border && ( option->state & QStyle::State_Sunken))
         {
             painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         } else
@@ -219,7 +219,7 @@ NodeItem::paint( QPainter *painter,
         if ( node()->firstPred()->item()->isSelected()
              || node()->firstSucc()->item()->isSelected())
         {
-            if ( option->state & QStyle::State_Sunken) 
+            if ( bold_border && ( option->state & QStyle::State_Sunken)) 
             {
                 painter->setBrush( Qt::gray);
                 painter->setPen( QPen( Qt::black, 0));
@@ -239,7 +239,8 @@ NodeItem::paint( QPainter *painter,
  */
 void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
 {
-    if( event->button() & Qt::RightButton && !node()->isEdgeControl())
+    bold_border = true;
+	if( event->button() & Qt::RightButton && !node()->isEdgeControl())
     {
         node()->graph()->view()->SetCreateEdge( true);
         node()->graph()->view()->SetTmpSrc( node());
@@ -247,8 +248,8 @@ void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
     {
         node()->graph()->view()->showNodeText( node());
     }
-    update();
     QGraphicsItem::mousePressEvent(event);
+	update();
 }
 
 /**
@@ -256,14 +257,17 @@ void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
  */
 void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
 {
-    update();
-    /** Select this node */
+    bold_border = false;
+	/** Select this node */
 	node()->graph()->emptySelection();
 	node()->graph()->selectNode( this->node());
 	/** Show context menu */
-	if (event->button() & Qt::RightButton)
-		node()->graph()->view()->nodeMenu()->exec( event->screenPos());
+	if ( node()->graph()->view()->isShowContextMenus()
+		 && ( event->button() & Qt::RightButton) )
+		 node()->graph()->view()->nodeMenu()->exec( event->screenPos());
+	
 	QGraphicsItem::mouseReleaseEvent( event);
+	update();
 }
 
 /**
@@ -282,7 +286,6 @@ void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 void NodeItem::focusOutEvent(QFocusEvent *event)
 {
     setTextInteractionFlags(Qt::NoTextInteraction);
-    //emit lostFocus(this);
     QGraphicsTextItem::focusOutEvent(event);
 }
 
@@ -340,11 +343,4 @@ QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
     return QGraphicsTextItem::itemChange(change, value);
 }
 
-/**
- * Context menu event handler
- */
-void NodeItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
-{
-	//QGraphicsTextItem::contextMenuEvent( event);
-}
 

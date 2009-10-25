@@ -15,7 +15,8 @@
  */
 class NodeItem: public QGraphicsTextItem
 {    
-    GNode *node_p;    
+    GNode *node_p;
+	bool bold_border;
     /** Initialization */
     void SetInitFlags();
 public:
@@ -23,7 +24,7 @@ public:
     enum {Type = TypeNode};
 
     /** Constructor */
-    inline NodeItem( GNode *n_p)
+	inline NodeItem( GNode *n_p): bold_border( false)
     {
         node_p = n_p;
         SetInitFlags();
@@ -58,10 +59,7 @@ public:
     void keyPressEvent(QKeyEvent *event);
     /** Item change event handler */
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-	/** Handler for context menu event */
-	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-    
-    /** Remove from scene */
+	/** Remove from scene */
     inline void remove()
     {
         setVisible( false);
