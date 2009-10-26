@@ -7,6 +7,20 @@
 /* GUI for ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
+/**
+ * @page iface Graph editor interface
+ * Graph editor.
+ * 
+ * Here's list of conventional editing tasks and how they are performed with Showgraph
+ * -# Create new node - double click on free space
+ * -# Create edge - draw edge holding down right mouse button
+ * -# Delete node/edge - use delete option from context menu
+ * -# Enter text in node - double click on node to enable its text editor
+ * -# Move node - press left mouse button on it and drag
+ * -# Create edge control point - double click on edge
+ * -# Zoom view - press '-' and '+' or use mouse wheel
+ * -# Invoke auto layout - select 'Run Layout' from View menu or simply press F5 
+ */
 #ifndef GRAPH_VIEW_H
 #define GRAPH_VIEW_H
 

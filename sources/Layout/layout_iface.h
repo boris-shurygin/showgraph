@@ -13,6 +13,10 @@
  * - Horizontal placement, wich uses barycenter heuristic to position a node close
  *   to the nodes connected with it on other levels
  */
+/**
+ * @page layout graph layout
+ * Drawing graph on a 2D plane is done via Sugiyama-like algorithm. 
+ */
 #ifndef LAYOUT_IFACE_H
 #define LAYOUT_IFACE_H
 

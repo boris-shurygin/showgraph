@@ -6,6 +6,27 @@
  * Graphical part of ShowGraph is arranged around MainWindow wich has 
  * GraphView as a center widget.
  */
+
+/**
+ * @mainpage
+ *
+ *     Showgraph tool is a simple graph editor/viewer. It allows for creating nodes 
+ * and connecting them with edges. Nodes have ediatable labels and edges can be
+ * routed using control points. One of primary goals was to create lightweight and
+ * easy-to-use tool for fast construction of a graph's visual representation. 
+ * Nodes are simply created by double-click on background and edges are created by 
+ * pressing right mouse button on one node, holding it down while moving to other node
+ * and finally releasing it on the target node. Nodes can be moved around by simply
+ * dragging them. See @subpage iface section for more details.
+ *
+ *    Showgraph also features an auto-layout for directed graphs. Once you have constructed
+ * graph you can use automatic layout to provide a basic structured view that can be further
+ * adjusted manually to produce nicer image of the graph.
+ * See @subpage layout section for info on automatic graph drawing.
+ *
+ *    Constructed graphs are stored in XML files. Graph images can be also exported in various
+ * formats or sent to printer.
+ */
 /**
  * GUI implementation.
  * Copyright (C) 2009  Boris Shurygin
