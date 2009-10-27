@@ -110,7 +110,9 @@ namespace Mem
 			/** Decrement object's ref count */
 			if ( ptr != 0)
 			{
+#ifdef USE_REF_COUNTERS
 				ptr->decRefCount();	
+#endif
 				ptr = 0;
 			}
 			return ret_val;

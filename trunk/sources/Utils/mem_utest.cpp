@@ -13,8 +13,10 @@ using namespace Mem;
 /** Test object class */
 class TestObj: public Obj
 {
-	public:	
-		int a;
+	
+public:	
+	/** Some variable */
+	int a;
 };
 
 /**
@@ -41,8 +43,10 @@ bool uTestMem()
 	assertd( ref == ref2);
 
 	/** Test operator -> */
+	ref->a = 2;
+#ifdef USE_REF_COUNTERS
 	assertd( ref->refCount() == 2);
-	
+#endif	
 	bool catched = false;
 	
 	/** Test exception generation */

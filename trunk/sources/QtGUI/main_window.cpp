@@ -216,9 +216,9 @@ void MainWindow::about()
    QMessageBox::about( this,
                        tr("About Showgraph"),
 #ifdef _DEBUG
-       tr("The <b>ShowGraph</b> implements a simple graph editor currently. <b>DEBUG VERSION</b>")
+       tr("The <b>ShowGraph</b> implements a simple graph editor. <b>DEBUG VERSION</b>")
 #else
-       tr("The <b>ShowGraph</b> implements a simple graph editor currently.")
+       tr("The <b>ShowGraph</b> implements a simple graph editor.")
 #endif
                         );
 }
@@ -244,7 +244,7 @@ void MainWindow::createActions()
     newGraphAct->setShortcut(tr("Ctrl+N"));
     connect( newGraphAct, SIGNAL(triggered()), this, SLOT( newGraph()));
 
-    layoutRunAct = new QAction(tr("&Run"), this);
+    layoutRunAct = new QAction(tr("&Run Layout"), this);
     layoutRunAct->setShortcut(tr("F5"));
     connect( layoutRunAct, SIGNAL(triggered()), this, SLOT( runLayout()));
 

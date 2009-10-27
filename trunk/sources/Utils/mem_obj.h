@@ -50,14 +50,19 @@ namespace Mem
 #endif		
 	public:
 		/** Constructor */
-		inline Obj(): ref_count( 0)
+		inline Obj() 
+#ifdef USE_REF_COUNTERS
+		:ref_count( 0)
+#endif
 		{
 		
 		}
 		/** Destructor */
 		~Obj()
 		{
+#ifdef USE_REF_COUNTERS
 			assertd( ref_count == 0);
+#endif
 		}
     };
 };
