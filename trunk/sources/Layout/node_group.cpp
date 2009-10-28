@@ -142,6 +142,6 @@ void NodeGroup::placeNodesFinal( GraphDir dir)
         node->setX( curr_left);
         curr_left += node->width();
         prev_type = node->type();
-        node->setY( node->modelY() - node->height() / 2 );
+        node->setY( node->level()->y() - node->height() / 2 );
     }
 }
