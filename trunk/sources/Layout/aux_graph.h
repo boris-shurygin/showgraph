@@ -234,6 +234,33 @@ protected:
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;
     friend class AuxGraph;
 };
+
+/**
+ * Edge types
+ *
+ * @ingroup Layout
+ */
+enum AuxEdgeType
+{
+	/** Unknown type (typically before classification) */
+	UNKNOWN_TYPE_EDGE = 0,
+
+	/** Tree edge */
+	TREE_EDGE,
+	
+	/** Back edge */
+	BACK_EDGE,
+
+	/** Forward edge */
+	FORWARD_EDGE,
+
+	/** Self-edge */
+	SELF_EDGE,
+
+	/** Number of edge types */
+	EDGE_TYPES_NUM
+};
+
 /**
  * Edge of model graph used in Layout
  *
@@ -243,14 +270,13 @@ class AuxEdge: public EdgeT< AuxGraph, AuxNode, AuxEdge>
 {
     bool priv_fixed;
 
-    /** Whether an edge should be inverted */
-    bool is_back;
+    AuxEdgeType priv_type;
    
 protected:
     /** Constructors are made private, only nodes and graph can create edges */
     AuxEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ):
         EdgeT< AuxGraph, AuxNode, AuxEdge>( graph_p, _id, _pred, _succ),
-        priv_fixed( true), is_back( false) {};
+        priv_fixed( true), priv_type( UNKNOWN_TYPE_EDGE) {};
 public:
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;
     friend class NodeT< AuxGraph, AuxNode, AuxEdge>;
@@ -270,14 +296,50 @@ public:
     /** Check if edge was classified as a 'Backedge' */
     inline bool isBack() const
     {
-        return is_back;
+        return priv_type == BACK_EDGE;
     }
-    /** Set edge to be a backedge */
-    inline void setBack( bool back = true)
+	/** Get edge type */
+	inline AuxEdgeType type() const
+	{
+		return priv_type;
+	}
+    /** Set edge type */
+    inline void setType( AuxEdgeType t = UNKNOWN_TYPE_EDGE)
     {
-        is_back = back;
+        priv_type = t;
     }
-    /** Check whether this edge is inverted */
+	/** Set edge to be of unknown type */
+    inline void setUnknown()
+    {
+        priv_type = UNKNOWN_TYPE_EDGE;
+    }
+	/** Set edge to be a tree edge */
+    inline void setTree()
+    {
+        priv_type = TREE_EDGE;
+    }
+	/** Set edge to be a backedge */
+    inline void setBack()
+    {
+        priv_type = BACK_EDGE;
+    }
+    /** Set edge to be a forward edge */
+    inline void setForward()
+    {
+        priv_type = FORWARD_EDGE;
+    }
+	/** Set edge to be a self-edge */
+    inline void setSelf()
+    {
+        assertd( pred() == succ());
+		priv_type = SELF_EDGE;
+    }
+    /** Check if edge is a self-edge */
+    inline bool isSelf() const
+    {
+        return priv_type == SELF_EDGE;
+    }
+	/** Check whether this edge is inverted */
     inline bool isInverted() const
     {
         return isBack();
