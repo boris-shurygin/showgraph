@@ -125,6 +125,11 @@ public:
     {
         priv_level = l;
     }
+    /** Get level */
+    inline Level *level() const
+    {
+        return priv_level;
+    }
     /** Set order */
     inline void setOrder( int or) 
     {
@@ -312,6 +317,8 @@ public:
     void orderNodesByDFS();
     /** Try to reduce crossings */
     void reduceCrossings();
+    /** Find proper vertical position for each level */
+    void adjustVerticalLevels();
     /** Arrange nodes horizontally */
     void arrangeHorizontally();
     /** Debug info print */
@@ -359,13 +366,15 @@ public:
  */
 class Level
 {
+    qreal _height;
+    qreal y_pos;
     Rank level_rank;
     QList< AuxNode*> node_list;
 public:
     /** Default constructor */
-    Level(): level_rank( 0), node_list(){};
+    inline Level(): level_rank( 0), node_list(), _height( 0), y_pos( 0){};
     /** Constructor with rank parameter */
-    Level( Rank r): level_rank( r), node_list(){};
+    inline Level( Rank r): level_rank( r), node_list(), _height( 0), y_pos( 0){};
     /** Arrange nodes with respect to adjacent level*/
     void arrangeNodes( GraphDir dir, bool commit_placement, bool first_pass);
     /** Sort nodes by their order */
@@ -389,8 +398,30 @@ public:
     inline void add( AuxNode *node)
     {
         node_list.push_back( node);
+        if ( _height < node->height())
+            _height = node->height();
         node->setLevel( this);
         node->setRank( level_rank);
+    }
+    /** Set level height */
+    inline void setHeight( qreal h)
+    {
+        _height = h;
+    }
+    /** Get level height */
+    inline qreal height() const
+    {
+        return _height;
+    }
+    /** Set level vertical position */
+    inline void setY( qreal yy)
+    {
+        y_pos = yy;
+    }
+    /** Get level vertical pos */
+    inline qreal y() const
+    {
+        return y_pos;
     }
 };
 

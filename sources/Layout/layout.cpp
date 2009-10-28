@@ -447,8 +447,8 @@ void AuxGraph::doLayout()
     /** 2. Rank nodes */
     rankNodes();
 
-    /** 3. Build aux graph */
-    //AuxGraph* agraph = new AuxGraph();
+    /** 3. Adjust levels vertically */
+    adjustVerticalLevels();
 
     /** 4. Perform edge crossings minimization */
     reduceCrossings();
@@ -518,6 +518,22 @@ void AuxGraph::orderNodesByDFS()
         }
     }
     freeMarker( m);
+}
+
+/**
+ * Arrange ranks vertically
+ */
+void AuxGraph::adjustVerticalLevels()
+{
+    qreal y = 0;
+    qreal prev_height = 0;
+    for ( int i = 0; i < levels.size(); i++)
+    {
+        Level* level = levels[ i];
+        y += (prev_height + level->height() + RANK_SPACING) / 2;
+        level->setY( y );
+        prev_height = level->height();
+    }
 }
 
 /**

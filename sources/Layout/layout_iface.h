@@ -39,7 +39,7 @@ const qreal EDGE_CONTROL_WIDTH = 5;
 /** Edge control height */
 const qreal EDGE_CONTROL_HEIGHT = 5;
 /** Vertical spacing between ranks */
-const qreal RANK_SPACING = 60;
+const qreal RANK_SPACING = 40;
 
 #include "../Graph/graph_iface.h"
 #include "aux_graph.h"
