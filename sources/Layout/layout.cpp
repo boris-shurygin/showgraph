@@ -161,7 +161,7 @@ void AuxGraph::classifyEdges()
           isNotNullP( e);
           e = e->nextEdge())
     {
-        e->setBack( false);   
+        e->setUnknown();   
     }
 
     /* Fill stack with nodes that have no predecessors */
@@ -179,7 +179,7 @@ void AuxGraph::classifyEdges()
     {
         DfsStepInfo *info = stack.top();
         AuxNode *node = info->node;
-       AuxEdge *edge = info->edge;
+        AuxEdge *edge = info->edge;
         
         if ( isNotNullP( edge)) // Add successor to stack
         {
@@ -404,7 +404,7 @@ Numeration AuxGraph::rankNodes()
             {
                 curr_edge = node->firstSucc();
             }
-            node->firstSucc()->setBack( e->isBack());
+            node->firstSucc()->setType( e->type());
             node->setType( AUX_EDGE_CONTROL);
             node->setY( pred->modelY() + RANK_SPACING);
             levels[ curr_rank]->add( node);
