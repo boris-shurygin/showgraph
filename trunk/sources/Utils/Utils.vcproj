@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="Utils"
 	ProjectGUID="{21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4}"
 	RootNamespace="Utils"
@@ -149,6 +149,10 @@
 		</File>
 		<File
 			RelativePath=".\mem_obj.h"
+			>
+		</File>
+		<File
+			RelativePath=".\mem_pool.cpp"
 			>
 		</File>
 		<File

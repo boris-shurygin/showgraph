@@ -26,6 +26,10 @@ namespace Mem
      */
     class Obj
     {
+    private:
+        /** Pointer to pool */
+        Pool *_pool;
+        
 #ifdef USE_REF_COUNTERS
 	private:
 		/** Counter for references */
@@ -49,6 +53,12 @@ namespace Mem
 		}
 #endif		
 	public:
+        /** Get pointer to pool */
+        inline Pool* pool() const
+        {
+            return _pool;
+        }
+
 		/** Constructor */
 		inline Obj() 
 #ifdef USE_REF_COUNTERS
