@@ -25,8 +25,13 @@
 #  define USE_REF_COUNTERS
 #endif
 
+/* Class pool predeclaration */
+class Pool;
+
+#include <stdlib.h>
 #include "mem_ref.h" /** Memory reference */
 #include "mem_obj.h" /** Memory object base class */
 #include "mem_pool.h" /** Memory pool */
+
 
 #endif /* MEM_H */
