@@ -276,7 +276,11 @@ protected:
     /** Constructors are made private, only nodes and graph can create edges */
     AuxEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ):
         EdgeT< AuxGraph, AuxNode, AuxEdge>( graph_p, _id, _pred, _succ),
-        priv_fixed( true), priv_type( UNKNOWN_TYPE_EDGE) {};
+        priv_fixed( true), priv_type( UNKNOWN_TYPE_EDGE) 
+	{
+		if ( _pred == _succ)
+			priv_type = SELF_EDGE;
+	};
 public:
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;
     friend class NodeT< AuxGraph, AuxNode, AuxEdge>;
@@ -306,22 +310,27 @@ public:
     /** Set edge type */
     inline void setType( AuxEdgeType t = UNKNOWN_TYPE_EDGE)
     {
-        priv_type = t;
+		if ( isSelf())
+		{
+			assertd( t == SELF_EDGE);
+			return;
+		}
+		priv_type = t;
     }
 	/** Set edge to be of unknown type */
     inline void setUnknown()
     {
-        priv_type = UNKNOWN_TYPE_EDGE;
+        setType( UNKNOWN_TYPE_EDGE);
     }
 	/** Set edge to be a tree edge */
     inline void setTree()
     {
-        priv_type = TREE_EDGE;
+       setType( TREE_EDGE);
     }
 	/** Set edge to be a backedge */
     inline void setBack()
     {
-        priv_type = BACK_EDGE;
+        setType( BACK_EDGE);
     }
     /** Set edge to be a forward edge */
     inline void setForward()
@@ -332,7 +341,7 @@ public:
     inline void setSelf()
     {
         assertd( pred() == succ());
-		priv_type = SELF_EDGE;
+		setType( SELF_EDGE);
     }
     /** Check if edge is a self-edge */
     inline bool isSelf() const
