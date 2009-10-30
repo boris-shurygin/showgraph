@@ -88,9 +88,37 @@ EdgeItem::itemChange( GraphicsItemChange change, const QVariant &value)
     return QGraphicsItem::itemChange( change, value);
 }    
 
+/** Convenience routine for self edge path */
+QPainterPath EdgeItem::selfEdgePath() const
+{
+    assertd( edge()->isSelf());
+    QPainterPath path( srcP);
+    QPointF center = mapFromItem( pred()->item(), pred()->item()->boundingRect().center());
+    QRectF r = pred()->item()->borderRect();
+    
+    path.cubicTo(  center + QPointF( 3 * r.width()/8, r.height()/2 + SE_VERT_MARGIN),
+                   btmRight, cp1);
+    path.cubicTo(  cp1 + QPointF( 0, -r.height()/2-SE_VERT_MARGIN),
+                   topLeft, dstP);
+    return path;
+}
+
 void
 EdgeItem::adjust()
 {
+    if ( edge()->isSelf())
+    {
+        QPointF center = mapFromItem( pred()->item(), pred()->item()->boundingRect().center());
+        QRectF r = pred()->item()->borderRect();
+        srcP = center + QPointF( 3 * r.width()/8, r.height() /2);
+        dstP = center + QPointF( 3 * r.width()/8, -r.height() /2);
+        topLeft = center + QPointF( 3 * r.width()/8, -r.height()/2 - SE_VERT_MARGIN);
+        cp1 = center + QPointF( (r.width() / 2) + SE_HOR_MARGIN, 0);
+        btmRight = cp1 + QPointF( 0, r.height()/2 + SE_VERT_MARGIN);
+        
+        prepareGeometryChange();
+        return;
+    }
     srcP = mapFromItem( pred()->item(), pred()->item()->boundingRect().center());
     dstP = mapFromItem( succ()->item(), succ()->item()->boundingRect().center());
     topLeft = srcP;
@@ -235,11 +263,18 @@ QPainterPath
 EdgeItem::shape() const
 {
     QPainterPath path( srcP);
+    QPainterPathStroker stroker;
         
     if ( srcP == dstP)
         return path;
-    QPainterPathStroker stroker;
-    path.cubicTo( cp1, cp2, dstP);
+    
+    if ( edge()->isSelf())
+    {
+        path = selfEdgePath();
+    } else
+    {
+        path.cubicTo( cp1, cp2, dstP);
+    }
     stroker.setWidth( 2);
     return stroker.createStroke( path); 
 }
@@ -257,9 +292,17 @@ EdgeItem::paint( QPainter *painter,
     line.setP1( nextToDst);
     line.setP2( dstP);
     
+    
     QPainterPath path( srcP);
     QPainterPathStroker stroker;
-    path.cubicTo( cp1, cp2, dstP);
+    
+    if ( edge()->isSelf())
+    {
+        path = selfEdgePath();
+    } else
+    {
+        path.cubicTo( cp1, cp2, dstP);
+    }
 
     if ( nextToDst == dstP)
         return;
@@ -293,23 +336,40 @@ EdgeItem::paint( QPainter *painter,
     double angle = ::acos(line.dx() / line.length());
     if ( line.dy() >= 0)
         angle = TwoPi - angle;
+    
+    QPointF destArrowP1;
+    QPointF destArrowP2;
 
-    QPointF destArrowP1 = dstP + QPointF(sin(angle - Pi / 3) * arrowSize,
-                                              cos(angle - Pi / 3) * arrowSize);
-    QPointF destArrowP2 = dstP + QPointF(sin(angle - Pi + Pi / 3) * arrowSize,
-                                              cos(angle - Pi + Pi / 3) * arrowSize);
     painter->drawPath(path);
     painter->setBrush(Qt::black);
-    //painter->drawLine( line);
+    
+    if ( edge()->isSelf())
+    {
+        angle = -2* Pi/3;
+    }  
+    destArrowP1 = dstP + QPointF( sin(angle - Pi / 3) * arrowSize,
+                                  cos(angle - Pi / 3) * arrowSize);
+    destArrowP2 = dstP + QPointF( sin(angle - Pi + Pi / 3) * arrowSize,
+                                  cos(angle - Pi + Pi / 3) * arrowSize);
     if ( !succ()->isEdgeControl())
-        painter->drawPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2); 
-     
+        painter->drawPolygon(QPolygonF() << dstP << destArrowP1 << destArrowP2); 
+
+    
 #ifdef SHOW_CONTROL_POINTS
     /** For illustrative purposes */
     painter->setPen(QPen(Qt::gray, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
-    painter->drawLine( srcP, dstP);
-    painter->drawLine( srcP, cp1);
-    painter->drawLine( cp2, dstP);
+    if ( !edge()->isSelf())
+    {
+        painter->drawLine( srcP, dstP);
+        painter->drawLine( srcP, cp1);
+        painter->drawLine( cp2, dstP);
+    }   
+    painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->drawPoint( srcP);
+    painter->setPen(QPen(Qt::blue, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->drawPoint( dstP);
+    painter->setPen(QPen(Qt::green, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->drawPoint( cp1);
 #endif
 }
 void EdgeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -352,8 +412,19 @@ void EdgeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
 {
     if( ev->button() & Qt::LeftButton)
     {
-        GNode* new_node = static_cast<GNode *>( edge()->insertNode());
-        new_node->setTypeEdgeControl();
-        new_node->item()->setPos( ev->pos());
+        if ( edge()->isSelf())
+        {
+            GNode* new_node1 = static_cast<GNode *>( edge()->insertNode());
+            GNode* new_node2 = static_cast<GNode *>( edge()->insertNode());
+            new_node1->setTypeEdgeControl();
+            new_node2->setTypeEdgeControl();
+            new_node1->item()->setPos( ev->pos() + QPointF( 0, -10));
+            new_node2->item()->setPos( ev->pos() + QPointF( 0, 10));
+        } else
+        {
+            GNode* new_node = static_cast<GNode *>( edge()->insertNode());
+            new_node->setTypeEdgeControl();
+            new_node->item()->setPos( ev->pos());
+        }
     }
 }

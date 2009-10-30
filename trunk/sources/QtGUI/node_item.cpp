@@ -247,6 +247,10 @@ void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
     } else if ( event->button() & Qt::LeftButton && !node()->isEdgeControl())
     {
         node()->graph()->view()->showNodeText( node());
+    } else if ( event->button() & Qt::LeftButton && node()->isEdgeControl())
+    {
+        node()->firstPred()->item()->setSelected( true);
+        node()->firstSucc()->item()->setSelected( true);
     }
     QGraphicsTextItem::mousePressEvent(event);
 	update();
@@ -263,9 +267,12 @@ void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
 	node()->graph()->selectNode( this->node());
 	/** Show context menu */
 	if ( node()->graph()->view()->isShowContextMenus()
-		 && ( event->button() & Qt::RightButton) )
-		 node()->graph()->view()->nodeMenu()->exec( event->screenPos());
-	
+        && ( event->button() & Qt::RightButton) )
+    {
+	    QMenu *menu = node()->graph()->view()->createMenuForNode( node());
+        menu->exec( event->screenPos());
+        delete menu;
+    }
 	QGraphicsTextItem::mouseReleaseEvent( event);
 	update();
 }

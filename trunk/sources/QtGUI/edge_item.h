@@ -186,5 +186,7 @@ public:
         scene()->removeItem( this);
         edge_p = NULL;
     }
+    /** Convenience routine for self edge path */
+    QPainterPath selfEdgePath() const;
 };
 #endif

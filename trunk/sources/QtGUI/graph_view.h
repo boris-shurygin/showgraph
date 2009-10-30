@@ -150,7 +150,17 @@ public:
 			deleteEdgeWithControls( e);
 		}
 	}
-
+    /**
+     * Create self edge on selected node
+     */
+    void createSelfEdge()
+    {
+        if ( !sel_nodes.isEmpty())
+        {
+            GNode *n = sel_nodes.first();
+            newEdge( n, n);
+        }
+    }
 	
 };
 
@@ -174,6 +184,7 @@ private:
 
 	/** Actions */
 	QAction *deleteItemAct;
+    QAction *createSelfEdgeAct;
 	
 	/** Context menus */
 	QMenu *nodeItemMenu;
@@ -185,10 +196,10 @@ signals:
     /** Signal that node is clicked */
     void nodeClicked( GNode *n);
 public slots:
-	/**
-	 * Delete one item
-	 */
+	/** Delete one item	 */
 	void deleteSelected();
+	/** create self edge on selected node */
+	void createSESelected();
 
 public:
     /** Constants */
@@ -221,6 +232,10 @@ public:
 	{
 		return edgeItemMenu;
 	}
+
+    /** Create menu for particular node */
+    QMenu* createMenuForNode( GNode *n);
+
     /** draw background reimplementation */
     void drawBackground(QPainter *painter, const QRectF &rect);
     /** Mouse double click event handler reimplementation */

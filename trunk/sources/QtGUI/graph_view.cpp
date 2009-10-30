@@ -256,18 +256,38 @@ void GraphView::deleteSelected()
 	graph()->deleteEdges();
 }
 
+void GraphView::createSESelected()
+{
+    graph()->createSelfEdge();
+}
+
 void GraphView::createActions()
 {
     deleteItemAct = new QAction(tr("&Delete"), this);
     deleteItemAct->setShortcut(tr("Ctrl+D"));
     connect(deleteItemAct, SIGNAL(triggered()), this, SLOT( deleteSelected()));
+
+    createSelfEdgeAct = new QAction(tr("&Create Self Edge"), this);
+    connect( createSelfEdgeAct, SIGNAL(triggered()), this, SLOT( createSESelected()));
 }
 
 void GraphView::createMenus()
 {
     nodeItemMenu = new QMenu( tr( "&Node Item"));
     nodeItemMenu->addAction( deleteItemAct);
+    nodeItemMenu->addAction( createSelfEdgeAct);
 
 	edgeItemMenu = new QMenu( tr( "&Edge Item"));
     edgeItemMenu->addAction( deleteItemAct);
+}
+
+QMenu* GraphView::createMenuForNode( GNode *n)
+{
+    QMenu* menu = new QMenu( tr( "&Node Item"));
+    menu->addAction( deleteItemAct);
+    if ( !n->isEdgeControl())
+    {
+        menu->addAction( createSelfEdgeAct);
+    }
+    return menu;
 }
