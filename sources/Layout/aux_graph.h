@@ -346,7 +346,7 @@ public:
     /** Check if edge is a self-edge */
     inline bool isSelf() const
     {
-        return priv_type == SELF_EDGE;
+        return pred() == succ();
     }
 	/** Check whether this edge is inverted */
     inline bool isInverted() const

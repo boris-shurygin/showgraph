@@ -15,7 +15,14 @@
 static const double Pi = 3.14159265358979323846264338327950288419717;
 /**  2 * Pi constant */
 static double TwoPi = 2.0 * Pi;
+
 /** Arrow size constant */
 const qreal arrowSize = 10;
+
+/** Self edge vertical margin*/
+const qreal SE_VERT_MARGIN = 20;
+
+/** Self edge horizontal margin*/
+const qreal SE_HOR_MARGIN = 20;
 
 #endif
