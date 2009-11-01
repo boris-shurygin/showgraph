@@ -312,7 +312,6 @@ public:
     {
 		if ( isSelf())
 		{
-			assertd( t == SELF_EDGE);
 			return;
 		}
 		priv_type = t;
@@ -353,6 +352,27 @@ public:
     {
         return isBack();
     }
+	/** Return real node in given direction */
+	inline AuxNode* realNode( GraphDir dir) const
+	{
+		AuxNode* n = node( dir);
+		assertd( isNotNullP( n));
+		while ( n->isEdgeControl())
+		{
+			n = n->firstEdgeInDir( dir)->node( dir);
+		}
+		return n;
+	}
+	/** Get real predecessor */
+	inline AuxNode* realPred() const
+	{
+		return realNode( GRAPH_DIR_UP);
+	}
+	/** Get real successor */
+	inline AuxNode* realSucc() const
+	{
+		return realNode( GRAPH_DIR_DOWN);
+	}
 };
 
 /**
