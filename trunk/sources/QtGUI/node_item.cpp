@@ -39,6 +39,7 @@ GNode::~GNode()
     {
         QList< GNode *> nodes;
         GEdge* edge;
+		Marker m = graph()->newMarker();
         for ( edge = firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
         {
             edge->item()->adjust();
@@ -47,19 +48,28 @@ GNode::~GNode()
             while ( succ->isEdgeControl())
             {
                 assert( isNotNullP( succ->firstSucc()));
-                nodes << succ;
+                if ( succ->mark( m))
+				{
+					nodes << succ;
+				}
                 succ = succ->firstSucc()->succ();
             }
         }
         for ( edge = firstPred(); isNotNullP( edge); edge = edge->nextPred())
         {
-            edge->item()->adjust();
+            if ( edge->isSelf()) // We've already processed this one in previous loop
+				continue;
+
+			edge->item()->adjust();
             GNode* pred = edge->pred();
 
             while ( pred->isEdgeControl())
             {
                 assert( isNotNullP( pred->firstPred()));
-                nodes << pred;
+                if ( pred->mark( m))
+				{
+					nodes << pred;
+				}
                 pred = pred->firstPred()->pred();
             }
         }
@@ -68,6 +78,7 @@ GNode::~GNode()
         {
             delete n;
         }
+		graph()->freeMarker( m);
     }
     item()->remove();
     graph()->view()->deleteLaterNodeItem( item());
