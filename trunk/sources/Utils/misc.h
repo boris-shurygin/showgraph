@@ -23,7 +23,15 @@ inline bool isNullP( void *pointer)
 /**
  * If pointers are equal
  */
-inline bool AreEqP( void *p1, void *p2)
+inline bool areEqP( void *p1, void *p2)
+{
+    return p1 == p2;
+}
+
+/**
+ * If pointers are equal
+ */
+inline bool areNotEqP( void *p1, void *p2)
 {
     return p1 == p2;
 }

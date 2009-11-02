@@ -394,6 +394,29 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
     /** Maximum used for ranking */
     GraphNum max_rank;
 
+	/** 
+	 * Structure used for dfs traversal loop-wise implementation
+	 * Not part of interface used internally
+	 */
+	struct DfsStepInfo
+	{
+		AuxNode *node; // Node in consideration
+		AuxEdge *edge; // Next edge
+
+		/* Constructor */
+		DfsStepInfo( AuxNode *n)
+		{
+			node = n;
+			edge = n->firstSucc();
+		}
+	};
+
+	/**
+	 * Find enters for graph so that
+	 * for every node there would exist an enter from wich it is reachable
+	 */
+	QStack< DfsStepInfo *> findEnterNodes();
+
 public:
     
     /** Default constructor */
