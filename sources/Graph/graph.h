@@ -94,6 +94,7 @@ public:
            first_node = node->nextNode();
         }
         node->detachFromGraph();
+        node_num--;
     }
 
     /**
@@ -109,6 +110,7 @@ public:
            first_edge = edge->nextEdge();
         }
         edge->detachFromGraph();
+        edge_num--;
     }
 
     /**

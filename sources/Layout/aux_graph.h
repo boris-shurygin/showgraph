@@ -409,6 +409,12 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
 			node = n;
 			edge = n->firstSucc();
 		}
+        /* Constructor with direction specification */
+		DfsStepInfo( AuxNode *n, GraphDir dir)
+		{
+			node = n;
+			edge = n->firstEdgeInDir( dir);
+		}
 	};
 
 	/**
@@ -416,6 +422,11 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
 	 * for every node there would exist an enter from wich it is reachable
 	 */
 	QStack< DfsStepInfo *> findEnterNodes();
+
+    /**
+     * Mark nodes that are reachable down from given node
+     */
+    GraphNum markReachableDown( AuxNode *n, Marker m);
 
 public:
     

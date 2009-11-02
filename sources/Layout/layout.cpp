@@ -135,6 +135,35 @@ void Level::arrangeNodes( GraphDir dir, bool commit_placement, bool first_pass)
 }
 
 /**
+ * Mark nodes that are reachable in direction GRAPH_DIR_DOWN from given node 
+ */
+GraphNum
+AuxGraph::markReachableDown( AuxNode *n,
+                             Marker m)
+{
+    GraphNum marked = 1;
+    QStack< AuxNode *> trav;
+    trav.push( n);
+    n->mark( m);
+    while ( !trav.isEmpty())
+	{
+		AuxNode *n = trav.pop();
+		AuxEdge *e;
+		
+		ForEdges( n, e, Succ)
+		{
+			AuxNode* succ = e->succ();
+			if ( succ->mark( m))
+			{
+				marked++;
+				trav.push( succ);
+			}
+		}
+	}
+    return marked;
+}
+
+/**
  * Find enter nodes
  */
 QStack< AuxGraph::DfsStepInfo *>
@@ -145,7 +174,7 @@ AuxGraph::findEnterNodes()
 	GraphNum marked = 0;
 	QStack< AuxNode *> trav;
 
-    /* Fill stack with nodes that have no predecessors */
+    /** Find nodes that have no predecessors */
     for ( AuxNode *n = firstNode();
           isNotNullP( n);
           n = n->nextNode())
@@ -159,7 +188,7 @@ AuxGraph::findEnterNodes()
 		} else
 		{
 			bool has_valid_pred = false;
-			AuxEdge e = n->firstPred();
+			AuxEdge* e = n->firstPred();
 			
 			while ( isNotNullP( e))
 			{
@@ -202,7 +231,11 @@ AuxGraph::findEnterNodes()
 		return stack;
 	}
 	
-	/* Fill stack with nodes that have no successors */
+    /** Begin traverse from exits */
+    QStack< DfsStepInfo *> rev_trav;
+    Marker visited = newMarker();
+	
+    /* Fill stack with nodes that have no successors */
     for ( AuxNode *n = firstNode();
           isNotNullP( n);
           n = n->nextNode())
@@ -212,11 +245,11 @@ AuxGraph::findEnterNodes()
 		if ( n->isMarked( m))
 			continue;
 		
-		AuxEdge e = n->firstSucc();
+		AuxEdge* e = n->firstSucc();
 		
 		while ( isNotNullP( e))
 		{
-			if ( areNotEqP( e->pred(),n))
+			if ( !e->succ()->isMarked( m) && areNotEqP( e->succ(),n))
 			{
 				has_valid_succ = true;
 				break;
@@ -226,29 +259,66 @@ AuxGraph::findEnterNodes()
 		if ( !has_valid_succ)
 		{
 			n->mark( m);
-			marked++;
-			stack.push( new DfsStepInfo( n));
-			trav.push( n);
+            n->mark( visited);
+            rev_trav.push( new DfsStepInfo( n, GRAPH_DIR_UP));
 		}
     }
-	/** Mark nodes from enters */
-	while ( !trav.isEmpty())
+
+	/** Upward pass */
+    while( !rev_trav.isEmpty())
+    {
+        DfsStepInfo *info = rev_trav.top();
+        AuxNode *node = info->node;
+        AuxEdge *edge = info->edge;
+        
+        if ( isNotNullP( edge)) // Add predecessor to stack
+        {
+            AuxNode* pred_node = edge->pred();
+            info->edge = edge->nextPred();
+            
+            if ( !pred_node->isMarked( m)
+                 && pred_node->isMarked( visited))
+            {
+                //Backedge in reverse traversal terms. Consider edge's predecessor as enter node
+                stack.push( new DfsStepInfo( pred_node));
+            }
+            if ( pred_node->mark( visited))
+                 rev_trav.push( new DfsStepInfo( pred_node, GRAPH_DIR_UP));
+        } else // We're done with this node
+        {
+            node->mark( m);
+            marked++;
+            delete info;
+            rev_trav.pop();
+        }
+    }
+    freeMarker( visited);
+	
+    /** Check if we're done */
+	if ( marked == nodeCount())
 	{
-		AuxNode *n = trav.pop();
-		AuxEdge *e;
-		
-		ForEdges( n, e, Succ)
-		{
-			AuxNode* succ = e->succ();
-			if ( succ->mark( m))
-			{
-				marked++;
-				trav.push( succ);
-			}
-		}
+		freeMarker( m);
+		return stack;
 	}
-	freeMarker( m);
-	return stack;
+
+    /** 
+     *  If we didn't find all the nodes on previous passes then
+     *  they must be in infinite loops without a head so let's break these loops
+     *  r a n d o m l y
+     */
+    for ( AuxNode *n = firstNode();
+          isNotNullP( n);
+          n = n->nextNode())
+    {
+        if ( !n->isMarked( m))
+        {
+            stack.push( new DfsStepInfo( n));
+            marked+=markReachableDown( n, m);
+        }
+    }
+    assertd( marked == nodeCount());// FIXME: node count needs updating on node delete
+    freeMarker( m);
+    return stack;
 }
 
 /**

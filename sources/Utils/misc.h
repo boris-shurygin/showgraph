@@ -33,7 +33,7 @@ inline bool areEqP( void *p1, void *p2)
  */
 inline bool areNotEqP( void *p1, void *p2)
 {
-    return p1 == p2;
+    return p1 != p2;
 }
 
 /**
