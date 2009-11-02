@@ -135,34 +135,15 @@ void Level::arrangeNodes( GraphDir dir, bool commit_placement, bool first_pass)
 }
 
 /**
- * Perform edge classification
+ * Find enter nodes
  */
-void AuxGraph::classifyEdges()
+QStack< AuxGraph::DfsStepInfo *>
+AuxGraph::findEnterNodes()
 {
-    /** Structure used for dfs traversal */
-    struct DfsStepInfo
-    {
-        AuxNode *node; // Node in consideration
-        AuxEdge *edge; // Next edge
-
-        /* Constructor */
-        DfsStepInfo( AuxNode *n)
-        {
-            node = n;
-            edge = n->firstSucc();
-        }
-    };
-
-    Marker m = newMarker(); // Marker for visiting nodes
-    Marker doneMarker = newMarker(); // Marker for nodes that are finished
-    QStack< DfsStepInfo *> stack;
-    
-    for ( AuxEdge* e=firstEdge();
-          isNotNullP( e);
-          e = e->nextEdge())
-    {
-        e->setUnknown();   
-    }
+	QStack< DfsStepInfo *> stack;
+    Marker m = newMarker();
+	GraphNum marked = 0;
+	QStack< AuxNode *> trav;
 
     /* Fill stack with nodes that have no predecessors */
     for ( AuxNode *n = firstNode();
@@ -171,9 +152,123 @@ void AuxGraph::classifyEdges()
     {
         if ( isNullP( n->firstPred()))
         {
-            stack.push( new DfsStepInfo( n));
-        }
+            n->mark( m);
+			marked++;
+			stack.push( new DfsStepInfo( n));
+			trav.push( n);
+		} else
+		{
+			bool has_valid_pred = false;
+			AuxEdge e = n->firstPred();
+			
+			while ( isNotNullP( e))
+			{
+				if ( areNotEqP( e->pred(),n))
+				{
+					has_valid_pred = true;
+					break;
+				}
+				e = e->nextPred();
+			}
+			if ( !has_valid_pred)
+			{
+				n->mark( m);
+				marked++;
+				stack.push( new DfsStepInfo( n));
+				trav.push( n);
+			}
+		}
     }
+	/** Mark nodes from enters */
+	while ( !trav.isEmpty())
+	{
+		AuxNode *n = trav.pop();
+		AuxEdge *e;
+		
+		ForEdges( n, e, Succ)
+		{
+			AuxNode* succ = e->succ();
+			if ( succ->mark( m))
+			{
+				marked++;
+				trav.push( succ);
+			}
+		}
+	}
+	/** Check if we're done */
+	if ( marked == nodeCount())
+	{
+		freeMarker( m);
+		return stack;
+	}
+	
+	/* Fill stack with nodes that have no successors */
+    for ( AuxNode *n = firstNode();
+          isNotNullP( n);
+          n = n->nextNode())
+    {
+		bool has_valid_succ = false;
+		
+		if ( n->isMarked( m))
+			continue;
+		
+		AuxEdge e = n->firstSucc();
+		
+		while ( isNotNullP( e))
+		{
+			if ( areNotEqP( e->pred(),n))
+			{
+				has_valid_succ = true;
+				break;
+			}
+			e = e->nextSucc();
+		}
+		if ( !has_valid_succ)
+		{
+			n->mark( m);
+			marked++;
+			stack.push( new DfsStepInfo( n));
+			trav.push( n);
+		}
+    }
+	/** Mark nodes from enters */
+	while ( !trav.isEmpty())
+	{
+		AuxNode *n = trav.pop();
+		AuxEdge *e;
+		
+		ForEdges( n, e, Succ)
+		{
+			AuxNode* succ = e->succ();
+			if ( succ->mark( m))
+			{
+				marked++;
+				trav.push( succ);
+			}
+		}
+	}
+	freeMarker( m);
+	return stack;
+}
+
+/**
+ * Perform edge classification
+ */
+void AuxGraph::classifyEdges()
+{
+    Marker m = newMarker(); // Marker for visiting nodes
+    Marker doneMarker = newMarker(); // Marker for nodes that are finished
+    
+    for ( AuxEdge* e=firstEdge();
+          isNotNullP( e);
+          e = e->nextEdge())
+    {
+        e->setUnknown();   
+    }
+
+	/* Fill the traverse stack with enter nodes */
+	QStack< DfsStepInfo *> stack = findEnterNodes();
+    
     /* Walk graph with marker and perform classification */
     while( !stack.isEmpty())
     {
