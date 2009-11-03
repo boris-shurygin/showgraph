@@ -2,6 +2,10 @@
  * @file: mem_pool.h 
  * Implementation of memory pool
  */
+/*
+ * Utils library in Showgraph tool
+ * Copyright (C) 2009  Boris Shurygin
+ */
 #pragma once
 
 #ifndef MEM_H

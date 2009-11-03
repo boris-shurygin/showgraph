@@ -10,6 +10,7 @@
 #ifndef UTILS_IFACE_H
 #define UTILS_IFACE_H
 #include <stdio.h>
+#include <QTextStream>
 #include "misc.h"
 #include "asrt.h"
 #include "print.h"

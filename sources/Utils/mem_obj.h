@@ -2,6 +2,10 @@
  * @file: mem_obj.h 
  * Implementation of memory object base class
  */
+/*
+ * Utils library in Showgraph tool
+ * Copyright (C) 2009  Boris Shurygin
+ */
 #pragma once
 
 #ifndef MEM_H

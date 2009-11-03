@@ -1,6 +1,6 @@
 /**
  * @file: graph_utest.cpp 
- * Implementation of testing of Graph library
+ * Implementation of testing of memory manager
  */
 /*
  * Copyright (C) 2009  Boris Shurygin

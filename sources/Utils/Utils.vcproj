@@ -140,6 +140,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\conf_utest.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\list.h"
 			>
 		</File>

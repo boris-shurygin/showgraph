@@ -1,5 +1,6 @@
 /**
- * File: misc.h - Assertion related routines of Utils library for ShowGraph
+ * @file: misc.h 
+ * Assertion related routines of Utils library for ShowGraph
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef ASRT_H
