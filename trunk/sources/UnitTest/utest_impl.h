@@ -15,6 +15,11 @@
 bool uTestMem();
 
 /**
+ * Test configuration-related functionality
+ */
+bool uTestConf();
+
+/**
  * Graph library unit testing
  */
 bool uTestGraph();

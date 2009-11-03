@@ -11,6 +11,10 @@ int main(int argc, char **argv)
     if ( !uTestMem())
 		return -1;
 
+    /** Test configuration classes functionality */
+    if ( !uTestConf())
+    	return -1;
+
 	/** Test graph package */
     if ( !uTestGraph())
         return -1;
