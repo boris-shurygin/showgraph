@@ -317,7 +317,7 @@ EdgeItem::paint( QPainter *painter,
         } else
 #endif
         {
-            painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            painter->setPen(QPen(option->palette.foreground().color(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         }
     } else
     {
@@ -328,7 +328,8 @@ EdgeItem::paint( QPainter *painter,
         } else
 #endif
         {
-            painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            painter->setPen( QPen(option->palette.foreground().color(),
+                             1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         }
     }
 
@@ -341,6 +342,8 @@ EdgeItem::paint( QPainter *painter,
     QPointF destArrowP2;
 
     painter->drawPath(path);
+    
+    /* NOTE:  Qt::black can be replaced by option->palette.foreground().color() */
     painter->setBrush(Qt::black);
     
     if ( edge()->isSelf())
