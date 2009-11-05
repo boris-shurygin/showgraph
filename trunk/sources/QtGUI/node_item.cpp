@@ -218,10 +218,10 @@ NodeItem::paint( QPainter *painter,
         qreal adjust = 3;
         if ( bold_border && ( option->state & QStyle::State_Sunken))
         {
-            painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            painter->setPen( QPen(option->palette.foreground().color(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         } else
         {
-            painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            painter->setPen( QPen(option->palette.foreground().color(), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         }
         painter->drawRect( borderRect());
         QGraphicsTextItem::paint( painter, option, widget);
@@ -232,12 +232,12 @@ NodeItem::paint( QPainter *painter,
         {
             if ( bold_border && ( option->state & QStyle::State_Sunken)) 
             {
-                painter->setBrush( Qt::gray);
-                painter->setPen( QPen( Qt::black, 0));
+                painter->setBrush( option->palette.highlight().color());
+                painter->setPen( QPen(option->palette.foreground().color(), 0));
             } else
             {
-                painter->setBrush( Qt::lightGray);
-                painter->setPen( QPen(Qt::darkGray, 0));
+                painter->setBrush( option->palette.highlight().color());
+                painter->setPen( QPen(option->palette.foreground().color(), 0));
             }
             painter->drawEllipse( -EdgeControlSize, -EdgeControlSize,
                                   2*EdgeControlSize, 2*EdgeControlSize);
