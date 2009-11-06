@@ -17,5 +17,13 @@ bool uTestConf()
     conf->addOption( new Option( OPT_STRING, "o", "output", "output file name"));
     conf->printOpts();
 
+    char *args[ 5];
+    args[ 0] = "string";
+    args[ 1] = "--output";
+    args[ 2] = "file";
+    args[ 3] = "-a";
+    args[ 4] = "--b";
+
+    conf->readArgs( 5, args);
     return true;
 }
