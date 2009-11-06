@@ -136,6 +136,8 @@ public:
 
     /** Print value defaults */
     void printDefaults();
+    /** Parse args */
+    void readArgs( int argc, char** argv);
 };
 
 #endif
