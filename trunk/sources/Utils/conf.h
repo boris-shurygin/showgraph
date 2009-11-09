@@ -30,21 +30,32 @@ enum OptType
 };
 
 /**
+ * Union type for option's values
+ */
+union OptValues
+{
+    /** Value for boolean option */
+    bool bool_val;
+    /** Value for integer option */
+    int int_val;
+    /** Value for floating point option */
+    qreal float_val;
+}; 
+
+/**
  * Command line option descrition
  */
 class Option
 {
     /** Type */
-    OptType type;
+    OptType _type;
 
-    /** Option values */
-    union OptValues
-    {
-        bool bool_val;
-        int int_val;
-        qreal float_val;
-    } values;
-    
+    /** Option default values */
+    OptValues def_values;
+
+    /** Option user's values */
+    OptValues values;
+
     QString string_val;
     
     /** Short name */
@@ -58,18 +69,35 @@ class Option
 public:
     /** Constructor without default val */
     Option( OptType _t, QString sname, QString lname, QString d):
-        type( _t), short_name( sname), long_name( lname), descr( d){};
+        _type( _t), short_name( sname), long_name( lname), descr( d)
+    {
+        switch ( _t)
+        {   
+            case OPT_BOOL:
+                def_values.bool_val = false;
+                break;
+            case OPT_INT:
+                def_values.int_val = 0;
+                break;
+            case OPT_FLOAT:
+                def_values.float_val = 0;
+                break;
+            case OPT_STRING:
+            default:
+                break;
+        }
+    };
 
     /** Constructor with default bool val */
     Option( QString sname, QString lname, QString d, bool val):
-        type( OPT_BOOL), short_name( sname), long_name( lname), descr( d)
+        _type( OPT_BOOL), short_name( sname), long_name( lname), descr( d)
     {
-        values.bool_val = val;
+        def_values.bool_val = val;
     }
 
     /** Constructor for string option */
     Option( QString sname, QString lname, QString d):
-        type( OPT_STRING), short_name( sname), long_name( lname), descr( d){};
+        _type( OPT_STRING), short_name( sname), long_name( lname), descr( d){};
 
     /** Get short name */
     inline QString shortName() const
@@ -80,6 +108,58 @@ public:
     inline QString longName() const
     {
         return long_name;    
+    }
+    /** Get option type */
+    inline OptType type() const
+    {
+        return _type;
+    }
+    /** Get option default val */
+    inline bool defBoolVal() const
+    {
+        return def_values.bool_val;
+    }
+    /** Set option boolean value */
+    inline void setBoolVal( bool val)
+    {
+        values.bool_val = val;
+    }
+        /** Set option boolean value */
+    inline void setIntVal( int val)
+    {
+        values.int_val = val;
+    }
+        /** Set option boolean value */
+    inline void setFloatVal( qreal val)
+    {
+        values.float_val = val;
+    }
+        /** Set option boolean value */
+    inline void setStringVal( QString val)
+    {
+        string_val = val;
+    }
+    /** Get string value of option */
+    inline QString string() const
+    {
+        assertd( _type == OPT_STRING);
+        return string_val;
+    }
+    /** Get int value of option */
+    inline int intVal() const
+    {
+        return values.int_val;
+    }
+    /** Get float value of option */
+    inline qreal floatVal() const
+    {
+        return values.float_val;
+    }
+    /** Get int value of option */
+    inline int isSet() const
+    {
+        assertd( _type == OPT_BOOL);
+        return values.bool_val;
     }
     /** Print option's synopsis and description */
     void print();
@@ -92,6 +172,8 @@ class Conf
 {
     QHash< QString, Option *> short_opts;
     QHash< QString, Option *> long_opts;
+
+    QList< QString> unknown_options;
 public:
     /** Constructor */
     Conf();
@@ -103,6 +185,11 @@ public:
         {
             delete opt;
         }
+    }
+    /** Get number of arguments that were not recognized */
+    inline int unknownOptsNum() const
+    {
+        return unknown_options.count();
     }
     /** Add option */
     inline void addOption( Option *opt)
@@ -136,8 +223,48 @@ public:
 
     /** Print value defaults */
     void printDefaults();
+
     /** Parse args */
     void readArgs( int argc, char** argv);
+
+    /** Get option based on its name */
+    inline Option* option( QString name)
+    {
+        /* try to look among short options */
+        if ( short_opts.find( name) != short_opts.end())
+        {
+            return short_opts[ name];
+        }
+        /* try to look among long options */
+        if ( long_opts.find( name) != long_opts.end())
+        {
+            return long_opts[ name];
+        }
+        /* if nothing's found return NULL */
+        return NULL;
+    }
+    /** Get option based on its short name */
+    inline Option* shortOption( QString name)
+    {
+        /* try to look among short options */
+        if ( short_opts.find( name) != short_opts.end())
+        {
+            return short_opts[ name];
+        }
+        /* if nothing's found return NULL */
+        return NULL;
+    }
+    /** Get option based on its long name */
+    inline Option* longOption( QString name)
+    {
+        /* try to look among long options */
+        if ( long_opts.find( name) != long_opts.end())
+        {
+            return long_opts[ name];
+        }
+        /* if nothing's found return NULL */
+        return NULL;
+    }
 };
 
 #endif
