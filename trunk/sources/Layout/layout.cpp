@@ -150,7 +150,7 @@ AuxGraph::markReachableDown( AuxNode *n,
 		AuxNode *n = trav.pop();
 		AuxEdge *e;
 		
-		ForEdges( n, e, Succ)
+		foreachSucc( e, n)
 		{
 			AuxNode* succ = e->succ();
 			if ( succ->mark( m))
