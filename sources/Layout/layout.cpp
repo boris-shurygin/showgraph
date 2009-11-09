@@ -328,10 +328,9 @@ void AuxGraph::classifyEdges()
 {
     Marker m = newMarker(); // Marker for visiting nodes
     Marker doneMarker = newMarker(); // Marker for nodes that are finished
-    
-    for ( AuxEdge* e=firstEdge();
-          isNotNullP( e);
-          e = e->nextEdge())
+    AuxEdge* e;
+
+    foreachEdge( e, this)
     {
         e->setUnknown();   
     }
@@ -386,15 +385,13 @@ Numeration AuxGraph::rankNodes()
      *  Set numbers to nodes and count predecessors of each node.
      *  predecessors include inverted edges 
      */
-    for ( AuxNode *n = firstNode();
-          isNotNullP( n);
-          n = n->nextNode())
+    AuxNode *n;
+    foreachNode( n, this)
     {
         int pred_num = 0;
         n->setNumber( own, i);
-        for (AuxEdge* e = n->firstPred();
-              isNotNullP( e);
-              e = e->nextPred())
+        AuxEdge* e; 
+        foreachPred( e, n)
         {
             if ( e->pred() == e->succ())
                 continue;
@@ -402,9 +399,7 @@ Numeration AuxGraph::rankNodes()
             if ( !e->isInverted())
                 pred_num++;
         }
-        for (AuxEdge* e = n->firstSucc();
-              isNotNullP( e);
-              e = e->nextSucc())
+        foreachSucc( e, n)
         {
             if ( e->pred() == e->succ())
                 continue;
@@ -417,9 +412,7 @@ Numeration AuxGraph::rankNodes()
     }
     /* Fill ranking and ordering numerations by walking the nodes */
     /* Add nodes with no preds to stack */
-    for ( AuxNode *n = firstNode();
-          isNotNullP( n);
-          n = n->nextNode())
+    foreachNode( n, this)
     {
         if ( pred_nums[ n->number( own)] == 0)
         {
@@ -429,12 +422,11 @@ Numeration AuxGraph::rankNodes()
     while( !stack.isEmpty())
     {
         AuxNode* n = stack.pop();
+        AuxEdge* e;
         GraphNum rank = 0;
 
         /* Propagation part */
-        for (AuxEdge* e = n->firstPred();
-              isNotNullP( e);
-              e = e->nextPred())
+        foreachPred( e, n)
         {
             if ( e->pred() == e->succ())
                 continue;
@@ -447,9 +439,7 @@ Numeration AuxGraph::rankNodes()
                 }
             }
         }
-        for ( AuxEdge* e = n->firstSucc();
-              isNotNullP( e);
-              e = e->nextSucc())
+        foreachSucc( e, n)
         {
             if ( e->pred() == e->succ())
                 continue;
@@ -473,9 +463,7 @@ Numeration AuxGraph::rankNodes()
         n->setY( rank * RANK_SPACING);
 
         /* Traversal continuation */
-        for (AuxEdge* e = n->firstSucc();
-              isNotNullP( e);
-              e = e->nextSucc())
+        foreachSucc( e, n)
         {
             if ( e->pred() == e->succ())
                 continue;
@@ -492,9 +480,7 @@ Numeration AuxGraph::rankNodes()
                 }
             }  
         }
-        for (AuxEdge* e = n->firstPred();
-              isNotNullP( e);
-              e = e->nextPred())
+        foreachPred( e, n)
         {
             if ( e->pred() == e->succ())
                 continue;
@@ -514,9 +500,7 @@ Numeration AuxGraph::rankNodes()
 
     /** Fill levels */
     initLevels( maxRank());
-    for ( AuxNode* n =firstNode();
-          isNotNullP( n);
-          n = n->nextNode())
+    foreachNode( n, this)
     {
         Rank rank = n->number( ranking);
         if ( rank == NUMBER_NO_NUM)
@@ -527,9 +511,8 @@ Numeration AuxGraph::rankNodes()
         levels[ rank]->add( n);
     }
     /** Create edge control nodes */
-    for ( AuxEdge* e = firstEdge();
-          isNotNullP( e);
-          e = e->nextEdge())
+    AuxEdge* e;
+    foreachEdge( e, this)
     {
         AuxNode* pred;
         AuxNode* succ;
