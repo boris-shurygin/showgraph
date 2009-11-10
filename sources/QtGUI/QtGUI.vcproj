@@ -160,6 +160,16 @@
 						Outputs="moc_edge_item.cpp"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for EdgeItem"
+						CommandLine="moc edge_item.h -o moc_edge_item.cpp"
+						Outputs="moc_edge_item.cpp"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\graph_view.h"
@@ -175,6 +185,16 @@
 						Outputs="moc_graph_view.cpp"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for GraphView"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 graph_view.h -o moc_graph_view.cpp"
+						Outputs="moc_graph_view.cpp"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\graph_widget.h"
@@ -185,7 +205,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Running MOC for GraphWidget"
-						CommandLine="moc edge_item.h -o moc_graph_widget.cpp"
+						CommandLine="moc edge_item.h -o moc_graph_widget.cpp&#x0D;&#x0A;"
 						Outputs="moc_graph_widget.cpp"
 					/>
 				</FileConfiguration>
@@ -236,6 +256,16 @@
 						Name="VCCustomBuildTool"
 						Description="Running MOC for MainWindow"
 						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 main_window.h -o moc_main_window.cpp&#x0D;&#x0A;"
+						Outputs="moc_main_window.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for MainWindow"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 main_window.h -o moc_main_window.cpp"
 						Outputs="moc_main_window.cpp"
 					/>
 				</FileConfiguration>

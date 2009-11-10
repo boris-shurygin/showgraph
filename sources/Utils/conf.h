@@ -86,6 +86,7 @@ public:
             default:
                 break;
         }
+        values = def_values;
     };
 
     /** Constructor with default bool val */
@@ -93,6 +94,7 @@ public:
         _type( OPT_BOOL), short_name( sname), long_name( lname), descr( d)
     {
         def_values.bool_val = val;
+        values = def_values;
     }
 
     /** Constructor for string option */
@@ -117,26 +119,31 @@ public:
     /** Get option default val */
     inline bool defBoolVal() const
     {
+        assertd( _type == OPT_BOOL);
         return def_values.bool_val;
     }
     /** Set option boolean value */
     inline void setBoolVal( bool val)
     {
+        assertd( _type == OPT_BOOL);
         values.bool_val = val;
     }
         /** Set option boolean value */
     inline void setIntVal( int val)
     {
+        assertd( _type == OPT_INT);
         values.int_val = val;
     }
         /** Set option boolean value */
     inline void setFloatVal( qreal val)
     {
+        assertd( _type == OPT_FLOAT);
         values.float_val = val;
     }
         /** Set option boolean value */
     inline void setStringVal( QString val)
     {
+        assertd( _type == OPT_STRING);
         string_val = val;
     }
     /** Get string value of option */
@@ -148,11 +155,13 @@ public:
     /** Get int value of option */
     inline int intVal() const
     {
+        assertd( _type == OPT_INT);
         return values.int_val;
     }
     /** Get float value of option */
     inline qreal floatVal() const
     {
+        assertd( _type == OPT_FLOAT);
         return values.float_val;
     }
     /** Get int value of option */
@@ -170,6 +179,7 @@ public:
  */
 class Conf
 {
+    QString app_name;
     QHash< QString, Option *> short_opts;
     QHash< QString, Option *> long_opts;
 
