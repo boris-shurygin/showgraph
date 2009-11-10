@@ -21,6 +21,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     GraphView* graph_view;
     QDockWidget *dock;
+    Conf* conf;
 public:
     /** Constructor */
     MainWindow();

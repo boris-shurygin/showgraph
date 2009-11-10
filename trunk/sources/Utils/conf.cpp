@@ -6,9 +6,6 @@
  * Copyright (C) 2009  Boris Shurygin
  */
 #include "utils_iface.h"
-#include "conf.h"
-
-
 #include <QRegExp>
 
 /** Option's print routine */
@@ -50,9 +47,11 @@ void Conf::printDefaults()
 /** Read input args */
 void Conf::readArgs( int argc, char** argv)
 {
+    app_name = QString( argv[ 0]);
+
     QTextStream err( stderr);
     
-    for ( int i = 0; i < argc; i++)
+    for ( int i = 1; i < argc; i++)
     {
         QString curr( argv[ i]);
         QRegExp short_rx("^-([^-]+)");

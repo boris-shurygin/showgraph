@@ -16,6 +16,7 @@
 #include "print.h"
 #include "list.h"
 //#include "mem.h"
+#include "conf.h"
 
 
 namespace Utils

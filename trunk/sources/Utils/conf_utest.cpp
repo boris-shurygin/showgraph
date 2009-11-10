@@ -6,7 +6,6 @@
  * Copyright (C) 2009  Boris Shurygin
  */
 #include "utils_iface.h"
-#include "conf.h"
 
 /**
  * Test configuration and options parsing
@@ -31,7 +30,7 @@ bool uTestConf()
 
     /** Create array of arguments */
     char *args[ 8];
-    args[ 0] = "string";
+    args[ 0] = "string";// treated as app name
     args[ 1] = "--output";
     args[ 2] = "file";
     args[ 3] = "-a";
@@ -44,11 +43,12 @@ bool uTestConf()
     conf->readArgs( 8, args);
 
     /** Check options values */
-    assert( conf->unknownOptsNum() == 3); // Check number of unknown arguments
+    assert( conf->unknownOptsNum() == 2); // Check number of unknown arguments
     assert( !(conf->option( "output")->string().compare("file")));
     Option *int_opt = conf->option( "integer");
     assert( int_opt->intVal()== 80);
     assert( conf->option( "b")->isSet());
     
+    delete conf;
     return true;
 }
