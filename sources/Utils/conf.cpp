@@ -8,6 +8,11 @@
 #include "utils_iface.h"
 #include <QRegExp>
 
+/** 
+ * namespaces import
+ */
+using namespace Utils;
+
 /** Option's print routine */
 void
 Option::print()
@@ -84,6 +89,7 @@ void Conf::readArgs( int argc, char** argv)
             }
         } else
         {
+            out("WTF");
             /** Is not an option specifier */
             err << "Unrecognized argument " << curr << endl;
             unknown_options.push_back( curr);
@@ -91,7 +97,7 @@ void Conf::readArgs( int argc, char** argv)
         if ( isNotNullP( opt))
         {
             OptType tp = opt->type();
-            
+            opt->setDefined(); // option is defined now
             switch( tp)
             {
                 case OPT_BOOL:

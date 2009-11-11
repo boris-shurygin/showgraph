@@ -10,9 +10,6 @@
 
 #include "main_window.h"
 
-/** Magnifying factor for getting more detailed images */
-const int IMAGE_EXPORT_SCALE_FACTOR = 2;
-
 MainWindow::MainWindow()
 {
     graph_view = new GraphView();

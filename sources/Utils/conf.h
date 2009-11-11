@@ -47,6 +47,9 @@ union OptValues
  */
 class Option
 {
+    /** Whether user has set value of this option */
+    bool defined;
+
     /** Type */
     OptType _type;
 
@@ -69,7 +72,7 @@ class Option
 public:
     /** Constructor without default val */
     Option( OptType _t, QString sname, QString lname, QString d):
-        _type( _t), short_name( sname), long_name( lname), descr( d)
+        defined( false),_type( _t), short_name( sname), long_name( lname), descr( d)
     {
         switch ( _t)
         {   
@@ -91,7 +94,7 @@ public:
 
     /** Constructor with default bool val */
     Option( QString sname, QString lname, QString d, bool val):
-        _type( OPT_BOOL), short_name( sname), long_name( lname), descr( d)
+        defined( false), _type( OPT_BOOL), short_name( sname), long_name( lname), descr( d)
     {
         def_values.bool_val = val;
         values = def_values;
@@ -99,8 +102,18 @@ public:
 
     /** Constructor for string option */
     Option( QString sname, QString lname, QString d):
-        _type( OPT_STRING), short_name( sname), long_name( lname), descr( d){};
+        defined( false), _type( OPT_STRING), short_name( sname), long_name( lname), descr( d){};
 
+    /** Check if the option was defined */
+    inline bool isDefined() const
+    {
+        return defined;    
+    }
+    /** Set the option to 'defined' state*/
+    inline void setDefined( bool def = true)
+    {
+        defined = def;
+    }
     /** Get short name */
     inline QString shortName() const
     {
@@ -128,19 +141,19 @@ public:
         assertd( _type == OPT_BOOL);
         values.bool_val = val;
     }
-        /** Set option boolean value */
+    /** Set option boolean value */
     inline void setIntVal( int val)
     {
         assertd( _type == OPT_INT);
         values.int_val = val;
     }
-        /** Set option boolean value */
+    /** Set option boolean value */
     inline void setFloatVal( qreal val)
     {
         assertd( _type == OPT_FLOAT);
         values.float_val = val;
     }
-        /** Set option boolean value */
+    /** Set option boolean value */
     inline void setStringVal( QString val)
     {
         assertd( _type == OPT_STRING);

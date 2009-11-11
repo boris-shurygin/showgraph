@@ -12,6 +12,9 @@
 #include "gui_impl.h"
 #include <QMainWindow>
 
+/** Magnifying factor for getting more detailed images */
+const int IMAGE_EXPORT_SCALE_FACTOR = 2;
+
 /**
  * Main window class
  * @ingroup GUI
