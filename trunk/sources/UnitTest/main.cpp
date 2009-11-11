@@ -13,7 +13,6 @@ int main(int argc, char **argv)
     conf.addOption( new Option( OPT_STRING, "o", "output", "output image file name"));
     conf.addOption( new Option( OPT_BOOL, "cl", "command_line", "Command line mode only"));
     conf.readArgs( argc, argv);
-    conf.printOpts(); // Print options to console
     
     Option *cl = conf.option("cl");
 

@@ -5,18 +5,34 @@
 /*
  * Copyright (C) 2009  Boris Shurygin
  */
-#include <stdio.h>
-#include <QRegExp>
-#include "../Graph/graph_iface.h"
-#include "../Utils/utils_iface.h"
-#include "../QtGUI/gui_iface.h"
-#include "../Frontend/fe_iface.h"
+#include "render.h"
 
 int main(int argc, char **argv)
 {
+    QApplication app(argc, argv);
+    app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+
     Conf conf;
     conf.addOption( new Option( OPT_STRING, "f", "file", "input graph description file name"));
     conf.addOption( new Option( OPT_STRING, "o", "output", "output image file name"));
     conf.readArgs( argc, argv);
-    conf.printOpts(); // Print options to console
+    //conf.printOpts(); // Print options to console
+
+    Option *fopt = conf.longOption("file");
+    Option *out_opt = conf.longOption("output");
+    
+    assertd( isNotNullP( fopt));
+    assertd( isNotNullP( out_opt));
+    if ( fopt->isDefined())
+    {
+        QString xmlname = fopt->string();
+        QString outname("image.png");
+        Renderer r;
+        if ( out_opt->isDefined())
+        {
+            outname = out_opt->string();
+        }
+        r.render( xmlname, outname);
+    }
+    //return app.exec();
 }
