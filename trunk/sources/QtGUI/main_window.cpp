@@ -12,9 +12,6 @@
 
 MainWindow::MainWindow()
 {
-    graph_view = new GraphView();
-    setCentralWidget( graph_view);
-
     dock = new QDockWidget( tr("Text"), this);
     
     createActions();
@@ -29,6 +26,8 @@ MainWindow::MainWindow()
     dock->setWidget( text_view);
     addDockWidget(Qt::RightDockWidgetArea, dock);
     dock->hide();
+    
+    connectToGraphView( new GraphView());
 }
 
 void MainWindow::printContents()
@@ -56,15 +55,17 @@ void MainWindow::exportImage()
     if (fileName.isEmpty())
         return;
     
-    QRectF scene_rect( graph_view->scene()->itemsBoundingRect());
+    QRectF scene_rect( graph_view->scene()->itemsBoundingRect()
+                       .adjusted( -IMAGE_RECT_ADJUST, -IMAGE_RECT_ADJUST,
+                                   IMAGE_RECT_ADJUST, IMAGE_RECT_ADJUST));
 	/** We render */
 	QImage image( scene_rect.width() * IMAGE_EXPORT_SCALE_FACTOR,
 		          scene_rect.height() * IMAGE_EXPORT_SCALE_FACTOR,
 				  QImage::Format_RGB32);
-	image.fill( QColor( "white").rgb());
+	image.fill( graph_view->palette().base().color().rgb());
     QPainter pp( &image);
 	pp.setRenderHints( graph_view->renderHints());
-    graph_view->scene()->render( &pp);
+    graph_view->scene()->render( &pp, image.rect(), scene_rect);
     QImageWriter writer( fileName);
     if ( writer.canWrite() && writer.write( image))
     {

@@ -25,25 +25,26 @@ bool Renderer::render( QString xmlname, QString outname)
                 .arg( file.errorString());
         return false;
     }
-
     /** Create graph instance */
     GraphView* graph_view = new GraphView();
-    
+
     /** Read graph from XML */
     graph_view->graph()->readFromXML( xmlname);
  
     /** Perform layout */
     graph_view->graph()->doLayout();
-    QRectF scene_rect( graph_view->scene()->itemsBoundingRect());
+    QRectF scene_rect( graph_view->scene()->itemsBoundingRect()
+                       .adjusted( -IMAGE_RECT_ADJUST, -IMAGE_RECT_ADJUST,
+                                   IMAGE_RECT_ADJUST, IMAGE_RECT_ADJUST));
 
     /** Render to image */
 	QImage image( scene_rect.width() * IMAGE_EXPORT_SCALE_FACTOR,
 		          scene_rect.height() * IMAGE_EXPORT_SCALE_FACTOR,
 				  QImage::Format_RGB32);
-	image.fill( QColor( "white").rgb());
+    image.fill( graph_view->palette().base().color().rgb());
     QPainter pp( &image);
 	pp.setRenderHints( graph_view->renderHints());
-    graph_view->scene()->render( &pp);
+    graph_view->scene()->render( &pp, image.rect(), scene_rect);
     QImageWriter writer( outname);
     
     /** Write image to file */

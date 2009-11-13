@@ -1,11 +1,16 @@
 /**
- * File: UnitTest/main.cpp - Implementation and entry point for unit testing of ShowGraph
+ * @file: UnitTest/main.cpp
+ * Implementation and entry point for unit testing of ShowGraph
+ */
+/*
  * Copyright (C) 2009  Boris Shurygin
  */
 #include "utest_impl.h"
-#define _WIN32_WINNT 0x0500
 #include <windows.h>
 
+/**
+ * The entry point for GUI version of ShowGraph
+ */
 int main(int argc, char **argv)
 {
     Conf conf;
