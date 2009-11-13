@@ -1,5 +1,5 @@
 /**
- * @file: main.cpp 
+ * @file: console/main.cpp 
  * Implementation of console version of showgraph
  */
 /*
@@ -7,6 +7,9 @@
  */
 #include "render.h"
 
+/**
+ * The entry point for console version of ShowGraph
+ */
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);

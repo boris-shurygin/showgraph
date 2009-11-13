@@ -16,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\objects\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)\bin"
 			IntermediateDirectory="$(SolutionDir)\objects\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="2"
@@ -58,6 +58,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmaind.lib QtGuid4.lib QtCored4.lib QtXmld4.lib"
+				OutputFile="$(OutDir)\showgraphcl.exe"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
 			/>
