@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\objects\$(ProjectName)"
-			IntermediateDirectory="$(SolutionDir)\objects\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
+			IntermediateDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="1"
 			>
@@ -79,8 +79,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\objects\$(ProjectName)"
-			IntermediateDirectory="$(SolutionDir)\objects\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
+			IntermediateDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -166,7 +166,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Running MOC for EdgeItem"
-						CommandLine="moc edge_item.h -o moc_edge_item.cpp"
+						CommandLine="moc edge_item.h -o moc_edge_item.cpp&#x0D;&#x0A;"
 						Outputs="moc_edge_item.cpp"
 					/>
 				</FileConfiguration>
@@ -191,7 +191,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Running MOC for GraphView"
-						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 graph_view.h -o moc_graph_view.cpp"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 graph_view.h -o moc_graph_view.cpp&#x0D;&#x0A;"
 						Outputs="moc_graph_view.cpp"
 					/>
 				</FileConfiguration>
@@ -265,7 +265,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Running MOC for MainWindow"
-						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 main_window.h -o moc_main_window.cpp"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 main_window.h -o moc_main_window.cpp&#x0D;&#x0A;"
 						Outputs="moc_main_window.cpp"
 					/>
 				</FileConfiguration>

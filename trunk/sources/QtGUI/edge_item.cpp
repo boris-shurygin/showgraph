@@ -178,8 +178,8 @@ EdgeItem::adjust()
     if ( mainLine.length() < 1)
         return;
 
-    qreal size = Abs< qreal>(( min< qreal>( Abs< qreal>( mainLine.dx()),
-                                            Abs< qreal>(mainLine.dy()))));
+    qreal size = abs< qreal>(( min< qreal>( abs< qreal>( mainLine.dx()),
+                                            abs< qreal>( mainLine.dy()))));
     //Stub
     if( size < 2* EdgeControlSize)
     {

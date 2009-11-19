@@ -50,3 +50,45 @@ AuxGraph::~AuxGraph()
     freeNum( ranking);
     freeNum( order);
 }
+
+/**
+ * Get root node of the graph
+ */
+AuxNode*
+AuxGraph::rootNode()
+{
+    Level* root_level = levels[ 0];
+
+    if( isNullP( root_level) || isNullP( firstNode()))
+    {
+        return firstNode();
+    }
+    /** Use median heuristic to select root node */
+    qreal center;
+    foreach ( AuxNode* node, root_level->nodes())
+    {
+        center = node->modelX() + node->width()/ 2;
+    }
+    center = center / root_level->nodes().count();
+    
+    AuxNode* prev = NULL;
+    AuxNode* node = NULL;
+    
+    foreach ( node, root_level->nodes())
+    {
+        if ( center <= node->modelX() + node->width()/ 2)
+        {
+            qreal delta_curr = node->modelX() + node->width()/ 2 - center;
+            if ( isNotNullP( prev)
+                 && ( delta_curr > center - prev->modelX() - prev->width()/ 2))
+            {
+                return prev;
+            } else
+            {
+                return node;
+            }
+        }
+        prev = node;
+    }
+    return firstNode();
+}

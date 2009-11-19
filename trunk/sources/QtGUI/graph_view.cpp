@@ -91,6 +91,25 @@ void GGraph::deleteEdgeWithControls( GEdge *edge)
 	
 }
 
+/**
+ * Run layout procedure
+ */
+void GGraph::doLayout()
+{
+    AuxGraph::doLayout();
+    for ( GNode* n = firstNode();
+          isNotNullP( n);
+          n = n->nextNode())
+    {
+        n->item()->setPos( n->modelX(), n->modelY());
+    }
+    GNode *root = static_cast<GNode*>( rootNode());
+    if ( isNotNullP( root))
+    {
+        view_p->centerOn( root->item());
+    }
+}
+
 /** Constructor */
 GraphView::GraphView(): 
     dst( 0, 0), src( 0, 0),

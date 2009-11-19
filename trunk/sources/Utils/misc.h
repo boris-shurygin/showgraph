@@ -37,10 +37,10 @@ inline bool areNotEqP( void *p1, void *p2)
 }
 
 /**
- * Abs template 
+ * abs template 
  * operators "<" and "-" must be defined for parameter class
  */
-template<class Value> inline Value Abs( Value val)
+template<class Value> inline Value abs( Value val)
 {
     if( val < 0)
         return -val;
