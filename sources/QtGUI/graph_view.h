@@ -89,16 +89,8 @@ public:
     /**
      * Run layout procedure
      */
-    inline void doLayout()
-    {
-        AuxGraph::doLayout();
-        for ( GNode* n = firstNode();
-              isNotNullP( n);
-              n = n->nextNode())
-        {
-            n->item()->setPos( n->modelX(), n->modelY());
-        }
-    }
+    void doLayout();
+
     /** Get corresponding graph view widget */
     inline GraphView *view() const
     {

@@ -428,12 +428,6 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
      */
     GraphNum markReachableDown( AuxNode *n, Marker m);
 
-public:
-    
-    /** Default constructor */
-    AuxGraph();
-    /** Destructor */
-    ~AuxGraph();
     /** Initialize levels */
     void initLevels( Rank max_level);
     /** Delete levels */
@@ -446,6 +440,31 @@ public:
     void adjustVerticalLevels();
     /** Arrange nodes horizontally */
     void arrangeHorizontally();
+    /** Assign ranks to nodes in respect to maximum length of path from top */
+    Numeration rankNodes();
+    /** Assign edge types, mark edges that should be inverted */
+    void classifyEdges();
+
+    /** Get numeration that describes ranks in graph */
+    inline Numeration ranks() const
+    {
+        return ranking;
+    }
+    /** Get max rank number */
+    inline GraphNum maxRank() const
+    {
+        return max_rank;
+    }
+protected:
+    /** Get node that is considered root one after the layout */
+    AuxNode* rootNode();
+public:
+    
+    /** Default constructor */
+    AuxGraph();
+    /** Destructor */
+    ~AuxGraph();
+
     /** Debug info print */
     virtual void debugPrint()
     {
@@ -462,25 +481,9 @@ public:
     {
         return new AuxEdge( graph_p, _id, _pred, _succ);
     }
-    /** Get numeration that describes ranks in graph */
-    inline Numeration ranks() const
-    {
-        return ranking;
-    }
-    /** Get max rank number */
-    inline GraphNum maxRank() const
-    {
-        return max_rank;
-    }
-
+    
     /** Perform layout */
     void doLayout();
-    
-    /** Assign ranks to nodes in respect to maximum length of path from top */
-    Numeration rankNodes();
-
-    /** Assign edge types, mark edges that should be inverted */
-    void classifyEdges();
 };
 
 /**

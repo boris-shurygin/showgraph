@@ -2,10 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="UnitTest"
-	ProjectGUID="{A93B99CA-DC51-4B2F-803E-849B4B065CE3}"
-	RootNamespace="UnitTest"
-	Keyword="Win32Proj"
+	Name="Gui"
+	ProjectGUID="{A006A9B6-339E-48F3-9904-F4D9D8F4767F}"
+	RootNamespace="Gui"
 	>
 	<Platforms>
 		<Platform
@@ -20,7 +19,7 @@
 			OutputDirectory="$(SolutionDir)\bin"
 			IntermediateDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -40,11 +39,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
@@ -61,11 +58,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmaind.lib QtGuid4.lib QtCored4.lib QtXmld4.lib"
-				OutputFile="$(OutDir)\utestd.exe"
-				LinkIncremental="2"
-				IgnoreDefaultLibraryNames=""
+				OutputFile="$(OutDir)\showgraphd.exe"
 				GenerateDebugInformation="true"
-				SubSystem="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -98,7 +92,7 @@
 			OutputDirectory="$(SolutionDir)\bin"
 			IntermediateDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -118,9 +112,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="0"
@@ -137,11 +129,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmain.lib QtGui4.lib QtCore4.lib QtXml4.lib"
-				OutputFile="$(OutDir)\utest.exe"
-				Version="0.2"
-				LinkIncremental="1"
-				GenerateDebugInformation="false"
-				SubSystem="2"
+				OutputFile="$(OutDir)\showgraph.exe"
+				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -152,7 +141,6 @@
 			<Tool
 				Name="VCManifestTool"
 				EmbedManifest="false"
-				VerboseOutput="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -178,23 +166,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\fe_utest.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\graph_utest.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\gui_utest.cpp"
-			>
-		</File>
-		<File
 			RelativePath=".\main.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\utest_impl.h"
 			>
 		</File>
 	</Files>

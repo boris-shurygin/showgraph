@@ -24,8 +24,7 @@ int main(int argc, char **argv)
     if ( conf.option("cl")->isSet())
         return 0;
 
-#ifdef _DEBUG
-	/** Test memory management */
+    /** Test memory management */
     if ( !uTestMem())
 		return -1;
 
@@ -41,18 +40,7 @@ int main(int argc, char **argv)
     if ( !uTestFE())
         return -1;
     
-    /** Test graph package */
+    /** Test GUI package */
     if ( uTestGUI(argc, argv) != 0)
         return -1;
-    
-    return 0;
-#else
-    QApplication app(argc, argv);
-    app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
-    
-    MainWindow mainWin;
-    mainWin.show();
-    
-    return app.exec();
-#endif
 }
