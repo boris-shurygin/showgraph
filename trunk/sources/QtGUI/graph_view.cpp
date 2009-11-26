@@ -96,18 +96,34 @@ void GGraph::deleteEdgeWithControls( GEdge *edge)
  */
 void GGraph::doLayout()
 {
-    AuxGraph::doLayout();
-    for ( GNode* n = firstNode();
+    /** Run layout algorithm */
+	AuxGraph::doLayout();
+    
+	QGraphicsScene *scene = view()->scene();
+	
+	/**
+	 * Prevent BSP tree from being modified - significantly speeds up node positioning 
+	 * For this purpose tree depth is set to one and indexing is turned off
+	 */
+	int depth = scene->bspTreeDepth();
+    scene->setBspTreeDepth( 1);
+    scene->setItemIndexMethod( QGraphicsScene::NoIndex);
+
+	for ( GNode* n = firstNode();
           isNotNullP( n);
           n = n->nextNode())
     {
         n->item()->setPos( n->modelX(), n->modelY());
     }
-    GNode *root = static_cast<GNode*>( rootNode());
+    /** Center view on root node */
+	GNode *root = static_cast<GNode*>( rootNode());
     if ( isNotNullP( root))
     {
         view_p->centerOn( root->item());
     }
+	/** Restore indexing */
+	scene->setItemIndexMethod( QGraphicsScene::BspTreeIndex);
+    scene->setBspTreeDepth( depth);
 }
 
 /** Constructor */
