@@ -19,6 +19,10 @@
  */
 class NodeGroup
 {
+    /** Number of edges in adjacent layer */
+    unsigned int edge_num;
+    /** Barycenter */
+    qreal barycenter;
     /** List of group's nodes */
     QList< AuxNode *> node_list;
     /** Horizontal coordinate of left border */
@@ -34,6 +38,16 @@ public:
         border_left = 0;
         border_right = 0;
         group_weight = 0;        
+    }
+    /** Get adjacent number of adjacent edges */
+    inline unsigned int adjEdgesNum() const
+    {
+        return edge_num;
+    }
+    /** Get barycenter of adjacent edges */
+    inline qreal bc() const
+    {
+        return barycenter;
     }
     /** Get weight */
     inline float weight() const
