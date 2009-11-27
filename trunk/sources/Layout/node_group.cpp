@@ -29,7 +29,7 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
     addNode( n);
     /** Compute coordinates */
     double sum = 0;
-    int num_peers = 0;
+    unsigned int num_peers = 0;
     /**
      * On descending pass we compute center coordinate with respect to coordinates of predecessors,
      * on ascending - we look at successors
@@ -59,12 +59,15 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
     double center = 0;
     if ( num_peers > 0)
     {
+        edge_num = num_peers;
         center = sum / num_peers;
     } else if ( !first_pass)
     {
+        edge_num = 1;
         center = n->modelX() + n->width() / 2;
     }
     n->setBc( center);
+    barycenter = center;
     border_left = center - n->width() / 2;
     border_right = center + n->width() / 2;
 }
@@ -80,30 +83,35 @@ void NodeGroup::merge( NodeGroup *grp)
 
     /** Recalculate border coordinates */
     /* 1. calculate center coordinate */
+    qreal bc1 = bc();
+    qreal bc2 = grp->bc();
+    unsigned int e1 = adjEdgesNum();
+    unsigned int e2 = grp->adjEdgesNum();
     qreal center = ( right() + left()) / 2; 
-    qreal merged_center = ( grp->right() + grp->left()) / 2; 
-    center = ( center + merged_center) / 2;
+    center = ( bc1 * e1 + bc2 * e2) / (e1 + e2);
     
     /* 2. calculate width */
     qreal width = 0;
     int num = 0;
-    qreal barycenter = 0;
+    qreal nodes_barycenter = 0;
     
     qSort( node_list.begin(), node_list.end(), compareBc);
     
     foreach ( AuxNode* node, node_list)
     {
         width += node->spacing( prev_type);
-        barycenter += width + node->width() / 2; 
+        nodes_barycenter += width + node->width() / 2; 
         width += node->width();
         prev_type = node->type();
         num++;
     }
-    barycenter = barycenter / num;
+    nodes_barycenter = nodes_barycenter / num;
 
     /* 3. set borders */
-    setLeft( center - barycenter);
+    setLeft( center - nodes_barycenter);
     setRight( left() + width);
+    barycenter = center;
+    edge_num = e1 + e2;
     //out("Width %e, center %e, barycenter %e", width, center, barycenter);
 
 }

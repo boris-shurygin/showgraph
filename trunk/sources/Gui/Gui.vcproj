@@ -132,6 +132,7 @@
 				AdditionalDependencies="qtmain.lib QtGui4.lib QtCore4.lib QtXml4.lib"
 				OutputFile="$(OutDir)\showgraph.exe"
 				GenerateDebugInformation="true"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
