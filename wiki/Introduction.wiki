@@ -1,0 +1,11 @@
+#summary What ShowGraph is about
+
+Showgraph is a simple graph editor/viewer.
+
+It allows for creating nodes and connecting them with edges. Nodes have editable labels and edges can be routed using control points. One of primary goals was to create lightweight and easy-to-use tool for fast construction of a graph's visual representation. 
+
+http://i35.tinypic.com/2chkxp0.png
+
+Showgraph also features an auto-layout for directed graphs. Once you have constructed graph you can use automatic layout to provide a basic structured view that can be further adjusted manually to produce nicer image of the graph.
+
+Constructed graphs are stored in XML files. Graph images can be exported in various formats or sent to printer.
