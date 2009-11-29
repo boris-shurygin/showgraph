@@ -1,6 +1,6 @@
 #summary IndexPage
 
- * [ Introduction]
+ * [ Introduction Introduction]
  * [ Overview Overview]
  * [ Docs Project Design Documents]
    * [ Problem Problem definition]
