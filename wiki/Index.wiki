@@ -8,3 +8,4 @@
      * [UiReqs User Interface]
      * [LayoutReqs Layout algorithm]
      * [TestingPlan Testing Plan]
+ * [IntroductionRus Russian version]
