@@ -1,4 +1,5 @@
 #summary Общая формулировка задачи
+#sidebar IndexRus
 
 = _DRAFT_ =
 
