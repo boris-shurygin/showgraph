@@ -1,10 +1,10 @@
 #summary IndexPageRus
 
- * [IntroductionRus Introduction]
- * [OverviewRus Overview]
- * [DocsRus Project Design Documents]
-   * [ProblemRus Problem definition]
-   * [ReqsRus Requirements]
-     * [UiReqsRus User Interface]
-     * [LayoutReqsRus Layout algorithm]
-     * [TestingPlanRus Testing Plan]
+ * [IntroductionRus Введение]
+ * [OverviewRus Обзор]
+ * [DocsRus Проектнаые документы]
+   * [ProblemRus Формулировка задачи]
+   * [ReqsRus Требования]
+     * [UiReqsRus Интерфейс пользователя]
+     * [LayoutReqsRus Алгоритм Размещения]
+     * [TestingPlanRus Планы тестирования]
