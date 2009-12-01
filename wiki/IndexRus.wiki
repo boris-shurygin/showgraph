@@ -2,7 +2,7 @@
 
  * [IntroductionRus Введение]
  * [OverviewRus Обзор]
- * [DocsRus Проектнаые документы]
+ * [DocsRus Проектные документы]
    * [ProblemRus Формулировка задачи]
    * [ReqsRus Требования]
      * [UiReqsRus Интерфейс пользователя]
