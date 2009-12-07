@@ -1,4 +1,5 @@
 #summary Алгоритмы размещения
+#sidebar IndexRus
 
 = DRAFT =
 
