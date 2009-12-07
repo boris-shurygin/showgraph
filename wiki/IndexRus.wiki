@@ -6,5 +6,6 @@
    * [ProblemRus Формулировка задачи]
    * Требования
      * [UiReqsRus Действия пользователя]
+     * [UiSketchRus Наброски интерфейса]
      * [LayoutReqsRus Алгоритм Размещения]
      * [TestingPlanRus Планы тестирования]
