@@ -326,3 +326,24 @@ QMenu* GraphView::createMenuForNode( GNode *n)
     }
     return menu;
 }
+
+/**
+ * Find node by its ID from dump
+ */
+bool GraphView::findNodeById( int id)
+{
+	GNode *n;
+	foreachNode( n, graph())
+	{
+		if ( n->irId() == id)
+			break;
+	}
+	if ( isNotNullP( n))
+	{
+		centerOn( n->item());
+		return true;
+	} else
+	{
+		return false;
+	}
+}

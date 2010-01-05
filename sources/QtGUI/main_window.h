@@ -18,6 +18,34 @@ const int IMAGE_EXPORT_SCALE_FACTOR = 2;
 /** Adjust value for image's bounding rectangle on scene rendering */
 const qreal IMAGE_RECT_ADJUST = 10;
 
+/** Find widget */
+class FindWidget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    FindWidget(QWidget *parent = 0);
+    ~FindWidget();
+
+signals:
+    void findNext();
+    void findPrevious();
+
+private slots:
+    void updateButtons();
+
+private:
+    QLineEdit *editFind;
+    QCheckBox *checkCase;
+    QLabel *labelWrapped;
+    QToolButton *toolNext;
+    QToolButton *toolClose;
+    QToolButton *toolPrevious;
+    QCheckBox *checkWholeWords;
+	friend class MainWindow;
+};
+
+
 /**
  * Main window class
  * @ingroup GUI
@@ -25,6 +53,11 @@ const qreal IMAGE_RECT_ADJUST = 10;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    
+    QWidget *view;
+	QWidget *findBar;
+	FindWidget *findWidget;
+	QVBoxLayout *vboxLayout;
     GraphView* graph_view;
     QDockWidget *dock;
     Conf* conf;
@@ -43,6 +76,12 @@ public slots:
     void saveAs();
     /** Show "about" info */
     void about();
+	/** Show find bar */
+	void findShow();
+	/** Find node/text next */
+	void findNext();
+	/** Find node/text prev */
+	void findPrev();
     /** Zoom view in */
     void zoomIn();
     /** Zoom view out */
@@ -75,6 +114,7 @@ private:
     QAction *exitAct;
     QAction *aboutAct;
     QAction *layoutRunAct;
+	QAction *findAct;
     QAction *zoomInAct;
     QAction *zoomOutAct;
     QAction *zoomOrigAct;

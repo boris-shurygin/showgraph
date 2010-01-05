@@ -59,7 +59,9 @@ TestParser::parseLine( QString line)
             
     if ( node_rx.indexIn( line) != -1 )
     {
-        QString text = QString("Node ").append( node_rx.cap(1));
+		bool good_id = false;
+		int ir_id = node_rx.cap(1).toInt( &good_id);
+		QString text = QString("Node ").append( node_rx.cap(1));
         QString name = n_str.append( node_rx.cap(1));
         /** Add node to symtab */
         if ( symtab.find( name ) == symtab.end())
@@ -69,7 +71,10 @@ TestParser::parseLine( QString line)
             curr_node->setDoc( new QTextDocument());
             node->setNode( curr_node);
             node->node()->item()->setPlainText( text);
-        
+			if ( good_id)
+			{
+				node->node()->setIRId( ir_id);
+			}
             symtab[ name] = node;
 #ifdef _DEBUG
             //stream << name << endl;
