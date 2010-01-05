@@ -254,7 +254,7 @@ public:
     {
         return createEdge;
     }
-/** Check if we are in the process of the edge creation */
+	/** Check if we are in the process of the edge creation */
     inline bool isShowContextMenus() const
     {
         return show_menus;
@@ -297,6 +297,11 @@ public:
      */
     void deleteItems();
     
+	/**
+	 * Find node by its ID from dump
+	 */
+	bool findNodeById( int id);
+
     /** 
      * Check that we haven't exceeded the max amount of deleted items
      */
@@ -305,7 +310,7 @@ public:
         int item_count = del_node_items.count() + del_edge_items.count();
         if ( item_count >= MAX_DELETED_ITEMS_COUNT)
         {
-            deleteItems();
+            /** deleteItems(); !!! FIXME: MEMORY LEACKAGE( yes, not potential... known leakage) */
         }
     }
     

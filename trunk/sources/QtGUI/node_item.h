@@ -74,7 +74,9 @@ public:
  */
 class GNode: public AuxNode
 {
-    /** Representation of node in graph view */
+    int ir_id;
+
+	/** Representation of node in graph view */
     NodeItem *item_p; 
 
     /** Representation of node as text */
@@ -91,7 +93,19 @@ class GNode: public AuxNode
 public:
     /** Destructor */
     virtual ~GNode();
-    /** Get the pointer to item */
+	
+	/** Get node's Id as it was parsed from ir dump */
+	inline int irId() const
+	{
+		return ir_id;
+	}
+	/** Set node's IR ID */
+	inline void setIRId( int i)
+	{
+		ir_id = i;
+	}
+
+	/** Get the pointer to item */
     inline NodeItem* item() const
     {
         return item_p;

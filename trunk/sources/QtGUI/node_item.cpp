@@ -10,17 +10,19 @@
 
 /** We can't create nodes separately, do it through newNode method of graph */
 GNode::GNode( GGraph *graph_p, int _id):
-    AuxNode( ( AuxGraph *)graph_p, _id), _doc( NULL)
+    AuxNode( ( AuxGraph *)graph_p, _id), _doc( NULL), ir_id( -1)
 {
     item_p = new NodeItem( this);
+	setIRId( id());
 }
 
 /** Contructor of node with specified position */
 GNode::GNode( GGraph *graph_p, int _id, QPointF _pos):
-    AuxNode( ( AuxGraph *)graph_p, _id), _doc( NULL)
+    AuxNode( ( AuxGraph *)graph_p, _id), _doc( NULL), ir_id( -1)
 {
     item_p = new NodeItem( this);
     item_p->setPos( _pos);
+	setIRId( id());
 }
 
 /**

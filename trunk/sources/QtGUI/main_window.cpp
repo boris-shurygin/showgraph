@@ -12,7 +12,9 @@
 
 MainWindow::MainWindow()
 {
-    dock = new QDockWidget( tr("Text"), this);
+    QFrame *central = new QFrame( this);
+	central->setMinimumSize( 200, 200);
+	dock = new QDockWidget( tr("Text"), this);
     
     createActions();
     createMenus();
@@ -27,6 +29,30 @@ MainWindow::MainWindow()
     addDockWidget(Qt::RightDockWidgetArea, dock);
     dock->hide();
     
+	vboxLayout = new QVBoxLayout( central);
+	vboxLayout->setDirection( QBoxLayout::BottomToTop);
+#ifdef Q_OS_MAC
+    system = QLatin1String("mac");
+#else
+    vboxLayout->setMargin(0);
+#endif
+    view = new QWidget( central);
+    
+    findBar = new QWidget( central);
+    findWidget = new FindWidget(findBar);
+    findBar->setMinimumHeight(findWidget->minimumSizeHint().height());
+    findWidget->move(0, 0);
+    vboxLayout->addWidget(findBar);
+    findBar->hide();
+    findWidget->editFind->installEventFilter( central);
+    
+	connect(findWidget->toolClose, SIGNAL(clicked()), findBar, SLOT(hide()));
+	connect(findWidget->toolNext, SIGNAL(clicked()), this, SLOT(findNext()));
+    connect(findWidget->editFind, SIGNAL(returnPressed()), this, SLOT(findNext()));
+    //connect(findWidget->toolPrevious, SIGNAL(clicked()), this, SLOT( findPrev()));
+
+	setCentralWidget( central);
+	
     connectToGraphView( new GraphView());
 }
 
@@ -97,15 +123,15 @@ void MainWindow::removeGraphView()
     dock->hide();
 }
 
-void MainWindow::connectToGraphView( GraphView *view)
+void MainWindow::connectToGraphView( GraphView *gview)
 {
-    graph_view = view;
+    graph_view = gview;
     
     /** Connect signals */
-    connect( view, SIGNAL( nodeClicked( GNode*)), this, SLOT( showNodeText( GNode*)));
+    connect( gview, SIGNAL( nodeClicked( GNode*)), this, SLOT( showNodeText( GNode*)));
 
     /** Place graph view in window */
-    setCentralWidget( graph_view);
+    vboxLayout->addWidget( graph_view);
 }
 
 void MainWindow::open()
@@ -155,6 +181,30 @@ void MainWindow::open()
     statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
+void MainWindow::findShow()
+{
+    findBar->show();
+}
+
+void MainWindow::findNext()
+{
+	bool goodId = false;
+	QString findStr = findWidget->editFind->text();
+	int id = findStr.toInt( &goodId);
+	if ( goodId)
+	{
+		graph_view->findNodeById( id);
+	} else
+	{
+	
+	}
+}
+
+void MainWindow::findPrev()
+{
+
+}
+
 void MainWindow::zoomIn()
 {
     graph_view->zoomIn();
@@ -175,7 +225,7 @@ void MainWindow::newGraph()
     delete graph_view;
 
     graph_view = new GraphView();
-    setCentralWidget( graph_view);
+    connectToGraphView( graph_view);
     statusBar()->showMessage(tr("Created new"), 2000);
     dock->hide();
 }
@@ -246,7 +296,11 @@ void MainWindow::createActions()
     layoutRunAct->setShortcut(tr("F5"));
     connect( layoutRunAct, SIGNAL(triggered()), this, SLOT( runLayout()));
 
-    zoomInAct = new QAction(tr("&Zoom In"), this);
+    findAct = new QAction(tr("&Find"), this);
+    findAct->setShortcut(tr("Ctrl+F"));
+    connect( findAct, SIGNAL(triggered()), this, SLOT( findShow()));
+
+	zoomInAct = new QAction(tr("&Zoom In"), this);
     zoomInAct->setShortcut(Qt::Key_Plus);
     connect( zoomInAct, SIGNAL(triggered()), this, SLOT( zoomIn()));
 
@@ -285,6 +339,7 @@ void MainWindow::createMenus()
     viewMenu = menuBar()->addMenu( tr( "&View"));
     viewMenu->addAction( layoutRunAct);
     viewMenu->addSeparator();
+	viewMenu->addAction( findAct);
     viewMenu->addAction( zoomInAct);
     viewMenu->addAction( zoomOutAct);
     viewMenu->addAction( zoomOrigAct);
@@ -295,4 +350,80 @@ void MainWindow::createMenus()
     
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
+}
+
+FindWidget::FindWidget(QWidget *parent)
+    : QWidget(parent)
+{
+    QString system = QLatin1String("win");
+    QHBoxLayout *hboxLayout = new QHBoxLayout(this);
+#ifdef Q_OS_MAC
+    system = QLatin1String("mac");
+#else
+    hboxLayout->setSpacing(6);
+    hboxLayout->setMargin(0);
+#endif
+
+    toolClose = new QToolButton(this);
+    toolClose->setIcon(QIcon(QString::fromUtf8("images/%1/closetab.png").arg(system)));
+    toolClose->setAutoRaise(true);
+    hboxLayout->addWidget(toolClose);
+
+    editFind = new QLineEdit(this);
+    editFind->setMinimumSize(QSize(150, 0));
+    connect(editFind, SIGNAL(textChanged(const QString&)),
+        this, SLOT(updateButtons()));
+    hboxLayout->addWidget(editFind);
+
+    /*toolPrevious = new QToolButton(this);
+    toolPrevious->setAutoRaise(true);
+    toolPrevious->setText(tr("Previous"));
+    toolPrevious->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    toolPrevious->setIcon(QIcon(QString::fromUtf8("images/%1/previous.png").arg(system)));
+    hboxLayout->addWidget(toolPrevious);*/
+
+    toolNext = new QToolButton(this);
+    toolNext->setAutoRaise(true);
+    toolNext->setText(tr("Next"));
+    toolNext->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    toolNext->setIcon(QIcon(QString::fromUtf8("images/%1/next.png").arg(system)));
+    hboxLayout->addWidget(toolNext);
+
+    checkCase = new QCheckBox(tr("Case Sensitive"), this);
+    hboxLayout->addWidget(checkCase);
+
+    checkWholeWords = new QCheckBox(tr("Whole words"), this);
+    hboxLayout->addWidget(checkWholeWords);
+#if defined(USE_WEBKIT)
+    checkWholeWords->hide();
+#endif
+
+    labelWrapped = new QLabel(this);
+    labelWrapped->setMinimumSize(QSize(0, 20));
+    labelWrapped->setMaximumSize(QSize(105, 20));
+    labelWrapped->setTextFormat(Qt::RichText);
+    labelWrapped->setScaledContents(true);
+    labelWrapped->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+    labelWrapped->setText(tr("<img src=\"images/wrap.png\">&nbsp;Search wrapped"));
+    hboxLayout->addWidget(labelWrapped);
+
+    QSpacerItem *spacerItem = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    hboxLayout->addItem(spacerItem);
+    setMinimumWidth(minimumSizeHint().width());
+    labelWrapped->hide();
+
+    updateButtons();
+}
+
+FindWidget::~FindWidget()
+{
+}
+
+void FindWidget::updateButtons()
+{
+    if (editFind->text().isEmpty()) {
+        toolNext->setEnabled(false);
+    } else {
+        toolNext->setEnabled(true);
+    }
 }
