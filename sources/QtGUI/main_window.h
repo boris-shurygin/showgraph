@@ -94,6 +94,14 @@ public slots:
     void exportImage();
     /** Print picture */
     void printContents();
+	/** Reimplementation of drag enter event handler */
+	void dragEnterEvent( QDragEnterEvent *event);
+	/** Reimplementation of drop event handler */
+	void dropEvent( QDropEvent *event);
+	/** Reimplementation of drag move event handler */
+	void dragMoveEvent( QDragMoveEvent *event);
+	/** Open specified file */
+	void openFile( QString fileName);
 
 private:
     /** Create actions */

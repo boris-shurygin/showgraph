@@ -149,6 +149,7 @@ GraphView::GraphView():
 	createActions();
 	createMenus();
 	show_menus = true;
+	setAcceptDrops( false);
 }
 
 /** Destructor */
@@ -326,6 +327,37 @@ QMenu* GraphView::createMenuForNode( GNode *n)
     }
     return menu;
 }
+
+void GraphView::dragEnterEvent(QDragEnterEvent *event)
+{
+	/*if ( event->mimeData()->hasUrls())
+		event->acceptProposedAction();*/
+}
+
+void GraphView::dropEvent(QDropEvent *event)
+{
+	/*const QMimeData *mimeData = event->mimeData();
+
+	if ( mimeData->hasUrls())
+	{
+		QList<QUrl> urlList = mimeData->urls();
+		QString text;
+
+		for ( int i = 0; i < urlList.size(); ++i)
+		{
+			QString url = urlList.at(i).path();
+
+		}
+    }
+
+	event->acceptProposedAction();*/
+}
+ 
+void GraphView::dragMoveEvent(QDragMoveEvent *event)
+{
+	//event->acceptProposedAction();
+}
+
 
 /**
  * Find node by its ID from dump
