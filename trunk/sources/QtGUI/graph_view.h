@@ -228,6 +228,12 @@ public:
     /** Create menu for particular node */
     QMenu* createMenuForNode( GNode *n);
 
+	void dragEnterEvent(QDragEnterEvent *event);
+
+	void dropEvent(QDropEvent *event);
+	 
+	void dragMoveEvent(QDragMoveEvent *event);
+
     /** draw background reimplementation */
     void drawBackground(QPainter *painter, const QRectF &rect);
     /** Mouse double click event handler reimplementation */

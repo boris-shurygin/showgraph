@@ -49,11 +49,39 @@ MainWindow::MainWindow()
 	connect(findWidget->toolClose, SIGNAL(clicked()), findBar, SLOT(hide()));
 	connect(findWidget->toolNext, SIGNAL(clicked()), this, SLOT(findNext()));
     connect(findWidget->editFind, SIGNAL(returnPressed()), this, SLOT(findNext()));
-    //connect(findWidget->toolPrevious, SIGNAL(clicked()), this, SLOT( findPrev()));
-
+   
 	setCentralWidget( central);
 	
     connectToGraphView( new GraphView());
+	setAcceptDrops( true);
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+	if ( event->mimeData()->hasUrls())
+		event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+	const QMimeData *mimeData = event->mimeData();
+
+	if ( mimeData->hasUrls())
+	{
+		QList<QUrl> urlList = mimeData->urls();
+		if ( urlList.size() == 1)
+		{
+			QString url = urlList.at(0).toLocalFile();
+			openFile( url);
+		}
+    }
+
+	event->acceptProposedAction();
+}
+ 
+void MainWindow::dragMoveEvent(QDragMoveEvent *event)
+{
+	event->acceptProposedAction();
 }
 
 void MainWindow::printContents()
@@ -137,10 +165,15 @@ void MainWindow::connectToGraphView( GraphView *gview)
 void MainWindow::open()
 {
     QString fileName =
-            QFileDialog::getOpenFileName(this, tr("Open graph File"),
-                                         QDir::currentPath(),
-                                         tr("Dump/Text Files ( *.txt);;Graph XML Files ( *.xml);;All Files ( *.*)"));
-    if ( fileName.isEmpty())
+            QFileDialog::getOpenFileName( this, tr("Open graph File"),
+                                          QDir::currentPath(),
+                                          tr("Dump/Text Files ( *.txt);;Graph XML Files ( *.xml);;All Files ( *.*)"));
+    openFile( fileName);
+}
+
+void MainWindow::openFile( QString fileName)
+{
+	if ( fileName.isEmpty())
         return;
 
     removeGraphView();
@@ -148,6 +181,17 @@ void MainWindow::open()
     QRegExp rx("\\.xml$");
     
     bool do_layout = false;
+    
+	QFile file(fileName);
+    if ( !file.open(QFile::ReadOnly | QFile::Text))
+    {
+        QMessageBox::warning( this, tr("Graph Description"),
+                              tr("Cannot read file %1:\n%2.")
+                              .arg(fileName)
+                              .arg(file.errorString()));
+        return;
+    }
+    file.close();
 
     /** Not a graph description - run parser */
     if ( rx.indexIn( fileName) == -1 )
@@ -161,16 +205,6 @@ void MainWindow::open()
         dock->show();
     } else
     {
-        QFile file(fileName);
-        if ( !file.open(QFile::ReadOnly | QFile::Text))
-        {
-            QMessageBox::warning(this, tr("Graph Description"),
-                                 tr("Cannot read file %1:\n%2.")
-                                 .arg(fileName)
-                                 .arg(file.errorString()));
-            return;
-        }
-        file.close();
         connectToGraphView( new GraphView());
         graph_view->graph()->readFromXML( fileName);
     }
@@ -178,7 +212,7 @@ void MainWindow::open()
     /** Run layout automatically */
     if ( do_layout)
         graph_view->graph()->doLayout();
-    statusBar()->showMessage(tr("File loaded"), 2000);
+    statusBar()->showMessage(tr("File %1 loaded").arg( fileName), 2000);
 }
 
 void MainWindow::findShow()
