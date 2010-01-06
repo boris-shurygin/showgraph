@@ -418,16 +418,16 @@ FindWidget::FindWidget(QWidget *parent)
 
     toolNext = new QToolButton(this);
     toolNext->setAutoRaise(true);
-    toolNext->setText(tr("Next"));
+    //toolNext->setText(tr("Next"));
     toolNext->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolNext->setIcon(QIcon(QString::fromUtf8("images/%1/next.png").arg(system)));
     hboxLayout->addWidget(toolNext);
 
-    checkCase = new QCheckBox(tr("Case Sensitive"), this);
-    hboxLayout->addWidget(checkCase);
+    //checkCase = new QCheckBox(tr("Case Sensitive"), this);
+    //hboxLayout->addWidget(checkCase);
 
-    checkWholeWords = new QCheckBox(tr("Whole words"), this);
-    hboxLayout->addWidget(checkWholeWords);
+    //checkWholeWords = new QCheckBox(tr("Whole words"), this);
+    //hboxLayout->addWidget(checkWholeWords);
 #if defined(USE_WEBKIT)
     checkWholeWords->hide();
 #endif
