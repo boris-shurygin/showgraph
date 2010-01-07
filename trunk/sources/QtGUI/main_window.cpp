@@ -129,6 +129,16 @@ void MainWindow::exportImage()
     }
 }
 
+void MainWindow::textClicked( const QUrl & link)
+{
+	bool valid = false;
+	int node_id = link.toString().toInt( &valid);
+	if ( valid)
+	{
+		graph_view->findNodeById( node_id);
+	}
+}
+
 void MainWindow::showNodeText( GNode *node)
 {
 	if ( isNotNullP( node->doc()))
@@ -143,6 +153,8 @@ void MainWindow::showNodeText( GNode *node)
 			node->setTextShown();
 			node->item()->setTextDock( dock);
 			textDocks.push_back( dock);
+			text_view->highlighText();
+			connect( text_view, SIGNAL( anchorClicked( const QUrl &)), this, SLOT( textClicked(const QUrl &)));
 		} else
 		{
 			node->item()->textDock()->show();
