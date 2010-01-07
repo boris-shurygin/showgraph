@@ -33,11 +33,15 @@
 class GGraph: public AuxGraph
 {
     GraphView *view_p;
+	Marker nodeTextIsShown;
 	QList< GNode* > sel_nodes;
 	QList< GEdge* > sel_edges;
 public:
     /** Constructor */
-    inline GGraph( GraphView *v): view_p( v){};
+    inline GGraph( GraphView *v): view_p( v)
+	{
+		nodeTextIsShown = newMarker();
+	}
     
     /** Destructor */
     ~GGraph();
