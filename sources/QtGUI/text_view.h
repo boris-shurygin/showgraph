@@ -10,15 +10,53 @@
 #define TEXT_VIEW_H
 
 /**
+ * Class used to highlight the dump and create anchors
+ */
+class DumpHighlighter: public QSyntaxHighlighter
+{
+
+public:
+	/**
+	 * Constructor from text document
+	 */
+	DumpHighlighter( QTextDocument *doc): QSyntaxHighlighter( doc){};
+
+	/**
+	 * Highlight given text
+	 */
+	void highlightBlock(const QString &text);
+};
+
+
+/**
  * IR dump browser class
  */
 class TextView: public QTextBrowser
 {
+	/** Highlighter used to format the text */
+	DumpHighlighter * hl;
 public:
-    /**
+	/**
+	 * Constructor
+	 */
+	TextView();
+
+	/**
+	 * Destructor
+	 */
+	~TextView();
+
+	/**
      * Open document in browser
      */
     void openFile( QString fileName);
+
+	/**
+	 * Highlight text
+	 */
+	void highlighText();
+
+	void mousePressEvent( QMouseEvent * mouseEvent);
 };
 
 

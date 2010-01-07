@@ -103,6 +103,8 @@ public slots:
 	void dragMoveEvent( QDragMoveEvent *event);
 	/** Open specified file */
 	void openFile( QString fileName);
+	/** React to anchor click in text view */
+	void textClicked( const QUrl & link);
 
 private:
     /** Create actions */
