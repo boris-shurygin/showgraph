@@ -60,7 +60,8 @@ class MainWindow : public QMainWindow
 	QVBoxLayout *vboxLayout;
     GraphView* graph_view;
     QDockWidget *dock;
-    Conf* conf;
+    QList< QDockWidget *> textDocks;
+	Conf* conf;
 public:
     /** Constructor */
     MainWindow();

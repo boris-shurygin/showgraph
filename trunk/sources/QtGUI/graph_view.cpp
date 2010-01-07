@@ -11,7 +11,8 @@
 /** Destructor */
 GGraph::~GGraph()
 {
-    for ( GNode *node = firstNode();
+    freeMarker( nodeTextIsShown);
+	for ( GNode *node = firstNode();
           isNotNullP( node);
           )
     {

@@ -24,11 +24,6 @@ MainWindow::MainWindow()
     setWindowTitle(tr("ShowGraph"));
     resize(480, 320);
         
-    TextView* text_view = new TextView();
-    dock->setWidget( text_view);
-    addDockWidget(Qt::RightDockWidgetArea, dock);
-    dock->hide();
-    
 	vboxLayout = new QVBoxLayout( central);
 	vboxLayout->setDirection( QBoxLayout::BottomToTop);
 #ifdef Q_OS_MAC
@@ -136,19 +131,35 @@ void MainWindow::exportImage()
 
 void MainWindow::showNodeText( GNode *node)
 {
-    TextView* text_view = ( TextView* )dock->widget();
-    if ( isNotNullP( node->doc()))
-        text_view->setPlainText( node->doc()->toPlainText());
+	if ( isNotNullP( node->doc()))
+	{
+		if ( !node->textIsShown())
+		{
+			QDockWidget *dock = new QDockWidget( node->item()->toPlainText(), this);
+			TextView* text_view = new TextView();
+			dock->setWidget( text_view);
+			addDockWidget(Qt::RightDockWidgetArea, dock);
+			text_view->setPlainText( node->doc()->toPlainText());
+			node->setTextShown();
+			node->item()->setTextDock( dock);
+			textDocks.push_back( dock);
+		} else
+		{
+			node->item()->textDock()->show();
+		}
+	}
 }
 
 void MainWindow::removeGraphView()
 {
-    /** Delete old graph and text views */
-    delete graph_view;
+	foreach( QDockWidget *tdock, textDocks)
+	{
+		delete tdock;
+	}
+	textDocks.clear();
 
-    /*if ( isNotNullP( dock->widget()))
-        delete dock->widget();*/
-    dock->hide();
+	/** Delete old graph and text views */
+    delete graph_view;
 }
 
 void MainWindow::connectToGraphView( GraphView *gview)
@@ -256,7 +267,7 @@ void MainWindow::zoomOrig()
 
 void MainWindow::newGraph()
 {
-    delete graph_view;
+    removeGraphView();
 
     graph_view = new GraphView();
     connectToGraphView( graph_view);
@@ -378,7 +389,7 @@ void MainWindow::createMenus()
     viewMenu->addAction( zoomOutAct);
     viewMenu->addAction( zoomOrigAct);
     viewMenu->addSeparator();
-    viewMenu->addAction( dock->toggleViewAction());
+    //viewMenu->addAction( dock->toggleViewAction());
     
     menuBar()->addSeparator();
     

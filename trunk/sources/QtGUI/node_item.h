@@ -16,6 +16,7 @@
 class NodeItem: public QGraphicsTextItem
 {    
     GNode *node_p;
+	QDockWidget *text_dock;
 	bool bold_border;
     /** Initialization */
     void SetInitFlags();
@@ -29,7 +30,17 @@ public:
         node_p = n_p;
         SetInitFlags();
     }
-    /** Get pointer to model node */
+    /** Get corresponding text doc */
+	inline QDockWidget *textDock() const
+	{
+		return text_dock;
+	}
+	/** Set corresponding text doc */
+	inline void setTextDock( QDockWidget *dock)
+	{
+		text_dock = dock;
+	}
+	/** Get pointer to model node */
     inline GNode *node() const
     {
         return node_p;
@@ -75,7 +86,7 @@ public:
 class GNode: public AuxNode
 {
     int ir_id;
-
+	bool text_shown;
 	/** Representation of node in graph view */
     NodeItem *item_p; 
 
@@ -94,6 +105,18 @@ public:
     /** Destructor */
     virtual ~GNode();
 	
+	/** Tell whether the text is shown */
+	inline bool textIsShown() const
+	{
+		return text_shown;
+	}
+	
+	/** Memorize that the text is shown */
+	inline void setTextShown( bool shown = true)
+	{
+		text_shown = shown;
+	}
+
 	/** Get node's Id as it was parsed from ir dump */
 	inline int irId() const
 	{
