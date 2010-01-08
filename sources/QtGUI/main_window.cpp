@@ -245,15 +245,28 @@ void MainWindow::findShow()
 
 void MainWindow::findNext()
 {
-	bool goodId = false;
 	QString findStr = findWidget->editFind->text();
-	int id = findStr.toInt( &goodId);
-	if ( goodId)
-	{
-		graph_view->findNodeById( id);
-	} else
-	{
 	
+	if ( findWidget->mode() == FIND_MODE_NODE)
+	{
+		bool goodId = false;
+		int id = findStr.toInt( &goodId);
+		if ( goodId)
+		{
+			graph_view->findNodeById( id);
+		} else
+		{
+			//Not implemented 
+		}
+	} else if ( findWidget->mode() == FIND_MODE_TEXT)
+	{
+		//Not implemented
+		QTextDocument::FindFlags flags;
+		GNode * node = graph_view->findNextNodeWithText( findStr, flags);
+        if ( isNotNullP( node))
+        {
+            showNodeText( node);
+        }
 	}
 }
 
@@ -426,18 +439,27 @@ FindWidget::FindWidget(QWidget *parent)
     toolClose->setAutoRaise(true);
     hboxLayout->addWidget(toolClose);
 
+
+	comboMode = new QComboBox( this);
+	comboMode->addItem( "node", QVariant( FIND_MODE_NODE));
+	//comboMode->addItem( "expr", QVariant( FIND_MODE_TEXT)); Off till expression parsing is implemented 
+	comboMode->addItem( "text", QVariant( FIND_MODE_TEXT));
+	connect( comboMode, SIGNAL( activated(const QString&)),
+			 this, SLOT( modeSet()));
+	hboxLayout->addWidget( comboMode);
+
     editFind = new QLineEdit(this);
     editFind->setMinimumSize(QSize(150, 0));
-    connect(editFind, SIGNAL(textChanged(const QString&)),
-        this, SLOT(updateButtons()));
+    connect( editFind, SIGNAL(textChanged(const QString&)),
+			 this, SLOT(updateButtons()));
     hboxLayout->addWidget(editFind);
 
-    /*toolPrevious = new QToolButton(this);
+    toolPrevious = new QToolButton(this);
     toolPrevious->setAutoRaise(true);
-    toolPrevious->setText(tr("Previous"));
+    //toolPrevious->setText(tr("Previous"));
     toolPrevious->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolPrevious->setIcon(QIcon(QString::fromUtf8("images/%1/previous.png").arg(system)));
-    hboxLayout->addWidget(toolPrevious);*/
+    hboxLayout->addWidget(toolPrevious);
 
     toolNext = new QToolButton(this);
     toolNext->setAutoRaise(true);
@@ -446,11 +468,15 @@ FindWidget::FindWidget(QWidget *parent)
     toolNext->setIcon(QIcon(QString::fromUtf8("images/%1/next.png").arg(system)));
     hboxLayout->addWidget(toolNext);
 
-    //checkCase = new QCheckBox(tr("Case Sensitive"), this);
-    //hboxLayout->addWidget(checkCase);
+    checkCase = new QCheckBox(tr("Case Sensitive"), this);
+    //checkCase->hide();
+	hboxLayout->addWidget(checkCase);
 
-    //checkWholeWords = new QCheckBox(tr("Whole words"), this);
-    //hboxLayout->addWidget(checkWholeWords);
+    checkWholeWords = new QCheckBox(tr("Whole words"), this);
+    //checkWholeWords->hide();
+	hboxLayout->addWidget(checkWholeWords);
+	//toolPrevious->hide();
+	
 #if defined(USE_WEBKIT)
     checkWholeWords->hide();
 #endif
@@ -470,6 +496,7 @@ FindWidget::FindWidget(QWidget *parent)
     labelWrapped->hide();
 
     updateButtons();
+	modeSet();
 }
 
 FindWidget::~FindWidget()
@@ -478,9 +505,34 @@ FindWidget::~FindWidget()
 
 void FindWidget::updateButtons()
 {
-    if (editFind->text().isEmpty()) {
-        toolNext->setEnabled(false);
-    } else {
-        toolNext->setEnabled(true);
+    if ( editFind->text().isEmpty())
+	{
+        toolNext->setEnabled( false);
+	    toolPrevious->setEnabled( false);
+    } else
+	{
+        toolPrevious->setEnabled( true);
+        toolNext->setEnabled( true);
     }
+}
+
+void FindWidget::modeSet()
+{
+	FindMode m = mode();
+
+	switch( m)
+	{
+	case FIND_MODE_TEXT:
+		toolPrevious->show();
+		checkCase->show();
+		checkWholeWords->show();
+		break;
+	case FIND_MODE_NODE:
+	case FIND_MODE_EXPR:
+	default:
+		toolPrevious->hide();
+		checkCase->hide();
+		checkWholeWords->hide();
+		break;
+	}
 }

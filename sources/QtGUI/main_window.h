@@ -18,14 +18,33 @@ const int IMAGE_EXPORT_SCALE_FACTOR = 2;
 /** Adjust value for image's bounding rectangle on scene rendering */
 const qreal IMAGE_RECT_ADJUST = 10;
 
+/**
+ * Search modes
+ */
+enum FindMode
+{
+	/** Node searching */
+	FIND_MODE_NODE,
+	/** Default */
+	FIND_MODE_DEFAULT = FIND_MODE_NODE,
+	/** IR expression searching */
+	FIND_MODE_EXPR,
+	/** IR dump text searching  */
+	FIND_MODE_TEXT,
+	/** Number of searching modes */
+	FIND_MODES_NUM
+};
+
 /** Find widget */
 class FindWidget : public QWidget
 {
     Q_OBJECT
 
-public:
-    FindWidget(QWidget *parent = 0);
-    ~FindWidget();
+public: 
+    /** Constructor */
+	FindWidget(QWidget *parent = 0);
+    /** Destructor */
+	~FindWidget();
 
 signals:
     void findNext();
@@ -33,6 +52,7 @@ signals:
 
 private slots:
     void updateButtons();
+	void modeSet();
 
 private:
     QLineEdit *editFind;
@@ -42,7 +62,15 @@ private:
     QToolButton *toolClose;
     QToolButton *toolPrevious;
     QCheckBox *checkWholeWords;
+	QComboBox *comboMode;
 	friend class MainWindow;
+public:
+	
+	/** Get current searching mode */
+	inline FindMode mode() const
+	{
+		return ( FindMode)comboMode->itemData( comboMode->currentIndex()).toInt();
+	}
 };
 
 

@@ -354,11 +354,32 @@ void GraphView::dropEvent(QDropEvent *event)
 	event->acceptProposedAction();*/
 }
  
-void GraphView::dragMoveEvent(QDragMoveEvent *event)
+void GraphView::dragMoveEvent( QDragMoveEvent *event)
 {
 	//event->acceptProposedAction();
 }
 
+
+GNode *
+GraphView::findNextNodeWithText( QString &findStr,
+                                 QTextDocument::FindFlags flags)
+{
+	GNode *n;
+	foreachNode( n, graph())
+	{
+		QTextDocument *doc = n->doc();
+		if ( isNotNullP( doc) && !doc->find( findStr).isNull())
+			break;
+	}
+	if ( isNotNullP( n))
+	{
+		centerOn( n->item());
+		return n;
+	} else
+	{
+		return NULL;
+	}
+}
 
 /**
  * Find node by its ID from dump

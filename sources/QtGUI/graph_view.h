@@ -311,6 +311,11 @@ public:
 	 * Find node by its ID from dump
 	 */
 	bool findNodeById( int id);
+	
+	/**
+	 * Find next node with matching text
+	 */
+	GNode *findNextNodeWithText( QString &findStr, QTextDocument::FindFlags flags);
 
     /** 
      * Check that we haven't exceeded the max amount of deleted items
