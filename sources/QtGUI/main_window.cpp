@@ -267,9 +267,13 @@ void MainWindow::findNext()
 {
 	QString findStr = findWidget->editFind->text();
     bool forward = true;
-
+    
+    QPalette p = findWidget->editFind->palette();
+    p.setColor(QPalette::Active, QPalette::Base, Qt::white);
+    
     if ( findStr.isEmpty())
     {
+        findWidget->editFind->setPalette(p);
         return;
     }
 
@@ -282,8 +286,8 @@ void MainWindow::findNext()
 			graph_view->findNodeById( id);
 		} else
 		{
-			//Not implemented 
-		}
+		    p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+        }
 	} else if ( findWidget->mode() == FIND_MODE_TEXT)
 	{
         QTextCursor cursor;
@@ -303,6 +307,7 @@ void MainWindow::findNext()
                              static_cast<TextView *>( node->item()->textDock()->widget()),
                              forward, flags) )
         {
+            GNode *prev = node;
             node = graph_view->findNextNodeWithText( findStr, flags);
             if ( isNotNullP( node))
             {
@@ -310,9 +315,19 @@ void MainWindow::findNext()
                 findInView( findStr,
                             static_cast<TextView *>( node->item()->textDock()->widget()),
                             forward, flags);
+            } else
+            {
+                if ( isNotNullP( prev))
+                {
+                    findWidget->labelWrapped->show();
+                } else
+                {
+                    p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+                }
             }
-        } 
+        }
 	}
+    findWidget->editFind->setPalette(p);
 }
 
 void MainWindow::findPrev()
@@ -559,6 +574,11 @@ void FindWidget::updateButtons()
         toolPrevious->setEnabled( true);
         toolNext->setEnabled( true);
     }
+    
+    QPalette p = editFind->palette();
+    p.setColor(QPalette::Active, QPalette::Base, Qt::white);            
+    editFind->setPalette(p);
+    labelWrapped->hide();
 }
 
 void FindWidget::modeSet()
@@ -571,13 +591,15 @@ void FindWidget::modeSet()
 		toolPrevious->show();
 		checkCase->show();
 		checkWholeWords->show();
-		break;
+		labelWrapped->hide();
+        break;
 	case FIND_MODE_NODE:
 	case FIND_MODE_EXPR:
 	default:
 		toolPrevious->hide();
 		checkCase->hide();
 		checkWholeWords->hide();
-		break;
+		labelWrapped->hide();
+        break;
 	}
 }

@@ -376,7 +376,7 @@ GraphView::findNextNodeWithText( QString &findStr,
           n = n->nextNode())
     {
 		QTextDocument *doc = n->doc();
-		if ( isNotNullP( doc) && !doc->find( findStr).isNull())
+		if ( isNotNullP( doc) && !doc->find( findStr, 0, flags).isNull())
         {
             search_node = n;        
             break;
