@@ -70,9 +70,8 @@ enum {
 #include "edge_item.h"
 #include "node_item.h"
 #include "graph_view.h"
+#include "text_view.h"
 #include "main_window.h"
 #include "graph_widget.h"
-#include "text_view.h"
-
 
 #endif

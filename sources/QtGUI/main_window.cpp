@@ -180,7 +180,8 @@ void MainWindow::connectToGraphView( GraphView *gview)
     
     /** Connect signals */
     connect( gview, SIGNAL( nodeClicked( GNode*)), this, SLOT( showNodeText( GNode*)));
-
+    connect( findWidget->editFind, SIGNAL( textChanged( const QString &)),
+             gview, SLOT( clearSearch()));
     /** Place graph view in window */
     vboxLayout->addWidget( graph_view);
 }
@@ -243,10 +244,35 @@ void MainWindow::findShow()
     findBar->show();
 }
 
+bool 
+MainWindow::findInView( QString &str,
+                        TextView* view,
+                        bool forward,
+                        QTextDocument::FindFlags flags)
+{
+    QTextCursor cursor = view->textCursor();
+
+    if (cursor.hasSelection())
+        cursor.setPosition( forward ? cursor.position() : cursor.anchor(),
+                            QTextCursor::MoveAnchor);
+    QTextCursor newCursor = cursor;
+    newCursor = view->document()->find( str, cursor, flags);
+    view->setTextCursor( newCursor);
+
+    return !newCursor.isNull();
+}
+
+
 void MainWindow::findNext()
 {
 	QString findStr = findWidget->editFind->text();
-	
+    bool forward = true;
+
+    if ( findStr.isEmpty())
+    {
+        return;
+    }
+
 	if ( findWidget->mode() == FIND_MODE_NODE)
 	{
 		bool goodId = false;
@@ -260,13 +286,32 @@ void MainWindow::findNext()
 		}
 	} else if ( findWidget->mode() == FIND_MODE_TEXT)
 	{
-		//Not implemented
-		QTextDocument::FindFlags flags;
-		GNode * node = graph_view->findNextNodeWithText( findStr, flags);
-        if ( isNotNullP( node))
+        QTextCursor cursor;
+        QTextDocument *doc = 0;
+        QTextDocument::FindFlags flags;
+
+        /** Set text search flags */
+        if ( findWidget->checkCase->isChecked())
+            flags |= QTextDocument::FindCaseSensitively;
+        if ( findWidget->checkWholeWords->isChecked())
+            flags |= QTextDocument::FindWholeWords;
+
+        GNode * node;
+        node = graph_view->searchNode();
+        if ( isNullP( node) 
+             || !findInView( findStr,
+                             static_cast<TextView *>( node->item()->textDock()->widget()),
+                             forward, flags) )
         {
-            showNodeText( node);
-        }
+            node = graph_view->findNextNodeWithText( findStr, flags);
+            if ( isNotNullP( node))
+            {
+                showNodeText( node);
+                findInView( findStr,
+                            static_cast<TextView *>( node->item()->textDock()->widget()),
+                            forward, flags);
+            }
+        } 
 	}
 }
 

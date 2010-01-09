@@ -64,6 +64,7 @@ private:
     QCheckBox *checkWholeWords;
 	QComboBox *comboMode;
 	friend class MainWindow;
+
 public:
 	
 	/** Get current searching mode */
@@ -143,6 +144,11 @@ private:
     void removeGraphView();
     /** Connect signals and slots to newly created graph view */
     void connectToGraphView( GraphView *view);
+    /** Find text string in view */
+    bool findInView( QString &str,
+                     TextView* view, 
+                     bool forward,
+                     QTextDocument::FindFlags flags);
 
 	QMenu *fileMenu;
     QMenu *viewMenu;
