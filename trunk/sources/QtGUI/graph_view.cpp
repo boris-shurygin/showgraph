@@ -147,6 +147,7 @@ GraphView::GraphView():
     setWindowTitle( tr("ShowGraph"));
     //setDragMode( RubberBandDrag);
     tmpSrc = NULL;
+    search_node = NULL;
 	createActions();
 	createMenus();
 	show_menus = true;
@@ -359,17 +360,27 @@ void GraphView::dragMoveEvent( QDragMoveEvent *event)
 	//event->acceptProposedAction();
 }
 
+void GraphView::clearSearch()
+{
+    search_node = NULL;
+}
 
 GNode *
 GraphView::findNextNodeWithText( QString &findStr,
                                  QTextDocument::FindFlags flags)
 {
 	GNode *n;
-	foreachNode( n, graph())
-	{
+	
+    for ( n = isNullP( search_node) ? graph()->firstNode() : search_node->nextNode();
+          isNotNullP( n);
+          n = n->nextNode())
+    {
 		QTextDocument *doc = n->doc();
 		if ( isNotNullP( doc) && !doc->find( findStr).isNull())
-			break;
+        {
+            search_node = n;        
+            break;
+        }
 	}
 	if ( isNotNullP( n))
 	{
@@ -377,7 +388,8 @@ GraphView::findNextNodeWithText( QString &findStr,
 		return n;
 	} else
 	{
-		return NULL;
+		search_node = NULL;        
+        return NULL;
 	}
 }
 

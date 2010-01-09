@@ -172,6 +172,7 @@ private:
     bool createEdge;
 	bool show_menus;
     GNode *tmpSrc;
+    GNode *search_node;
     GGraph * graph_p;
     qreal zoom_scale;
 
@@ -192,7 +193,8 @@ signals:
     /** Signal that node is clicked */
     void nodeClicked( GNode *n);
 public slots:
-	/** Delete one item	 */
+	void clearSearch();
+    /** Delete one item	 */
 	void deleteSelected();
 	/** create self edge on selected node */
 	void createSESelected();
@@ -208,6 +210,12 @@ public:
     GraphView();
     /** Destructor */
     ~GraphView();
+    
+    /** Get current search point */
+    inline GNode * searchNode() const
+    {
+        return search_node;
+    }
     /** Show text of the clicked node */
     inline void showNodeText( GNode * n)
     {
