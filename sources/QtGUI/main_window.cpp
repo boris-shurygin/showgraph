@@ -371,6 +371,8 @@ void MainWindow::findPrev()
     QString findStr = findWidget->editFind->text();
     QPalette p = findWidget->editFind->palette();
     p.setColor(QPalette::Active, QPalette::Base, Qt::white);
+        
+    findWidget->labelWrapped->hide();
     
     if ( findStr.isEmpty())
     {
