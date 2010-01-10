@@ -14,7 +14,7 @@ MainWindow::MainWindow()
 {
     QFrame *central = new QFrame( this);
 	central->setMinimumSize( 200, 200);
-	dock = new QDockWidget( tr("Text"), this);
+	dock_find = new QDockWidget( tr("Find"), this);
     
     createActions();
     createMenus();
@@ -23,7 +23,10 @@ MainWindow::MainWindow()
 
     setWindowTitle(tr("ShowGraph"));
     resize(480, 320);
-        
+
+    addDockWidget( Qt::TopDockWidgetArea, dock_find);
+    dock_find->hide();
+
 	vboxLayout = new QVBoxLayout( central);
 	vboxLayout->setDirection( QBoxLayout::BottomToTop);
 #ifdef Q_OS_MAC
@@ -33,15 +36,16 @@ MainWindow::MainWindow()
 #endif
     view = new QWidget( central);
     
-    findBar = new QWidget( central);
-    findWidget = new FindWidget(findBar);
-    findBar->setMinimumHeight(findWidget->minimumSizeHint().height());
+    //findBar = new QWidget( central);
+    findWidget = new FindWidget( this);
+    //findBar->setMinimumHeight(findWidget->minimumSizeHint().height());
     findWidget->move(0, 0);
-    vboxLayout->addWidget(findBar);
-    findBar->hide();
+    //vboxLayout->addWidget(findBar);
+    //findBar->hide();
     findWidget->editFind->installEventFilter( central);
+    dock_find->setWidget( findWidget);
     
-	connect(findWidget->toolClose, SIGNAL(clicked()), findBar, SLOT(hide()));
+	//connect(findWidget->toolClose, SIGNAL(clicked()), findBar, SLOT(hide()));
 	connect(findWidget->toolNext, SIGNAL(clicked()), this, SLOT(findNext()));
     connect(findWidget->editFind, SIGNAL(returnPressed()), this, SLOT(findNext()));
    
@@ -226,7 +230,7 @@ void MainWindow::openFile( QString fileName)
         parser.mainLoop();
         connectToGraphView( parser.graphView());
         do_layout = true;
-        dock->show();
+        //dock->show();
     } else
     {
         connectToGraphView( new GraphView());
@@ -270,7 +274,9 @@ void MainWindow::findNext()
     
     QPalette p = findWidget->editFind->palette();
     p.setColor(QPalette::Active, QPalette::Base, Qt::white);
-    
+        
+    findWidget->labelWrapped->hide();
+                
     if ( findStr.isEmpty())
     {
         findWidget->editFind->setPalette(p);
@@ -357,7 +363,7 @@ void MainWindow::newGraph()
     graph_view = new GraphView();
     connectToGraphView( graph_view);
     statusBar()->showMessage(tr("Created new"), 2000);
-    dock->hide();
+    dock_find->hide();
 }
 
 void MainWindow::runLayout()
@@ -426,11 +432,7 @@ void MainWindow::createActions()
     layoutRunAct->setShortcut(tr("F5"));
     connect( layoutRunAct, SIGNAL(triggered()), this, SLOT( runLayout()));
 
-    findAct = new QAction(tr("&Find"), this);
-    findAct->setShortcut(tr("Ctrl+F"));
-    connect( findAct, SIGNAL(triggered()), this, SLOT( findShow()));
-
-	zoomInAct = new QAction(tr("&Zoom In"), this);
+    zoomInAct = new QAction(tr("&Zoom In"), this);
     zoomInAct->setShortcut(Qt::Key_Plus);
     connect( zoomInAct, SIGNAL(triggered()), this, SLOT( zoomIn()));
 
@@ -469,12 +471,13 @@ void MainWindow::createMenus()
     viewMenu = menuBar()->addMenu( tr( "&View"));
     viewMenu->addAction( layoutRunAct);
     viewMenu->addSeparator();
-	viewMenu->addAction( findAct);
-    viewMenu->addAction( zoomInAct);
+	viewMenu->addAction( zoomInAct);
     viewMenu->addAction( zoomOutAct);
     viewMenu->addAction( zoomOrigAct);
     viewMenu->addSeparator();
-    //viewMenu->addAction( dock->toggleViewAction());
+    
+    dock_find->toggleViewAction()->setShortcut(tr("Ctrl+F"));
+    viewMenu->addAction( dock_find->toggleViewAction());
     
     menuBar()->addSeparator();
     
@@ -494,10 +497,10 @@ FindWidget::FindWidget(QWidget *parent)
     hboxLayout->setMargin(0);
 #endif
 
-    toolClose = new QToolButton(this);
-    toolClose->setIcon(QIcon(QString::fromUtf8("images/%1/closetab.png").arg(system)));
-    toolClose->setAutoRaise(true);
-    hboxLayout->addWidget(toolClose);
+    //toolClose = new QToolButton(this);
+    //toolClose->setIcon(QIcon(QString::fromUtf8("images/%1/closetab.png").arg(system)));
+    //toolClose->setAutoRaise(true);
+    //hboxLayout->addWidget(toolClose);
 
 
 	comboMode = new QComboBox( this);

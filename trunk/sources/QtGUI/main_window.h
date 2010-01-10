@@ -88,7 +88,7 @@ class MainWindow : public QMainWindow
 	FindWidget *findWidget;
 	QVBoxLayout *vboxLayout;
     GraphView* graph_view;
-    QDockWidget *dock;
+    QDockWidget *dock_find;
     QList< QDockWidget *> textDocks;
 	Conf* conf;
 public:
