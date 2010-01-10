@@ -160,6 +160,11 @@ public:
     {
         return static_cast< GNode*>( AuxNode::nextNode());
     }
+    /** Get prev graph's node */
+    inline GNode* prevNode()
+    {
+        return static_cast< GNode*>( AuxNode::prevNode());
+    }
     /** Edge connection reimplementation */
     inline void AddEdgeInDir( GEdge *edge, GraphDir dir)
     {

@@ -144,6 +144,8 @@ private:
     void removeGraphView();
     /** Connect signals and slots to newly created graph view */
     void connectToGraphView( GraphView *view);
+    
+    bool findText( QString &str, bool forward);
     /** Find text string in view */
     bool findInView( QString &str,
                      TextView* view, 

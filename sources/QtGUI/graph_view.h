@@ -325,6 +325,11 @@ public:
 	 */
 	GNode *findNextNodeWithText( QString &findStr, QTextDocument::FindFlags flags);
 
+    /**
+	 * Find prev node with matching text
+	 */
+	GNode *findPrevNodeWithText( QString &findStr, QTextDocument::FindFlags flags);
+
     /** 
      * Check that we haven't exceeded the max amount of deleted items
      */

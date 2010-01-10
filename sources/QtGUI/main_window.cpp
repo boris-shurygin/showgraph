@@ -47,6 +47,7 @@ MainWindow::MainWindow()
     
 	//connect(findWidget->toolClose, SIGNAL(clicked()), findBar, SLOT(hide()));
 	connect(findWidget->toolNext, SIGNAL(clicked()), this, SLOT(findNext()));
+    connect(findWidget->toolPrevious, SIGNAL(clicked()), this, SLOT(findPrev()));
     connect(findWidget->editFind, SIGNAL(returnPressed()), this, SLOT(findNext()));
    
 	setCentralWidget( central);
@@ -255,23 +256,86 @@ MainWindow::findInView( QString &str,
                         QTextDocument::FindFlags flags)
 {
     QTextCursor cursor = view->textCursor();
+    if ( cursor.atStart() && !forward)
+    {
+        cursor.movePosition( QTextCursor::End);
+    } else if ( cursor.atEnd() && forward)
+    {
+        cursor.movePosition( QTextCursor::Start);
+    }
 
     if (cursor.hasSelection())
         cursor.setPosition( forward ? cursor.position() : cursor.anchor(),
                             QTextCursor::MoveAnchor);
+    view->setTextCursor( cursor);
     QTextCursor newCursor = cursor;
     newCursor = view->document()->find( str, cursor, flags);
-    view->setTextCursor( newCursor);
-
+    
+    if ( !newCursor.isNull())
+    {
+        view->setTextCursor( newCursor);
+    }
     return !newCursor.isNull();
 }
 
+bool MainWindow::findText( QString &str, bool forward)
+{
+    bool res = false;
+    QTextCursor cursor;
+    QTextDocument *doc = 0;
+    QTextDocument::FindFlags flags;
+
+    /** Set text search flags */
+    if ( !forward)
+        flags |= QTextDocument::FindBackward;
+    if ( findWidget->checkCase->isChecked())
+        flags |= QTextDocument::FindCaseSensitively;
+    if ( findWidget->checkWholeWords->isChecked())
+        flags |= QTextDocument::FindWholeWords;
+
+    GNode * node;
+    node = graph_view->searchNode();
+
+    if ( isNullP( node) 
+         || !findInView( str,
+                         static_cast<TextView *>( node->item()->textDock()->widget()),
+                         forward, flags) )
+    {
+        GNode *prev = node;
+        
+        node = ( forward) ?
+                graph_view->findNextNodeWithText( str, flags) :
+                graph_view->findPrevNodeWithText( str, flags); 
+
+        if ( isNotNullP( node))
+        {
+            showNodeText( node);
+            res = true;
+            findInView( str,
+                        static_cast<TextView *>( node->item()->textDock()->widget()),
+                        forward, flags);
+        } else
+        {
+            if ( isNotNullP( prev))
+            {
+                res = true;
+                findWidget->labelWrapped->show();
+            } else
+            {
+                res = false;
+            }
+        }
+    } else
+    {
+        showNodeText( node);
+        res = true;
+    }  
+    return res;
+}
 
 void MainWindow::findNext()
 {
 	QString findStr = findWidget->editFind->text();
-    bool forward = true;
-    
     QPalette p = findWidget->editFind->palette();
     p.setColor(QPalette::Active, QPalette::Base, Qt::white);
         
@@ -296,49 +360,29 @@ void MainWindow::findNext()
         }
 	} else if ( findWidget->mode() == FIND_MODE_TEXT)
 	{
-        QTextCursor cursor;
-        QTextDocument *doc = 0;
-        QTextDocument::FindFlags flags;
-
-        /** Set text search flags */
-        if ( findWidget->checkCase->isChecked())
-            flags |= QTextDocument::FindCaseSensitively;
-        if ( findWidget->checkWholeWords->isChecked())
-            flags |= QTextDocument::FindWholeWords;
-
-        GNode * node;
-        node = graph_view->searchNode();
-        if ( isNullP( node) 
-             || !findInView( findStr,
-                             static_cast<TextView *>( node->item()->textDock()->widget()),
-                             forward, flags) )
-        {
-            GNode *prev = node;
-            node = graph_view->findNextNodeWithText( findStr, flags);
-            if ( isNotNullP( node))
-            {
-                showNodeText( node);
-                findInView( findStr,
-                            static_cast<TextView *>( node->item()->textDock()->widget()),
-                            forward, flags);
-            } else
-            {
-                if ( isNotNullP( prev))
-                {
-                    findWidget->labelWrapped->show();
-                } else
-                {
-                    p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
-                }
-            }
-        }
+        if ( !findText( findStr, true))
+            p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
 	}
     findWidget->editFind->setPalette(p);
 }
 
 void MainWindow::findPrev()
 {
-
+    QString findStr = findWidget->editFind->text();
+    QPalette p = findWidget->editFind->palette();
+    p.setColor(QPalette::Active, QPalette::Base, Qt::white);
+    
+    if ( findStr.isEmpty())
+    {
+        findWidget->editFind->setPalette(p);
+        return;
+    }
+    
+    assert( findWidget->mode() == FIND_MODE_TEXT);
+    
+    if ( !findText( findStr, false))
+        p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+	findWidget->editFind->setPalette(p);
 }
 
 void MainWindow::zoomIn()

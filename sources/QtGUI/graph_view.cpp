@@ -371,6 +371,46 @@ GraphView::findNextNodeWithText( QString &findStr,
 {
 	GNode *n;
 	
+    if ( isNullP( search_node))
+    {
+        foreachNode( n, graph())
+        {
+            if ( isNullP( n->nextNode()))
+                break;
+        }
+    } else
+    {
+        n = search_node->prevNode();
+    }
+
+    while ( isNotNullP( n))
+    {
+		QTextDocument *doc = n->doc();
+		if ( isNotNullP( doc) && !doc->find( findStr, 0, flags).isNull())
+        {
+            search_node = n;        
+            break;
+        }
+        n = n->prevNode();
+	}
+	if ( isNotNullP( n))
+	{
+		centerOn( n->item());
+		return n;
+	} else
+	{
+		search_node = NULL;        
+        return NULL;
+	}
+}
+
+GNode *
+GraphView::findPrevNodeWithText( QString &findStr,
+                                 QTextDocument::FindFlags flags)
+{
+	GNode *n;
+	
+    flags ^= QTextDocument::FindBackward; // Unset backward search flag
     for ( n = isNullP( search_node) ? graph()->firstNode() : search_node->nextNode();
           isNotNullP( n);
           n = n->nextNode())
@@ -392,7 +432,6 @@ GraphView::findNextNodeWithText( QString &findStr,
         return NULL;
 	}
 }
-
 /**
  * Find node by its ID from dump
  */

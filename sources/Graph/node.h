@@ -102,6 +102,14 @@ public:
     {
         return ( graph_it.next() != NULL )? graph_it.next()->data() : NULL;
     }
+    
+    /**
+	 * Prev node in graph's list
+	 */
+    inline Node* prevNode()
+    {
+        return ( graph_it.prev() != NULL )? graph_it.prev()->data() : NULL;
+    }
 
     /**
      * Add edge to node in specified direction
