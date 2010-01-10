@@ -353,8 +353,9 @@ void MainWindow::findNext()
 		int id = findStr.toInt( &goodId);
 		if ( goodId)
 		{
-			graph_view->findNodeById( id);
-		} else
+			if ( !graph_view->findNodeById( id))
+                p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+        } else
 		{
 		    p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
         }
@@ -547,18 +548,21 @@ FindWidget::FindWidget(QWidget *parent)
     //toolClose->setIcon(QIcon(QString::fromUtf8("images/%1/closetab.png").arg(system)));
     //toolClose->setAutoRaise(true);
     //hboxLayout->addWidget(toolClose);
-
-
+ 
+    QSpacerItem *spacerItem = new QSpacerItem(5, 5, QSizePolicy::Fixed, QSizePolicy::Minimum);
+    hboxLayout->addItem(spacerItem);
+    
 	comboMode = new QComboBox( this);
 	comboMode->addItem( "node", QVariant( FIND_MODE_NODE));
-	//comboMode->addItem( "expr", QVariant( FIND_MODE_TEXT)); Off till expression parsing is implemented 
+	//comboMode->addItem( "expr", QVariant( FIND_MODE_EXPR)); Off till expression parsing is implemented 
 	comboMode->addItem( "text", QVariant( FIND_MODE_TEXT));
 	connect( comboMode, SIGNAL( activated(const QString&)),
 			 this, SLOT( modeSet()));
 	hboxLayout->addWidget( comboMode);
 
     editFind = new QLineEdit(this);
-    editFind->setMinimumSize(QSize(150, 0));
+    editFind->setMinimumSize( QSize(150, 0));
+    editFind->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect( editFind, SIGNAL(textChanged(const QString&)),
 			 this, SLOT(updateButtons()));
     hboxLayout->addWidget(editFind);
@@ -599,7 +603,7 @@ FindWidget::FindWidget(QWidget *parent)
     labelWrapped->setText(tr("<img src=\"images/wrap.png\">&nbsp;Search wrapped"));
     hboxLayout->addWidget(labelWrapped);
 
-    QSpacerItem *spacerItem = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    spacerItem = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     hboxLayout->addItem(spacerItem);
     setMinimumWidth(minimumSizeHint().width());
     labelWrapped->hide();
