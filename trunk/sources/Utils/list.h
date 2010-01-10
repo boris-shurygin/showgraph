@@ -85,7 +85,7 @@ public:
         return GetPeerInDir( LIST_DIR_DEFAULT);
     }
     /** Return prev peer in default direction */
-    inline ListItem<Data>* GetPrev() const
+    inline ListItem<Data>* prev() const
     {
         return GetPeerInDir( LIST_DIR_RDEFAULT);
     }
