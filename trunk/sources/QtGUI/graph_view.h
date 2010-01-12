@@ -27,6 +27,102 @@
 #include "gui_impl.h"
 
 /**
+ * Navigation event types
+ * @ingroup GUIGraph
+ */
+enum NavEventType
+{
+    /** Focus on node event */
+    NAV_EVENT_NODE_FOCUS,
+    /** Number of event types */
+    NAV_EVENT_TYPES_NUM
+};
+
+/**
+ * Navigation event
+ * @ingroup GUIGraph
+ */
+class NavEvent
+{
+    /** data associated with event */
+    union NavEventData
+    {
+        /** Node */
+        GNode *node;
+    };
+
+    NavEventType type;
+    NavEventData data;
+public:
+    /** Constructor from type only */
+    inline NavEvent( NavEventType t): type( t)
+    {
+        data.node = NULL;
+    }
+    /** Constructor from type and node */
+    inline NavEvent( NavEventType t, GNode *n): type( t)
+    {
+        data.node = n;
+    }
+    /** Get associated node */
+    inline GNode *node() const
+    {
+        return data.node;
+    }
+    /** Set node */
+    inline void setNode( GNode *n)
+    {
+        data.node = n;
+    }
+    /** Check if event is a focus on node */
+    bool isFocus() const
+    {
+        return type == NAV_EVENT_NODE_FOCUS; 
+    }
+};
+
+/**
+ * History of graph view navigation
+ * @ingroup GUIGraph
+ */
+class GraphViewHistory
+{
+    QList< NavEvent *> events; // List of events
+    QList< NavEvent *>::Iterator it; // Iterator to hold current position in list
+public:
+    /** Constructor */
+    GraphViewHistory()
+    {
+        it = events.end();
+    };
+    /** Destructor */
+    ~GraphViewHistory()
+    {
+        foreach ( NavEvent *ev, events)
+        {
+            delete ev;
+        }
+    }
+    /** Get last event */
+    NavEvent *last();
+    /** Get prev event */
+    NavEvent *prev();
+    /** Get next event */
+    NavEvent *next();
+    /** New event */
+    void viewEvent( NavEventType t, GNode *n = NULL);
+
+    /** New focus event */
+    inline void focusEvent( GNode *n)
+    {
+        assert( isNotNullP( n));
+        viewEvent( NAV_EVENT_NODE_FOCUS, n);
+    }
+    /** Erase node from history */
+    void eraseNode( GNode *n);
+};
+
+/**
  * Graph for graphics. Graph model layer of GraphView.
  * @ingroup GUIGraph
  */
@@ -36,12 +132,13 @@ class GGraph: public AuxGraph
 	Marker nodeTextIsShown;
 	QList< GNode* > sel_nodes;
 	QList< GEdge* > sel_edges;
+    GNode *node_in_focus;
 public:
     /** Constructor */
-    inline GGraph( GraphView *v): view_p( v)
+    inline GGraph( GraphView *v): view_p( v), node_in_focus( NULL)
 	{
 		nodeTextIsShown = newMarker();
-	}
+    }
     
     /** Destructor */
     ~GGraph();
@@ -106,6 +203,16 @@ public:
     inline void selectNode( GNode *n)
     {
         sel_nodes << n;
+    }
+    /** Get node in focus */
+    inline GNode* nodeInFocus() const
+    {
+        return node_in_focus;
+    }
+    /** Set node in focus */
+    inline void setNodeInFocus( GNode *n)
+    {
+        node_in_focus = n;
     }
 	/**
 	 * Clear list of selected nodes
@@ -182,6 +289,7 @@ private:
     GNode *search_node;
     GGraph * graph_p;
     qreal zoom_scale;
+    GraphViewHistory *view_history;
 
     QList< NodeItem* > del_node_items;
     QList< EdgeItem* > del_edge_items;
@@ -200,7 +308,12 @@ signals:
     /** Signal that node is clicked */
     void nodeClicked( GNode *n);
 public slots:
-	void clearSearch();
+	/** Navigate backward */
+    void navPrev();
+    /** Navigate forward */
+    void navNext();
+    /** Clear search node */
+    void clearSearch();
     /** Delete one item	 */
 	void deleteSelected();
 	/** create self edge on selected node */
@@ -218,6 +331,11 @@ public:
     /** Destructor */
     ~GraphView();
     
+    /** Get view history */
+    inline GraphViewHistory * viewHistory() const
+    {
+        return view_history;
+    }
     /** Get current search point */
     inline GNode * searchNode() const
     {
@@ -275,8 +393,9 @@ public:
     /** Do the transofrmation( scale) */
 	void updateMatrix();
     /** Focus on node */
-    void focusOnNode( GNode *n);
-
+    void focusOnNode( GNode *n, bool gen_event);
+    /** Replay navigation event */
+    void replayNavigationEvent( NavEvent *event);
     /** Check if we are in the process of the edge creation */
     inline bool isCreateEdge() const
     {

@@ -126,8 +126,10 @@ public:
 	{
 		return text_shown;
 	}
-	
-	/** Memorize that the text is shown */
+    /** Check if this node is in focus */
+    bool isNodeInFocus() const;
+    
+    /** Memorize that the text is shown */
 	inline void setTextShown( bool shown = true)
 	{
 		text_shown = shown;
