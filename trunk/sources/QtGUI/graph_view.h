@@ -112,7 +112,12 @@ public:
 	 */
 	inline void emptySelection()
 	{
-		sel_nodes.clear();
+		foreach (GNode *n, sel_nodes)
+		{
+            n->item()->toRegular();
+            n->item()->update();
+    	}
+        sel_nodes.clear();
 		sel_edges.clear();
 	}
 	/**
@@ -131,6 +136,7 @@ public:
 		{
 			delete n;
 		}
+        sel_nodes.clear();
 	}
 
 	/** Delete edge with all of the edge controls on it */
@@ -145,6 +151,7 @@ public:
 		{
 			deleteEdgeWithControls( e);
 		}
+        sel_edges.clear();
 	}
     /**
      * Create self edge on selected node
@@ -267,6 +274,9 @@ public:
     void zoomOrig();
     /** Do the transofrmation( scale) */
 	void updateMatrix();
+    /** Focus on node */
+    void focusOnNode( GNode *n);
+
     /** Check if we are in the process of the edge creation */
     inline bool isCreateEdge() const
     {

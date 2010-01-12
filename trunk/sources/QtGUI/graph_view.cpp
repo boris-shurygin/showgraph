@@ -183,6 +183,7 @@ GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
         QGraphicsItem *node = scene()->itemAt( mapToScene( ev->pos()));
         if ( isNotNullP( node) && qgraphicsitem_cast<NodeItem *>( node))
         {
+            graph()->emptySelection();
             delete qgraphicsitem_cast<NodeItem *>( node)->node();
         }
     }
@@ -365,6 +366,15 @@ void GraphView::clearSearch()
     search_node = NULL;
 }
 
+void GraphView::focusOnNode( GNode *n)
+{
+    graph()->emptySelection();
+    graph()->selectNode( n);
+    n->item()->highlight();
+    n->item()->update();
+    centerOn( n->item());
+}
+
 GNode *
 GraphView::findNextNodeWithText( QString &findStr,
                                  QTextDocument::FindFlags flags)
@@ -395,7 +405,7 @@ GraphView::findNextNodeWithText( QString &findStr,
 	}
 	if ( isNotNullP( n))
 	{
-		centerOn( n->item());
+		focusOnNode( n);
 		return n;
 	} else
 	{
@@ -424,7 +434,7 @@ GraphView::findPrevNodeWithText( QString &findStr,
 	}
 	if ( isNotNullP( n))
 	{
-		centerOn( n->item());
+		focusOnNode( n);
 		return n;
 	} else
 	{
@@ -440,12 +450,12 @@ bool GraphView::findNodeById( int id)
 	GNode *n;
 	foreachNode( n, graph())
 	{
-		if ( n->irId() == id)
+        if ( !n->isEdgeControl() && n->irId() == id)
 			break;
 	}
 	if ( isNotNullP( n))
 	{
-		centerOn( n->item());
+		focusOnNode( n);
 		return true;
 	} else
 	{

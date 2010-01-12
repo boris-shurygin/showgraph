@@ -271,8 +271,14 @@ MainWindow::findInView( QString &str,
     QTextCursor newCursor = cursor;
     newCursor = view->document()->find( str, cursor, flags);
     
-    if ( !newCursor.isNull())
+    if ( newCursor.isNull())
     {
+        cursor.movePosition( forward?
+                             QTextCursor::End :
+                             QTextCursor::Start );
+        view->setTextCursor( cursor);
+    }
+    else{
         view->setTextCursor( newCursor);
     }
     return !newCursor.isNull();
@@ -327,6 +333,7 @@ bool MainWindow::findText( QString &str, bool forward)
         }
     } else
     {
+        graph_view->focusOnNode( node);
         showNodeText( node);
         res = true;
     }  
@@ -338,7 +345,8 @@ void MainWindow::findNext()
 	QString findStr = findWidget->editFind->text();
     QPalette p = findWidget->editFind->palette();
     p.setColor(QPalette::Active, QPalette::Base, Qt::white);
-        
+    graph_view->graph()->emptySelection();
+                
     findWidget->labelWrapped->hide();
                 
     if ( findStr.isEmpty())
@@ -353,7 +361,7 @@ void MainWindow::findNext()
 		int id = findStr.toInt( &goodId);
 		if ( goodId)
 		{
-			if ( !graph_view->findNodeById( id))
+            if ( !graph_view->findNodeById( id))
                 p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
         } else
 		{
@@ -362,7 +370,9 @@ void MainWindow::findNext()
 	} else if ( findWidget->mode() == FIND_MODE_TEXT)
 	{
         if ( !findText( findStr, true))
+        {
             p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+        }
 	}
     findWidget->editFind->setPalette(p);
 }
@@ -372,19 +382,22 @@ void MainWindow::findPrev()
     QString findStr = findWidget->editFind->text();
     QPalette p = findWidget->editFind->palette();
     p.setColor(QPalette::Active, QPalette::Base, Qt::white);
-        
+    graph_view->graph()->emptySelection();
+                    
     findWidget->labelWrapped->hide();
     
     if ( findStr.isEmpty())
     {
         findWidget->editFind->setPalette(p);
-        return;
+       return;
     }
     
     assert( findWidget->mode() == FIND_MODE_TEXT);
     
     if ( !findText( findStr, false))
+    {
         p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+    }
 	findWidget->editFind->setPalette(p);
 }
 

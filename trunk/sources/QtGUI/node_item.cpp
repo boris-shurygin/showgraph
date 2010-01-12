@@ -224,12 +224,16 @@ NodeItem::paint( QPainter *painter,
     if ( node()->isSimple())
     {
         qreal adjust = 3;
-        if ( bold_border && ( option->state & QStyle::State_Sunken))
+        if ( bold_border )// ( option->state & QStyle::State_Sunken))
         {
             painter->setPen( QPen(option->palette.foreground().color(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         } else
         {
             painter->setPen( QPen(option->palette.foreground().color(), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        }
+        if ( alternate_background)
+        {
+            painter->setBrush( option->palette.highlight().color());
         }
         painter->drawRect( borderRect());
         QGraphicsTextItem::paint( painter, option, widget);
