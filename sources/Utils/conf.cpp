@@ -15,9 +15,9 @@ using namespace Utils;
 
 /** Option's print routine */
 void
-Option::print()
+Option::print( QTextStream &stream)
 {
-    QTextStream stream( stdout);
+    //QTextStream stream( stdout);
     
     stream << "-" << short_name << ", "
            << "--" << long_name << "    "
@@ -37,9 +37,11 @@ Conf::Conf()
 /** Print options */
 void Conf::printOpts()
 {
+    QTextStream stream( stdout);
+    
     foreach( Option *opt, short_opts)
     {
-        opt->print();
+        opt->print( stream);
     }
 }
 

@@ -184,7 +184,7 @@ public:
         return values.bool_val;
     }
     /** Print option's synopsis and description */
-    void print();
+    void print( QTextStream &stream);
 };
 
 /**
