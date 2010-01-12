@@ -18,6 +18,8 @@ class NodeItem: public QGraphicsTextItem
     GNode *node_p;
 	QDockWidget *text_dock;
 	bool bold_border;
+    bool alternate_background; 
+
     /** Initialization */
     void SetInitFlags();
 public:
@@ -25,10 +27,24 @@ public:
     enum {Type = TypeNode};
 
     /** Constructor */
-	inline NodeItem( GNode *n_p): bold_border( false)
+	inline NodeItem( GNode *n_p): 
+        bold_border( false),
+        alternate_background( false)
     {
         node_p = n_p;
         SetInitFlags();
+    }
+    /** Set node to be highlighted */
+    inline void highlight()
+    {
+        bold_border = true;
+        alternate_background = true;
+    }
+    /** Set node to be regular */
+    inline void toRegular()
+    {
+        bold_border = false;
+        alternate_background = false;
     }
     /** Get corresponding text doc */
 	inline QDockWidget *textDock() const
