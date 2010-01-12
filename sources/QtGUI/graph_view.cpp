@@ -132,7 +132,8 @@ GraphView::GraphView():
     dst( 0, 0), src( 0, 0),
     createEdge( false),
     graph_p( new GGraph( this)),
-	zoom_scale( 0)
+	zoom_scale( 0),
+    view_history( new GraphViewHistory)
 {
     QGraphicsScene *scene = new QGraphicsScene( this);
     //scene->setItemIndexMethod( QGraphicsScene::NoIndex);
@@ -157,7 +158,7 @@ GraphView::GraphView():
 /** Destructor */
 GraphView::~GraphView()
 {
-
+    delete view_history;
 }
 
 
@@ -184,6 +185,7 @@ GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
         if ( isNotNullP( node) && qgraphicsitem_cast<NodeItem *>( node))
         {
             graph()->emptySelection();
+            graph()->setNodeInFocus( NULL);
             delete qgraphicsitem_cast<NodeItem *>( node)->node();
         }
     }
@@ -366,13 +368,16 @@ void GraphView::clearSearch()
     search_node = NULL;
 }
 
-void GraphView::focusOnNode( GNode *n)
+void GraphView::focusOnNode( GNode *n, bool gen_event)
 {
     graph()->emptySelection();
     graph()->selectNode( n);
     n->item()->highlight();
     n->item()->update();
     centerOn( n->item());
+    if ( gen_event && !n->isNodeInFocus())
+        view_history->focusEvent( n);
+    graph()->setNodeInFocus( n);
 }
 
 GNode *
@@ -405,7 +410,7 @@ GraphView::findNextNodeWithText( QString &findStr,
 	}
 	if ( isNotNullP( n))
 	{
-		focusOnNode( n);
+		focusOnNode( n, true);
 		return n;
 	} else
 	{
@@ -434,7 +439,7 @@ GraphView::findPrevNodeWithText( QString &findStr,
 	}
 	if ( isNotNullP( n))
 	{
-		focusOnNode( n);
+		focusOnNode( n, true);
 		return n;
 	} else
 	{
@@ -455,10 +460,97 @@ bool GraphView::findNodeById( int id)
 	}
 	if ( isNotNullP( n))
 	{
-		focusOnNode( n);
+		focusOnNode( n, true);
 		return true;
 	} else
 	{
 		return false;
 	}
+}
+/** Repeat navigation event */
+void GraphView::replayNavigationEvent( NavEvent *ev)
+{
+    assert( isNotNullP( ev));
+    
+    if ( ev->isFocus())
+    {
+        assert( isNotNullP( ev->node()));
+        focusOnNode( ev->node(), false); 
+    }
+}
+
+/** Navigate backward */
+void GraphView::navPrev()
+{
+    NavEvent * ev = view_history->prev();
+    if ( isNotNullP( ev))
+        replayNavigationEvent( ev);
+}
+
+/** Navigate forward */
+void GraphView::navNext()
+{
+    NavEvent * ev = view_history->next();
+    if ( isNotNullP( ev))
+        replayNavigationEvent( ev);
+}
+
+void GraphViewHistory::eraseNode( GNode *n)
+{
+    it = events.begin();
+    while ( it != events.end())
+    {
+        NavEvent *ev = *it;
+        if ( ev->isFocus() && areEqP( ev->node(), n))
+        {
+            it = events.erase( it);
+        } else
+        {
+            it++;
+        }
+    }
+}
+/** Get last event */
+NavEvent *GraphViewHistory::last()
+{
+    if ( events.count() > 0)
+    {
+        it = events.end();
+        it--;
+        return *it;
+    }
+    return NULL;
+}
+/** Get prev event */
+NavEvent *GraphViewHistory::prev()
+{
+    if ( it != events.begin())
+    {
+        it--;
+        return *it;
+    }
+    return NULL;
+}
+/** Get next event */
+NavEvent *GraphViewHistory::next()
+{
+    if ( it != events.end())
+        it++;
+    if ( it != events.end())
+    {
+        return *it;
+    }
+    return NULL;
+}
+/** New event */
+void GraphViewHistory::viewEvent( NavEventType t, GNode *n)
+{
+    NavEvent *ev = new NavEvent( t, n);
+    if ( it != events.end())
+        it++;
+    if ( it != events.end())
+        events.erase( it, events.end());
+    events.push_back( ev);
+    it = events.end();
+    it--;
 }

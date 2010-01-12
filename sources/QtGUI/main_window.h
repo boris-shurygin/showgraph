@@ -162,6 +162,8 @@ private:
     QAction *aboutAct;
     QAction *layoutRunAct;
 	QAction *findAct;
+    QAction *navPrevAct;
+    QAction *navNextAct;
     QAction *zoomInAct;
     QAction *zoomOutAct;
     QAction *zoomOrigAct;

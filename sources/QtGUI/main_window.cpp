@@ -185,8 +185,11 @@ void MainWindow::connectToGraphView( GraphView *gview)
     
     /** Connect signals */
     connect( gview, SIGNAL( nodeClicked( GNode*)), this, SLOT( showNodeText( GNode*)));
+    connect( navPrevAct, SIGNAL( triggered()), gview, SLOT( navPrev()));
+    connect( navNextAct, SIGNAL( triggered()), gview, SLOT( navNext()));
     connect( findWidget->editFind, SIGNAL( textChanged( const QString &)),
              gview, SLOT( clearSearch()));
+
     /** Place graph view in window */
     vboxLayout->addWidget( graph_view);
 }
@@ -333,7 +336,7 @@ bool MainWindow::findText( QString &str, bool forward)
         }
     } else
     {
-        graph_view->focusOnNode( node);
+        graph_view->focusOnNode( node, true);
         showNodeText( node);
         res = true;
     }  
@@ -512,6 +515,10 @@ void MainWindow::createActions()
     printAct->setShortcut( tr("Ctrl+P"));
     connect( printAct, SIGNAL( triggered()), this, SLOT( printContents()));
 
+    navPrevAct = new QAction( tr("Navigate &Backward"), this);
+    navPrevAct->setShortcut( tr("Ctrl+Left"));
+    navNextAct = new QAction( tr("Navigate &Forward"), this);
+    navNextAct->setShortcut( tr("Ctrl+Right"));
 }
 
 void MainWindow::createMenus()
@@ -538,7 +545,9 @@ void MainWindow::createMenus()
     
     dock_find->toggleViewAction()->setShortcut(tr("Ctrl+F"));
     viewMenu->addAction( dock_find->toggleViewAction());
-    
+    viewMenu->addSeparator();
+    viewMenu->addAction( navPrevAct);
+    viewMenu->addAction( navNextAct);
     menuBar()->addSeparator();
     
     helpMenu = menuBar()->addMenu(tr("&Help"));

@@ -88,6 +88,9 @@ GNode::~GNode()
         }
 		graph()->freeMarker( m);
     }
+    if ( isNodeInFocus())
+        graph()->setNodeInFocus( NULL);
+    graph()->view()->viewHistory()->eraseNode( this);
     item()->remove();
     graph()->view()->deleteLaterNodeItem( item());
 }
@@ -139,6 +142,10 @@ GNode::readFromElement( QDomElement e)
         setTypeEdgeControl();
     }
     AuxNode::readFromElement( e); // Base class method
+}
+bool GNode::isNodeInFocus() const
+{
+    return areEqP( this, graph()->nodeInFocus());
 }
 
 /**
@@ -284,6 +291,11 @@ void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
     bold_border = false;
 	/** Select this node */
 	node()->graph()->emptySelection();
+    if ( !node()->isNodeInFocus())
+    {
+        node()->graph()->view()->viewHistory()->focusEvent( node());
+        node()->graph()->setNodeInFocus( node());
+    }
 	node()->graph()->selectNode( this->node());
 	/** Show context menu */
 	if ( node()->graph()->view()->isShowContextMenus()

@@ -8,14 +8,14 @@
 /**
  * If pointer is not null
  */
-inline bool isNotNullP( void *pointer)
+inline bool isNotNullP( const void *pointer)
 {
     return pointer != NULL;
 }
 /**
  * If pointer is null
  */
-inline bool isNullP( void *pointer)
+inline bool isNullP( const void *pointer)
 {
     return pointer == NULL;
 }
@@ -23,7 +23,7 @@ inline bool isNullP( void *pointer)
 /**
  * If pointers are equal
  */
-inline bool areEqP( void *p1, void *p2)
+inline bool areEqP( const void *p1, const void *p2)
 {
     return p1 == p2;
 }
@@ -31,7 +31,7 @@ inline bool areEqP( void *p1, void *p2)
 /**
  * If pointers are equal
  */
-inline bool areNotEqP( void *p1, void *p2)
+inline bool areNotEqP( const void *p1, const void *p2)
 {
     return p1 != p2;
 }
