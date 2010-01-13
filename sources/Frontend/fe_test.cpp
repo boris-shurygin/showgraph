@@ -88,6 +88,9 @@ TestParser::parseLine( QString line)
         QString succ_name("Node ");
         succ_name.append( edge_rx.cap( 3));
         
+        /** Back edge */
+        QRegExp back_rx("Back");
+    
         /** Add edge to symtab */
         if ( symtab.find( name) == symtab.end())
         {
@@ -106,7 +109,12 @@ TestParser::parseLine( QString line)
         {
             GNode* pred = static_cast< SymNode *>( symtab[ pred_name])->node();
             GNode* succ = static_cast< SymNode *>( symtab[ succ_name])->node();
-            graph->graph()->newEdge( pred, succ);
+            GEdge* e = graph->graph()->newEdge( pred, succ);
+            if (  back_rx.indexIn( line) != -1 && !e->isSelf())
+            {
+                GNode* label = e->insertLabelNode( QPointF( 0,0));                
+                label->item()->setPlainText( "Back");
+            }
         }
     } else
     {
