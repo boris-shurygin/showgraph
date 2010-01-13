@@ -300,8 +300,7 @@ void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
     {
         node()->graph()->view()->SetCreateEdge( true);
         node()->graph()->view()->SetTmpSrc( node());
-    } else if ( event->button() & Qt::LeftButton
-                && ( node()->isEdgeControl() || node()->isEdgeLabel()))
+    } else if ( node()->isEdgeControl() || node()->isEdgeLabel())
     {
         node()->firstPred()->item()->setSelected( true);
         node()->firstSucc()->item()->setSelected( true);
