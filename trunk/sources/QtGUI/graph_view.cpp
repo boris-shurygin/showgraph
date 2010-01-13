@@ -116,7 +116,7 @@ void GGraph::deleteEdgeWithControls( GEdge *edge)
 		succ = succ->firstSucc()->succ();
     }
     GNode * pred = edge->pred(); 
-    while ( pred->isEdgeControl() || succ->isEdgeLabel())
+    while ( pred->isEdgeControl() || pred->isEdgeLabel())
     {
         assert( isNotNullP( pred->firstPred()));
         nodes << pred;

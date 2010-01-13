@@ -211,8 +211,7 @@ public:
         switch ( prev_type)
         {
             case AUX_NODE_SIMPLE:
-                if ( node_type == AUX_NODE_SIMPLE || 
-                     node_type == AUX_EDGE_LABEL)
+                if ( node_type == AUX_NODE_SIMPLE)
                 {
                     return NODE_NODE_MARGIN;
                 } else
@@ -220,8 +219,7 @@ public:
                     return NODE_CONTROL_MARGIN;
                 }
             case AUX_EDGE_CONTROL:
-                if ( node_type == AUX_NODE_SIMPLE || 
-                     node_type == AUX_EDGE_LABEL)
+                if ( node_type == AUX_NODE_SIMPLE)
                 {
                     return NODE_CONTROL_MARGIN;
                 } else
@@ -229,8 +227,7 @@ public:
                     return CONTROL_CONTROL_MARGIN;
                 }
             case AUX_EDGE_LABEL:
-                if ( node_type == AUX_NODE_SIMPLE || 
-                     node_type == AUX_EDGE_LABEL)
+                if ( node_type == AUX_NODE_SIMPLE)
                 {
                     return NODE_NODE_MARGIN;
                 } else

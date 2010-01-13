@@ -354,6 +354,12 @@ void AuxGraph::classifyEdges()
                  && succ_node->isMarked( m))
             {
                 edge->setBack();
+                AuxNode *pred = edge->pred();
+                while ( pred->isEdgeLabel())
+                {
+                    pred->firstPred()->setBack();
+                    pred = pred->firstPred()->pred();
+                }
             }
             if ( succ_node->mark( m))
                  stack.push( new DfsStepInfo( succ_node));
