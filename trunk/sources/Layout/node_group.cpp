@@ -42,7 +42,13 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
         if ( !e->isInverted())
         {
             num_peers++;
-            sum+= ( e->node( rdir)->modelX() + ( e->node( rdir)->width() / 2));
+            if ( e->node( rdir)->isEdgeLabel())
+            {
+                sum+= ( e->node( rdir)->modelX());
+            } else
+            {
+                sum+= ( e->node( rdir)->modelX() + ( e->node( rdir)->width() / 2));
+            }
         }
     }
     for ( AuxEdge* e = n->firstEdgeInDir( dir);
@@ -52,7 +58,13 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
         if ( e->isInverted())
         {
             num_peers++;
-            sum+= ( e->node( dir)->modelX() + ( e->node( dir)->width() / 2));
+            if ( e->node( rdir)->isEdgeLabel())
+            {
+                sum+= ( e->node( dir)->modelX());
+            } else
+            {
+                sum+= ( e->node( dir)->modelX() + ( e->node( dir)->width() / 2));
+            }
         }
     }
     /** Barycenter heuristic */
@@ -66,8 +78,12 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
         edge_num = 1;
         center = n->modelX() + n->width() / 2;
     }
+    if ( n->isEdgeLabel())
+        center += ( n->width() / 2);
+
     n->setBc( center);
     barycenter = center;
+    
     border_left = center - n->width() / 2;
     border_right = center + n->width() / 2;
 }

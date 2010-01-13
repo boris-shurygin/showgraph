@@ -27,6 +27,8 @@ enum AuxNodeType
     AUX_NODE_SIMPLE,
     /* Aux node that represents a control point of edge in processed graph */
     AUX_EDGE_CONTROL,
+    /** Aux node that represents an edge label */
+    AUX_EDGE_LABEL,
     /* Number of aux node types */
     AUX_NODE_TYPES_NUM
 };
@@ -160,6 +162,11 @@ public:
     {
         return node_type == AUX_EDGE_CONTROL;
     }
+    /** Check if this node is an edge control */
+    inline bool isEdgeLabel() const
+    {
+        return node_type == AUX_EDGE_LABEL;
+    }
     /** Set node to be an edge control */
     inline void setTypeEdgeControl()
     {
@@ -169,6 +176,11 @@ public:
     inline void setTypeSimple()
     {
         node_type = AUX_NODE_SIMPLE;
+    }
+    /** Set node's type to simple */
+    inline void setTypeEdgeLabel()
+    {
+        node_type = AUX_EDGE_LABEL;
     }
     /** Print node's debug info */
     inline void debugPrint()
@@ -180,6 +192,9 @@ public:
                 break;
             case AUX_EDGE_CONTROL:
                 out("EDGE CONTROL %llu;", id());
+                break;
+            case AUX_EDGE_LABEL:
+                out("EDGE LABEL %llu;", id());
                 break;
             default:         
                 assert( 0);
@@ -196,7 +211,8 @@ public:
         switch ( prev_type)
         {
             case AUX_NODE_SIMPLE:
-                if ( node_type == AUX_NODE_SIMPLE)
+                if ( node_type == AUX_NODE_SIMPLE || 
+                     node_type == AUX_EDGE_LABEL)
                 {
                     return NODE_NODE_MARGIN;
                 } else
@@ -204,12 +220,22 @@ public:
                     return NODE_CONTROL_MARGIN;
                 }
             case AUX_EDGE_CONTROL:
-                if ( node_type == AUX_NODE_SIMPLE)
+                if ( node_type == AUX_NODE_SIMPLE || 
+                     node_type == AUX_EDGE_LABEL)
                 {
                     return NODE_CONTROL_MARGIN;
                 } else
                 {
                     return CONTROL_CONTROL_MARGIN;
+                }
+            case AUX_EDGE_LABEL:
+                if ( node_type == AUX_NODE_SIMPLE || 
+                     node_type == AUX_EDGE_LABEL)
+                {
+                    return NODE_NODE_MARGIN;
+                } else
+                {
+                    return NODE_CONTROL_MARGIN;
                 }
             case AUX_NODE_TYPES_NUM:
                 return 0;
@@ -357,7 +383,7 @@ public:
 	{
 		AuxNode* n = node( dir);
 		assertd( isNotNullP( n));
-		while ( n->isEdgeControl())
+		while ( n->isEdgeControl() || n->isEdgeLabel())
 		{
 			n = n->firstEdgeInDir( dir)->node( dir);
 		}

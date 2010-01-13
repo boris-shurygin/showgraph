@@ -237,14 +237,7 @@ public:
 	/**
 	 * Delete scheduled nodes
 	 */
-	void deleteNodes()
-	{
-		foreach (GNode *n, sel_nodes)
-		{
-			delete n;
-		}
-        sel_nodes.clear();
-	}
+	void deleteNodes();
 
 	/** Delete edge with all of the edge controls on it */
 	void deleteEdgeWithControls( GEdge *e);
@@ -252,25 +245,17 @@ public:
 	/**
 	 * Delete scheduled edges
 	 */
-	void deleteEdges()
-	{
-		foreach (GEdge *e, sel_edges)
-		{
-			deleteEdgeWithControls( e);
-		}
-        sel_edges.clear();
-	}
+	void deleteEdges();
+
     /**
      * Create self edge on selected node
      */
-    void createSelfEdge()
-    {
-        if ( !sel_nodes.isEmpty())
-        {
-            GNode *n = sel_nodes.first();
-            newEdge( n, n);
-        }
-    }
+    void createSelfEdge();
+
+    /**
+     * Create label on selected edge
+     */
+    void createEdgeLabel( QPointF pos);
 	
 };
 
@@ -281,8 +266,7 @@ class GraphView: public QGraphicsView
 {
     Q_OBJECT; /** For MOC */
 private:
-    QPoint src;
-    QPoint dst;
+    QPointF curr_pos;
     bool createEdge;
 	bool show_menus;
     GNode *tmpSrc;
@@ -297,7 +281,8 @@ private:
 	/** Actions */
 	QAction *deleteItemAct;
     QAction *createSelfEdgeAct;
-	
+	QAction *createEdgeLabelAct;
+    
 	/** Context menus */
 	QMenu *nodeItemMenu;
 	QMenu *edgeItemMenu;
@@ -318,6 +303,8 @@ public slots:
 	void deleteSelected();
 	/** create self edge on selected node */
 	void createSESelected();
+    /** Create edge label */
+    void createEdgeLabel();
 
 public:
     /** Constants */
@@ -331,6 +318,16 @@ public:
     /** Destructor */
     ~GraphView();
     
+    /** Return saved position */
+    inline QPointF currPos() const
+    {
+        return curr_pos;
+    }
+    /** Set current event position */
+    inline void setCurrPos( QPointF p)
+    {
+        curr_pos = p;
+    }
     /** Get view history */
     inline GraphViewHistory * viewHistory() const
     {
@@ -364,6 +361,9 @@ public:
 
     /** Create menu for particular node */
     QMenu* createMenuForNode( GNode *n);
+    
+    /** Create menu for particular edge */
+    QMenu* createMenuForEdge( GEdge *e);
 
 	void dragEnterEvent(QDragEnterEvent *event);
 

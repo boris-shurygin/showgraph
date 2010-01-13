@@ -36,7 +36,7 @@ GNode::GNode( GGraph *graph_p, int _id, QPointF _pos):
  */
 GNode::~GNode()
 {
-    if ( isEdgeControl() 
+    if ( ( isEdgeControl() || isEdgeLabel())
          && isNotNullP( firstPred()) 
          && isNotNullP( firstSucc())
          && isNotNullP( firstPred()->pred())
@@ -53,7 +53,7 @@ GNode::~GNode()
             edge->item()->adjust();
             GNode* succ = edge->succ();
 
-            while ( succ->isEdgeControl())
+            while ( succ->isEdgeControl() || succ->isEdgeLabel())
             {
                 assert( isNotNullP( succ->firstSucc()));
                 if ( succ->mark( m))
@@ -71,7 +71,7 @@ GNode::~GNode()
 			edge->item()->adjust();
             GNode* pred = edge->pred();
 
-            while ( pred->isEdgeControl())
+            while ( pred->isEdgeControl() || pred->isEdgeLabel())
             {
                 assert( isNotNullP( pred->firstPred()));
                 if ( pred->mark( m))
@@ -113,9 +113,15 @@ GNode::updateElement()
     e.setAttribute( "x", item()->x());
     e.setAttribute( "y", item()->y());
     e.setAttribute( "label", item()->toPlainText());
-    if ( isEdgeControl())
+    if ( isSimple())
+    {  
+       // e.setAttribute( "type", "simple");
+    } else if ( isEdgeControl())
     {
-        e.setAttribute( "edge_control", 1);
+        e.setAttribute( "type", "edge_control");
+    } else if ( isEdgeLabel())
+    {
+        e.setAttribute( "type", "edge_label");
     }
 }
 
@@ -135,12 +141,26 @@ GNode::readFromElement( QDomElement e)
     }
     if ( e.hasAttribute( "label"))
     {
-        item()->setPlainText( e.attribute( "label"));
+        QString str = e.attribute( "label");
+        item()->setPlainText( str);
+        QRegExp rx("(\\d+)");
+        if ( rx.indexIn( str) != -1)
+        {
+            setIRId( rx.cap( 1).toInt());
+        }
     }
-    if ( e.hasAttribute("edge_control"))
+    if ( e.hasAttribute("type"))
     {
-        setTypeEdgeControl();
+        QString type_str = e.attribute( "type");
+        if ( type_str == QString( "edge_control"))
+        {
+            setTypeEdgeControl();
+        } else if (type_str == QString( "edge_label"))
+        {
+            setTypeEdgeLabel();
+        } 
     }
+
     AuxNode::readFromElement( e); // Base class method
 }
 bool GNode::isNodeInFocus() const
@@ -177,6 +197,11 @@ NodeItem::borderRect() const
         qreal adjust = 2;
         return QRectF( -EdgeControlSize - adjust, -EdgeControlSize - adjust,
               2*( EdgeControlSize + adjust), 2*( EdgeControlSize + adjust));
+    } else if ( node()->isEdgeLabel())
+    {
+        qreal adjust = 5;
+        return QGraphicsTextItem::boundingRect()
+            .adjusted( -adjust, -adjust, adjust, adjust);    
     } else
     {
         qreal adjust = 5;
@@ -228,7 +253,7 @@ NodeItem::paint( QPainter *painter,
     if ( isNullP( node_p))
         return;
 
-    if ( node()->isSimple())
+    if ( node()->isSimple() || node()->isEdgeLabel())
     {
         qreal adjust = 3;
         if ( bold_border )// ( option->state & QStyle::State_Sunken))
@@ -242,7 +267,8 @@ NodeItem::paint( QPainter *painter,
         {
             painter->setBrush( option->palette.highlight().color());
         }
-        painter->drawRect( borderRect());
+        if ( node()->isSimple())
+            painter->drawRect( borderRect());
         QGraphicsTextItem::paint( painter, option, widget);
     } else if ( node()->isEdgeControl())
     {
@@ -274,7 +300,8 @@ void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
     {
         node()->graph()->view()->SetCreateEdge( true);
         node()->graph()->view()->SetTmpSrc( node());
-    } else if ( event->button() & Qt::LeftButton && node()->isEdgeControl())
+    } else if ( event->button() & Qt::LeftButton
+                && ( node()->isEdgeControl() || node()->isEdgeLabel()))
     {
         node()->firstPred()->item()->setSelected( true);
         node()->firstSucc()->item()->setSelected( true);
@@ -304,7 +331,8 @@ void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
 	    QMenu *menu = node()->graph()->view()->createMenuForNode( node());
         menu->exec( event->screenPos());
         delete menu;
-    } else if ( event->button() & Qt::LeftButton && !node()->isEdgeControl())
+    } else if ( event->button() & Qt::LeftButton 
+                && !( node()->isEdgeControl() || node()->isEdgeLabel()))
     {
         node()->graph()->view()->showNodeText( node());
 	}
@@ -365,7 +393,7 @@ QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
             edge->item()->adjust();
             GNode* succ = edge->succ();
 
-            if ( succ->isEdgeControl())
+            if ( succ->isEdgeControl() || succ->isEdgeLabel())
             {
                 assert( isNotNullP( succ->firstSucc()));
                 succ->firstSucc()->item()->adjust();
@@ -376,7 +404,7 @@ QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
             edge->item()->adjust();
             GNode* pred = edge->pred();
 
-            if ( pred->isEdgeControl())
+            if ( pred->isEdgeControl() || pred->isEdgeLabel())
             {
                 assert( isNotNullP( pred->firstPred()));
                 pred->firstPred()->item()->adjust();

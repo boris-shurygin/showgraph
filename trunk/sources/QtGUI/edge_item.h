@@ -101,6 +101,8 @@ public:
     {
         return nextEdgeInDir( GRAPH_DIR_UP);
     } 
+    /** Insert node of label type */
+    GNode *insertLabelNode( QPointF pos);
 };
 /**
  * Graphics item for visualizing a graph edge
