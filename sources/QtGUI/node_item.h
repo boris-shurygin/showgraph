@@ -198,7 +198,7 @@ public:
     {
         AddEdgeInDir( edge, GRAPH_DIR_DOWN);
     }
-    /** Get first edge in given dircetion */
+    /** Get first edge in given direction */
     inline GEdge* firstEdgeInDir( GraphDir dir)
     {
         return static_cast< GEdge*>( AuxNode::first_edge[ dir]);
@@ -216,8 +216,9 @@ public:
     /** Get node's width */
     virtual inline double width() const
     {
-        return item()->boundingRect().width();
+        return item()->borderRect().width();
     }
+
     /** Get node's nodes height */
     virtual inline double height() const
     {

@@ -57,6 +57,49 @@ GGraph::newEdge( GNode* pred, GNode* succ, QDomElement e)
     edge_p->item()->adjust();
     return edge_p;
 }
+/**
+ * Delete scheduled nodes
+ */
+void GGraph::deleteNodes()
+{
+    foreach (GNode *n, sel_nodes)
+    {
+        delete n;
+    }
+    sel_nodes.clear();
+}
+
+/**
+ * Delete scheduled edges
+ */
+void GGraph::deleteEdges()
+{
+	foreach (GEdge *e, sel_edges)
+	{
+		deleteEdgeWithControls( e);
+	}
+    sel_edges.clear();
+}
+/**
+ * Create self edge on selected node
+ */
+void GGraph::createSelfEdge()
+{
+    if ( !sel_nodes.isEmpty())
+    {
+        GNode *n = sel_nodes.first();
+        newEdge( n, n);
+    }
+}
+
+/** Create label on selected edge */
+void GGraph::createEdgeLabel( QPointF pos)
+{
+    if ( !sel_edges.isEmpty())
+    {
+        sel_edges.first()->insertLabelNode( pos);
+    }
+}
 
 void GGraph::deleteEdgeWithControls( GEdge *edge)
 {
@@ -65,7 +108,7 @@ void GGraph::deleteEdgeWithControls( GEdge *edge)
     
     /** Check successor */
     GNode * succ = edge->succ();
-	while ( succ->isEdgeControl())
+    while ( succ->isEdgeControl() || succ->isEdgeLabel())
     {
         assert( isNotNullP( succ->firstSucc()));
         nodes << succ;
@@ -73,7 +116,7 @@ void GGraph::deleteEdgeWithControls( GEdge *edge)
 		succ = succ->firstSucc()->succ();
     }
     GNode * pred = edge->pred(); 
-    while ( pred->isEdgeControl())
+    while ( pred->isEdgeControl() || succ->isEdgeLabel())
     {
         assert( isNotNullP( pred->firstPred()));
         nodes << pred;
@@ -129,7 +172,7 @@ void GGraph::doLayout()
 
 /** Constructor */
 GraphView::GraphView(): 
-    dst( 0, 0), src( 0, 0),
+    curr_pos(),
     createEdge( false),
     graph_p( new GGraph( this)),
 	zoom_scale( 0),
@@ -210,8 +253,12 @@ GraphView::mouseReleaseEvent( QMouseEvent *ev)
             {
                 if ( tmpSrc != qgraphicsitem_cast<NodeItem *>(item)->node())
                 {
-                    graph()->newEdge( tmpSrc, qgraphicsitem_cast<NodeItem *>(item)->node());
-					show_menus = false;
+                    GNode* dst_node = qgraphicsitem_cast<NodeItem *>(item)->node();
+                    if ( tmpSrc->isSimple() && dst_node->isSimple())
+                    {   
+                        graph()->newEdge( tmpSrc, dst_node);
+                        show_menus = false;
+                    }
 				}
             }
 			
@@ -226,10 +273,6 @@ GraphView::mouseReleaseEvent( QMouseEvent *ev)
 void
 GraphView::mouseMoveEvent(QMouseEvent *ev)
 {
-    if ( createEdge)
-    {
-        dst = ev->pos();
-    }
     QGraphicsView::mouseMoveEvent(ev);
 }
 
@@ -302,6 +345,12 @@ void GraphView::createSESelected()
     graph()->createSelfEdge();
 }
 
+void GraphView::createEdgeLabel()
+{
+    graph()->createEdgeLabel( curr_pos);
+}
+
+
 void GraphView::createActions()
 {
     deleteItemAct = new QAction(tr("&Delete"), this);
@@ -310,6 +359,9 @@ void GraphView::createActions()
 
     createSelfEdgeAct = new QAction(tr("&Create Self Edge"), this);
     connect( createSelfEdgeAct, SIGNAL(triggered()), this, SLOT( createSESelected()));
+
+    createEdgeLabelAct = new QAction(tr("&Create Label"), this);
+    connect( createEdgeLabelAct, SIGNAL(triggered()), this, SLOT( createEdgeLabel()));
 }
 
 void GraphView::createMenus()
@@ -330,6 +382,14 @@ QMenu* GraphView::createMenuForNode( GNode *n)
     {
         menu->addAction( createSelfEdgeAct);
     }
+    return menu;
+}
+
+QMenu* GraphView::createMenuForEdge( GEdge *e)
+{
+    QMenu* menu = new QMenu( tr( "&Node Item"));
+    menu->addAction( deleteItemAct);
+    menu->addAction( createEdgeLabelAct);
     return menu;
 }
 

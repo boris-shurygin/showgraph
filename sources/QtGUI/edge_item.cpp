@@ -64,6 +64,18 @@ GEdge::readFromElement( QDomElement e)
     AuxEdge::readFromElement( e); // Base class method
     item()->adjust();
 }
+/**
+ * Insert node of label type
+ */
+GNode *
+GEdge::insertLabelNode( QPointF pos)
+{
+    GNode *new_node = static_cast<GNode *>( insertNode());
+    new_node->setTypeEdgeLabel();
+    new_node->item()->setPlainText( "Label");
+    new_node->item()->setPos( pos + QPointF( new_node->item()->borderRect().width()/2, 0));
+    return new_node;
+}
 
 /**
  * EdgeItem implementaion
@@ -108,7 +120,7 @@ EdgeItem::adjust()
 {
     if ( edge()->isSelf())
     {
-        QPointF center = mapFromItem( pred()->item(), pred()->item()->boundingRect().center());
+        QPointF center = mapFromItem( pred()->item(), pred()->item()->borderRect().center());
         QRectF r = pred()->item()->borderRect();
         srcP = center + QPointF( 3 * r.width()/8, r.height() /2);
         dstP = center + QPointF( 3 * r.width()/8, -r.height() /2);
@@ -125,10 +137,25 @@ EdgeItem::adjust()
     btmRight = dstP;
     QPointF srcCP = srcP;
     QPointF dstCP = dstP;
-    if ( pred()->isEdgeControl())
-    {
 
-    } else
+    if ( pred()->isEdgeLabel())
+    {
+        srcP = mapFromItem( pred()->item(),
+                            pred()->item()->borderRect().left(),
+                            pred()->item()->borderRect().center().y());
+        qreal w = pred()->item()->borderRect().width();
+        //srcP += QPointF( -w, 0);
+        srcCP = srcP;
+    } 
+    if ( succ()->isEdgeLabel())
+    {
+        dstP = mapFromItem( succ()->item(),
+                            succ()->item()->borderRect().left(),
+                            succ()->item()->borderRect().center().y());
+        dstCP = dstP;
+    } 
+
+    if ( pred()->isSimple())
     {
         QLineF line( srcP, dstP);
         QPolygonF endPolygon = mapFromItem( pred()->item(), pred()->item()->borderRect());
@@ -147,10 +174,7 @@ EdgeItem::adjust()
             p1 = p2;
         }
     }
-    if ( succ()->isEdgeControl())
-    {
-    
-    } else
+    if ( succ()->isSimple())
     {
         QLineF line2( srcP, dstP);
         QPolygonF endPolygon = mapFromItem( succ()->item(), succ()->item()->borderRect());
@@ -193,12 +217,12 @@ EdgeItem::adjust()
     NodeItem *next_pred = NULL;
     NodeItem *next_succ = NULL;
 
-    if ( pred()->isEdgeControl() 
+    if ( ( pred()->isEdgeControl() || pred()->isEdgeLabel()) 
          && isNotNullP( pred()->firstPred()))
     {
         next_pred = pred()->firstPred()->pred()->item();
     } 
-    if ( succ()->isEdgeControl()
+    if ( ( succ()->isEdgeControl() || succ()->isEdgeLabel()) 
          && isNotNullP( succ()->firstSucc()))
     {
         next_succ = succ()->firstSucc()->succ()->item();
@@ -206,7 +230,7 @@ EdgeItem::adjust()
     /** Place cp1 */
     if ( isNotNullP( next_pred))
     {
-        QPointF p1 = mapFromItem( next_pred, next_pred->boundingRect().center());
+        QPointF p1 = mapFromItem( next_pred, next_pred->borderRect().center());
         QLineF line( p1, dstCP);
         QPointF cp1_offset = QPointF( (line.dx() * size)/ line.length(),
                                       (line.dy() * size)/ line.length());
@@ -226,7 +250,7 @@ EdgeItem::adjust()
     /** Place cp2 */
     if ( isNotNullP( next_succ))
     {
-        QPointF p2 = mapFromItem( next_succ, next_succ->boundingRect().center());
+        QPointF p2 = mapFromItem( next_succ, next_succ->borderRect().center());
         QLineF line( p2, srcCP);
         QPointF cp2_offset = QPointF( (line.dx() * size)/ line.length(),
                                       (line.dy() * size)/ line.length());
@@ -354,7 +378,7 @@ EdgeItem::paint( QPainter *painter,
                                   cos(angle - Pi / 3) * arrowSize);
     destArrowP2 = dstP + QPointF( sin(angle - Pi + Pi / 3) * arrowSize,
                                   cos(angle - Pi + Pi / 3) * arrowSize);
-    if ( !succ()->isEdgeControl())
+    if ( succ()->isSimple())
         painter->drawPolygon(QPolygonF() << dstP << destArrowP1 << destArrowP2); 
 
     
@@ -406,8 +430,13 @@ void EdgeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 	edge()->graph()->emptySelection();
 	edge()->graph()->selectEdge( this->edge());
 	/** Show context menu */
-	if (ev->button() & Qt::RightButton)
-		edge()->graph()->view()->edgeMenu()->exec( ev->screenPos());
+    if ( ev->button() & Qt::RightButton)
+    {
+	    QMenu *menu = edge()->graph()->view()->createMenuForEdge( edge());
+        edge()->graph()->view()->setCurrPos( ev->pos());
+        menu->exec( ev->screenPos());
+        delete menu;
+    }
     QGraphicsItem::mouseReleaseEvent( ev);
 }
 
