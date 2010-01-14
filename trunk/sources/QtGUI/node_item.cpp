@@ -255,6 +255,10 @@ NodeItem::paint( QPainter *painter,
 
     if ( node()->isSimple() || node()->isEdgeLabel())
     {
+        if ( option->levelOfDetail < 0.1)
+        {
+            painter->fillRect( borderRect(), option->palette.highlight().color());
+        }
         qreal adjust = 3;
         if ( bold_border )// ( option->state & QStyle::State_Sunken))
         {
@@ -269,9 +273,12 @@ NodeItem::paint( QPainter *painter,
         }
         if ( node()->isSimple())
             painter->drawRect( borderRect());
-        QGraphicsTextItem::paint( painter, option, widget);
+        if ( option->levelOfDetail >= 0.2)
+            QGraphicsTextItem::paint( painter, option, widget);
     } else if ( node()->isEdgeControl())
     {
+        if ( option->levelOfDetail < 0.2)
+            return;
         if ( node()->firstPred()->item()->isSelected()
              || node()->firstSucc()->item()->isSelected())
         {

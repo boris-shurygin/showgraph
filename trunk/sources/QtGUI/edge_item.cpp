@@ -308,6 +308,11 @@ EdgeItem::paint( QPainter *painter,
                  const QStyleOptionGraphicsItem *option,
                  QWidget *widget)
 {
+    if ( option->levelOfDetail < 0.1)
+        return;
+
+    const qreal spline_detail_level = 0.4;
+    const qreal draw_arrow_detail_level = 0.3;
     QPointF curr_point;
     QLineF line = QLineF();
     curr_point = srcP;
@@ -323,63 +328,80 @@ EdgeItem::paint( QPainter *painter,
     if ( edge()->isSelf())
     {
         path = selfEdgePath();
-    } else
+    } else if ( option->levelOfDetail >= spline_detail_level)
     {
         path.cubicTo( cp1, cp2, dstP);
     }
-
     if ( nextToDst == dstP)
         return;
 
     // Draw the line itself
-    if ( option->state & QStyle::State_Selected)
+    if ( option->levelOfDetail >= spline_detail_level)
     {
+        if ( option->state & QStyle::State_Selected)
+        {
 #ifdef SHOW_BACKEDGES
-        if ( isInverted())
-        {
-            painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        } else
+            if ( isInverted())
+            {
+                painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            } else
 #endif
+            {
+                painter->setPen( QPen( option->palette.foreground().color(), 2,
+                                       Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            }
+        } else
         {
-            painter->setPen(QPen(option->palette.foreground().color(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+#ifdef SHOW_BACKEDGES
+            if ( isInverted())
+            {
+                painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            } else
+#endif
+            {
+                painter->setPen( QPen(option->palette.foreground().color(),
+                                 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            }
         }
     } else
     {
-#ifdef SHOW_BACKEDGES
-        if ( isInverted())
-        {
-            painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        } else
-#endif
-        {
-            painter->setPen( QPen(option->palette.foreground().color(),
-                             1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        }
+        painter->setPen( QPen(option->palette.foreground().color(),1));
+            
+    }
+    //Draw edge
+    if ( edge()->isSelf() || option->levelOfDetail >= spline_detail_level)
+    {
+        painter->drawPath(path);
+    } else
+    {
+        painter->drawLine( line);
     }
 
-    // Draw the arrows if there's enough room
-    double angle = ::acos(line.dx() / line.length());
-    if ( line.dy() >= 0)
-        angle = TwoPi - angle;
-    
-    QPointF destArrowP1;
-    QPointF destArrowP2;
-
-    painter->drawPath(path);
-    
-    /* NOTE:  Qt::black can be replaced by option->palette.foreground().color() */
-    painter->setBrush(Qt::black);
-    
-    if ( edge()->isSelf())
+    // Draw the arrows if there's enough room and level of detail is appropriate
+    if ( option->levelOfDetail >= draw_arrow_detail_level)
     {
-        angle = -2* Pi/3;
-    }  
-    destArrowP1 = dstP + QPointF( sin(angle - Pi / 3) * arrowSize,
-                                  cos(angle - Pi / 3) * arrowSize);
-    destArrowP2 = dstP + QPointF( sin(angle - Pi + Pi / 3) * arrowSize,
-                                  cos(angle - Pi + Pi / 3) * arrowSize);
-    if ( succ()->isSimple())
-        painter->drawPolygon(QPolygonF() << dstP << destArrowP1 << destArrowP2); 
+        double angle = ::acos(line.dx() / line.length());
+        if ( line.dy() >= 0)
+            angle = TwoPi - angle;
+        
+        QPointF destArrowP1;
+        QPointF destArrowP2;
+
+       
+        /* NOTE:  Qt::black can be replaced by option->palette.foreground().color() */
+        painter->setBrush(Qt::black);
+        
+        if ( edge()->isSelf())
+        {
+            angle = -2* Pi/3;
+        }  
+        destArrowP1 = dstP + QPointF( sin(angle - Pi / 3) * arrowSize,
+                                      cos(angle - Pi / 3) * arrowSize);
+        destArrowP2 = dstP + QPointF( sin(angle - Pi + Pi / 3) * arrowSize,
+                                      cos(angle - Pi + Pi / 3) * arrowSize);
+        if ( succ()->isSimple())
+            painter->drawPolygon(QPolygonF() << dstP << destArrowP1 << destArrowP2); 
+    }
 
     
 #ifdef SHOW_CONTROL_POINTS
