@@ -81,6 +81,21 @@ public:
     {
         return node( GRAPH_DIR_DOWN);
     }
+    
+    /** Get real node in given direction */
+    inline GNode* realNode( GraphDir) const;
+
+    /** Get real predecessor */
+	inline GNode* realPred() const
+	{
+		return realNode( GRAPH_DIR_UP);
+	}
+	/** Get real successor */
+	inline GNode* realSucc() const
+	{
+		return realNode( GRAPH_DIR_DOWN);
+	}
+
     /** Next edge in graph's list */
     inline GEdge* nextEdge()
     {
@@ -170,6 +185,8 @@ public:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     /** Event handler for double click */
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    /** Key press event handler */
+    void keyPressEvent(QKeyEvent *event);
     /** Get predecessor in terms of graph model */
     inline GNode* pred() const
     {

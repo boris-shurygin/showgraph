@@ -266,15 +266,11 @@ class GraphView: public QGraphicsView
 {
     Q_OBJECT; /** For MOC */
 private:
-    QPointF curr_pos;
-    bool createEdge;
-	bool show_menus;
-    GNode *tmpSrc;
-    GNode *search_node;
+    /** Pointer to model graph */   
     GGraph * graph_p;
-    qreal zoom_scale;
+    /** History of view events */
     GraphViewHistory *view_history;
-
+   
     QList< NodeItem* > del_node_items;
     QList< EdgeItem* > del_edge_items;
 
@@ -286,6 +282,16 @@ private:
 	/** Context menus */
 	QMenu *nodeItemMenu;
 	QMenu *edgeItemMenu;
+    
+    /** Temporary data */
+    int timer_id;
+    QPointF curr_pos;
+    bool createEdge;
+	bool show_menus;
+    GNode *tmpSrc;
+    GNode *search_node;
+    qreal zoom_scale;
+    qreal preferred_zoom;
 private:
 	void createActions();
 	void createMenus();
@@ -381,7 +387,9 @@ public:
     void mouseMoveEvent(QMouseEvent *event);
     /** Mouse release event handler reimplementation */
     void mouseReleaseEvent(QMouseEvent *event);
-   
+    /** Keypress event handler reimplementation */
+    void keyPressEvent(QKeyEvent *event);
+
 	/** Mouse wheel event handler reimplementation */
     void wheelEvent(QWheelEvent *event);
     /** Zoom the view in */
@@ -439,6 +447,9 @@ public:
         checkDelItems();
     }
     
+    /** Timer event handler */
+    void timerEvent(QTimerEvent *event);
+     
     /**
      * Delete items that have been disconnected from scene
      */

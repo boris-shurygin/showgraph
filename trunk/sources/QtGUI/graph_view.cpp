@@ -176,7 +176,8 @@ GraphView::GraphView():
     createEdge( false),
     graph_p( new GGraph( this)),
 	zoom_scale( 0),
-    view_history( new GraphViewHistory)
+    view_history( new GraphViewHistory),
+    timer_id( 0)
 {
     QGraphicsScene *scene = new QGraphicsScene( this);
     //scene->setItemIndexMethod( QGraphicsScene::NoIndex);
@@ -189,6 +190,7 @@ GraphView::GraphView():
     setResizeAnchor( AnchorViewCenter);
     setMinimumSize( 200, 200);
     setWindowTitle( tr("ShowGraph"));
+    setDragMode( ScrollHandDrag);
     //setDragMode( RubberBandDrag);
     tmpSrc = NULL;
     search_node = NULL;
@@ -238,6 +240,11 @@ GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
 void
 GraphView::mousePressEvent(QMouseEvent *ev)
 {
+    if( timer_id)
+    {
+        killTimer( timer_id);
+        timer_id = 0;
+    }
     QGraphicsView::mousePressEvent( ev);
 }
 
@@ -274,6 +281,20 @@ void
 GraphView::mouseMoveEvent(QMouseEvent *ev)
 {
     QGraphicsView::mouseMoveEvent(ev);
+}
+
+void 
+GraphView::keyPressEvent(QKeyEvent *event)
+{
+    if ( event->key() == scene()->selectedItems().size() == 1)
+    {
+        EdgeItem* e = qgraphicsitem_cast<EdgeItem *>( scene()->selectedItems().first());
+        if ( e)
+        {
+        
+        }
+    }     
+    QGraphicsView::keyPressEvent( event);
 }
 
 /**
@@ -423,6 +444,51 @@ void GraphView::dragMoveEvent( QDragMoveEvent *event)
 	//event->acceptProposedAction();
 }
 
+void GraphView::timerEvent( QTimerEvent *event)
+{
+    GNode *target = graph()->nodeInFocus(); 
+    const qreal STEP_LEN = 10;
+    if ( target)
+    {
+        QRectF item_rect = target->item()->mapToScene( target->item()->boundingRect()).boundingRect();
+        QRectF view_rect = mapToScene( viewport()->rect())
+                           .boundingRect();
+        
+        QLineF line( view_rect.center(), item_rect.center());
+        qreal dist = line.length();
+        QPointF displacement( STEP_LEN * line.dx() / dist, STEP_LEN * line.dy() / dist);
+        QLineF expected_step( view_rect.center(), view_rect.center() + displacement);
+        centerOn( view_rect.center() + displacement);
+        QRectF new_view_rect = mapToScene( viewport()->rect()).boundingRect();
+        QLineF step( new_view_rect.center(), view_rect.center());
+        qreal len = step.length();
+        if ( ( dist < STEP_LEN || len < STEP_LEN /2 )
+             && abs<qreal>( zoom_scale - preferred_zoom) < 1)
+        {
+            zoom_scale = preferred_zoom;
+            centerOn( target->item());
+            updateMatrix();
+            killTimer( timer_id);
+            timer_id = 0;
+        }
+        
+        if ( dist < STEP_LEN || len < STEP_LEN /2 )
+        {    
+           if ( zoom_scale < preferred_zoom)
+            {
+                zoom_scale+=0.2;
+                updateMatrix();
+            }
+        } 
+        if( abs<qreal>( line.dx()) > view_rect.width()
+            || abs<qreal>( line.dy()) > view_rect.height())
+        {
+            zoom_scale-=0.2;
+            updateMatrix();
+        }
+    }
+}
+
 void GraphView::clearSearch()
 {
     search_node = NULL;
@@ -434,7 +500,11 @@ void GraphView::focusOnNode( GNode *n, bool gen_event)
     graph()->selectNode( n);
     n->item()->highlight();
     n->item()->update();
-    centerOn( n->item());
+    //centerOn( n->item()); replaced by animation
+    if (!timer_id)
+         timer_id = startTimer(1000/25);
+    preferred_zoom = zoom_scale;
+            
     if ( gen_event && !n->isNodeInFocus())
         view_history->focusEvent( n);
     graph()->setNodeInFocus( n);
@@ -515,7 +585,9 @@ bool GraphView::findNodeById( int id)
 	GNode *n;
 	foreachNode( n, graph())
 	{
-        if ( !n->isEdgeControl() && n->irId() == id)
+        if ( !n->isEdgeControl()
+             && !n->isEdgeLabel()
+             && n->irId() == id)
 			break;
 	}
 	if ( isNotNullP( n))
