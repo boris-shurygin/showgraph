@@ -181,6 +181,7 @@ NodeItem::SetInitFlags()
     setFlag( ItemIsFocusable, false);
     setCacheMode( DeviceCoordinateCache);
     setZValue(2);
+    QGraphicsItem::setCursor( Qt::ArrowCursor);
 }
 
 /**

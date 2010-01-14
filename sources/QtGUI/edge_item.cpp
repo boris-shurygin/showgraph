@@ -30,6 +30,12 @@ GEdge::node( GraphDir dir) const
     return static_cast< GNode *>(AuxEdge::node( dir));
 }
 
+GNode * 
+GEdge::realNode( GraphDir dir) const 
+{
+    return static_cast< GNode *>(AuxEdge::realNode( dir));
+}
+
 GGraph *
 GEdge::graph() const
 {
@@ -84,7 +90,9 @@ GEdge::insertLabelNode( QPointF pos)
 EdgeItem::EdgeItem( GEdge *e_p): edge_p( e_p)
 {
     curr_mode = ModeShow;
-    setFlag( ItemIsSelectable);
+    QGraphicsItem::setCursor( Qt::ArrowCursor);
+	setFlag( ItemIsSelectable);
+    setFlag( ItemIsFocusable);
     //setCacheMode( DeviceCoordinateCache);
     setZValue(1);
 }
@@ -482,3 +490,36 @@ void EdgeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
         }
     }
 }
+
+void 
+EdgeItem::keyPressEvent(QKeyEvent *event)
+{
+    int key = event->key();
+    
+    switch( key)
+    {
+        case Qt::Key_Up:
+        case Qt::Key_Down:
+            {
+                bool up = (key == Qt::Key_Up);
+                GNode *pred = edge()->realPred();
+                GNode *succ = edge()->realSucc();
+                
+                if ( pred->item()->pos().y() >
+                     succ->item()->pos().y() + succ->item()->boundingRect().height())
+                {
+                    //Successor over predecessor
+                    edge()->graph()->view()->focusOnNode( up? succ: pred, true);
+                } else
+                {
+                    //Predecessor over successor
+                    edge()->graph()->view()->focusOnNode( up? pred: succ, true);
+                }
+            }
+            break;
+        default:
+            break;
+    }
+    QGraphicsItem::keyPressEvent( event);
+}
+
