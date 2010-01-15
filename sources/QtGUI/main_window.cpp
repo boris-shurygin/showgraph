@@ -189,7 +189,9 @@ void MainWindow::connectToGraphView( GraphView *gview)
     connect( navNextAct, SIGNAL( triggered()), gview, SLOT( navNext()));
     connect( findWidget->editFind, SIGNAL( textChanged( const QString &)),
              gview, SLOT( clearSearch()));
-
+    connect( trackFocusAct, SIGNAL( toggled( bool)),
+             gview, SLOT( toggleSmoothFocus( bool)));
+    gview->toggleSmoothFocus( trackFocusAct->isChecked());
     /** Place graph view in window */
     vboxLayout->addWidget( graph_view);
 }
@@ -519,6 +521,10 @@ void MainWindow::createActions()
     navPrevAct->setShortcut( tr("Ctrl+Left"));
     navNextAct = new QAction( tr("Navigate &Forward"), this);
     navNextAct->setShortcut( tr("Ctrl+Right"));
+
+    trackFocusAct = new QAction( tr("Smooth Centering"), this);
+    trackFocusAct->setCheckable( true);
+    trackFocusAct->setChecked( false);
 }
 
 void MainWindow::createMenus()
@@ -541,6 +547,7 @@ void MainWindow::createMenus()
 	viewMenu->addAction( zoomInAct);
     viewMenu->addAction( zoomOutAct);
     viewMenu->addAction( zoomOrigAct);
+    viewMenu->addAction( trackFocusAct);
     viewMenu->addSeparator();
     
     dock_find->toggleViewAction()->setShortcut(tr("Ctrl+F"));

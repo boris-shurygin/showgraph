@@ -8,6 +8,11 @@
  */
 #include "gui_impl.h"
 
+inline qreal scaleVal( qreal zoom_scale)
+{
+    return qPow( qreal(2), zoom_scale / qreal(5));
+}
+
 /** Destructor */
 GGraph::~GGraph()
 {
@@ -177,7 +182,8 @@ GraphView::GraphView():
     graph_p( new GGraph( this)),
 	zoom_scale( 0),
     view_history( new GraphViewHistory),
-    timer_id( 0)
+    timer_id( 0),
+    smooth_focus( false)
 {
     QGraphicsScene *scene = new QGraphicsScene( this);
     //scene->setItemIndexMethod( QGraphicsScene::NoIndex);
@@ -186,7 +192,7 @@ GraphView::GraphView():
     //setCacheMode( CacheBackground);
     setViewportUpdateMode( SmartViewportUpdate);
     setRenderHint( QPainter::Antialiasing);
-    setTransformationAnchor( AnchorUnderMouse);
+    setTransformationAnchor( NoAnchor);//AnchorViewCenter);
     setResizeAnchor( AnchorViewCenter);
     setMinimumSize( 200, 200);
     setWindowTitle( tr("ShowGraph"));
@@ -328,11 +334,30 @@ void GraphView::zoomOrig()
 
 void GraphView::updateMatrix()
 {
-     qreal scale_val = qPow( qreal(2), zoom_scale / qreal(5)); 
-     QMatrix matrix;
-     matrix.scale(scale_val, scale_val);
-   
-     setMatrix(matrix);
+     qreal scale_val = scaleVal( zoom_scale); 
+     QMatrix scale;
+     qreal prev_scale = matrix().m11();
+     qreal scale_ratio = scale_val / prev_scale; 
+     scale.scale( scale_val, scale_val);
+     GNode * focus = graph()->nodeInFocus();
+     if ( isNotNullP( focus))
+     {
+         QPointF item_center = focus->item()->mapToScene( focus->item()->boundingRect())
+                               .boundingRect()
+                               .center();
+         QPointF old_center = mapToScene( viewport()->rect())
+                             .boundingRect()
+                             .center();
+
+         QPointF item_in_view = item_center - old_center;
+         setMatrix( scale); // scale
+         QPointF new_center = old_center + item_in_view * ( scale_ratio - 1) / scale_ratio;
+         centerOn( new_center); // adjust to keep focus point in place
+     } else
+     {
+         setMatrix( scale);
+     }
+     
 }
 
 void
@@ -447,7 +472,8 @@ void GraphView::dragMoveEvent( QDragMoveEvent *event)
 void GraphView::timerEvent( QTimerEvent *event)
 {
     GNode *target = graph()->nodeInFocus(); 
-    const qreal STEP_LEN = 10;
+    qreal STEP_LEN = 10 / scaleVal( zoom_scale);
+    const qreal STEP_SCALE = 0.2;
     if ( target)
     {
         QRectF item_rect = target->item()->mapToScene( target->item()->boundingRect()).boundingRect();
@@ -455,40 +481,46 @@ void GraphView::timerEvent( QTimerEvent *event)
                            .boundingRect();
         
         QLineF line( view_rect.center(), item_rect.center());
+        
         qreal dist = line.length();
         QPointF displacement( STEP_LEN * line.dx() / dist, STEP_LEN * line.dy() / dist);
-        QLineF expected_step( view_rect.center(), view_rect.center() + displacement);
-        centerOn( view_rect.center() + displacement);
+        if ( dist > STEP_LEN /2)
+            centerOn( view_rect.center() + displacement);
+        
         QRectF new_view_rect = mapToScene( viewport()->rect()).boundingRect();
         QLineF step( new_view_rect.center(), view_rect.center());
         qreal len = step.length();
-        if ( ( dist < STEP_LEN || len < STEP_LEN /2 )
-             && abs<qreal>( zoom_scale - preferred_zoom) < 1)
-        {
-            zoom_scale = preferred_zoom;
-            centerOn( target->item());
-            updateMatrix();
-            killTimer( timer_id);
-            timer_id = 0;
-        }
         
-        if ( dist < STEP_LEN || len < STEP_LEN /2 )
-        {    
-           if ( zoom_scale < preferred_zoom)
+        if ( zoom_out_done)
+        {   
+            if ( dist < STEP_LEN || len < STEP_LEN /2)
             {
-                zoom_scale+=0.2;
+                zoom_scale+=STEP_SCALE;
                 updateMatrix();
+                if ( abs<qreal>( zoom_scale - preferred_zoom) <= STEP_SCALE * 2)
+                {
+                    zoom_scale = preferred_zoom;
+                    updateMatrix();
+                    killTimer( timer_id);
+                    timer_id = 0;
+                    centerOn( target->item());
+                }
             }
-        } 
-        if( abs<qreal>( line.dx()) > view_rect.width()
-            || abs<qreal>( line.dy()) > view_rect.height())
-        {
-            zoom_scale-=0.2;
-            updateMatrix();
         }
-    }
+        if ( ! zoom_out_done
+             && ( abs<qreal>( line.dx()) > view_rect.width()
+                  || abs<qreal>( line.dy()) > view_rect.height()))
+        {
+            zoom_scale-=STEP_SCALE;
+            QMatrix scale;
+            scale.scale( scaleVal( zoom_scale), scaleVal( zoom_scale));
+            setMatrix( scale);
+        } else
+        {
+            zoom_out_done = true;
+        }
+    } 
 }
-
 void GraphView::clearSearch()
 {
     search_node = NULL;
@@ -500,11 +532,17 @@ void GraphView::focusOnNode( GNode *n, bool gen_event)
     graph()->selectNode( n);
     n->item()->highlight();
     n->item()->update();
-    //centerOn( n->item()); replaced by animation
-    if (!timer_id)
-         timer_id = startTimer(1000/25);
-    preferred_zoom = zoom_scale;
-            
+    
+    if ( smooth_focus)
+    {
+        if (!timer_id)
+             timer_id = startTimer(1000/25);
+        preferred_zoom = zoom_scale;
+        zoom_out_done = false;
+    } else
+    {
+        centerOn( n->item());
+    }
     if ( gen_event && !n->isNodeInFocus())
         view_history->focusEvent( n);
     graph()->setNodeInFocus( n);
@@ -609,6 +647,11 @@ void GraphView::replayNavigationEvent( NavEvent *ev)
         assert( isNotNullP( ev->node()));
         focusOnNode( ev->node(), false); 
     }
+}
+
+void GraphView::toggleSmoothFocus( bool smooth)
+{
+    smooth_focus = smooth;
 }
 
 /** Navigate backward */
