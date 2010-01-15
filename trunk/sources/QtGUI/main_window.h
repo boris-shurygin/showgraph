@@ -155,6 +155,7 @@ private:
 	QMenu *fileMenu;
     QMenu *viewMenu;
     QMenu *helpMenu;
+    QAction *trackFocusAct;
     QAction *openAct;
     QAction *newGraphAct;
     QAction *saveAsAct;

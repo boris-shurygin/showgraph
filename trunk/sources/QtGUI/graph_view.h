@@ -288,6 +288,8 @@ private:
     QPointF curr_pos;
     bool createEdge;
 	bool show_menus;
+    bool smooth_focus;
+    bool zoom_out_done;
     GNode *tmpSrc;
     GNode *search_node;
     qreal zoom_scale;
@@ -311,6 +313,8 @@ public slots:
 	void createSESelected();
     /** Create edge label */
     void createEdgeLabel();
+    /** Toggle smooth focusing mode ( moving viewport to show user how to get from one node to anoter) */
+    void toggleSmoothFocus( bool smooth);
 
 public:
     /** Constants */
