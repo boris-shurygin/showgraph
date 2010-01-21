@@ -192,7 +192,7 @@ GraphView::GraphView():
     //setCacheMode( CacheBackground);
     setViewportUpdateMode( SmartViewportUpdate);
     setRenderHint( QPainter::Antialiasing);
-    setTransformationAnchor( NoAnchor);//AnchorViewCenter);
+    setTransformationAnchor( AnchorViewCenter);
     setResizeAnchor( AnchorViewCenter);
     setMinimumSize( 200, 200);
     setWindowTitle( tr("ShowGraph"));
@@ -474,7 +474,7 @@ void GraphView::timerEvent( QTimerEvent *event)
     GNode *target = graph()->nodeInFocus(); 
     qreal STEP_LEN = 10 / scaleVal( zoom_scale);
     const qreal STEP_SCALE = 0.2;
-    if ( target)
+    if ( isNotNullP( target))
     {
         QRectF item_rect = target->item()->mapToScene( target->item()->boundingRect()).boundingRect();
         QRectF view_rect = mapToScene( viewport()->rect())
