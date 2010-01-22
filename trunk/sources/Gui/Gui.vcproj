@@ -131,7 +131,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmain.lib QtGui4.lib QtCore4.lib QtXml4.lib"
 				OutputFile="$(OutDir)\showgraph.exe"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -168,7 +168,23 @@
 	</References>
 	<Files>
 		<File
+			RelativePath=".\Gui1.rc"
+			>
+		</File>
+		<File
+			RelativePath=".\logo.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\main.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\resource.h"
+			>
+		</File>
+		<File
+			RelativePath=".\resource1.h"
 			>
 		</File>
 	</Files>
