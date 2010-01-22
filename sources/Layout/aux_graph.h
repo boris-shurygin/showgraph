@@ -50,7 +50,7 @@ class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
     int priv_order;
     Rank priv_rank;
     AuxNodeType node_type;
-
+    bool is_for_placement;
 public:
     /** Get Height */
     virtual double height() const
@@ -167,6 +167,11 @@ public:
     {
         return node_type == AUX_EDGE_LABEL;
     }
+    /** Check whether node is pseudo */
+    inline bool isPseudo() const
+    {
+        return isEdgeControl() || isEdgeLabel();
+    }
     /** Set node to be an edge control */
     inline void setTypeEdgeControl()
     {
@@ -181,6 +186,16 @@ public:
     inline void setTypeEdgeLabel()
     {
         node_type = AUX_EDGE_LABEL;
+    }
+    /** Check if this node participates in horizontal arrangement */
+    inline bool isForPlacement() const
+    {
+        return is_for_placement;
+    }
+    /** Set node to participate in horizontal arrangement */
+    inline void setForPlacement( bool placed = true)
+    {
+        is_for_placement = placed;
     }
     /** Print node's debug info */
     inline void debugPrint()
@@ -251,7 +266,8 @@ protected:
         priv_priority(-1),
         priv_level( NULL),
         priv_order(-1),
-        node_type( AUX_NODE_SIMPLE)
+        node_type( AUX_NODE_SIMPLE),
+        is_for_placement( 1)
     {
     }
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;
@@ -380,7 +396,7 @@ public:
 	{
 		AuxNode* n = node( dir);
 		assertd( isNotNullP( n));
-		while ( n->isEdgeControl() || n->isEdgeLabel())
+		while ( n->isPseudo())
 		{
 			n = n->firstEdgeInDir( dir)->node( dir);
 		}
@@ -416,6 +432,9 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
 
     /** Maximum used for ranking */
     GraphNum max_rank;
+
+    /** Marker for nodes that have are subject to horizontal placement */
+    Marker for_placement;
 
 	/** 
 	 * Structure used for dfs traversal loop-wise implementation
@@ -461,8 +480,7 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
     void reduceCrossings();
     /** Find proper vertical position for each level */
     void adjustVerticalLevels();
-    /** Arrange nodes horizontally */
-    void arrangeHorizontally();
+
     /** Assign ranks to nodes in respect to maximum length of path from top */
     Numeration rankNodes();
     /** Assign edge types, mark edges that should be inverted */
@@ -481,6 +499,8 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
 protected:
     /** Get node that is considered root one after the layout */
     AuxNode* rootNode();
+    /** Arrange nodes horizontally */
+    void arrangeHorizontally();
 public:
     
     /** Default constructor */
@@ -504,7 +524,21 @@ public:
     {
         return new AuxEdge( graph_p, _id, _pred, _succ);
     }
-    
+    inline void freePlacementMarker()
+    {
+        freeMarker( for_placement);
+    }
+    inline Marker newPlacement()
+    {
+        freeMarker( for_placement);
+        for_placement = newMarker();
+        return for_placement;
+    }
+    inline Marker placementMarker() const
+    {
+        return for_placement;
+    }
+
     /** Perform layout */
     void doLayout();
 };

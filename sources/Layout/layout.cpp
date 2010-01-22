@@ -51,8 +51,11 @@ void Level::arrangeNodes( GraphDir dir, bool commit_placement, bool first_pass)
     QList< NodeGroup *> list;
     foreach ( AuxNode* node, node_list)
     {
-        NodeGroup* group = new NodeGroup( node, dir, first_pass);
-        list.push_back( group);
+        if ( node->isForPlacement())
+        {
+            NodeGroup* group = new NodeGroup( node, dir, first_pass);
+            list.push_back( group);
+        }
     }
     /** Sort groups with respect to their coordinates */
     qSort( list.begin(), list.end(), compareGroups);

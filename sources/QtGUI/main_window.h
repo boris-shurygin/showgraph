@@ -162,6 +162,7 @@ private:
     QAction *exitAct;
     QAction *aboutAct;
     QAction *layoutRunAct;
+    QAction *contextViewAct;
 	QAction *findAct;
     QAction *navPrevAct;
     QAction *navNextAct;

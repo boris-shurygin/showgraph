@@ -192,6 +192,8 @@ void MainWindow::connectToGraphView( GraphView *gview)
              gview, SLOT( clearSearch()));
     connect( trackFocusAct, SIGNAL( toggled( bool)),
              gview, SLOT( toggleSmoothFocus( bool)));
+    connect( contextViewAct, SIGNAL( toggled( bool)),
+             gview, SLOT( toggleViewMode( bool)));
     gview->toggleSmoothFocus( trackFocusAct->isChecked());
     /** Place graph view in window */
     vboxLayout->addWidget( graph_view);
@@ -526,6 +528,10 @@ void MainWindow::createActions()
     trackFocusAct = new QAction( tr("Smooth Centering"), this);
     trackFocusAct->setCheckable( true);
     trackFocusAct->setChecked( false);
+
+    contextViewAct = new QAction( tr("Context View"), this);
+    contextViewAct->setCheckable( true);
+    contextViewAct->setChecked( false);
 }
 
 void MainWindow::createMenus()
@@ -544,6 +550,7 @@ void MainWindow::createMenus()
 
     viewMenu = menuBar()->addMenu( tr( "&View"));
     viewMenu->addAction( layoutRunAct);
+    viewMenu->addAction( contextViewAct);
     viewMenu->addSeparator();
 	viewMenu->addAction( zoomInAct);
     viewMenu->addAction( zoomOutAct);

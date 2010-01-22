@@ -62,6 +62,15 @@ GGraph::newEdge( GNode* pred, GNode* succ, QDomElement e)
     edge_p->item()->adjust();
     return edge_p;
 }
+
+void GGraph::showNodesText()
+{
+    foreach (GNode *n, sel_nodes)
+    {
+        view()->showNodeText( n);
+    }
+}
+
 /**
  * Delete scheduled nodes
  */
@@ -106,6 +115,98 @@ void GGraph::createEdgeLabel( QPointF pos)
     }
 }
 
+void GGraph::showWholeGraph()
+{
+    assert( !view()->isContext());
+    emptySelection();
+    GNode* n;
+    foreachNode( n, this)
+    {
+        n->item()->setVisible( true);
+        n->setForPlacement( true);
+    }
+    doLayout();
+}
+
+/** Create label on selected edge */
+void GGraph::findContext()
+{
+    if ( sel_nodes.isEmpty())
+        return;
+    
+    QQueue< GNode *> border;
+    Marker m = newMarker();
+    foreach( GNode *n, sel_nodes)
+    {
+        n->mark( m);
+        border.enqueue( n);
+    }
+    for ( int i = 0; i < 5; i++)
+    {
+        int added = border.count();
+        for ( int j = 0; j < added; j++)
+        {
+            GNode *n = border.dequeue(); 
+            if ( !n->isPseudo())
+            {
+                selectNode( n);
+                n->item()->highlight();
+            }
+            n->item()->update();
+            GEdge *e;
+            foreachPred( e, n)
+            {
+                GNode * pred = e->pred();
+                
+                if ( pred->mark( m))
+                {
+                    border.enqueue( pred);
+                }
+            }
+            foreachSucc( e, n)
+            {
+                GNode * succ = e->succ();
+                if ( succ->mark( m))
+                {
+                    border.enqueue( succ);
+                }
+            }
+        }
+    }
+    if ( view()->isContext())
+    {
+        GNode* n;
+        foreachNode( n, this)
+        {
+            if ( n->isMarked( m))
+            {
+                n->item()->setVisible( true);
+                n->setForPlacement( true);
+            } else
+            {
+                n->item()->setVisible( false);
+                n->setForPlacement( false);
+            }
+        }
+        GEdge *e;
+        foreachEdge( e, this)
+        {
+            if ( e->realPred()->isMarked( m)
+                 && e->realSucc()->isMarked( m))
+            {
+                e->pred()->item()->setVisible( true);   
+                e->succ()->item()->setVisible( true);   
+                e->pred()->setForPlacement( true);
+                e->succ()->setForPlacement( true);
+            }
+        }
+        view()->focusOnNode( sel_nodes.first(), true);
+        doLayout();
+    }
+    freeMarker( m);
+    
+}
+
 void GGraph::deleteEdgeWithControls( GEdge *edge)
 {
 	QList< GNode *> nodes;
@@ -140,14 +241,8 @@ void GGraph::deleteEdgeWithControls( GEdge *edge)
 	
 }
 
-/**
- * Run layout procedure
- */
-void GGraph::doLayout()
+void GGraph::UpdatePlacement()
 {
-    /** Run layout algorithm */
-	AuxGraph::doLayout();
-    
 	QGraphicsScene *scene = view()->scene();
 	
 	/**
@@ -164,15 +259,33 @@ void GGraph::doLayout()
     {
         n->item()->setPos( n->modelX(), n->modelY());
     }
-    /** Center view on root node */
-	GNode *root = static_cast<GNode*>( rootNode());
-    if ( isNotNullP( root))
-    {
-        view_p->centerOn( root->item());
-    }
 	/** Restore indexing */
 	scene->setItemIndexMethod( QGraphicsScene::BspTreeIndex);
-    scene->setBspTreeDepth( depth);
+    scene->setBspTreeDepth( depth); 
+}
+/**
+ * Run layout procedure
+ */
+void GGraph::doLayout()
+{
+    if ( view()->isContext())
+    {
+        arrangeHorizontally();
+        UpdatePlacement();
+    } else
+    {
+        /** Run layout algorithm */
+	    AuxGraph::doLayout();
+        
+        UpdatePlacement();
+        
+        /** Center view on root node */
+	    GNode *root = static_cast<GNode*>( rootNode());
+        if ( isNotNullP( root))
+        {
+            view_p->centerOn( root->item());
+        }
+    }
 }
 
 /** Constructor */
@@ -183,7 +296,8 @@ GraphView::GraphView():
 	zoom_scale( 0),
     view_history( new GraphViewHistory),
     timer_id( 0),
-    smooth_focus( false)
+    smooth_focus( false),
+    view_mode( WHOLE_GRAPH_VIEW)
 {
     QGraphicsScene *scene = new QGraphicsScene( this);
     //scene->setItemIndexMethod( QGraphicsScene::NoIndex);
@@ -396,6 +510,16 @@ void GraphView::createEdgeLabel()
     graph()->createEdgeLabel( curr_pos);
 }
 
+void GraphView::findContext()
+{
+    graph()->findContext();
+}
+
+/** Show text of the clicked node */
+void GraphView::showSelectedNodesText()
+{
+    graph()->showNodesText();
+}
 
 void GraphView::createActions()
 {
@@ -403,11 +527,17 @@ void GraphView::createActions()
     deleteItemAct->setShortcut(tr("Ctrl+D"));
     connect(deleteItemAct, SIGNAL(triggered()), this, SLOT( deleteSelected()));
 
-    createSelfEdgeAct = new QAction(tr("&Create Self Edge"), this);
+    createSelfEdgeAct = new QAction(tr("&Create self-edge"), this);
     connect( createSelfEdgeAct, SIGNAL(triggered()), this, SLOT( createSESelected()));
 
-    createEdgeLabelAct = new QAction(tr("&Create Label"), this);
+    createEdgeLabelAct = new QAction(tr("&Create label"), this);
     connect( createEdgeLabelAct, SIGNAL(triggered()), this, SLOT( createEdgeLabel()));
+
+    findContextAct = new QAction(tr("&Highlight context"), this);
+    connect( findContextAct, SIGNAL(triggered()), this, SLOT( findContext()));
+    
+    showTextAct = new QAction(tr("&Show text"), this);
+    connect( showTextAct, SIGNAL(triggered()), this, SLOT( showSelectedNodesText()));
 }
 
 void GraphView::createMenus()
@@ -427,6 +557,8 @@ QMenu* GraphView::createMenuForNode( GNode *n)
     if ( !n->isEdgeControl())
     {
         menu->addAction( createSelfEdgeAct);
+        menu->addAction( findContextAct);
+        menu->addAction( showTextAct);
     }
     return menu;
 }
@@ -654,6 +786,15 @@ void GraphView::toggleSmoothFocus( bool smooth)
     smooth_focus = smooth;
 }
 
+void GraphView::toggleViewMode( bool context)
+{
+    view_mode = context? CONTEXT_VIEW : WHOLE_GRAPH_VIEW;
+    if ( !context)
+    {
+        graph()->showWholeGraph();
+    }
+}
+
 /** Navigate backward */
 void GraphView::navPrev()
 {
@@ -669,7 +810,7 @@ void GraphView::navNext()
     if ( isNotNullP( ev))
         replayNavigationEvent( ev);
 }
-
+/** Erase node from history */
 void GraphViewHistory::eraseNode( GNode *n)
 {
     it = events.begin();

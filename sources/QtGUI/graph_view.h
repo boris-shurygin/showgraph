@@ -192,11 +192,17 @@ public:
      */
     void doLayout();
 
+    /**
+     * Assign placement coordinates to node items
+     */
+    void UpdatePlacement();
+
     /** Get corresponding graph view widget */
     inline GraphView *view() const
     {
         return view_p;
     }
+    void showNodesText();
 	/**
      * Add node to selection
      */
@@ -256,7 +262,29 @@ public:
      * Create label on selected edge
      */
     void createEdgeLabel( QPointF pos);
-	
+
+    /**
+     * Create label on selected edge
+     */
+    void findContext();
+    
+	/**
+     * Make all nodes of graph visible and eligible for placement
+     */
+    void showWholeGraph();
+};
+
+/**
+ * View mode types
+ */
+enum GraphViewMode
+{
+    /** Whole graph view mode */
+    WHOLE_GRAPH_VIEW,
+    /** Context view mode */
+    CONTEXT_VIEW,
+    /** Number of view modes for graph */
+    GRAPH_VIEW_MODES_NUM
 };
 
 /**
@@ -270,7 +298,9 @@ private:
     GGraph * graph_p;
     /** History of view events */
     GraphViewHistory *view_history;
-   
+    /** View mode */
+    GraphViewMode view_mode;
+    /** Deleted items lists */
     QList< NodeItem* > del_node_items;
     QList< EdgeItem* > del_edge_items;
 
@@ -278,6 +308,8 @@ private:
 	QAction *deleteItemAct;
     QAction *createSelfEdgeAct;
 	QAction *createEdgeLabelAct;
+    QAction *findContextAct;
+    QAction *showTextAct;
     
 	/** Context menus */
 	QMenu *nodeItemMenu;
@@ -313,9 +345,14 @@ public slots:
 	void createSESelected();
     /** Create edge label */
     void createEdgeLabel();
+    /** Find node's context */
+    void findContext();
     /** Toggle smooth focusing mode ( moving viewport to show user how to get from one node to anoter) */
     void toggleSmoothFocus( bool smooth);
-
+    /** Toggle view mode */
+    void toggleViewMode( bool context);
+    /** Show text of the clicked node */
+    void showSelectedNodesText();
 public:
     /** Constants */
 #ifdef _DEBUG
@@ -328,6 +365,11 @@ public:
     /** Destructor */
     ~GraphView();
     
+    /** Return true if view operates in context mode */
+    inline bool isContext() const
+    {
+        return view_mode == CONTEXT_VIEW;
+    }
     /** Return saved position */
     inline QPointF currPos() const
     {
@@ -353,6 +395,7 @@ public:
     {
         emit nodeClicked( n);
     }
+
     /** Get pointer to model graph */
     inline GGraph *graph() const
     {
