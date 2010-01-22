@@ -15,7 +15,8 @@ MainWindow::MainWindow()
     QFrame *central = new QFrame( this);
 	central->setMinimumSize( 200, 200);
 	dock_find = new QDockWidget( tr("Find"), this);
-    
+    QIcon icon( "images/logo.ico");
+    setWindowIcon(icon);
     createActions();
     createMenus();
 
