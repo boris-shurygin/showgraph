@@ -41,6 +41,8 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
     {
         if ( !e->isInverted())
         {
+            if ( !e->node( rdir)->isForPlacement())
+                continue;
             num_peers++;
             if ( e->node( rdir)->isEdgeLabel())
             {
@@ -57,7 +59,11 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
     {
         if ( e->isInverted())
         {
+            if ( !e->node( dir)->isForPlacement())
+                continue;
+            
             num_peers++;
+
             if ( e->node( dir)->isEdgeLabel())
             {
                 sum+= ( e->node( dir)->modelX());

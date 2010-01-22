@@ -341,7 +341,13 @@ void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
     } else if ( event->button() & Qt::LeftButton 
                 && !( node()->isEdgeControl() || node()->isEdgeLabel()))
     {
-        node()->graph()->view()->showNodeText( node());
+        if (  node()->graph()->view()->isContext())
+        {
+            node()->graph()->view()->findContext();
+        } else
+        {
+            node()->graph()->view()->showNodeText( node());
+        }
 	}
 	QGraphicsTextItem::mouseReleaseEvent( event);
 	update();

@@ -39,12 +39,14 @@ public:
     {
         bold_border = true;
         alternate_background = true;
+        update();
     }
     /** Set node to be regular */
     inline void toRegular()
     {
         bold_border = false;
         alternate_background = false;
+        update();
     }
     /** Get corresponding text doc */
 	inline QDockWidget *textDock() const

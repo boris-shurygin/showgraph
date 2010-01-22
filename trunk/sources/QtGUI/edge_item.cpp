@@ -126,6 +126,15 @@ QPainterPath EdgeItem::selfEdgePath() const
 void
 EdgeItem::adjust()
 {
+    if ( edge()->pred()->item()->isVisible()
+         && edge()->succ()->item()->isVisible())
+    {
+        setVisible( true);
+    } else
+    {
+        setVisible( false);
+        return;
+    }
     if ( edge()->isSelf())
     {
         QPointF center = mapFromItem( pred()->item(), pred()->item()->borderRect().center());
