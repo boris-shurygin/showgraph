@@ -2,6 +2,8 @@
 
  * [Introduction Introduction]
  * [Overview Overview]
+ * [Manual User's Manual]
+ * [Releases Release History]
  * [Docs Project Design Documents]
    * [Problem Problem definition]
    * [Reqs Requirements]
