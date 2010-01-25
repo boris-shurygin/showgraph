@@ -387,6 +387,8 @@ Numeration AuxGraph::rankNodes()
     QVector< int> pred_nums( nodeCount());
     QStack< AuxNode *> stack; // Node stack
     
+    invalidateRanking();
+
     Numeration own = newNum();
     GraphNum i = 0;
     max_rank = 0;
@@ -570,6 +572,7 @@ Numeration AuxGraph::rankNodes()
             curr_rank++;
         }
     }
+    validateRanking();
 #ifdef _DEBUG
     //debugPrint();
 #endif

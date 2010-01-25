@@ -9,7 +9,7 @@
 /**
  * Default constructor
  */
-AuxGraph::AuxGraph(): levels() 
+AuxGraph::AuxGraph(): ranking_valid( false), levels() 
 {
     ranking = newNum();
     order = newNum();
