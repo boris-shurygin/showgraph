@@ -334,7 +334,7 @@ EdgeItem::paint( QPainter *painter,
     QLineF line = QLineF();
     curr_point = srcP;
     QPointF nextToDst = srcP;
-    
+    int priority = min<int>( edge()->pred()->priority(), edge()->succ()->priority());
     line.setP1( nextToDst);
     line.setP2( dstP);
     
@@ -351,6 +351,10 @@ EdgeItem::paint( QPainter *painter,
     }
     if ( nextToDst == dstP)
         return;
+
+    //Set opacity
+    if ( edge()->graph()->view()->isContext())
+        painter->setOpacity( ((qreal)priority)/6);
 
     // Draw the line itself
     if ( option->levelOfDetail >= spline_detail_level)
@@ -420,7 +424,7 @@ EdgeItem::paint( QPainter *painter,
             painter->drawPolygon(QPolygonF() << dstP << destArrowP1 << destArrowP2); 
     }
 
-    
+    painter->setOpacity( 1);
 #ifdef SHOW_CONTROL_POINTS
     /** For illustrative purposes */
     painter->setPen(QPen(Qt::gray, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
