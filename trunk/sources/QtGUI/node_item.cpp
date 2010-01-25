@@ -253,6 +253,9 @@ NodeItem::paint( QPainter *painter,
 {
     if ( isNullP( node_p))
         return;
+    
+    if ( node()->graph()->view()->isContext())
+        painter->setOpacity( ((qreal)node()->priority())/6);
 
     if ( node()->isSimple() || node()->isEdgeLabel())
     {
@@ -296,6 +299,7 @@ NodeItem::paint( QPainter *painter,
                                   2*EdgeControlSize, 2*EdgeControlSize);
         }
     }
+    painter->setOpacity( 1);
 }
 
 /**

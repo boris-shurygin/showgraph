@@ -139,6 +139,7 @@ void GGraph::findContext()
     foreach( GNode *n, sel_nodes)
     {
         n->mark( m);
+        n->setPriority( 6);
         border.enqueue( n);
     }
     for ( int i = 0; i < 5; i++)
@@ -160,6 +161,7 @@ void GGraph::findContext()
                 
                 if ( pred->mark( m))
                 {
+                    pred->setPriority( 6 - i);
                     border.enqueue( pred);
                 }
             }
@@ -168,6 +170,7 @@ void GGraph::findContext()
                 GNode * succ = e->succ();
                 if ( succ->mark( m))
                 {
+                    succ->setPriority( 6 - i);
                     border.enqueue( succ);
                 }
             }
@@ -710,7 +713,13 @@ GraphView::findNextNodeWithText( QString &findStr,
 	}
 	if ( isNotNullP( n))
 	{
-		focusOnNode( n, true);
+		if ( isContext())
+        {
+            graph()->emptySelection();
+            graph()->selectNode( n);
+            findContext();
+        }
+        focusOnNode( n, true);
 		return n;
 	} else
 	{
@@ -739,7 +748,13 @@ GraphView::findPrevNodeWithText( QString &findStr,
 	}
 	if ( isNotNullP( n))
 	{
-		focusOnNode( n, true);
+		if ( isContext())
+        {
+            graph()->emptySelection();
+            graph()->selectNode( n);
+            findContext();
+        }
+        focusOnNode( n, true);
 		return n;
 	} else
 	{
@@ -762,7 +777,13 @@ bool GraphView::findNodeById( int id)
 	}
 	if ( isNotNullP( n))
 	{
-		focusOnNode( n, true);
+        if ( isContext())
+        {
+            graph()->emptySelection();
+            graph()->selectNode( n);
+            findContext();
+        }
+        focusOnNode( n, true);
 		return true;
 	} else
 	{
@@ -777,6 +798,12 @@ void GraphView::replayNavigationEvent( NavEvent *ev)
     if ( ev->isFocus())
     {
         assert( isNotNullP( ev->node()));
+        if ( isContext())
+        {
+            graph()->emptySelection();
+            graph()->selectNode( ev->node());
+            findContext();
+        }
         focusOnNode( ev->node(), false); 
     }
 }

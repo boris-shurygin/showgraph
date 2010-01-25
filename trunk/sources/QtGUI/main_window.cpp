@@ -341,6 +341,12 @@ bool MainWindow::findText( QString &str, bool forward)
         }
     } else
     {
+        if ( graph_view->isContext())
+        {
+            graph_view->graph()->emptySelection();
+            graph_view->graph()->selectNode( node);
+            graph_view->findContext();
+        }
         graph_view->focusOnNode( node, true);
         showNodeText( node);
         res = true;
