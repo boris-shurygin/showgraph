@@ -25,4 +25,16 @@ const qreal SE_VERT_MARGIN = 20;
 /** Self edge horizontal margin*/
 const qreal SE_HOR_MARGIN = 20;
 
+/** Node speed */
+const qreal NODE_SPEED = 4;
+
+/** Opacity step */
+const qreal OPACITY_STEP = 0.1;
+
+/** Context visible border */
+const int MAX_VISIBLE_LEN = 6;
+
+/** Context far border */
+const int MAX_PLACE_LEN = 8;
+
 #endif

@@ -255,7 +255,7 @@ NodeItem::paint( QPainter *painter,
         return;
     
     if ( node()->graph()->view()->isContext())
-        painter->setOpacity( ((qreal)node()->priority())/6);
+        painter->setOpacity( this->opacity);
 
     if ( node()->isSimple() || node()->isEdgeLabel())
     {
@@ -395,6 +395,76 @@ void  NodeItem::keyPressEvent(QKeyEvent *event)
     }
 }
 
+/** 
+ * Perform animation step
+ * Advance node's coordinates and opacity towards goal values of these parameters
+ * Return true if node have advanced somehow. False if node hasn't change
+ */
+bool NodeItem::advance()
+{
+    QPointF target( node()->modelX(), node()->modelY());
+    QLineF line( pos(), target); 
+    qreal dist = line.length();
+    bool changed = false;
+
+    qreal target_opacity = ((qreal)node()->priority())/6;
+    
+    if ( target_opacity > opacityLevel() + OPACITY_STEP)
+    {
+        setOpacityLevel( opacityLevel() + OPACITY_STEP);
+        changed = true;
+    } else if ( target_opacity < opacityLevel() - OPACITY_STEP)
+    {
+        setOpacityLevel( opacityLevel() - OPACITY_STEP);
+        changed = true;
+    } else
+    {
+        setOpacityLevel( target_opacity);
+        if ( !target_opacity)
+            setVisible( false);
+    }
+    if ( changed)
+    {
+        updateAssociates();
+        update();
+    }
+
+    if ( dist > NODE_SPEED)
+    {
+        QPointF displacement( NODE_SPEED * line.dx() / dist, NODE_SPEED * line.dy() / dist);
+        setPos( pos() + displacement);   
+        changed = true;
+    }
+    return changed;
+}
+
+void NodeItem::updateAssociates()
+{
+    GEdge *edge = NULL;
+
+    for ( edge = node()->firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
+    {
+        edge->item()->adjust();
+        GNode* succ = edge->succ();
+
+        if ( succ->isEdgeControl() || succ->isEdgeLabel())
+        {
+            assert( isNotNullP( succ->firstSucc()));
+            succ->firstSucc()->item()->adjust();
+        }
+    }
+    for ( edge = node()->firstPred(); isNotNullP( edge); edge = edge->nextPred())
+    {
+        edge->item()->adjust();
+        GNode* pred = edge->pred();
+
+        if ( pred->isEdgeControl() || pred->isEdgeLabel())
+        {
+            assert( isNotNullP( pred->firstPred()));
+            pred->firstPred()->item()->adjust();
+        }
+    }
+}
 /**
  * Adjust edges when node changes
  */
@@ -405,28 +475,7 @@ QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
     if ( change != QGraphicsItem::ItemSceneChange 
          || change != QGraphicsItem::ItemSceneHasChanged)
     {
-        for ( edge = node()->firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
-        {
-            edge->item()->adjust();
-            GNode* succ = edge->succ();
-
-            if ( succ->isEdgeControl() || succ->isEdgeLabel())
-            {
-                assert( isNotNullP( succ->firstSucc()));
-                succ->firstSucc()->item()->adjust();
-            }
-        }
-        for ( edge = node()->firstPred(); isNotNullP( edge); edge = edge->nextPred())
-        {
-            edge->item()->adjust();
-            GNode* pred = edge->pred();
-
-            if ( pred->isEdgeControl() || pred->isEdgeLabel())
-            {
-                assert( isNotNullP( pred->firstPred()));
-                pred->firstPred()->item()->adjust();
-            }
-        }
+        updateAssociates();
     }
     return QGraphicsTextItem::itemChange(change, value);
 }

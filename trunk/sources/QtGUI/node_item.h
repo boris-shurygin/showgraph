@@ -17,7 +17,8 @@ class NodeItem: public QGraphicsTextItem
 {    
     GNode *node_p;
 	QDockWidget *text_dock;
-	bool bold_border;
+    qreal opacity;
+    bool bold_border;
     bool alternate_background; 
 
     /** Initialization */
@@ -27,12 +28,23 @@ public:
     enum {Type = TypeNode};
 
     /** Constructor */
-	inline NodeItem( GNode *n_p): 
+	inline NodeItem( GNode *n_p):
+        opacity( MAX_OPACITY),
         bold_border( false),
         alternate_background( false)
     {
         node_p = n_p;
         SetInitFlags();
+    }
+    /** Get item's opacity level */
+    inline qreal opacityLevel() const
+    {
+        return opacity;
+    }
+    /** Set item's opacity level */
+    inline void setOpacityLevel( qreal op_l)
+    {
+        opacity = op_l;
     }
     /** Set node to be highlighted */
     inline void highlight()
@@ -86,9 +98,19 @@ public:
     void focusOutEvent(QFocusEvent *event);
     /** Reimplementation of key press event */
     void keyPressEvent(QKeyEvent *event);
+    /** Update associated items */
+    void updateAssociates();
+
     /** Item change event handler */
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-	/** Remove from scene */
+	/** 
+     * Perform animation step
+     * Advance node's coordinates and opacity towards goal values of these parameters
+     * Return true if node have advanced somehow. False if node hasn't change
+     */
+    bool advance();
+    
+    /** Remove from scene */
     inline void remove()
     {
         setVisible( false);

@@ -51,7 +51,16 @@ class AuxNode: public NodeT< AuxGraph, AuxNode, AuxEdge>
     Rank priv_rank;
     AuxNodeType node_type;
     bool is_for_placement;
+    bool stable;
 public:
+    inline bool isStable() const
+    {
+        return stable;
+    }
+    inline void setStable( bool st = true)
+    {
+        stable = st;
+    }
     /** Get Height */
     virtual double height() const
     {
@@ -267,7 +276,8 @@ protected:
         priv_level( NULL),
         priv_order(-1),
         node_type( AUX_NODE_SIMPLE),
-        is_for_placement( 1)
+        is_for_placement( true),
+        stable( false)
     {
     }
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;
@@ -427,6 +437,9 @@ class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
     /** Order numeration */
     Numeration order;
     
+    /** Ranking state */
+    bool ranking_valid;
+
     /** Ranking numeration */
     Numeration ranking;
 
@@ -507,6 +520,23 @@ public:
     AuxGraph();
     /** Destructor */
     ~AuxGraph();
+
+    /** Check if ranking is is valid */
+    inline bool rankingValid() const
+    {
+        return ranking_valid;
+    }
+
+    /** Set ranking to invalid state */
+    inline void invalidateRanking()
+    {
+        ranking_valid = false;
+    }
+    /** Set ranking to valid state */
+    inline void validateRanking()
+    {
+        ranking_valid = true;
+    }
 
     /** Debug info print */
     virtual void debugPrint()

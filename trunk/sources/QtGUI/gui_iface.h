@@ -67,6 +67,9 @@ enum {
     TypeEdgeControl = QGraphicsItem::UserType + 3 /** EdgeControl item */
 };
 
+/** Max opacity level for items in graph view */
+const qreal MAX_OPACITY = 6;
+
 #include "edge_item.h"
 #include "node_item.h"
 #include "graph_view.h"

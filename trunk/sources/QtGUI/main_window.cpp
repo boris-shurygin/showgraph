@@ -195,6 +195,7 @@ void MainWindow::connectToGraphView( GraphView *gview)
     connect( contextViewAct, SIGNAL( toggled( bool)),
              gview, SLOT( toggleViewMode( bool)));
     gview->toggleSmoothFocus( trackFocusAct->isChecked());
+    gview->toggleViewMode( contextViewAct->isChecked());
     /** Place graph view in window */
     vboxLayout->addWidget( graph_view);
 }

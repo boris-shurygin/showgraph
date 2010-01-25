@@ -334,10 +334,10 @@ EdgeItem::paint( QPainter *painter,
     QLineF line = QLineF();
     curr_point = srcP;
     QPointF nextToDst = srcP;
-    int priority = min<int>( edge()->pred()->priority(), edge()->succ()->priority());
+    qreal opacity = min<qreal>( edge()->pred()->item()->opacityLevel(), 
+                              edge()->succ()->item()->opacityLevel());
     line.setP1( nextToDst);
     line.setP2( dstP);
-    
     
     QPainterPath path( srcP);
     QPainterPathStroker stroker;
@@ -356,7 +356,7 @@ EdgeItem::paint( QPainter *painter,
 
     //Set opacity
     if ( edge()->graph()->view()->isContext())
-        painter->setOpacity( ((qreal)priority)/6);
+        painter->setOpacity( opacity);
 
     // Draw the line itself
     if ( option->levelOfDetail >= spline_detail_level)

@@ -63,6 +63,14 @@ GGraph::newEdge( GNode* pred, GNode* succ, QDomElement e)
     return edge_p;
 }
 
+void GGraph::selectOneNode( GNode* n)
+{    
+    emptySelection();
+    selectNode( n);
+    n->item()->highlight();
+    n->item()->update();
+}
+
 void GGraph::showNodesText()
 {
     foreach (GNode *n, sel_nodes)
@@ -123,7 +131,11 @@ void GGraph::showWholeGraph()
     foreachNode( n, this)
     {
         n->item()->setVisible( true);
+        n->item()->setOpacityLevel( 1);
+        n->setPriority( MAX_OPACITY);
         n->setForPlacement( true);
+        n->setStable( false);
+        n->item()->update();
     }
     doLayout();
 }
@@ -142,7 +154,7 @@ void GGraph::findContext()
         n->setPriority( 6);
         border.enqueue( n);
     }
-    for ( int i = 0; i < 5; i++)
+    for ( int i = 0; i < MAX_PLACE_LEN; i++)
     {
         int added = border.count();
         for ( int j = 0; j < added; j++)
@@ -161,7 +173,13 @@ void GGraph::findContext()
                 
                 if ( pred->mark( m))
                 {
-                    pred->setPriority( 6 - i);
+                    if ( i <= MAX_VISIBLE_LEN)
+                    {
+                        pred->setPriority( MAX_VISIBLE_LEN - i);
+                    } else
+                    {
+                        pred->setPriority( 0);
+                    }
                     border.enqueue( pred);
                 }
             }
@@ -170,7 +188,13 @@ void GGraph::findContext()
                 GNode * succ = e->succ();
                 if ( succ->mark( m))
                 {
-                    succ->setPriority( 6 - i);
+                    if ( i <= MAX_VISIBLE_LEN)
+                    {
+                        succ->setPriority( MAX_VISIBLE_LEN - i);
+                    } else
+                    {
+                        succ->setPriority( 0);
+                    }
                     border.enqueue( succ);
                 }
             }
@@ -181,30 +205,64 @@ void GGraph::findContext()
         GNode* n;
         foreachNode( n, this)
         {
+            if ( n->item()->isVisible())
+            {
+                n->setStable();
+            }
             if ( n->isMarked( m))
             {
-                n->item()->setVisible( true);
+                if ( !n->item()->isVisible())
+                {
+                    n->item()->setVisible( true);
+                    n->item()->setOpacityLevel( 0);
+                }
                 n->setForPlacement( true);
             } else
             {
-                n->item()->setVisible( false);
+                if ( n->item()->isVisible())
+                {
+                    n->setPriority( 0);
+                } else
+                {
+                    n->setStable( false);
+                }
                 n->setForPlacement( false);
             }
         }
         GEdge *e;
         foreachEdge( e, this)
         {
-            if ( e->realPred()->isMarked( m)
-                 && e->realSucc()->isMarked( m))
+            if ( e->pred()->isPseudo() && e->succ()->isPseudo())
             {
-                e->pred()->item()->setVisible( true);   
-                e->succ()->item()->setVisible( true);   
-                e->pred()->setForPlacement( true);
-                e->succ()->setForPlacement( true);
+                if ( e->realPred()->isMarked( m)
+                     && e->realSucc()->isMarked( m))
+                {
+                    int priority = 
+                        min<int>( e->realPred()->priority(), e->realSucc()->priority());
+                    e->pred()->item()->setVisible( true);   
+                    e->succ()->item()->setVisible( true);   
+                    e->pred()->setForPlacement( true);
+                    e->succ()->setForPlacement( true);
+                    e->pred()->setPriority( priority);
+                    e->succ()->setPriority( priority);
+                }
             }
         }
-        view()->focusOnNode( sel_nodes.first(), true);
-        doLayout();
+        selectOneNode( sel_nodes.first());
+    
+        if ( view()->hasSmoothFocus())
+        {
+            view()->focusOnNode( sel_nodes.first(), true);
+        }
+        doLayout(); 
+        foreachNode( n, this)
+        {
+            if ( n->item()->isVisible() && !n->item()->opacityLevel())
+            {
+                n->item()->setPos( n->modelX(), n->modelY());
+            }
+        }
+        view()->startAnimationNodes();
     }
     freeMarker( m);
     
@@ -273,8 +331,15 @@ void GGraph::doLayout()
 {
     if ( view()->isContext())
     {
-        arrangeHorizontally();
-        UpdatePlacement();
+        if ( rankingValid())
+        {
+            arrangeHorizontally();
+        } else
+        {
+            /** Run layout algorithm */
+	        AuxGraph::doLayout();
+            UpdatePlacement();
+        }
     } else
     {
         /** Run layout algorithm */
@@ -299,6 +364,7 @@ GraphView::GraphView():
 	zoom_scale( 0),
     view_history( new GraphViewHistory),
     timer_id( 0),
+    node_animation_timer( 0),
     smooth_focus( false),
     view_mode( WHOLE_GRAPH_VIEW)
 {
@@ -329,6 +395,11 @@ GraphView::~GraphView()
     delete view_history;
 }
 
+void GraphView::startAnimationNodes()
+{
+    if ( !node_animation_timer)
+         node_animation_timer = startTimer(1000/25);
+}
 
 void 
 GraphView::drawBackground(QPainter *painter, const QRectF &rect)
@@ -604,7 +675,23 @@ void GraphView::dragMoveEvent( QDragMoveEvent *event)
 	//event->acceptProposedAction();
 }
 
-void GraphView::timerEvent( QTimerEvent *event)
+void GraphView::advanceNodes()
+{
+    GNode *n;
+    bool advanced = false;
+    foreachNode( n, graph())
+    {
+        if ( n->item()->advance())
+            advanced = true;
+    }
+    if ( !advanced)
+    {
+        killTimer( node_animation_timer);
+        node_animation_timer = 0;
+    }
+}
+
+void GraphView::advanceView()
 {
     GNode *target = graph()->nodeInFocus(); 
     qreal STEP_LEN = 10 / scaleVal( zoom_scale);
@@ -654,7 +741,21 @@ void GraphView::timerEvent( QTimerEvent *event)
         {
             zoom_out_done = true;
         }
-    } 
+    }
+}
+
+void GraphView::timerEvent( QTimerEvent *event)
+{
+    if ( !event->timerId())
+        return;
+    if ( event->timerId() == timer_id)
+    {
+        advanceView();
+    }
+    if ( event->timerId() == node_animation_timer)
+    {
+        advanceNodes();
+    }
 }
 void GraphView::clearSearch()
 {
@@ -663,10 +764,7 @@ void GraphView::clearSearch()
 
 void GraphView::focusOnNode( GNode *n, bool gen_event)
 {
-    graph()->emptySelection();
-    graph()->selectNode( n);
-    n->item()->highlight();
-    n->item()->update();
+    graph()->selectOneNode( n);
     
     if ( smooth_focus)
     {

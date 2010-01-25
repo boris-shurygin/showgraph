@@ -220,6 +220,7 @@ public:
     {
         node_in_focus = n;
     }
+    void selectOneNode(GNode *n);
 	/**
 	 * Clear list of selected nodes
 	 */
@@ -317,10 +318,14 @@ private:
     
     /** Temporary data */
     int timer_id;
+    int node_animation_timer;
     QPointF curr_pos;
     bool createEdge;
 	bool show_menus;
+    
     bool smooth_focus;
+    bool smooth_layout_adjustment;
+
     bool zoom_out_done;
     GNode *tmpSrc;
     GNode *search_node;
@@ -364,6 +369,12 @@ public:
     GraphView();
     /** Destructor */
     ~GraphView();
+    
+    /** Return true if smooth focus is enabled */
+    inline bool hasSmoothFocus() const
+    {
+        return smooth_focus;
+    }
     
     /** Return true if view operates in context mode */
     inline bool isContext() const
@@ -449,6 +460,12 @@ public:
 	void updateMatrix();
     /** Focus on node */
     void focusOnNode( GNode *n, bool gen_event);
+    /** Start animation for nodes */
+    void startAnimationNodes();
+    /** Advance view in animated focusing procedure */
+    void advanceView();
+    /** Advance nodes in animation sequence */
+    void advanceNodes();
     /** Replay navigation event */
     void replayNavigationEvent( NavEvent *event);
     /** Check if we are in the process of the edge creation */

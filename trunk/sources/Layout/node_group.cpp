@@ -73,8 +73,10 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
             }
         }
     }
+
     /** Barycenter heuristic */
     double center = 0;
+    edge_num = 1;
     if ( num_peers > 0)
     {
         edge_num = num_peers;
@@ -86,7 +88,10 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
     }
     if ( n->isEdgeLabel())
         center += ( n->width() / 2);
-
+    if ( n->isStable())
+    {
+        center = ( center + n->modelX() + n->width() / 2)/2;
+    }
     n->setBc( center);
     barycenter = center;
     
