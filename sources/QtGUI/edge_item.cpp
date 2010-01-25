@@ -341,7 +341,8 @@ EdgeItem::paint( QPainter *painter,
     
     QPainterPath path( srcP);
     QPainterPathStroker stroker;
-    
+    stroker.setWidth( 0.5);
+
     if ( edge()->isSelf())
     {
         path = selfEdgePath();
@@ -349,6 +350,7 @@ EdgeItem::paint( QPainter *painter,
     {
         path.cubicTo( cp1, cp2, dstP);
     }
+    path = stroker.createStroke(path);
     if ( nextToDst == dstP)
         return;
 
@@ -389,14 +391,7 @@ EdgeItem::paint( QPainter *painter,
         painter->setPen( QPen(option->palette.foreground().color(),1));
             
     }
-    //Draw edge
-    if ( edge()->isSelf() || option->levelOfDetail >= spline_detail_level)
-    {
-        painter->drawPath(path);
-    } else
-    {
-        painter->drawLine( line);
-    }
+
 
     // Draw the arrows if there's enough room and level of detail is appropriate
     if ( option->levelOfDetail >= draw_arrow_detail_level)
@@ -410,7 +405,7 @@ EdgeItem::paint( QPainter *painter,
 
        
         /* NOTE:  Qt::black can be replaced by option->palette.foreground().color() */
-        painter->setBrush(Qt::black);
+        painter->setBrush(option->palette.foreground().color());
         
         if ( edge()->isSelf())
         {
@@ -421,9 +416,22 @@ EdgeItem::paint( QPainter *painter,
         destArrowP2 = dstP + QPointF( sin(angle - Pi + Pi / 3) * arrowSize,
                                       cos(angle - Pi + Pi / 3) * arrowSize);
         if ( succ()->isSimple())
-            painter->drawPolygon(QPolygonF() << dstP << destArrowP1 << destArrowP2); 
+        {
+            QPainterPath arrow_path;
+            arrow_path.addPolygon( QPolygonF() << dstP << destArrowP1 << destArrowP2 <<  dstP);
+            path = path.united( arrow_path);
+            //painter->drawPolygon(QPolygonF() << dstP << destArrowP1 << destArrowP2);
+        }
     }
 
+    //Draw edge
+    if ( edge()->isSelf() || option->levelOfDetail >= spline_detail_level)
+    {
+        painter->drawPath( path);
+    } else
+    {
+        painter->drawLine( line);
+    }
     painter->setOpacity( 1);
 #ifdef SHOW_CONTROL_POINTS
     /** For illustrative purposes */
