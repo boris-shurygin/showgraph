@@ -35,6 +35,6 @@ const qreal OPACITY_STEP = 0.1;
 const int MAX_VISIBLE_LEN = 6;
 
 /** Context far border */
-const int MAX_PLACE_LEN = 8;
+const int MAX_PLACE_LEN = 6;
 
 #endif

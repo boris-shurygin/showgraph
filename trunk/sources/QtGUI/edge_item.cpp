@@ -16,10 +16,12 @@ GEdge::GEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ):
     AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ)
 {
     item_p = new EdgeItem( this);
+    graph()->invalidateRanking();
 }
    
 GEdge::~GEdge()
 {
+    graph()->invalidateRanking();
     item()->remove();
     graph()->view()->deleteLaterEdgeItem( item());
 }
@@ -530,10 +532,22 @@ EdgeItem::keyPressEvent(QKeyEvent *event)
                      succ->item()->pos().y() + succ->item()->boundingRect().height())
                 {
                     //Successor over predecessor
+                    if ( edge()->graph()->view()->isContext())
+                    {
+                        edge()->graph()->emptySelection();
+                        edge()->graph()->selectNode( up? succ: pred);
+                        edge()->graph()->view()->findContext();
+                    }
                     edge()->graph()->view()->focusOnNode( up? succ: pred, true);
                 } else
                 {
                     //Predecessor over successor
+                    if ( edge()->graph()->view()->isContext())
+                    {
+                        edge()->graph()->emptySelection();
+                        edge()->graph()->selectNode( up? pred: succ);
+                        edge()->graph()->view()->findContext();
+                    }
                     edge()->graph()->view()->focusOnNode( up? pred: succ, true);
                 }
             }

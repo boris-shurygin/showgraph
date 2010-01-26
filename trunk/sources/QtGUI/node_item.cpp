@@ -17,6 +17,7 @@ GNode::GNode( GGraph *graph_p, int _id):
 {
     item_p = new NodeItem( this);
 	setIRId( id());
+    graph()->invalidateRanking();
 }
 
 /** Contructor of node with specified position */
@@ -29,6 +30,7 @@ GNode::GNode( GGraph *graph_p, int _id, QPointF _pos):
     item_p = new NodeItem( this);
     item_p->setPos( _pos);
 	setIRId( id());
+    graph()->invalidateRanking();
 }
 
 /**
@@ -36,6 +38,7 @@ GNode::GNode( GGraph *graph_p, int _id, QPointF _pos):
  */
 GNode::~GNode()
 {
+    graph()->invalidateRanking();
     if ( ( isEdgeControl() || isEdgeLabel())
          && isNotNullP( firstPred()) 
          && isNotNullP( firstSucc())
