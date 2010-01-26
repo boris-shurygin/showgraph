@@ -92,24 +92,22 @@ TestParser::parseLine( QString line)
         QRegExp back_rx("Back");
     
         /** Add edge to symtab */
-        if ( symtab.find( name) == symtab.end())
+        if ( symtab.find( name) == symtab.end() 
+             && symtab.find( pred_name) != symtab.end() 
+             && symtab.find( succ_name) != symtab.end())
         {
             SymEdge *edge = new SymEdge( name);
             edge->setPred( pred_name);
             edge->setSucc( succ_name);
             symtab[ name] = edge;
-#ifdef _DEBUG            
-            //stream << name << ": " << pred_name << "->" << succ_name << endl;
-#endif
-        }
 
-        /** Add edge to graph */
-        if ( symtab.find( pred_name) != symtab.end() 
-             && symtab.find( succ_name) != symtab.end())
-        {
+            /** Add edge to graph */
             GNode* pred = static_cast< SymNode *>( symtab[ pred_name])->node();
             GNode* succ = static_cast< SymNode *>( symtab[ succ_name])->node();
             GEdge* e = graph->graph()->newEdge( pred, succ);
+#ifdef _DEBUG            
+            //stream << name << ": " << pred_name << "->" << succ_name << endl;
+#endif      
             if (  back_rx.indexIn( line) != -1 && !e->isSelf())
             {
                 GNode* label = e->insertLabelNode( QPointF( 0,0));                
