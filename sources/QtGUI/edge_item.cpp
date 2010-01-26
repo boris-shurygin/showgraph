@@ -343,7 +343,7 @@ EdgeItem::paint( QPainter *painter,
     
     QPainterPath path( srcP);
     QPainterPathStroker stroker;
-    stroker.setWidth( 0.5);
+    stroker.setWidth( 0);
 
     if ( edge()->isSelf())
     {

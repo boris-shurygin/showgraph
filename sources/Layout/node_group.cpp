@@ -139,6 +139,7 @@ void NodeGroup::merge( NodeGroup *grp)
     setRight( left() + width);
     barycenter = center;
     edge_num = e1 + e2;
+    
     //out("Width %e, center %e, barycenter %e", width, center, barycenter);
 
 }
