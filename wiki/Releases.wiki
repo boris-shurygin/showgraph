@@ -1,9 +1,18 @@
 #summary Release History
 
-===Version 1.0===
+===Version 1.0.2===
+  * Focus+Context view with animated nodes movement and fading of graph part that is out of scope
+  * Source docs excluded from release
+===Version 1.0.1===
+  * Animated scrolling and zooming of view when focusing on node
+  * Edge labels
+==Version 1.0==
 Wasn't actually first version shown to someone but from it we start showgraph's release history.
 
 Features:
-  * Graph view with automatic layout
+  * Graph editor allowing for creating nodes and edges
+  * Automatic 2D layout for directed graphs
   * Zoom, scroll of the view
   * Node search
+  * Graph image exporting and printing
+  * Navigation history
