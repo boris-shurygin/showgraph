@@ -410,6 +410,9 @@ bool NodeItem::advance()
     qreal dist = line.length();
     bool changed = false;
 
+    if ( !isVisible())
+        return false;
+
     qreal target_opacity = ((qreal)node()->priority())/6;
     
     if ( target_opacity > opacityLevel() + OPACITY_STEP)
@@ -424,10 +427,14 @@ bool NodeItem::advance()
     {
         setOpacityLevel( target_opacity);
         if ( !target_opacity)
+        {
             setVisible( false);
+            changed = true;
+        }
     }
     if ( changed)
     {
+        adjustAssociates();
         updateAssociates();
         update();
     }
@@ -441,7 +448,7 @@ bool NodeItem::advance()
     return changed;
 }
 
-void NodeItem::updateAssociates()
+void NodeItem::adjustAssociates()
 {
     GEdge *edge = NULL;
 
@@ -468,6 +475,34 @@ void NodeItem::updateAssociates()
         }
     }
 }
+
+void NodeItem::updateAssociates()
+{
+    GEdge *edge = NULL;
+
+    for ( edge = node()->firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
+    {
+        edge->item()->adjust();
+        GNode* succ = edge->succ();
+
+        if ( succ->isEdgeControl() || succ->isEdgeLabel())
+        {
+            assert( isNotNullP( succ->firstSucc()));
+            succ->firstSucc()->item()->update();
+        }
+    }
+    for ( edge = node()->firstPred(); isNotNullP( edge); edge = edge->nextPred())
+    {
+        edge->item()->adjust();
+        GNode* pred = edge->pred();
+
+        if ( pred->isEdgeControl() || pred->isEdgeLabel())
+        {
+            assert( isNotNullP( pred->firstPred()));
+            pred->firstPred()->item()->update();
+        }
+    }
+}
 /**
  * Adjust edges when node changes
  */
@@ -478,7 +513,7 @@ QVariant NodeItem::itemChange( GraphicsItemChange change, const QVariant &value)
     if ( change != QGraphicsItem::ItemSceneChange 
          || change != QGraphicsItem::ItemSceneHasChanged)
     {
-        updateAssociates();
+        adjustAssociates();
     }
     return QGraphicsTextItem::itemChange(change, value);
 }
