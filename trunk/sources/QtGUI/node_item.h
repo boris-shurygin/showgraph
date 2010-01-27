@@ -98,6 +98,8 @@ public:
     void focusOutEvent(QFocusEvent *event);
     /** Reimplementation of key press event */
     void keyPressEvent(QKeyEvent *event);
+    /** Adjust associated items */
+    void adjustAssociates();
     /** Update associated items */
     void updateAssociates();
 
