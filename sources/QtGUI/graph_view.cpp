@@ -863,7 +863,7 @@ GraphView::findPrevNodeWithText( QString &findStr,
 /**
  * Find node by its ID from dump
  */
-bool GraphView::findNodeById( int id)
+GNode* GraphView::findNodeById( int id)
 {
 	GNode *n;
 	foreachNode( n, graph())
@@ -882,10 +882,10 @@ bool GraphView::findNodeById( int id)
             findContext();
         }
         focusOnNode( n, true);
-		return true;
+		return n;
 	} else
 	{
-		return false;
+		return NULL;
 	}
 }
 /** Repeat navigation event */

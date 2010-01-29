@@ -35,11 +35,13 @@ class TextView: public QTextBrowser
 {
 	/** Highlighter used to format the text */
 	DumpHighlighter * hl;
+
+    GNode *node;
 public:
 	/**
 	 * Constructor
 	 */
-	TextView();
+	TextView( GNode *n);
 
 	/**
 	 * Destructor
@@ -55,7 +57,8 @@ public:
 	 * Highlight text
 	 */
 	void highlighText();
-
+    
+    void mouseReleaseEvent( QMouseEvent * mouseEvent);
 	void mousePressEvent( QMouseEvent * mouseEvent);
 };
 
