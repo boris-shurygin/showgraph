@@ -35,7 +35,7 @@ void DumpHighlighter::highlightBlock(const QString &text)
 /**
  * TextView Constructor
  */
-TextView::TextView(): hl( NULL)
+TextView::TextView( GNode *n): node( n), hl( NULL)
 {
 	setOpenLinks( false);
 }
@@ -117,6 +117,35 @@ TextView::openFile( QString fileName)
          str = QString::fromLocal8Bit(data);
          setPlainText(str);
      }
+}
+
+void TextView::mouseReleaseEvent( QMouseEvent * ev)
+{
+    if ( event->button() & Qt::LeftButton)
+    {
+        /** Change node */
+        QString str = anchorAt( ev->pos());
+        
+        if ( !str.isEmpty())
+        {
+            QTextCursor cursor = cursorForPosition ( ev->pos());
+            QString href = cursor.charFormat().anchorHref();
+                        
+            if ( !href.isEmpty())
+            {
+                bool success = false;
+                int id = href.toInt( &success);
+                if ( success)
+                {
+                    GNode *new_node = node->graph()->view()->findNodeById( id);
+                    //new_node->setTextShown();
+                    //new_node->item()->setTextDock( dock);
+                }
+            }
+        }
+    }
+
+    QTextBrowser::mouseReleaseEvent( ev);
 }
 
 void TextView::mousePressEvent( QMouseEvent * mouseEvent)

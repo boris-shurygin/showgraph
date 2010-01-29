@@ -152,7 +152,7 @@ void MainWindow::showNodeText( GNode *node)
 		if ( !node->textIsShown())
 		{
 			QDockWidget *dock = new QDockWidget( node->item()->toPlainText(), this);
-			TextView* text_view = new TextView();
+			TextView* text_view = new TextView( node);
 			dock->setWidget( text_view);
 			addDockWidget(Qt::RightDockWidgetArea, dock);
 			text_view->setPlainText( node->doc()->toPlainText());
@@ -376,7 +376,7 @@ void MainWindow::findNext()
 		int id = findStr.toInt( &goodId);
 		if ( goodId)
 		{
-            if ( !graph_view->findNodeById( id))
+            if ( isNullP( graph_view->findNodeById( id)))
                 p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
         } else
 		{

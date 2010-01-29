@@ -522,7 +522,7 @@ public:
 	/**
 	 * Find node by its ID from dump
 	 */
-	bool findNodeById( int id);
+	GNode* findNodeById( int id);
 	
 	/**
 	 * Find next node with matching text
