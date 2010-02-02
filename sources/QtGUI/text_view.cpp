@@ -119,52 +119,82 @@ TextView::openFile( QString fileName)
      }
 }
 
+bool TextView::nodeIdClicked( QPoint pos, int *id_p)
+{
+    QString str = anchorAt( pos);
+        
+    if ( !str.isEmpty())
+    {
+        QTextCursor cursor = cursorForPosition ( pos);
+        QString href = cursor.charFormat().anchorHref();
+        
+        if ( href.isEmpty())
+        {
+            cursor.movePosition( QTextCursor::NextCharacter);
+            href = cursor.charFormat().anchorHref();
+        }
+
+        if ( !href.isEmpty())
+        {
+            bool success = false;
+            int id = href.toInt( &success);
+            if ( success)
+            {
+                if ( isNotNullP( id_p))
+                {
+                    *id_p = id;
+                }
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void TextView::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu *menu;
+      
+    if ( nodeIdClicked( event->pos(), NULL))
+    {
+        menu = new QMenu( this);
+        menu->addAction(tr("My Menu Item"));
+    } else
+    {
+        menu = createStandardContextMenu();
+    }
+    menu->exec( event->globalPos());
+    delete menu;
+}
+
 void TextView::mouseReleaseEvent( QMouseEvent * ev)
 {
     if ( ev->button() & Qt::LeftButton)
     {
         /** Change node */
-        QString str = anchorAt( ev->pos());
-        
-        if ( !str.isEmpty())
+        int id = -1;
+        if ( nodeIdClicked( ev->pos(), &id))
         {
-            QTextCursor cursor = cursorForPosition ( ev->pos());
-            QString href = cursor.charFormat().anchorHref();
-            
-            if ( href.isEmpty())
+            GNode *new_node = node->graph()->view()->findNodeById( id);
+            if ( isNotNullP( new_node)) 
             {
-                cursor.movePosition( QTextCursor::NextCharacter);
-                href = cursor.charFormat().anchorHref();
-            }
-
-            if ( !href.isEmpty())
-            {
-                bool success = false;
-                int id = href.toInt( &success);
-                if ( success)
+                if( !new_node->isTextShown())
                 {
-                    GNode *new_node = node->graph()->view()->findNodeById( id);
-                    if ( isNotNullP( new_node)) 
-                    {
-                        if( !new_node->isTextShown())
-                        {
-                            QDockWidget *dock = node->item()->textDock();
-                            node->setTextShown( false);
-                            node->item()->setTextDock( NULL);
-                            new_node->item()->setTextDock( dock);
-                            new_node->setTextShown();
-                            document()->clear();
-                            setPlainText( new_node->doc()->toPlainText());
-                            highlightText();
-                            node = new_node;
-                            dock->setWindowTitle( new_node->item()->toPlainText());
-                        } else
-                        {
-			                new_node->item()->textDock()->show();
-		                }
-                    }
+                    QDockWidget *dock = node->item()->textDock();
+                    node->setTextShown( false);
+                    node->item()->setTextDock( NULL);
+                    new_node->item()->setTextDock( dock);
+                    new_node->setTextShown();
+                    document()->clear();
+                    setPlainText( new_node->doc()->toPlainText());
+                    highlightText();
+                    node = new_node;
+                    dock->setWindowTitle( new_node->item()->toPlainText());
+                } else
+                {
+	                new_node->item()->textDock()->show();
                 }
-            }
+            }        
         }
     }
 
