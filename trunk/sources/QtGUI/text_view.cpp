@@ -43,7 +43,7 @@ TextView::TextView( GNode *n): node( n), hl( NULL)
 /**
  * Highlight text
  */
-void TextView::highlighText()
+void TextView::highlightText()
 {
 	//hl = new DumpHighlighter( document());
 	 QTextCursor cursor( document());
@@ -121,7 +121,7 @@ TextView::openFile( QString fileName)
 
 void TextView::mouseReleaseEvent( QMouseEvent * ev)
 {
-    if ( event->button() & Qt::LeftButton)
+    if ( ev->button() & Qt::LeftButton)
     {
         /** Change node */
         QString str = anchorAt( ev->pos());
@@ -130,7 +130,13 @@ void TextView::mouseReleaseEvent( QMouseEvent * ev)
         {
             QTextCursor cursor = cursorForPosition ( ev->pos());
             QString href = cursor.charFormat().anchorHref();
-                        
+            
+            if ( href.isEmpty())
+            {
+                cursor.movePosition( QTextCursor::NextCharacter);
+                href = cursor.charFormat().anchorHref();
+            }
+
             if ( !href.isEmpty())
             {
                 bool success = false;
@@ -138,8 +144,25 @@ void TextView::mouseReleaseEvent( QMouseEvent * ev)
                 if ( success)
                 {
                     GNode *new_node = node->graph()->view()->findNodeById( id);
-                    //new_node->setTextShown();
-                    //new_node->item()->setTextDock( dock);
+                    if ( isNotNullP( new_node)) 
+                    {
+                        if( !new_node->isTextShown())
+                        {
+                            QDockWidget *dock = node->item()->textDock();
+                            node->setTextShown( false);
+                            node->item()->setTextDock( NULL);
+                            new_node->item()->setTextDock( dock);
+                            new_node->setTextShown();
+                            document()->clear();
+                            setPlainText( new_node->doc()->toPlainText());
+                            highlightText();
+                            node = new_node;
+                            dock->setWindowTitle( new_node->item()->toPlainText());
+                        } else
+                        {
+			                new_node->item()->textDock()->show();
+		                }
+                    }
                 }
             }
         }

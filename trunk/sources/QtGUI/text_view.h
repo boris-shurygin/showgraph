@@ -56,7 +56,7 @@ public:
 	/**
 	 * Highlight text
 	 */
-	void highlighText();
+	void highlightText();
     
     void mouseReleaseEvent( QMouseEvent * mouseEvent);
 	void mousePressEvent( QMouseEvent * mouseEvent);
