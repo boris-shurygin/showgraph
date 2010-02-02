@@ -26,6 +26,14 @@ int main(int argc, char **argv)
     
     MainWindow mainWin;
     mainWin.show();
-    
+
+    Option *fopt = conf.longOption("file");
+    assertd( isNotNullP( fopt));
+
+    if ( fopt->isDefined())
+    {
+        QString filename = fopt->string();
+        mainWin.openFile( filename);
+    }
     return app.exec();
 }
