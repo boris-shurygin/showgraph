@@ -149,7 +149,7 @@ void MainWindow::showNodeText( GNode *node)
 {
 	if ( isNotNullP( node->doc()))
 	{
-		if ( !node->textIsShown())
+		if ( !node->isTextShown())
 		{
 			QDockWidget *dock = new QDockWidget( node->item()->toPlainText(), this);
 			TextView* text_view = new TextView( node);
@@ -159,7 +159,7 @@ void MainWindow::showNodeText( GNode *node)
 			node->setTextShown();
 			node->item()->setTextDock( dock);
 			textDocks.push_back( dock);
-			text_view->highlighText();
+			text_view->highlightText();
 			connect( text_view, SIGNAL( anchorClicked( const QUrl &)), this, SLOT( textClicked(const QUrl &)));
 		} else
 		{

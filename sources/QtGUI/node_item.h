@@ -148,7 +148,7 @@ public:
     virtual ~GNode();
 	
 	/** Tell whether the text is shown */
-	inline bool textIsShown() const
+	inline bool isTextShown() const
 	{
 		return text_shown;
 	}
