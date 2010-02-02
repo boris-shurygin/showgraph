@@ -33,7 +33,9 @@ public:
  */
 class TextView: public QTextBrowser
 {
-	/** Highlighter used to format the text */
+	//Q_OBJECT; /** For MOC */
+
+    /** Highlighter used to format the text */
 	DumpHighlighter * hl;
 
     GNode *node;
@@ -58,8 +60,10 @@ public:
 	 */
 	void highlightText();
     
+    bool TextView::nodeIdClicked( QPoint pos, int *id_p);
     void mouseReleaseEvent( QMouseEvent * mouseEvent);
 	void mousePressEvent( QMouseEvent * mouseEvent);
+    void contextMenuEvent(QContextMenuEvent *event);
 };
 
 
