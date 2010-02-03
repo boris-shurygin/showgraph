@@ -360,7 +360,7 @@ void GGraph::doLayout()
 GraphView::GraphView(): 
     curr_pos(),
     createEdge( false),
-    graph_p( new GGraph( this)),
+    graph_p( 0),
 	zoom_scale( 0),
     view_history( new GraphViewHistory),
     timer_id( 0),
@@ -392,6 +392,7 @@ GraphView::GraphView():
 /** Destructor */
 GraphView::~GraphView()
 {
+    delete graph_p;
     delete view_history;
 }
 

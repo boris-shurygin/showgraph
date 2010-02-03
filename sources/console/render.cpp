@@ -27,6 +27,7 @@ bool Renderer::render( QString xmlname, QString outname)
     }
     /** Create graph instance */
     GraphView* graph_view = new GraphView();
+    graph_view->setGraph( new GGraph( graph_view));
 
     /** Read graph from XML */
     graph_view->graph()->readFromXML( xmlname);

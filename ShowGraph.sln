@@ -51,6 +51,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gui", "sources\Gui\Gui.vcpr
 		{4BCC63EF-794D-4DCA-B3B8-A04284AC6C69} = {4BCC63EF-794D-4DCA-B3B8-A04284AC6C69}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IR", "sources\IR\IR.vcproj", "{98CBA9D3-EB98-4C16-AED8-05979FCD2D1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -93,6 +95,10 @@ Global
 		{A006A9B6-339E-48F3-9904-F4D9D8F4767F}.Debug|Win32.Build.0 = Debug|Win32
 		{A006A9B6-339E-48F3-9904-F4D9D8F4767F}.Release|Win32.ActiveCfg = Release|Win32
 		{A006A9B6-339E-48F3-9904-F4D9D8F4767F}.Release|Win32.Build.0 = Release|Win32
+		{98CBA9D3-EB98-4C16-AED8-05979FCD2D1E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{98CBA9D3-EB98-4C16-AED8-05979FCD2D1E}.Debug|Win32.Build.0 = Debug|Win32
+		{98CBA9D3-EB98-4C16-AED8-05979FCD2D1E}.Release|Win32.ActiveCfg = Release|Win32
+		{98CBA9D3-EB98-4C16-AED8-05979FCD2D1E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
