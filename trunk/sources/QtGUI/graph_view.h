@@ -91,7 +91,7 @@ class GraphViewHistory
     QList< NavEvent *>::Iterator it; // Iterator to hold current position in list
 public:
     /** Constructor */
-    GraphViewHistory()
+    GraphViewHistory(): events()
     {
         it = events.end();
     };
@@ -407,7 +407,12 @@ public:
         emit nodeClicked( n);
     }
 
-    /** Get pointer to model graph */
+    /** Set model graph */
+    inline void setGraph( GGraph *g)
+    {
+        graph_p = g;
+    }
+	/** Get pointer to model graph */
     inline GGraph *graph() const
     {
         return graph_p;
