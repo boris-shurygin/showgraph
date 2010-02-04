@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="IR"
 	ProjectGUID="{98CBA9D3-EB98-4C16-AED8-05979FCD2D1E}"
 	RootNamespace="IR"
@@ -142,11 +142,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\cfedge.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\cfedge.h"
 				>
 			</File>
 			<File
+				RelativePath=".\cfg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\cfg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\cfnode.cpp"
 				>
 			</File>
 			<File
@@ -172,7 +184,15 @@
 			Name="IR"
 			>
 			<File
+				RelativePath=".\dep.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\dep.h"
+				>
+			</File>
+			<File
+				RelativePath=".\expr.cpp"
 				>
 			</File>
 			<File

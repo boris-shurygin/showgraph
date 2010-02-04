@@ -22,6 +22,7 @@ class GEdge: public AuxEdge
     /** Pointer to corresponding graphics item */
     EdgeItem *item_p;
 
+protected:
     /** Default constructor */
     GEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ);
     /** Destructor */

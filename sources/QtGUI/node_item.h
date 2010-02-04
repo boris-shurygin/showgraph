@@ -134,7 +134,7 @@ class GNode: public AuxNode
 
     /** Representation of node as text */
     QTextDocument* _doc;
-    
+protected:    
     /** We can't create nodes separately, do it through newNode method of graph */
     GNode( GGraph *graph_p, int _id);
     /** Contructor of node with specified position */
