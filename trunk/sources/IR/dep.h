@@ -11,6 +11,6 @@
 #ifndef DEP_H
 #define DEP_H
 
-class Dep{};
+
 
 #endif /* Dep_H */

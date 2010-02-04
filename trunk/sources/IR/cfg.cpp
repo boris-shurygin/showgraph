@@ -1,6 +1,6 @@
 /**
- * @file: ir.cpp 
- * Implementation of IR
+ * @file: cfg.cpp
+ * Implementation of CFG
  * @author Boris Shurygin
  */
 /**
@@ -9,12 +9,12 @@
  */
 #include "ir_impl.h"
 
-IR::IR()
+CFG::CFG()
 {
 
 }
 
-IR::~IR()
+CFG::~CFG()
 {
 
 }
