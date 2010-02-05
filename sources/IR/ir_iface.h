@@ -19,6 +19,7 @@
 /** Predeclarations */
 class CFG;
 class IR;
+class IRView;
 class CFEdge;
 class CFNode;
 class Dep;
@@ -28,8 +29,8 @@ class Expr;
 #include "cfedge.h"
 #include "cfnode.h"
 #include "cfg.h"
-#include "expr.h"
 #include "dep.h"
+#include "expr.h"
 #include "ir.h"
 
 #endif /* IR_IFACE_H */

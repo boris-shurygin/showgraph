@@ -12,7 +12,7 @@ TestParser::TestParser( QString str):
     Parser( str), curr_node( NULL)
 {
     graph = new GraphView();
-    graph->setGraph( new GGraph( graph));
+    graph->setGraph( new CFG( graph));
 }
 
 TestParser::~TestParser()

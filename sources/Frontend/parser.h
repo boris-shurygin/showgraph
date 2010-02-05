@@ -109,7 +109,7 @@ public:
     Parser( QString filename);
     
     /** Destructor */
-    ~Parser();
+    virtual ~Parser();
     /** Convert input file in graph description XML */
     virtual void convert2XML( QString xmlname);
     /** Main loop routine */

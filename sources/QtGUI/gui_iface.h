@@ -38,43 +38,8 @@
 #ifndef GUI_IFACE_H
 #define GUI_IFACE_H
 
-/** Predeclarations */
-class GGraph;
-class GNode;
-class GEdge;
-class NodeItem;
-class EdgeItem;
-class GraphView;
-
-#include <QtGui>
-#include <QList>
-#include <QGraphicsItem>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QDebug>
-#include <QWheelEvent>
-
-#include "../Graph/graph_iface.h"
-#include "../Layout/layout_iface.h"
+#include "gview_iface.h"
+#include "../IR/ir_iface.h"
 #include "../Frontend/fe_iface.h"
-
-/**
- * Subclasses of QGraphicsItem types
- */
-enum { 
-    TypeNode = QGraphicsItem::UserType + 1, /** Node item */
-    TypeEdge = QGraphicsItem::UserType + 2, /** Edge item */
-    TypeEdgeControl = QGraphicsItem::UserType + 3 /** EdgeControl item */
-};
-
-/** Max opacity level for items in graph view */
-const qreal MAX_OPACITY = 6;
-
-#include "edge_item.h"
-#include "node_item.h"
-#include "graph_view.h"
-#include "text_view.h"
 #include "main_window.h"
-#include "graph_widget.h"
-
 #endif

@@ -16,6 +16,8 @@
  */
 class CFNode: public GNode
 {
+    Expr *first;
+    Expr *last;
 protected:    
     /** We can't create nodes separately, do it through newNode method of graph */
     CFNode( CFG *graph_p, int _id);
@@ -29,6 +31,26 @@ public:
 	
     CFG* graph() const;
     
+    /** Get first expr */
+    inline Expr *firstExpr() const
+    {
+        return first;
+    }
+    /** Get last expr */
+    inline Expr *lastExpr() const 
+    {
+        return last;
+    }
+    /** Set first expr */
+    inline void setFirstExpr( Expr *expr) 
+    {
+        first = expr;
+    }
+    /** Set last expr */
+    inline void setLastExpr( Expr *expr)  
+    {
+        last = expr;
+    }
     /** Get next graph's node */
     inline CFNode* nextNode()
     {

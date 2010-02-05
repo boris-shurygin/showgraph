@@ -24,7 +24,7 @@
 #ifndef GRAPH_VIEW_H
 #define GRAPH_VIEW_H
 
-#include "gui_impl.h"
+#include "gview_impl.h"
 
 /**
  * Navigation event types
@@ -141,16 +141,16 @@ public:
     }
     
     /** Destructor */
-    ~GGraph();
+    virtual ~GGraph();
 
     /** New graphical node */
-    GNode* newNode();
+    virtual GNode* newNode();
     /** New graphical node */
-    GNode* newNode( QDomElement e);
+    virtual GNode* newNode( QDomElement e);
     /** New graphical edge */
-    GEdge* newEdge( GNode* pred, GNode* succ);
+    virtual GEdge* newEdge( GNode* pred, GNode* succ);
     /** New graphical edge */
-    GEdge* newEdge( GNode* pred, GNode* succ, QDomElement e);
+    virtual GEdge* newEdge( GNode* pred, GNode* succ, QDomElement e);
     
     /** Reimplementation of newEdge virtual function of base class */
     AuxEdge* newEdge( AuxNode * pred, AuxNode *succ)
