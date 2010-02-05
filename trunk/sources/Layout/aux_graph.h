@@ -519,7 +519,7 @@ public:
     /** Default constructor */
     AuxGraph();
     /** Destructor */
-    ~AuxGraph();
+    virtual ~AuxGraph();
 
     /** Check if ranking is is valid */
     inline bool rankingValid() const

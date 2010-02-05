@@ -54,7 +54,7 @@ MainWindow::MainWindow()
 	setCentralWidget( central);
 	
     graph_view = new GraphView();
-    graph_view->setGraph( new GGraph( graph_view));
+    graph_view->setGraph( new CFG( graph_view));
     connectToGraphView( graph_view);
     setAcceptDrops( true);
 }
@@ -246,7 +246,7 @@ void MainWindow::openFile( QString fileName)
     } else
     {
         graph_view = new GraphView();
-        graph_view->setGraph( new GGraph( graph_view));
+        graph_view->setGraph( new CFG( graph_view));
         connectToGraphView( graph_view);
         graph_view->graph()->readFromXML( fileName);
     }
@@ -440,7 +440,7 @@ void MainWindow::newGraph()
     removeGraphView();
 
     graph_view = new GraphView();
-    graph_view->setGraph( new GGraph( graph_view));
+    graph_view->setGraph( new CFG( graph_view));
     connectToGraphView( graph_view);
     statusBar()->showMessage(tr("Created new"), 2000);
     dock_find->hide();

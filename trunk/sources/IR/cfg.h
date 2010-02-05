@@ -17,7 +17,9 @@
 class CFG: public GGraph
 {
 public:
-    CFG();
+    /** Constructor */
+    CFG( GraphView *v);
+    /** Destructor */
     ~CFG();
     /** New graphical node */
     CFNode* newNode();
@@ -29,25 +31,25 @@ public:
     CFEdge* newEdge( CFNode* pred, CFNode* succ, QDomElement e);
     
     /** Reimplementation of newEdge virtual function of base class */
-    AuxEdge* newEdge( AuxNode * pred, AuxNode *succ)
+    GEdge* newEdge( GNode * pred, GNode *succ)
     {
-        return ( AuxEdge*)newEdge( static_cast< CFNode *>( pred),
+        return ( GEdge*)newEdge( static_cast< CFNode *>( pred),
                                     static_cast< CFNode *> (succ));
     }
     /** Reimplementation of newEdge virtual function of base class */
-    AuxEdge* newEdge( AuxNode * pred, AuxNode *succ, QDomElement e)
+    GEdge* newEdge( GNode * pred, GNode *succ, QDomElement e)
     {
-        return ( AuxEdge*)newEdge( static_cast< CFNode *>( pred),
+        return ( GEdge*)newEdge( static_cast< CFNode *>( pred),
                                     static_cast< CFNode *> (succ), e);
     }
     /** Node creation reimplementaiton */
-    virtual void * CreateNode( AuxGraph *graph_p, int _id)
+    virtual void * CreateNode( GGraph *graph_p, int _id)
     {
         CFNode* node_p = new CFNode( static_cast<CFG *>(graph_p), _id);
         return node_p;
     }
     /** Edge creation reimplementation */
-    virtual void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
+    virtual void * CreateEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ)
     {
         return new CFEdge(  static_cast<CFG *>( graph_p), _id,
                               static_cast<CFNode *>( _pred), 

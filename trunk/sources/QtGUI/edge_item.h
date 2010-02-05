@@ -9,7 +9,7 @@
 #ifndef EDGE_W_H
 #define EDGE_W_H
 
-#include "gui_impl.h"
+#include "gview_impl.h"
 /** size of edge control */
 const qreal EdgeControlSize  = 5;
 

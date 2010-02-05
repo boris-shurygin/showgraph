@@ -48,7 +48,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~TextView();
+	virtual ~TextView();
 
 	/**
      * Open document in browser

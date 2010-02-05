@@ -6,7 +6,7 @@
  * GUI for ShowGraph tool.
  * Copyright (C) 2009 Boris Shurygin
  */
-#include "gui_impl.h"
+#include "gview_impl.h"
 
 inline qreal scaleVal( qreal zoom_scale)
 {

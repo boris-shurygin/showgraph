@@ -6,7 +6,7 @@
  * GUI for ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
-#include "gui_impl.h"
+#include "gview_impl.h"
 
 /** We can't create nodes separately, do it through newNode method of graph */
 GNode::GNode( GGraph *graph_p, int _id):

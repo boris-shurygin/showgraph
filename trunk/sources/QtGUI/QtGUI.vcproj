@@ -147,6 +147,46 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\gui_iface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gui_impl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gview_iface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gview_impl.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="moc result"
+			>
+			<File
+				RelativePath=".\moc_edge_item.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\moc_graph_view.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\moc_main_window.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="GraphView"
+			>
+			<File
+				RelativePath=".\edge_item.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\edge_item.h"
 				>
 				<FileConfiguration
@@ -170,6 +210,10 @@
 						Outputs="moc_edge_item.cpp"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\graph_view.cpp"
+				>
 			</File>
 			<File
 				RelativePath=".\graph_view.h"
@@ -197,51 +241,17 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\graph_widget.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Running MOC for GraphWidget"
-						CommandLine="moc edge_item.h -o moc_graph_widget.cpp&#x0D;&#x0A;"
-						Outputs="moc_graph_widget.cpp"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\gui_iface.h"
+				RelativePath=".\node_item.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\node_item.h"
 				>
 			</File>
-			<File
-				RelativePath=".\text_view.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\text_view.h"
-				>
-			</File>
 		</Filter>
 		<Filter
-			Name="Implementation"
+			Name="GUI"
 			>
-			<File
-				RelativePath=".\edge_item.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\graph_view.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\gui_impl.h"
-				>
-			</File>
 			<File
 				RelativePath=".\main_window.cpp"
 				>
@@ -271,23 +281,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\node_item.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="moc result"
-			>
-			<File
-				RelativePath=".\moc_edge_item.cpp"
+				RelativePath=".\text_view.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\moc_graph_view.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\moc_main_window.cpp"
+				RelativePath=".\text_view.h"
 				>
 			</File>
 		</Filter>
