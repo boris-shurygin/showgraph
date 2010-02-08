@@ -12,7 +12,7 @@
 GNode::GNode( GGraph *graph_p, int _id):
     AuxNode( ( AuxGraph *)graph_p, _id),
 	_doc( NULL),
-	ir_id( -1),
+	ir_id( GRAPH_MAX_NODE_NUM),
 	text_shown( false)
 {
     item_p = new NodeItem( this);
@@ -24,7 +24,7 @@ GNode::GNode( GGraph *graph_p, int _id):
 GNode::GNode( GGraph *graph_p, int _id, QPointF _pos):
     AuxNode( ( AuxGraph *)graph_p, _id),
 	_doc( NULL),
-	ir_id( -1),
+	ir_id( GRAPH_MAX_NODE_NUM),
 	text_shown( false)
 {
     item_p = new NodeItem( this);
@@ -96,6 +96,7 @@ GNode::~GNode()
     graph()->view()->viewHistory()->eraseNode( this);
     item()->remove();
     graph()->view()->deleteLaterNodeItem( item());
+    delete _doc;
 }
 /**
  * Get the pointer to graph

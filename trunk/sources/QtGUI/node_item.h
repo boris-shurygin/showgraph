@@ -127,7 +127,7 @@ public:
  */
 class GNode: public AuxNode
 {
-    int ir_id;
+    GraphNum ir_id;
 	bool text_shown;
 	/** Representation of node in graph view */
     NodeItem *item_p; 
@@ -162,12 +162,12 @@ public:
 	}
 
 	/** Get node's Id as it was parsed from ir dump */
-	inline int irId() const
+	inline GraphNum irId() const
 	{
 		return ir_id;
 	}
 	/** Set node's IR ID */
-	inline void setIRId( int i)
+	inline void setIRId( GraphNum i)
 	{
 		ir_id = i;
 	}
