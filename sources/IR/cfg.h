@@ -16,6 +16,7 @@
  */
 class CFG: public GGraph
 {
+    IR * priv_ir;
 public:
     /** Constructor */
     CFG( GraphView *v);
@@ -64,6 +65,16 @@ public:
     inline CFNode* firstNode()
     {
         return static_cast< CFNode *>( AuxGraph::firstNode());
+    }
+    /** Get IR for CFG */
+    inline IR *ir() const
+    {
+        return priv_ir;
+    }
+    /** Change IR of CFG */
+    inline void setIR( IR *new_ir)
+    {
+        priv_ir = new_ir;
     }
 };
 

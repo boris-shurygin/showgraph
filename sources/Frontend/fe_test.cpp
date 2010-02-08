@@ -12,7 +12,9 @@ TestParser::TestParser( QString str):
     Parser( str), curr_node( NULL)
 {
     graph = new GraphView();
+    ir = new GraphView();
     graph->setGraph( new CFG( graph));
+    ir->setGraph( new IR( ir));
 }
 
 TestParser::~TestParser()
@@ -68,7 +70,7 @@ TestParser::parseLine( QString line)
         if ( symtab.find( name ) == symtab.end())
         {
             SymNode* node = new SymNode( name);
-            curr_node = graph->graph()->newNode();
+            curr_node = static_cast<CFNode *>( graph->graph()->newNode());
             curr_node->setDoc( new QTextDocument());
             node->setNode( curr_node);
             node->node()->item()->setPlainText( text);

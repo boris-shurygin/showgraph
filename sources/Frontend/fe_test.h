@@ -19,19 +19,85 @@
  * Node representation as a symbol
  * @ingroup FE_test
  */
+class SymExpr: public SymObj
+{
+    Expr *ir_expr;
+public:
+    /** Constructor */
+    SymExpr( QString name): SymObj( name){};
+    /** Set graph node */
+    inline void setExpr( Expr* e)
+    {
+        ir_expr = e;
+    }
+    /** Get associated graph node */
+    inline Expr* expr() const
+    {
+        return ir_expr;
+    }
+    /** Get node type */
+    SymType type() const
+    {
+        return SYM_NODE;
+    }
+};
+
+/**
+ * Edge representation as a symbol
+ * @ingroup FE_test
+ */
+class SymDep: public SymObj
+{
+    QString pred_name;
+    QString succ_name;
+    Dep* ir_dep;
+public:
+    /** Constructor */
+    SymDep( QString name): SymObj( name){};
+    /** Get symbol object type */
+    SymType type() const
+    {
+        return SYM_EDGE;
+    }
+    /** Set the name of predecessor */
+    inline void setPred( QString pred_string)
+    {
+        pred_name = pred_string;
+    }
+    /** Set the name of successor */
+    inline void setSucc( QString succ_string)
+    {
+        succ_name = succ_string;
+    }
+    /** Get predecessor's name */
+    inline QString pred() const
+    {
+        return pred_name;
+    }
+    /** Get successor's name */
+    inline QString succ() const
+    {
+        return succ_name;
+    }
+};
+
+/**
+ * Node representation as a symbol
+ * @ingroup FE_test
+ */
 class SymNode: public SymObj
 {
-    GNode *graph_node;
+    CFNode *graph_node;
 public:
     /** Constructor */
     SymNode( QString name): SymObj( name){};
     /** Set graph node */
-    inline void setNode( GNode* n)
+    inline void setNode( CFNode* n)
     {
         graph_node = n;
     }
     /** Get associated graph node */
-    inline GNode* node() const
+    inline CFNode* node() const
     {
         return graph_node;
     }
@@ -50,7 +116,7 @@ class SymEdge: public SymObj
 {
     QString pred_name;
     QString succ_name;
-    GEdge* graph_edge;
+    CFEdge* graph_edge;
 public:
     /** Constructor */
     SymEdge( QString name): SymObj( name){};
@@ -88,7 +154,11 @@ public:
 class TestParser: public Parser
 {
     GraphView *graph;
-    GNode *curr_node;
+    GraphView *ir;
+    CFNode *curr_node;
+
+    SymTab expr_tab;
+    SymTab dep_tab;
 public:
     /** Constructor */
     TestParser( QString str);

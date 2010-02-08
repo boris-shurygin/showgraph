@@ -16,6 +16,7 @@
  */
 class IR: public GGraph
 {
+    CFG *cf_graph;
 public:
     /** Constructor */
     IR( GraphView *v);
@@ -74,6 +75,16 @@ public:
     inline Expr* firstExpr()
     {
         return static_cast< Expr *>( AuxGraph::firstNode());
+    }
+    /** Get CFG associated with IR */
+    inline CFG *cfg() const
+    {
+        return cf_graph;
+    }
+    /** Set CF graph for IR */
+    inline void setCFG( CFG *g)
+    {
+        cf_graph = g;
     }
 };
 
