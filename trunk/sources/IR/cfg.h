@@ -44,13 +44,13 @@ public:
                                     static_cast< CFNode *> (succ), e);
     }
     /** Node creation reimplementaiton */
-    virtual void * CreateNode( GGraph *graph_p, int _id)
+    virtual void * CreateNode( AuxGraph *graph_p, int _id)
     {
         CFNode* node_p = new CFNode( static_cast<CFG *>(graph_p), _id);
         return node_p;
     }
     /** Edge creation reimplementation */
-    virtual void * CreateEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ)
+    virtual void * CreateEdge( AuxGraph *graph_p, int _id, GNode *_pred, GNode* _succ)
     {
         return new CFEdge(  static_cast<CFG *>( graph_p), _id,
                               static_cast<CFNode *>( _pred), 
