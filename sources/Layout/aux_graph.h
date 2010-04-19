@@ -16,6 +16,8 @@ typedef unsigned int Rank;
 /** Rank undefined value constant */
 const Rank RANK_UNDEF = (Rank) (-1);
 
+#include "layout_iface.h"
+
 /**
  * Types of a node
  *
@@ -429,8 +431,16 @@ public:
  *
  * @ingroup Layout
  */
-class AuxGraph: public GraphT< AuxGraph, AuxNode, AuxEdge>
+class AuxGraph: public QObject, public GraphT< AuxGraph, AuxNode, AuxEdge>
 {
+    Q_OBJECT;
+private:
+    /** Layout algorithm inner variables */
+    bool layout_in_process;
+    int cur_level; //last processed level
+    int cur_pass; // current pass
+    QFutureWatcher< void> *watcher;
+
     /** Array of node lists for ranks */
     QVector< Level*> levels;
 
@@ -514,8 +524,11 @@ protected:
     AuxNode* rootNode();
     /** Arrange nodes horizontally */
     void arrangeHorizontally();
+public slots:
+    void layoutNextStep();
+signals:
+    void progressChange( int value);
 public:
-    
     /** Default constructor */
     AuxGraph();
     /** Destructor */
@@ -571,6 +584,14 @@ public:
 
     /** Perform layout */
     void doLayout();
+    
+    /** Perform layout using concurrent threads */
+    void doLayoutConcurrent();
+    
+    /**
+     * Run some actions after main layout algorithm
+     */
+    virtual void layoutPostProcess();
 };
 
 /**

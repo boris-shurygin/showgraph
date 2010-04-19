@@ -9,10 +9,13 @@
 /**
  * Default constructor
  */
-AuxGraph::AuxGraph(): ranking_valid( false), levels() 
+AuxGraph::AuxGraph(): ranking_valid( false), levels(), layout_in_process( false) 
 {
     ranking = newNum();
     order = newNum();
+    
+    watcher = new QFutureWatcher<void>();
+    connect( watcher, SIGNAL(finished()), this, SLOT( layoutNextStep()));
 }
 
 /**
@@ -47,6 +50,7 @@ AuxGraph::deleteLevels()
 AuxGraph::~AuxGraph()
 {
     deleteLevels();
+    delete watcher;
     freeNum( ranking);
     freeNum( order);
 }

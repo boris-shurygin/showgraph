@@ -320,6 +320,17 @@ void GGraph::UpdatePlacement()
     {
         n->item()->setPos( n->modelX(), n->modelY());
     }
+    GNode *n;
+    GEdge *e;
+    
+    foreachNode( n, this)
+    {
+        n->item()->show();
+    }
+    foreachEdge( e, this)
+    {
+        e->item()->show();
+    }
 	/** Restore indexing */
 	scene->setItemIndexMethod( QGraphicsScene::BspTreeIndex);
     scene->setBspTreeDepth( depth); 
@@ -342,18 +353,36 @@ void GGraph::doLayout()
         }
     } else
     {
-        /** Run layout algorithm */
-	    AuxGraph::doLayout();
+        view()->dialog->show();
+        GNode *n;
+        GEdge *e;
         
-        UpdatePlacement();
-        
-        /** Center view on root node */
-	    GNode *root = static_cast<GNode*>( rootNode());
-        if ( isNotNullP( root))
+        foreachNode( n, this)
         {
-            view_p->centerOn( root->item());
+            n->item()->hide();
         }
+        foreachEdge( e, this)
+        {
+            e->item()->hide();
+        }
+        /** Run layout algorithm */
+	    AuxGraph::doLayoutConcurrent();
+        //AuxGraph::doLayout();
+        //layoutPostProcess();
     }
+}
+
+void GGraph::layoutPostProcess()
+{
+    UpdatePlacement();
+    
+    /** Center view on root node */
+    GNode *root = static_cast<GNode*>( rootNode());
+    if ( isNotNullP( root))
+    {
+        view_p->centerOn( root->item());
+    }
+    view()->dialog->hide();
 }
 
 /** Constructor */
@@ -387,6 +416,10 @@ GraphView::GraphView():
 	createMenus();
 	show_menus = true;
 	setAcceptDrops( false);
+    dialog = new QProgressDialog(this);
+//    dialog->setLabel("Layout progress");
+    dialog->hide(); 
+    dialog->setMaximum( 100);
 }
 
 /** Destructor */
@@ -394,6 +427,7 @@ GraphView::~GraphView()
 {
     delete graph_p;
     delete view_history;
+    delete dialog;
 }
 
 void GraphView::startAnimationNodes()
