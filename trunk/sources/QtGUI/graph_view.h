@@ -196,6 +196,10 @@ public:
      * Assign placement coordinates to node items
      */
     void UpdatePlacement();
+    /**
+     * Reimplementation of layout's post processing step
+     */
+    void layoutPostProcess();
 
     /** Get corresponding graph view widget */
     inline GraphView *view() const
@@ -359,6 +363,7 @@ public slots:
     /** Show text of the clicked node */
     void showSelectedNodesText();
 public:
+    QProgressDialog *dialog;
     /** Constants */
 #ifdef _DEBUG
     static const int MAX_DELETED_ITEMS_COUNT = 100;
@@ -411,6 +416,7 @@ public:
     inline void setGraph( GGraph *g)
     {
         graph_p = g;
+        connect( g, SIGNAL(progressChange(int)), dialog, SLOT(setValue(int)));
     }
 	/** Get pointer to model graph */
     inline GGraph *graph() const

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="Layout"
 	ProjectGUID="{4BCC63EF-794D-4DCA-B3B8-A04284AC6C69}"
 	RootNamespace="Layout"
@@ -164,6 +164,16 @@
 			<File
 				RelativePath=".\aux_graph.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Runnig MOC for AuxGraph"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 aux_graph.h -o moc_aux_graph.cpp"
+						Outputs="moc_aux_graph.cpp"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\layout_iface.h"
@@ -179,6 +189,14 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+		</Filter>
+		<Filter
+			Name="moc result"
+			>
+			<File
+				RelativePath=".\moc_aux_graph.cpp"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

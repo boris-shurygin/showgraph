@@ -7,6 +7,15 @@
 
 #include "layout_iface.h"
 
+
+/**
+ * Arrange nodes in level
+ */
+void arrangeLevel( Level *level, GraphDir dir, bool commit_placement, bool first_pass)
+{
+    level->arrangeNodes( dir, commit_placement, first_pass);
+}
+
 /**
  * Compare orders of nodes
  */
@@ -471,7 +480,7 @@ Numeration AuxGraph::rankNodes()
 #ifdef _DEBUG
         out( "%llu node rank is %u", n->id(), rank);
 #endif
-        n->setY( rank * RANK_SPACING);
+        //n->setY( rank * RANK_SPACING);
 
         /* Traversal continuation */
         foreachSucc( e, n)
@@ -584,6 +593,8 @@ Numeration AuxGraph::rankNodes()
  */
 void AuxGraph::doLayout()
 {
+    if ( layout_in_process)
+        return;
     /**
      * 0. Remove all edge controls
      * FIXME: This is a stub. we should not delete controls,
@@ -620,10 +631,59 @@ void AuxGraph::doLayout()
 }
 
 /**
+ * Perform layout
+ */
+void AuxGraph::doLayoutConcurrent()
+{
+    if ( layout_in_process)
+        return;
+    
+    /**
+     * 0. Remove all edge controls
+     * FIXME: This is a stub. we should not delete controls,
+     *        instead we should reuse them and create new ones only if necessary
+     */
+    for ( AuxNode* n = firstNode();
+          isNotNullP( n);
+          )
+    {
+        AuxNode *next = n->nextNode();
+        if ( n->isEdgeControl())
+        {
+            delete n;
+        }
+        n = next;
+    }
+
+    /** 1. Perfrom edge classification */
+    classifyEdges();
+    
+    /** 2. Rank nodes */
+    rankNodes();
+
+    /** 3. Adjust levels vertically */
+    adjustVerticalLevels();
+
+    /** 4. Perform edge crossings minimization */
+    reduceCrossings();
+
+    /** 5. Perform horizontal arrangement of nodes */
+    layout_in_process = true;
+    cur_pass = 0;
+    cur_level = 0;
+    layoutNextStep();
+
+    /** 6. Move edge controls to enchance the picture readability */
+}
+
+/**
  * Assign order to nodes by numbering in a DFS traversal
  */
 void AuxGraph::orderNodesByDFS()
 {
+    if ( layout_in_process)
+        return;
+
     /** Structure used for dfs traversal */
     struct DfsStepInfo
     {
@@ -685,6 +745,8 @@ void AuxGraph::orderNodesByDFS()
  */
 void AuxGraph::adjustVerticalLevels()
 {
+    if ( layout_in_process)
+        return;
     qreal y = 0;
     qreal prev_height = 0;
     for ( int i = 0; i < levels.size(); i++)
@@ -701,6 +763,8 @@ void AuxGraph::adjustVerticalLevels()
  */
 void AuxGraph::reduceCrossings()
 {
+    if ( layout_in_process)
+        return;
     /** Perform numeration and sort nodes to avoid tree edges crossings */
     orderNodesByDFS();
 
@@ -716,6 +780,8 @@ void AuxGraph::reduceCrossings()
  */
 void AuxGraph::arrangeHorizontally()
 {
+    if ( layout_in_process)
+        return;
     /* Descending pass */
     for ( int i = 0; i < levels.size(); i++)
     {
@@ -731,5 +797,63 @@ void AuxGraph::arrangeHorizontally()
     for ( int i = 0; i < levels.size(); i++)
     {
         levels[ i]->arrangeNodes( GRAPH_DIR_DOWN, true, false);
+    }
+}
+
+/** Empty implementation */
+void AuxGraph::layoutPostProcess()
+{
+
+}
+
+void AuxGraph::layoutNextStep()
+{
+    if ( cur_pass)
+    {
+        int progress = 100 * ( (cur_pass - 1) * levels.size() + cur_level) / ( 3 * levels.size());
+        emit progressChange( progress);
+    }
+    switch ( cur_pass)
+    {
+        case 0:/* prepare data */
+            cur_level = 0;
+            cur_pass++;
+        case 1:/* Descending pass */
+            if ( cur_level < levels.size())
+            {
+                watcher->setFuture( QtConcurrent::run( arrangeLevel, levels[ cur_level], GRAPH_DIR_DOWN, false, true));
+                cur_level++;
+                break;
+            } else
+            {
+                cur_pass++;
+                cur_level = 0;
+            }
+        case 2:/* Ascending pass */
+            if ( cur_level < levels.size())
+            {
+                watcher->setFuture( QtConcurrent::run( arrangeLevel, levels[ cur_level], GRAPH_DIR_UP, false, false));
+                cur_level++;
+                break;
+            } else
+            {
+                cur_level = 0;
+                cur_pass++;
+            }
+        case 3:
+            if ( cur_level < levels.size())
+            {
+                watcher->setFuture( QtConcurrent::run( arrangeLevel, levels[ cur_level], GRAPH_DIR_DOWN, true, false));
+                cur_level++;
+                break;
+            } else
+            {
+                cur_level = 0;
+                cur_pass++;
+            }
+        default:
+            layoutPostProcess();
+            layout_in_process = false;
+            break;
     }
 }
