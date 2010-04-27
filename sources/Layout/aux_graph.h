@@ -282,6 +282,7 @@ protected:
         stable( false)
     {
     }
+    ~AuxNode();
     friend class GraphT< AuxGraph, AuxNode, AuxEdge>;
     friend class AuxGraph;
 };
@@ -524,10 +525,17 @@ protected:
     AuxNode* rootNode();
     /** Arrange nodes horizontally */
     void arrangeHorizontally();
+    /** Arrange nodes horizontally without respect of stable nodes */
+    void arrangeHorizontallyWOStable();
+    /** Arrange nodes horizontally with respect of stable nodes */
+    void arrangeHorizontallyWithStable( Rank min, Rank max);
 public slots:
     void layoutNextStep();
 signals:
+    /** signal some progess in layout process */
     void progressChange( int value);
+    /** signal that layout has finished */
+    void layoutDone();
 public:
     /** Default constructor */
     AuxGraph();

@@ -206,6 +206,34 @@
 			<File
 				RelativePath=".\ir.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for IR"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 ir.h -o moc_ir.cpp"
+						Outputs="moc_ir.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for ir.h"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 ir.h -o moc_ir.cpp&#x0D;&#x0A;"
+						Outputs="moc_ir.cpp"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="moc result"
+			>
+			<File
+				RelativePath=".\moc_ir.cpp"
+				>
 			</File>
 		</Filter>
 	</Files>

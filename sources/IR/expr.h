@@ -17,13 +17,13 @@
 class Expr: public GNode
 {
     /** Expression's CF node */
-    CFNode *cf_node;
-    /** Textual representation */
+    CFNode *_node;
+    /** Expression textual representation */
     QString string;
     /** Previous expression in chain */
-    Expr *prev_expr;
+    Expr *_prev;
     /** Next expression in chain */
-    Expr *next_expr;
+    Expr *_next;
 protected:    
     /** We can't create nodes separately, do it through newNode method of graph */
     Expr( IR *graph_p, int _id);
@@ -40,12 +40,22 @@ public:
     /** Get CF node */
     inline CFNode * node() const
     {
-        return cf_node;
+        return _node;
     }
     /** Set CF node */
-    inline void setCFNode( CFNode * n)
+    inline void setNode( CFNode * n)
     {
-        cf_node = n;
+        _node = n;
+    }
+    /** Set string */
+    inline void setString( QString str)
+    {
+        string = str;
+    }
+    /** Convert to string */
+    inline QString toString() const
+    {
+        return string;
     }
     /** Get next graph's node */
     inline Expr* nextNode()
@@ -90,22 +100,22 @@ public:
     /** Get previous expression */
     inline Expr *prev() const
     {
-        return prev_expr;
+        return _prev;
     }
     /** Get next expression */
     inline Expr *next() const
     {
-        return next_expr;
+        return _next;
     }
     /** Set previous expression */
     inline void setPrev( Expr * p)
     {
-        prev_expr = p;
+        _prev = p;
     }
     /** Set next expression */
     inline void setNext( Expr *n)
     {
-        next_expr = n;
+        _next = n;
     }
     /** Insert expression in sequence */
     inline void insert( Expr *prev)

@@ -38,6 +38,11 @@ bool compareGroups( NodeGroup* g1,
      * (g1.left + g1.right) / 2 < (g2.left + g2.right) / 2
      *       g1.left + g1.right < g2.left + g2.right
      */
+    if ( g1->left() + g1->right() == g2->left() + g2->right()
+         && g1->nodes().count() == 1 && g1->nodes().count() == 1)
+    {
+        return g1->nodes().first()->order() < g2->nodes().first()->order();
+    }
     return ( g1->left() + g1->right() < g2->left() + g2->right());
 }
 
@@ -51,7 +56,7 @@ void Level::sortNodesByOrder()
 
 /**
  * Arranges nodes using group merge algorithm.
- * NodeGroup is a group of nodes which interleave if we apply baricentric heuristic directly.
+ * NodeGroup is a group of nodes which interleave if we apply barycentric heuristic directly.
  * These nodes are placed within group borders. If two groups interleave they are merged.
  * Arrangement is performed iteratively starting with groups that have one node each.
  */
@@ -778,7 +783,7 @@ void AuxGraph::reduceCrossings()
 /**
  * Assign X coordinates to the nodes
  */
-void AuxGraph::arrangeHorizontally()
+void AuxGraph::arrangeHorizontallyWOStable()
 {
     if ( layout_in_process)
         return;
@@ -797,6 +802,62 @@ void AuxGraph::arrangeHorizontally()
     for ( int i = 0; i < levels.size(); i++)
     {
         levels[ i]->arrangeNodes( GRAPH_DIR_DOWN, true, false);
+    }
+}
+
+/**
+ * Arrange with respect to stable nodes
+ */
+void
+AuxGraph::arrangeHorizontallyWithStable( Rank min, Rank max)
+{
+    /* Descending pass */
+    for ( int i = min; i < levels.size(); i++)
+    {
+        levels[ i]->arrangeNodes( GRAPH_DIR_DOWN, true, true);
+    }
+    
+    /* Ascending pass */
+    for ( int i = max; i >= 0; i--)
+    {
+        levels[ i]->arrangeNodes( GRAPH_DIR_UP, true, true);
+    }
+    /* Final pass */
+    for ( int i = min; i < levels.size(); i++)
+    {
+        //levels[ i]->arrangeNodes( GRAPH_DIR_DOWN, true, false);
+    }
+}
+
+/**
+ * Assign X coordinates to the nodes
+ */
+void
+AuxGraph::arrangeHorizontally()
+{
+    AuxNode *n;
+    bool with_stable = false;
+    Rank min_stable_rank = this->nodeCount();
+    Rank max_stable_rank = 0;
+    
+    foreachNode( n, this)
+    {
+        if ( n->isStable())
+        {
+            with_stable = true;
+            Rank rank = n->number( ranking);
+            if ( rank > max_stable_rank)
+                max_stable_rank = rank;
+            if ( rank < min_stable_rank)
+                min_stable_rank = rank;
+        }
+    }
+    if ( !with_stable)
+    {
+        arrangeHorizontallyWOStable();
+    } else
+    {
+        arrangeHorizontallyWithStable( min_stable_rank, max_stable_rank);
     }
 }
 
@@ -853,6 +914,7 @@ void AuxGraph::layoutNextStep()
             }
         default:
             layoutPostProcess();
+            emit layoutDone();
             layout_in_process = false;
             break;
     }

@@ -11,6 +11,7 @@
 #ifndef IR_H
 #define IR_H
 
+#include "ir_iface.h"
 /**
  * Intermediate representation
  */
@@ -44,13 +45,13 @@ public:
                                     static_cast< Expr *> (succ), e);
     }
     /** Node creation reimplementaiton */
-    virtual void * CreateNode( GGraph *graph_p, int _id)
+    virtual void * CreateNode( AuxGraph *graph_p, int _id)
     {
         Expr* node_p = new Expr( static_cast<IR *>(graph_p), _id);
         return node_p;
     }
     /** Edge creation reimplementation */
-    virtual void * CreateEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ)
+    virtual void * CreateEdge( AuxGraph *graph_p, int _id, GNode *_pred, GNode* _succ)
     {
         return new Dep(  static_cast<IR *>( graph_p), _id,
                               static_cast<Expr *>( _pred), 
@@ -86,6 +87,31 @@ public:
     {
         cf_graph = g;
     }
+    void showExprPrev();
+    void showExprNext();
 };
 
+class IRView: public GraphView
+{
+    Q_OBJECT;
+    
+    QAction *showPrevAct;
+    QAction *showNextAct;
+public:
+    IRView();
+    /** Get IR */
+    inline IR *graph() const
+    {
+        return static_cast< IR* >( GraphView::graph());
+    }
+public slots:
+    void showExprPrev();
+    void showExprNext();
+protected:
+	/** Create actions for node and edge dropdown menus */
+    void createActions();
+    /** Create menu for particular node */
+    virtual QMenu* createMenuForNode( GNode *n);
+
+};
 #endif /* IR_H */

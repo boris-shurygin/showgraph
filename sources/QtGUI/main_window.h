@@ -27,8 +27,6 @@ enum FindMode
 	FIND_MODE_NODE,
 	/** Default */
 	FIND_MODE_DEFAULT = FIND_MODE_NODE,
-	/** IR expression searching */
-	FIND_MODE_EXPR,
 	/** IR dump text searching  */
 	FIND_MODE_TEXT,
 	/** Number of searching modes */
@@ -81,14 +79,13 @@ public:
  */
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
-    
+    Q_OBJECT;
+
+private:
     QWidget *view;
-	QWidget *findBar;
 	FindWidget *findWidget;
-	QVBoxLayout *vboxLayout;
-    GraphView* graph_view;
-    QDockWidget *dock_find;
+	GraphView* graph_view;
+    QProgressBar* progress_bar;
     QList< QDockWidget *> textDocks;
 	Conf* conf;
 public:
@@ -102,12 +99,12 @@ public slots:
     void newGraph();
     /** Run layout procedure on the current graph view */   
     void runLayout();
+    /** Perform actions after layout */
+    void layoutDone();
     /** Save graph representation */   
     void saveAs();
     /** Show "about" info */
     void about();
-	/** Show find bar */
-	void findShow();
 	/** Find node/text next */
 	void findNext();
 	/** Find node/text prev */
@@ -120,11 +117,14 @@ public slots:
     void zoomOrig();
     /** Show text window for selected node */
     void showNodeText( GNode *node);
-    /** Export picture */
+    /** Show text window for selected node */
     void exportImage();
     /** Print picture */
     void printContents();
-	/** Reimplementation of drag enter event handler */
+    /** React to anchor click in text view */
+	void textClicked( const QUrl & link);
+public:
+    /** Reimplementation of drag enter event handler */
 	void dragEnterEvent( QDragEnterEvent *event);
 	/** Reimplementation of drop event handler */
 	void dropEvent( QDropEvent *event);
@@ -132,14 +132,13 @@ public slots:
 	void dragMoveEvent( QDragMoveEvent *event);
 	/** Open specified file */
 	void openFile( QString fileName);
-	/** React to anchor click in text view */
-	void textClicked( const QUrl & link);
-
 private:
     /** Create actions */
     void createActions();
     /** Create menus */
     void createMenus();
+    /** Create toolbar */
+    void createToolbar();
     /** Discard the current graph view */
     void removeGraphView();
     /** Connect signals and slots to newly created graph view */
@@ -171,6 +170,8 @@ private:
     QAction *zoomOrigAct;
     QAction *exportImageAct;
     QAction *printAct;
+    QToolBar *tool_bar;
+    QToolBar *find_tool_bar;
 };
 
 #endif

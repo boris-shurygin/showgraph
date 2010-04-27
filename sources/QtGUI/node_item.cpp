@@ -18,6 +18,12 @@ GNode::GNode( GGraph *graph_p, int _id):
     item_p = new NodeItem( this);
 	setIRId( id());
     graph()->invalidateRanking();
+    if ( graph()->view()->isContext())
+    {
+        item()->hide();
+        setForPlacement( false);
+        setPriority( 0);
+    }
 }
 
 /** Contructor of node with specified position */
@@ -31,6 +37,12 @@ GNode::GNode( GGraph *graph_p, int _id, QPointF _pos):
     item_p->setPos( _pos);
 	setIRId( id());
     graph()->invalidateRanking();
+    if ( graph()->view()->isContext())
+    {
+        item()->hide();
+        setForPlacement( false);
+        setPriority( 0);
+    }
 }
 
 /**
@@ -259,7 +271,7 @@ NodeItem::paint( QPainter *painter,
         return;
     
     if ( node()->graph()->view()->isContext())
-        painter->setOpacity( this->opacity);
+        painter->setOpacity( opacityLevel());
 
     if ( node()->isSimple() || node()->isEdgeLabel())
     {
@@ -312,10 +324,13 @@ NodeItem::paint( QPainter *painter,
 void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
 {
     bold_border = true;
-	if( event->button() & Qt::RightButton && !node()->isEdgeControl())
+	if ( event->button() & Qt::RightButton && !node()->isEdgeControl())
     {
-        node()->graph()->view()->SetCreateEdge( true);
-        node()->graph()->view()->SetTmpSrc( node());
+        if ( node()->graph()->view()->isEditable())
+        {
+            node()->graph()->view()->SetCreateEdge( true);
+            node()->graph()->view()->SetTmpSrc( node());
+        }
     } else if ( node()->isEdgeControl() || node()->isEdgeLabel())
     {
         node()->firstPred()->item()->setSelected( true);
@@ -331,6 +346,8 @@ void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
 void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
 {
     bold_border = false;
+    bool call_baseclass = true;
+
 	/** Select this node */
 	node()->graph()->emptySelection();
     if ( !node()->isNodeInFocus())
@@ -345,6 +362,7 @@ void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
     {
 	    QMenu *menu = node()->graph()->view()->createMenuForNode( node());
         menu->exec( event->screenPos());
+        call_baseclass = false;
         delete menu;
     } else if ( event->button() & Qt::LeftButton 
                 && !( node()->isEdgeControl() || node()->isEdgeLabel()))
@@ -352,13 +370,16 @@ void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
         if (  node()->graph()->view()->isContext())
         {
             node()->graph()->view()->findContext();
+            //node()->graph()->view()->showNodeText( node());
         } else
         {
-            node()->graph()->view()->showNodeText( node());
+            //node()->graph()->view()->showNodeText( node());
         }
 	}
-	QGraphicsTextItem::mouseReleaseEvent( event);
+	if ( call_baseclass)
+        QGraphicsTextItem::mouseReleaseEvent( event);
 	update();
+    setFlag( ItemIsMovable, true);
 }
 
 /**
@@ -366,11 +387,18 @@ void NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent *event)
  */
 void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    if ( event->button() & Qt::LeftButton && !node()->isEdgeControl())
+    setFlag( ItemIsMovable, false);
+    if ( node()->graph()->view()->isEditable())
     {
-        if ( textInteractionFlags() == Qt::NoTextInteraction)
-            setTextInteractionFlags(Qt::TextEditorInteraction);
-			//QGraphicsTextItem::mousePressEvent(event);
+        if ( event->button() & Qt::LeftButton && !node()->isEdgeControl())
+        {
+            if ( textInteractionFlags() == Qt::NoTextInteraction)
+                setTextInteractionFlags(Qt::TextEditorInteraction);
+			    //QGraphicsTextItem::mousePressEvent(event);
+        }
+    } else
+    {
+        node()->graph()->view()->showNodeText( node());
     }
 }
 
@@ -414,7 +442,7 @@ bool NodeItem::advance()
     if ( !isVisible())
         return false;
 
-    qreal target_opacity = ((qreal)node()->priority())/6;
+    qreal target_opacity = ((qreal)node()->priority())/ MAX_PRIORITY;
     
     if ( target_opacity > opacityLevel() + OPACITY_STEP)
     {

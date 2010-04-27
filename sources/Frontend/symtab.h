@@ -41,6 +41,9 @@ public:
     /** Full Constructor */
     SymObj( QString name): sym_name( name){};
 
+    /** Destructor */
+    virtual ~SymObj(){};
+
     /** Set object symbolic name */
     inline void setName( QString name)
     {
@@ -68,7 +71,18 @@ public:
     /** Empty destructor */
     ~SymTab()
     {
-
+        removeObjects();
+    }
+    /** Remove all objects */
+    void removeObjects()
+    {
+         QHash<QString, SymObj *>::const_iterator i = constBegin();
+         while (i != constEnd())
+         {
+             delete i.value();
+             ++i;
+         } 
+         clear();
     }
 };
 

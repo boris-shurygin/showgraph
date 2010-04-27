@@ -12,11 +12,19 @@
 
 MainWindow::MainWindow()
 {
-    QFrame *central = new QFrame( this);
-	central->setMinimumSize( 200, 200);
-	dock_find = new QDockWidget( tr("Find"), this);
+    QString system = QLatin1String("win");
+#ifdef Q_OS_MAC
+    system = QLatin1String("mac");
+#endif
     QIcon icon( "images/logo.ico");
     setWindowIcon(icon);
+    
+    /** Find toolbar */
+    find_tool_bar = addToolBar (tr("Find"));
+    find_tool_bar->toggleViewAction()->setIcon( 
+        QIcon(QString::fromUtf8("images/%1/Find/Find.ico").arg(system)));
+    find_tool_bar->toggleViewAction()->setShortcut(tr("Ctrl+F"));
+    
     createActions();
     createMenus();
 
@@ -24,39 +32,27 @@ MainWindow::MainWindow()
 
     setWindowTitle(tr("ShowGraph"));
     resize(480, 320);
-
-    addDockWidget( Qt::TopDockWidgetArea, dock_find);
-    dock_find->hide();
-
-	vboxLayout = new QVBoxLayout( central);
-	vboxLayout->setDirection( QBoxLayout::BottomToTop);
 #ifdef Q_OS_MAC
     system = QLatin1String("mac");
-#else
-    vboxLayout->setMargin(0);
 #endif
-    view = new QWidget( central);
     
-    //findBar = new QWidget( central);
     findWidget = new FindWidget( this);
-    //findBar->setMinimumHeight(findWidget->minimumSizeHint().height());
     findWidget->move(0, 0);
-    //vboxLayout->addWidget(findBar);
-    //findBar->hide();
-    findWidget->editFind->installEventFilter( central);
-    dock_find->setWidget( findWidget);
-    
-	//connect(findWidget->toolClose, SIGNAL(clicked()), findBar, SLOT(hide()));
+    //findWidget->editFind->installEventFilter( this);
+    find_tool_bar->addWidget( findWidget);
+    find_tool_bar->hide();
 	connect(findWidget->toolNext, SIGNAL(clicked()), this, SLOT(findNext()));
     connect(findWidget->toolPrevious, SIGNAL(clicked()), this, SLOT(findPrev()));
     connect(findWidget->editFind, SIGNAL(returnPressed()), this, SLOT(findNext()));
-   
-	setCentralWidget( central);
-	
     graph_view = new GraphView();
     graph_view->setGraph( new CFG( graph_view));
-    connectToGraphView( graph_view);
+    graph_view->setEditable();
+    graph_view->toggleEditableAction()->setChecked( true);
     setAcceptDrops( true);
+    createToolbar();
+    statusBar()->addWidget( progress_bar = new QProgressBar( this));
+    
+    connectToGraphView( graph_view);
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -153,7 +149,7 @@ void MainWindow::showNodeText( GNode *node)
 	{
 		if ( !node->isTextShown())
 		{
-			QDockWidget *dock = new QDockWidget( node->item()->toPlainText(), this);
+			QDockWidget *dock = new QDockWidget( QString("Node %1").arg( node->irId()), this);
 			TextView* text_view = new TextView( node);
 			dock->setWidget( text_view);
 			addDockWidget(Qt::RightDockWidgetArea, dock);
@@ -170,6 +166,7 @@ void MainWindow::showNodeText( GNode *node)
 	}
 }
 
+
 void MainWindow::removeGraphView()
 {
 	foreach( QDockWidget *tdock, textDocks)
@@ -177,7 +174,6 @@ void MainWindow::removeGraphView()
 		delete tdock;
 	}
 	textDocks.clear();
-
 	/** Delete old graph and text views */
     delete graph_view;
 }
@@ -199,7 +195,10 @@ void MainWindow::connectToGraphView( GraphView *gview)
     gview->toggleSmoothFocus( trackFocusAct->isChecked());
     gview->toggleViewMode( contextViewAct->isChecked());
     /** Place graph view in window */
-    vboxLayout->addWidget( graph_view);
+    setCentralWidget( graph_view);
+    connect( gview->graph(), SIGNAL(progressChange(int)), progress_bar, SLOT(setValue(int)));
+    connect( gview->graph(), SIGNAL(layoutDone()), this, SLOT(layoutDone()));
+    graph_view->scene()->setItemIndexMethod( QGraphicsScene::BspTreeIndex);
 }
 
 void MainWindow::open()
@@ -236,13 +235,10 @@ void MainWindow::openFile( QString fileName)
     /** Not a graph description - run parser */
     if ( rx.indexIn( fileName) == -1 )
     {
-        //TextView* text_view = dock->widget();
-        //text_view->openFile( fileName);
         TestParser parser( fileName);
         parser.mainLoop();
         connectToGraphView( parser.graphView());
         do_layout = true;
-        //dock->show();
     } else
     {
         graph_view = new GraphView();
@@ -255,11 +251,6 @@ void MainWindow::openFile( QString fileName)
     if ( do_layout)
         graph_view->graph()->doLayout();
     statusBar()->showMessage(tr("File %1 loaded").arg( fileName), 2000);
-}
-
-void MainWindow::findShow()
-{
-    findBar->show();
 }
 
 bool 
@@ -392,7 +383,7 @@ void MainWindow::findNext()
         {
             p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
         }
-	}
+    }
     findWidget->editFind->setPalette(p);
 }
 
@@ -427,7 +418,7 @@ void MainWindow::zoomIn()
 
 void MainWindow::zoomOut()
 {
-	graph_view->zoomOut();
+    graph_view->zoomOut();
 }
 
 void MainWindow::zoomOrig()
@@ -441,14 +432,26 @@ void MainWindow::newGraph()
 
     graph_view = new GraphView();
     graph_view->setGraph( new CFG( graph_view));
+    graph_view->setEditable();
+    graph_view->toggleEditableAction()->setChecked( true);
     connectToGraphView( graph_view);
     statusBar()->showMessage(tr("Created new"), 2000);
-    dock_find->hide();
 }
 
 void MainWindow::runLayout()
 {
+    if ( !graph_view->isContext())
+    {
+        progress_bar->show();
+        progress_bar->setFormat("layout %p");
+        progress_bar->setMaximum( 100);
+    }
     graph_view->graph()->doLayout();
+}
+
+void MainWindow::layoutDone()
+{
+    progress_bar->hide();
     statusBar()->showMessage(tr("Layout done"), 2000);
 }
 
@@ -480,55 +483,69 @@ void MainWindow::about()
    QMessageBox::about( this,
                        tr("About Showgraph"),
 #ifdef _DEBUG
-       tr("The <b>ShowGraph</b> implements a simple graph editor. <b>DEBUG VERSION</b>")
+       tr("The <b>ShowGraph</b> implements a simple graph editor. Icon desing by VisualPharm(visualpharm.ru) <b>DEBUG VERSION</b>")
 #else
-       tr("The <b>ShowGraph</b> implements a simple graph editor.")
+       tr("The <b>ShowGraph</b> implements a simple graph editor. Icon desing by VisualPharm(visualpharm.ru)")
 #endif
                         );
 }
 
 void MainWindow::createActions()
 {
-    openAct = new QAction(tr("&Open..."), this);
+    QString system = QLatin1String("win");
+#ifdef Q_OS_MAC
+    system = QLatin1String("mac");
+#endif
+    openAct = new QAction( QIcon(QString::fromUtf8("images/%1/Open/Open.ico").arg(system)),
+                           tr("&Open..."), this);
     openAct->setShortcut(tr("Ctrl+O"));
     connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
-    saveAsAct = new QAction(tr("&Save As..."), this);
+    saveAsAct = new QAction( QIcon(QString::fromUtf8("images/%1/Save/Save.ico").arg(system)),
+                             tr("&Save As..."), this);
     saveAsAct->setShortcut(tr("Ctrl+S"));
     connect( saveAsAct, SIGNAL(triggered()), this, SLOT( saveAs()));
 
-    exitAct = new QAction(tr("E&xit"), this);
+    exitAct = new QAction( QIcon(QString::fromUtf8("images/%1/Log Out/Log Out.ico").arg(system)),
+                           tr("E&xit"), this);
     exitAct->setShortcut(tr("Ctrl+Q"));
     connect( exitAct, SIGNAL(triggered()), this, SLOT( close()));
 
-    aboutAct = new QAction(tr("&About"), this);
+    aboutAct = new QAction( QIcon(QString::fromUtf8("images/%1/Information/Information.ico").arg(system)),
+                            tr("&About"), this);
     connect( aboutAct, SIGNAL(triggered()), this, SLOT( about()));
 
-    newGraphAct = new QAction(tr("&New"), this);
+    newGraphAct = new QAction( QIcon(QString::fromUtf8("images/%1/New/New.ico").arg(system)),
+                               tr("&New"), this);
     newGraphAct->setShortcut(tr("Ctrl+N"));
     connect( newGraphAct, SIGNAL(triggered()), this, SLOT( newGraph()));
 
-    layoutRunAct = new QAction(tr("&Run Layout"), this);
+    layoutRunAct = new QAction( QIcon(QString::fromUtf8("images/%1/Synchronize/Synchronize.ico").arg(system)),
+                                tr("&Run Layout"), this);
     layoutRunAct->setShortcut(tr("F5"));
     connect( layoutRunAct, SIGNAL(triggered()), this, SLOT( runLayout()));
 
-    zoomInAct = new QAction(tr("&Zoom In"), this);
-    zoomInAct->setShortcut(Qt::Key_Plus);
+    zoomInAct = new QAction( QIcon(QString::fromUtf8("images/%1/Zoom In/Zoom In.ico").arg(system)),
+                             tr("&Zoom In"), this);
+    //zoomInAct->setShortcut(Qt::Key_Plus);
     connect( zoomInAct, SIGNAL(triggered()), this, SLOT( zoomIn()));
 
-    zoomOutAct = new QAction(tr("&Zoom Out"), this);
-    zoomOutAct->setShortcut(Qt::Key_Minus);
+    zoomOutAct = new QAction( QIcon(QString::fromUtf8("images/%1/Zoom Out/Zoom Out.ico").arg(system)),
+                              tr("&Zoom Out"), this);
+    //zoomOutAct->setShortcut(Qt::Key_Minus);
     connect( zoomOutAct, SIGNAL(triggered()), this, SLOT( zoomOut()));
 
-    zoomOrigAct = new QAction(tr("&Original"), this);
+    zoomOrigAct = new QAction(tr("&Reset Zoom"), this);
     zoomOrigAct->setShortcut(tr("Ctrl+A"));
     connect( zoomOrigAct, SIGNAL(triggered()), this, SLOT( zoomOrig()));
 
-    exportImageAct = new QAction(tr("&Export Image..."), this);
+    exportImageAct = new QAction( QIcon(QString::fromUtf8("images/%1/Download/Download.ico").arg(system)),
+                                  tr("&Export Image..."), this);
     exportImageAct->setShortcut(tr("Ctrl+E"));
     connect( exportImageAct, SIGNAL(triggered()), this, SLOT( exportImage()));
 
-    printAct = new QAction( tr("&Print"), this);
+    printAct = new QAction( QIcon(QString::fromUtf8("images/%1/Print/Print.ico").arg(system)),
+                            tr("&Print"), this);
     printAct->setShortcut( tr("Ctrl+P"));
     connect( printAct, SIGNAL( triggered()), this, SLOT( printContents()));
 
@@ -567,18 +584,35 @@ void MainWindow::createMenus()
 	viewMenu->addAction( zoomInAct);
     viewMenu->addAction( zoomOutAct);
     viewMenu->addAction( zoomOrigAct);
+    viewMenu->addAction( find_tool_bar->toggleViewAction());
+    viewMenu->addSeparator();
     viewMenu->addAction( trackFocusAct);
-    viewMenu->addSeparator();
-    
-    dock_find->toggleViewAction()->setShortcut(tr("Ctrl+F"));
-    viewMenu->addAction( dock_find->toggleViewAction());
-    viewMenu->addSeparator();
     viewMenu->addAction( navPrevAct);
     viewMenu->addAction( navNextAct);
     menuBar()->addSeparator();
     
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
+}
+
+void MainWindow::createToolbar()
+{
+    QString system = QLatin1String("win");
+#ifdef Q_OS_MAC
+    system = QLatin1String("mac");
+#endif
+    insertToolBar( find_tool_bar, tool_bar = new QToolBar(tr("File"), this));
+    insertToolBarBreak( find_tool_bar);
+    /** Main tool bar */
+    tool_bar->addAction( newGraphAct);
+    tool_bar->addAction( openAct);
+    tool_bar->addAction( saveAsAct);
+    tool_bar->addAction( printAct);
+    tool_bar->addSeparator();
+    tool_bar->addAction( layoutRunAct);
+    tool_bar->addAction( zoomInAct);
+    tool_bar->addAction( zoomOutAct);
+    tool_bar->addAction( find_tool_bar->toggleViewAction());
 }
 
 FindWidget::FindWidget(QWidget *parent)
@@ -603,7 +637,6 @@ FindWidget::FindWidget(QWidget *parent)
     
 	comboMode = new QComboBox( this);
 	comboMode->addItem( "node", QVariant( FIND_MODE_NODE));
-	//comboMode->addItem( "expr", QVariant( FIND_MODE_EXPR)); Off till expression parsing is implemented 
 	comboMode->addItem( "text", QVariant( FIND_MODE_TEXT));
 	connect( comboMode, SIGNAL( activated(const QString&)),
 			 this, SLOT( modeSet()));
@@ -696,8 +729,7 @@ void FindWidget::modeSet()
 		labelWrapped->hide();
         break;
 	case FIND_MODE_NODE:
-	case FIND_MODE_EXPR:
-	default:
+  	default:
 		toolPrevious->hide();
 		checkCase->hide();
 		checkWholeWords->hide();

@@ -129,7 +129,8 @@ public:
 class GGraph: public AuxGraph
 {
     GraphView *view_p;
-	Marker nodeTextIsShown;
+protected:
+    Marker nodeTextIsShown;
 	QList< GNode* > sel_nodes;
 	QList< GEdge* > sel_edges;
     GNode *node_in_focus;
@@ -277,6 +278,20 @@ public:
      * Make all nodes of graph visible and eligible for placement
      */
     void showWholeGraph();
+
+    /**
+     * Zero nodes' priorities
+     */
+    void clearNodesPriority();
+
+    /**
+     * Show predecessor of selected edge
+     */
+    void showEdgePred();
+    /**
+     * Show successor of selected edge
+     */
+    void showEdgeSucc();
 };
 
 /**
@@ -305,14 +320,21 @@ private:
     GraphViewHistory *view_history;
     /** View mode */
     GraphViewMode view_mode;
+    /** Edition enabled/disabled */
+    bool editable;
     /** Deleted items lists */
     QList< NodeItem* > del_node_items;
     QList< EdgeItem* > del_edge_items;
 
 	/** Actions */
+    QAction *editableSwitchAct;
+    QAction *insertNodeAct;
+    QAction *runLayoutAct;
 	QAction *deleteItemAct;
     QAction *createSelfEdgeAct;
 	QAction *createEdgeLabelAct;
+    QAction *showPredAct;
+    QAction *showSuccAct;
     QAction *findContextAct;
     QAction *showTextAct;
     
@@ -335,7 +357,7 @@ private:
     GNode *search_node;
     qreal zoom_scale;
     qreal preferred_zoom;
-private:
+protected:
 	void createActions();
 	void createMenus();
 signals:
@@ -354,6 +376,10 @@ public slots:
 	void createSESelected();
     /** Create edge label */
     void createEdgeLabel();
+    /** Show edge predecessor */
+    void showEdgePred();
+    /** Show edge successor */
+    void showEdgeSucc();
     /** Find node's context */
     void findContext();
     /** Toggle smooth focusing mode ( moving viewport to show user how to get from one node to anoter) */
@@ -362,6 +388,12 @@ public slots:
     void toggleViewMode( bool context);
     /** Show text of the clicked node */
     void showSelectedNodesText();
+    /** Enable/disable edition */
+    void toggleEdition( bool e);
+    /** Insert node in center of view */
+    void insertNodeOnCenter();
+    /** Run layout */
+    void runLayout();
 public:
     QProgressDialog *dialog;
     /** Constants */
@@ -373,8 +405,22 @@ public:
     /** Constructor */
     GraphView();
     /** Destructor */
-    ~GraphView();
-    
+    virtual ~GraphView();
+    /** Get action for toggling edit mode */
+    inline QAction* toggleEditableAction() const
+    {
+        return editableSwitchAct;
+    }
+    /** Return true if graph enabled for edition */
+    inline bool isEditable() const
+    {
+        return editable;
+    }
+    /** Return true if graph enabled for edition */
+    inline void setEditable( bool val = true)
+    {
+        editable = val;
+    }
     /** Return true if smooth focus is enabled */
     inline bool hasSmoothFocus() const
     {
@@ -416,7 +462,6 @@ public:
     inline void setGraph( GGraph *g)
     {
         graph_p = g;
-        connect( g, SIGNAL(progressChange(int)), dialog, SLOT(setValue(int)));
     }
 	/** Get pointer to model graph */
     inline GGraph *graph() const
@@ -435,32 +480,34 @@ public:
 	}
 
     /** Create menu for particular node */
-    QMenu* createMenuForNode( GNode *n);
+    virtual QMenu* createMenuForNode( GNode *n);
     
     /** Create menu for particular edge */
-    QMenu* createMenuForEdge( GEdge *e);
+    virtual QMenu* createMenuForEdge( GEdge *e);
 
-	void dragEnterEvent(QDragEnterEvent *event);
+	void dragEnterEvent( QDragEnterEvent *event);
 
-	void dropEvent(QDropEvent *event);
+	void dropEvent( QDropEvent *event);
 	 
-	void dragMoveEvent(QDragMoveEvent *event);
+	void dragMoveEvent( QDragMoveEvent *event);
 
     /** draw background reimplementation */
-    void drawBackground(QPainter *painter, const QRectF &rect);
+    void drawBackground( QPainter *painter, const QRectF &rect);
     /** Mouse double click event handler reimplementation */
-    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mouseDoubleClickEvent( QMouseEvent *event);
     /** Mouse press event handler reimplementation */
-    void mousePressEvent(QMouseEvent *event);
+    void mousePressEvent( QMouseEvent *event);
     /** Mouse move event handler reimplementation */
-    void mouseMoveEvent(QMouseEvent *event);
+    void mouseMoveEvent( QMouseEvent *event);
     /** Mouse release event handler reimplementation */
-    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseReleaseEvent( QMouseEvent *event);
+    /** Context menu event handler */
+    void contextMenuEvent( QContextMenuEvent * e );
     /** Keypress event handler reimplementation */
-    void keyPressEvent(QKeyEvent *event);
+    void keyPressEvent( QKeyEvent *event);
 
 	/** Mouse wheel event handler reimplementation */
-    void wheelEvent(QWheelEvent *event);
+    void wheelEvent( QWheelEvent *event);
     /** Zoom the view in */
     void zoomIn();
     /** Zoom the view out */
