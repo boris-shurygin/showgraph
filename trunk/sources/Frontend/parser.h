@@ -20,6 +20,10 @@ class Parser
     QFile file;
     QString curr_line;
         
+    /** Statistics */
+    long long int total_lines_num;
+    long long int cur_line_num;
+
     /** states of the parser */
     enum ParserState
     {
@@ -104,6 +108,11 @@ protected:
     {
         return;
     }
+    /** Parse one given line */
+    virtual void parseLineDry( QString line)
+    {
+        return;
+    }
 public:
     /** Constructor from given filename */
     Parser( QString filename);
@@ -112,6 +121,12 @@ public:
     virtual ~Parser();
     /** Convert input file in graph description XML */
     virtual void convert2XML( QString xmlname);
+    virtual void preRun();
+    /**
+     * Main loop routine that only builds parsing data structures 
+     * Concurrent parsing should use this one
+     */
+    virtual void mainLoopDry();
     /** Main loop routine */
     virtual void mainLoop();
     /** Get currently processed line */
@@ -119,6 +134,18 @@ public:
     {
         return curr_line;
     }
+    inline long long int totalLinesNum() const
+    {
+        return total_lines_num;
+    }
+    inline long long int curLineNum() const
+    {
+        return cur_line_num;
+    }
+    /**
+     * Get parser progress in percentage
+     */
+    int progress() const;
 };
 
 #endif

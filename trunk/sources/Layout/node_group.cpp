@@ -90,7 +90,7 @@ NodeGroup::NodeGroup( AuxNode *n,   // Parent node
         center += ( n->width() / 2);
     if ( n->isStable())
     {
-        center = ( center + n->modelX() + n->width() / 2)/2;
+        center = n->modelX() + n->width() / 2;
     }
     n->setBc( center);
     barycenter = center;

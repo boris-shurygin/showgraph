@@ -154,11 +154,7 @@ public:
 class TestParser: public Parser
 {
     GraphView *graph;
-    GraphView *ir;
     CFNode *curr_node;
-
-    SymTab expr_tab;
-    SymTab dep_tab;
 public:
     /** Constructor */
     TestParser( QString str);
@@ -179,6 +175,8 @@ public:
     {
         return graph;
     }
+    /** Check whether the given line should be treated as a next line */
+    bool nextLine( QString line);
 };
 
 #endif

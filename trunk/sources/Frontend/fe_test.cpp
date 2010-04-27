@@ -12,9 +12,8 @@ TestParser::TestParser( QString str):
     Parser( str), curr_node( NULL)
 {
     graph = new GraphView();
-    ir = new GraphView();
     graph->setGraph( new CFG( graph));
-    ir->setGraph( new IR( ir));
+    graph->scene()->setItemIndexMethod( QGraphicsScene::NoIndex);
 }
 
 TestParser::~TestParser()
@@ -31,9 +30,7 @@ TestParser::convert2XML( QString xmlname)
 
 bool TestParser::nodeStart( QString line)
 {
-    /** Node recognition */
-    QRegExp node_rx("Node (\\d+)");
-    return  node_rx.indexIn( line) != -1;
+    return line.indexOf("Node") != -1;
 }
 
 void
@@ -48,42 +45,27 @@ TestParser::endNode()
     curr_node->doc()->setPlainText( node_text);
 }
 
+bool TestParser::nextLine( QString line)
+{
+    return true;
+}
+
 void
 TestParser::parseLine( QString line)
 {
     QString n_str("Node ");
     QString e_str("Edge ");
     /** Node recognition */
-    QRegExp node_rx("Node (\\d+)");
+    QRegExp node_rx("CF ?(Enter)? ?(\\w*) Node (\\d+)");
     
     /** Edge recognition */
     QRegExp edge_rx("CF EDGE (\\d+) \\[(\\d+)->(\\d+)\\]");
     QTextStream stream( stdout);
             
-    if ( node_rx.indexIn( line) != -1 )
-    {
-		bool good_id = false;
-		int ir_id = node_rx.cap(1).toInt( &good_id);
-		QString text = QString("Node ").append( node_rx.cap(1));
-        QString name = n_str.append( node_rx.cap(1));
-        /** Add node to symtab */
-        if ( symtab.find( name ) == symtab.end())
-        {
-            SymNode* node = new SymNode( name);
-            curr_node = static_cast<CFNode *>( graph->graph()->newNode());
-            curr_node->setDoc( new QTextDocument());
-            node->setNode( curr_node);
-            node->node()->item()->setPlainText( text);
-			if ( good_id)
-			{
-				node->node()->setIRId( ir_id);
-			}
-            symtab[ name] = node;
-#ifdef _DEBUG
-            //stream << name << endl;
-#endif
-        }
-    } else if (  edge_rx.indexIn( line) != -1 )
+    /** Expression recognition */
+    int pos = 0;
+
+    if (  edge_rx.indexIn( line) != -1)
     {
         QString name = e_str.append( edge_rx.cap(1));
         QString pred_name("Node ");
@@ -93,7 +75,7 @@ TestParser::parseLine( QString line)
         
         /** Back edge */
         QRegExp back_rx("Back");
-    
+           
         /** Add edge to symtab */
         if ( symtab.find( name) == symtab.end() 
              && symtab.find( pred_name) != symtab.end() 
@@ -116,6 +98,37 @@ TestParser::parseLine( QString line)
                 GNode* label = e->insertLabelNode( QPointF( 0,0));                
                 label->item()->setPlainText( "Back");
             }
+        }
+    } else if ( node_rx.indexIn( line) != -1 )
+    {
+		bool good_id = false;
+		int ir_id = node_rx.cap(3).toInt( &good_id);
+		QString text = QString("Node ").append( node_rx.cap(3));
+        QString name = n_str.append( node_rx.cap(3));
+        if ( !node_rx.cap( 1).isEmpty())
+        {
+            text.append("\n").append( node_rx.cap(1));
+        }
+        if ( !node_rx.cap( 2).isEmpty())
+        {
+            text.append("\n").append( node_rx.cap(2));
+        }
+        /** Add node to symtab */
+        if ( symtab.find( name ) == symtab.end())
+        {
+            SymNode* node = new SymNode( name);
+            curr_node = static_cast<CFNode *>( graph->graph()->newNode());
+            curr_node->setDoc( new QTextDocument());
+            node->setNode( curr_node);
+            node->node()->item()->setPlainText( text);
+		    if ( good_id)
+		    {
+			    node->node()->setIRId( ir_id);
+		    }
+            symtab[ name] = node;
+#ifdef _DEBUG
+            //stream << name << endl;
+#endif
         }
     } else
     {

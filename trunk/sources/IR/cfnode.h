@@ -30,7 +30,7 @@ public:
     virtual ~CFNode();
 	
     CFG* graph() const;
-    
+
     /** Get first expr */
     inline Expr *firstExpr() const
     {

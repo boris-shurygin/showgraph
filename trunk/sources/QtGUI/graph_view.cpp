@@ -22,6 +22,7 @@ GGraph::~GGraph()
           )
     {
         GNode* next = node->nextNode();
+        int ir_id = node->irId();
         delete node;
         node = next;
     }
@@ -123,6 +124,45 @@ void GGraph::createEdgeLabel( QPointF pos)
     }
 }
 
+void GGraph::showEdgePred()
+{
+    if ( !sel_edges.isEmpty())
+    {
+        if ( view()->isContext())
+        {
+            selectNode( sel_edges.first()->realPred());
+            view()->findContext();
+        } else
+        {
+            view()->focusOnNode( sel_edges.first()->realPred(), true);
+        }
+    }
+}
+
+void GGraph::showEdgeSucc()
+{
+    if ( !sel_edges.isEmpty())
+    {
+        if ( view()->isContext())
+        {
+            selectNode( sel_edges.first()->realSucc());
+            view()->findContext();
+        } else
+        {
+            view()->focusOnNode( sel_edges.first()->realSucc(), true);
+        }
+    }
+}
+
+void GGraph::clearNodesPriority()
+{
+    GNode* n;
+    foreachNode( n, this)
+    {
+        n->setPriority( 0);
+    }
+}
+
 void GGraph::showWholeGraph()
 {
     assert( !view()->isContext());
@@ -151,7 +191,8 @@ void GGraph::findContext()
     foreach( GNode *n, sel_nodes)
     {
         n->mark( m);
-        n->setPriority( 6);
+        n->setPriority( MAX_PRIORITY);
+        //n->setStable( true);
         border.enqueue( n);
     }
     for ( int i = 0; i < MAX_PLACE_LEN; i++)
@@ -173,13 +214,14 @@ void GGraph::findContext()
                 
                 if ( pred->mark( m))
                 {
-                    if ( i <= MAX_VISIBLE_LEN)
+                    if ( i <= MAX_VISIBLE_LEN 
+                         && pred->priority() < MAX_VISIBLE_LEN - i)
                     {
                         pred->setPriority( MAX_VISIBLE_LEN - i);
-                    } else
+                    }/* else
                     {
                         pred->setPriority( 0);
-                    }
+                    }*/
                     border.enqueue( pred);
                 }
             }
@@ -188,13 +230,14 @@ void GGraph::findContext()
                 GNode * succ = e->succ();
                 if ( succ->mark( m))
                 {
-                    if ( i <= MAX_VISIBLE_LEN)
+                    if ( i <= MAX_VISIBLE_LEN
+                         && succ->priority() < MAX_VISIBLE_LEN - i)
                     {
                         succ->setPriority( MAX_VISIBLE_LEN - i);
-                    } else
+                    }/* else
                     {
                         succ->setPriority( 0);
-                    }
+                    }*/
                     border.enqueue( succ);
                 }
             }
@@ -205,10 +248,10 @@ void GGraph::findContext()
         GNode* n;
         foreachNode( n, this)
         {
-            if ( n->item()->isVisible())
+            /*if ( n->item()->isVisible())
             {
                 n->setStable();
-            }
+            }*/
             if ( n->isMarked( m))
             {
                 if ( !n->item()->isVisible())
@@ -219,14 +262,12 @@ void GGraph::findContext()
                 n->setForPlacement( true);
             } else
             {
-                if ( n->item()->isVisible())
+                if ( n->priority() < MAX_PRIORITY)
                 {
                     n->setPriority( 0);
-                } else
-                {
-                    n->setStable( false);
+                    n->setForPlacement( false);
                 }
-                n->setForPlacement( false);
+                n->setStable( false);
             }
         }
         GEdge *e;
@@ -234,8 +275,8 @@ void GGraph::findContext()
         {
             if ( e->pred()->isPseudo() && e->succ()->isPseudo())
             {
-                if ( e->realPred()->isMarked( m)
-                     && e->realSucc()->isMarked( m))
+                if ( e->realPred()->item()->isVisible()
+                     && e->realSucc()->item()->isVisible())
                 {
                     int priority = 
                         min<int>( e->realPred()->priority(), e->realSucc()->priority());
@@ -313,14 +354,14 @@ void GGraph::UpdatePlacement()
 	int depth = scene->bspTreeDepth();
     scene->setBspTreeDepth( 1);
     scene->setItemIndexMethod( QGraphicsScene::NoIndex);
-
-	for ( GNode* n = firstNode();
+    GNode *n;
+	for ( n = firstNode();
           isNotNullP( n);
           n = n->nextNode())
     {
         n->item()->setPos( n->modelX(), n->modelY());
     }
-    GNode *n;
+
     GEdge *e;
     
     foreachNode( n, this)
@@ -353,7 +394,6 @@ void GGraph::doLayout()
         }
     } else
     {
-        view()->dialog->show();
         GNode *n;
         GEdge *e;
         
@@ -382,7 +422,6 @@ void GGraph::layoutPostProcess()
     {
         view_p->centerOn( root->item());
     }
-    view()->dialog->hide();
 }
 
 /** Constructor */
@@ -395,6 +434,7 @@ GraphView::GraphView():
     timer_id( 0),
     node_animation_timer( 0),
     smooth_focus( false),
+    editable( false),
     view_mode( WHOLE_GRAPH_VIEW)
 {
     QGraphicsScene *scene = new QGraphicsScene( this);
@@ -416,18 +456,14 @@ GraphView::GraphView():
 	createMenus();
 	show_menus = true;
 	setAcceptDrops( false);
-    dialog = new QProgressDialog(this);
-//    dialog->setLabel("Layout progress");
-    dialog->hide(); 
-    dialog->setMaximum( 100);
 }
 
 /** Destructor */
 GraphView::~GraphView()
 {
+    scene()->setItemIndexMethod( QGraphicsScene::NoIndex);
     delete graph_p;
     delete view_history;
-    delete dialog;
 }
 
 void GraphView::startAnimationNodes()
@@ -448,12 +484,13 @@ GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
     if( ev->button() & Qt::LeftButton)
     {
         QPoint p = ev->pos();
-        if ( !scene()->itemAt( mapToScene( ev->pos())))
+        if ( isEditable() && !scene()->itemAt( mapToScene( ev->pos())))
         {
             GNode* node = graph()->newNode();
             node->item()->setPos( mapToScene( p));
         }
-    } else if( ev->button() & Qt::RightButton)
+    } else if( isEditable() 
+               && ev->button() & Qt::RightButton)
     {
         QGraphicsItem *node = scene()->itemAt( mapToScene( ev->pos()));
         if ( isNotNullP( node) && qgraphicsitem_cast<NodeItem *>( node))
@@ -477,6 +514,30 @@ GraphView::mousePressEvent(QMouseEvent *ev)
     QGraphicsView::mousePressEvent( ev);
 }
 
+/** Enable/disable edition */
+void GraphView::toggleEdition( bool e)
+{
+    setEditable( e);
+}
+
+/** Insert node in center of view */
+void GraphView::insertNodeOnCenter()
+{
+
+}
+
+/** Run layout */
+void GraphView::runLayout()
+{
+    graph()->doLayout();
+}
+
+void
+GraphView::contextMenuEvent( QContextMenuEvent * e)
+{
+
+}
+
 void
 GraphView::mouseReleaseEvent( QMouseEvent *ev)
 {
@@ -498,6 +559,13 @@ GraphView::mouseReleaseEvent( QMouseEvent *ev)
 				}
             }
 			
+        } else if ( !scene()->itemAt( mapToScene( ev->pos())))
+        {
+            QMenu *menu = new QMenu( tr( "&View Menu"));
+            menu->addAction( editableSwitchAct);
+            menu->addAction( runLayoutAct);
+            menu->exec( mapToGlobal( ev->pos()));
+            delete menu;
         }
     }
     QGraphicsView::mouseReleaseEvent(ev);
@@ -515,14 +583,13 @@ GraphView::mouseMoveEvent(QMouseEvent *ev)
 void 
 GraphView::keyPressEvent(QKeyEvent *event)
 {
-    if ( event->key() == scene()->selectedItems().size() == 1)
+    if ( event->key() == Qt::Key_Plus)
     {
-        EdgeItem* e = qgraphicsitem_cast<EdgeItem *>( scene()->selectedItems().first());
-        if ( e)
-        {
-        
-        }
-    }     
+        zoomIn();
+    } else if ( event->key() == Qt::Key_Minus)
+    {
+        zoomOut();
+    }
     QGraphicsView::keyPressEvent( event);
 }
 
@@ -619,6 +686,16 @@ void GraphView::createEdgeLabel()
     graph()->createEdgeLabel( curr_pos);
 }
 
+void GraphView::showEdgePred()
+{
+    graph()->showEdgePred();
+}
+
+void GraphView::showEdgeSucc()
+{
+    graph()->showEdgeSucc();
+}
+
 void GraphView::findContext()
 {
     graph()->findContext();
@@ -632,6 +709,11 @@ void GraphView::showSelectedNodesText()
 
 void GraphView::createActions()
 {
+    QString system = QLatin1String("win");
+#ifdef Q_OS_MAC
+    system = QLatin1String("mac");
+#endif
+
     deleteItemAct = new QAction(tr("&Delete"), this);
     deleteItemAct->setShortcut(tr("Ctrl+D"));
     connect(deleteItemAct, SIGNAL(triggered()), this, SLOT( deleteSelected()));
@@ -647,6 +729,26 @@ void GraphView::createActions()
     
     showTextAct = new QAction(tr("&Show text"), this);
     connect( showTextAct, SIGNAL(triggered()), this, SLOT( showSelectedNodesText()));
+
+    showPredAct = new QAction(tr("Pred"), this);
+    connect( showPredAct, SIGNAL(triggered()), this, SLOT( showEdgePred()));
+
+    showSuccAct = new QAction(tr("Succ"), this);
+    connect( showSuccAct, SIGNAL(triggered()), this, SLOT( showEdgeSucc()));
+
+    editableSwitchAct = 
+        new QAction( QIcon( QString::fromUtf8("images/%1/Edit/Edit.ico").arg( system)),
+                     tr("Editable"), this);
+    editableSwitchAct->setCheckable( true);
+    editableSwitchAct->setChecked( false);
+    connect( editableSwitchAct, SIGNAL( toggled( bool)), this, SLOT( toggleEdition( bool)));
+    
+    insertNodeAct = new QAction(tr("Insert node"), this);
+   
+    runLayoutAct = 
+        new QAction( QIcon( QString::fromUtf8("images/%1/Synchronize/Synchronize.ico").arg( system)),
+                     tr("&Run Layout"), this);
+    connect( runLayoutAct, SIGNAL(triggered()), this, SLOT( runLayout()));
 }
 
 void GraphView::createMenus()
@@ -661,22 +763,30 @@ void GraphView::createMenus()
 
 QMenu* GraphView::createMenuForNode( GNode *n)
 {
-    QMenu* menu = new QMenu( tr( "&Node Item"));
+    QMenu* menu = new QMenu( tr( "&Node"));
     menu->addAction( deleteItemAct);
-    if ( !n->isEdgeControl())
+    deleteItemAct->setEnabled( isEditable());
+    if ( !n->isPseudo())
     {
-        menu->addAction( createSelfEdgeAct);
         menu->addAction( findContextAct);
         menu->addAction( showTextAct);
+        menu->addSeparator();
+        menu->addAction( createSelfEdgeAct);
+        createSelfEdgeAct->setEnabled( isEditable());
     }
     return menu;
 }
 
 QMenu* GraphView::createMenuForEdge( GEdge *e)
 {
-    QMenu* menu = new QMenu( tr( "&Node Item"));
+    QMenu* menu = new QMenu( tr( "&Edge"));
+    menu->addAction( showPredAct);
+    menu->addAction( showSuccAct);
+    menu->addSeparator();
     menu->addAction( deleteItemAct);
+    deleteItemAct->setEnabled( isEditable());
     menu->addAction( createEdgeLabelAct);
+    createEdgeLabelAct->setEnabled( isEditable());
     return menu;
 }
 
@@ -949,9 +1059,12 @@ void GraphView::toggleSmoothFocus( bool smooth)
 void GraphView::toggleViewMode( bool context)
 {
     view_mode = context? CONTEXT_VIEW : WHOLE_GRAPH_VIEW;
-    if ( !context)
+    if ( context)
     {
-        graph()->showWholeGraph();
+         graph()->clearNodesPriority();
+    } else
+    {
+         graph()->showWholeGraph();
     }
 }
 

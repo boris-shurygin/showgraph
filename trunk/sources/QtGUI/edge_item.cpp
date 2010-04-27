@@ -422,7 +422,7 @@ EdgeItem::paint( QPainter *painter,
             QPainterPath arrow_path;
             arrow_path.addPolygon( QPolygonF() << dstP << destArrowP1 << destArrowP2 <<  dstP);
             path = path.united( arrow_path);
-            //painter->drawPolygon(QPolygonF() << dstP << destArrowP1 << destArrowP2);
+            painter->drawPolygon(QPolygonF() << dstP << destArrowP1 << destArrowP2);
         }
     }
 
@@ -495,7 +495,8 @@ void EdgeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 
 void EdgeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
 {
-    if( ev->button() & Qt::LeftButton)
+    if( edge()->graph()->view()->isEditable() 
+        && ev->button() & Qt::LeftButton)
     {
         if ( edge()->isSelf())
         {

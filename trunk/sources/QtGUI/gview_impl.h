@@ -32,9 +32,12 @@ const qreal NODE_SPEED = 4;
 const qreal OPACITY_STEP = 0.1;
 
 /** Context visible border */
-const int MAX_VISIBLE_LEN = 6;
+const int MAX_VISIBLE_LEN = 3;
+
+/** Context visible border */
+const int MAX_PRIORITY = 6;
 
 /** Context far border */
-const int MAX_PLACE_LEN = 6;
+const int MAX_PLACE_LEN = 3;
 
 #endif /* GVIEW_IMPL_H */

@@ -6,6 +6,12 @@
  */
 #include "layout_iface.h"
 
+/** Destructor for node */
+AuxNode::~AuxNode()
+{
+
+}
+
 /**
  * Default constructor
  */
