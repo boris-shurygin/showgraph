@@ -21,7 +21,10 @@ Parser::Parser( QString filename): file( filename)
  */
 Parser::~Parser()
 {
-    
+    foreach( DumpUnitInfo *unit, units)
+    {
+        delete unit;
+    }
 }
 
 void Parser::preRun()

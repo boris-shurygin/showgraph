@@ -9,6 +9,96 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+
+/**
+ * Types of IR dumps
+ * @ingroup FE
+ */
+enum DumpType
+{
+    /** UNKNOWN type */
+    DUMP_TYPE_UNKNOWN,
+    /** GCC control flow dump */
+    DUMP_TYPE_GCC_CF,
+    /** ICC IL0 control flow dump */
+    DUMP_TYPE_ICC_IL0,
+    /** Number of types */
+    DUMP_TYPES_NUM
+};
+
+/** Type for position in dump file */
+typedef unsigned long int DumpPos;
+
+/**
+ * Describes a translation unit textual representation as part of dump
+ * @ingroup FE
+ */
+class DumpUnitInfo
+{
+    /** Unit id */
+    int _id;
+    /** Name of translation unit */
+    QString unit_name;
+    /** Name of translation phase */
+    QString phase_name;
+    /** Position in dump */
+    DumpPos _pos;
+    /** Type */
+    DumpType _type;
+public:
+    /** Constructor */
+    DumpUnitInfo();
+    /** Constructor with id */
+    DumpUnitInfo( int i);
+    /** Full constructor */
+    DumpUnitInfo( int i, QString uname, QString phname, DumpPos p, DumpType type);
+    /** Get id */
+    inline int id() const
+    {
+        return _id;
+    }
+    /** Get unit name */
+    inline QString unitName() const
+    {
+        return unit_name;
+    }
+    /** Set unit name */
+    inline void setUnitName( QString name)
+    {
+        unit_name = name;
+    }
+    /** Get phase name */
+    inline QString phaseName() const
+    {
+        return phase_name;
+    }
+    /** Set phase name */
+    inline void setPhaseName( QString name)
+    {
+        phase_name = name;
+    }
+    /** Get position in dump */
+    inline DumpPos pos() const
+    {
+        return _pos;
+    }
+    /** Set position in dump */
+    inline void setPos( DumpPos p)
+    {
+        _pos = p;
+    }
+    /** Get type of dump */
+    inline DumpType type() const
+    {
+        return _type;
+    }
+    /** Set type of dump */
+    inline void setType( DumpType p)
+    {
+        _type = p;
+    }
+};
+
 /**
  * Provides generic functionality for parsing files. 
  * Generic parser just opens/closes files, reads them line by line 
@@ -19,7 +109,8 @@ class Parser
 {
     QFile file;
     QString curr_line;
-        
+    QList< DumpUnitInfo *> units;
+
     /** Statistics */
     long long int total_lines_num;
     long long int cur_line_num;
