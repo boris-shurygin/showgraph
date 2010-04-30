@@ -249,8 +249,8 @@ void MainWindow::openFile( QString fileName)
     
     /** Run layout automatically */
     if ( do_layout)
-        graph_view->graph()->doLayout();
-    statusBar()->showMessage(tr("File %1 loaded").arg( fileName), 2000);
+        runLayout();
+    //statusBar()->showMessage(tr("File %1 loaded").arg( fileName), 2000);
 }
 
 bool 
@@ -442,9 +442,10 @@ void MainWindow::runLayout()
 {
     if ( !graph_view->isContext())
     {
-        progress_bar->show();
         progress_bar->setFormat("layout %p");
         progress_bar->setMaximum( 100);
+        progress_bar->setValue( 0);
+        progress_bar->show();
     }
     graph_view->graph()->doLayout();
 }
