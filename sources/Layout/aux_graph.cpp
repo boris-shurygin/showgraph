@@ -74,7 +74,7 @@ AuxGraph::rootNode()
         return firstNode();
     }
     /** Use median heuristic to select root node */
-    qreal center;
+    qreal center = 0;
     foreach ( AuxNode* node, root_level->nodes())
     {
         center = node->modelX() + node->width()/ 2;
