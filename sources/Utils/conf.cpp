@@ -25,7 +25,7 @@ Option::print( QTextStream &stream)
 }
 
 /** Default constructor of configuration */
-Conf::Conf()
+Conf::Conf(): short_opts(), long_opts(), unknown_options()
 {
 #ifdef _DEBUG
     /* Debug options */

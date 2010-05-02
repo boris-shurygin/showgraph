@@ -27,7 +27,7 @@ enum DumpType
 };
 
 /** Type for position in dump file */
-typedef unsigned long int DumpPos;
+typedef qint64 DumpPos;
 
 /**
  * Describes a translation unit textual representation as part of dump
@@ -43,15 +43,13 @@ class DumpUnitInfo
     QString phase_name;
     /** Position in dump */
     DumpPos _pos;
+    /** Position of end in dump */
+    DumpPos _end;
     /** Type */
     DumpType _type;
 public:
-    /** Constructor */
-    DumpUnitInfo();
     /** Constructor with id */
     DumpUnitInfo( int i);
-    /** Full constructor */
-    DumpUnitInfo( int i, QString uname, QString phname, DumpPos p, DumpType type);
     /** Get id */
     inline int id() const
     {
@@ -87,6 +85,16 @@ public:
     {
         _pos = p;
     }
+    /** Get position in dump */
+    inline DumpPos end() const
+    {
+        return _end;
+    }
+    /** Set position in dump */
+    inline void setEnd( DumpPos p)
+    {
+        _end = p;
+    }
     /** Get type of dump */
     inline DumpType type() const
     {
@@ -107,13 +115,26 @@ public:
  */
 class Parser
 {
+protected: 
     QFile file;
     QString curr_line;
     QList< DumpUnitInfo *> units;
+    
+    /** Type */
+    DumpType _type;
 
     /** Statistics */
-    long long int total_lines_num;
-    long long int cur_line_num;
+    DumpPos total_lines_num;
+    DumpPos cur_line_num;
+
+    /** Temporary internal data */
+    DumpPos unit_beg;
+    int unit_id;
+    QString unit_name;
+    QString phase_name;
+    bool look_for_phase;    
+    int num_blocks;
+    bool unit_info_collected;
 
     /** states of the parser */
     enum ParserState
@@ -136,7 +157,6 @@ class Parser
     /** Parser's internal state */
     ParserState _state;
 
-protected:
     /** Accumulation string for node text */
     QString node_text;
     /** Symbol table */
@@ -204,6 +224,8 @@ protected:
     {
         return;
     }
+    /** End previous unit and save it */
+    void unitEnd( DumpPos pos);
 public:
     /** Constructor from given filename */
     Parser( QString filename);
@@ -213,6 +235,23 @@ public:
     /** Convert input file in graph description XML */
     virtual void convert2XML( QString xmlname);
     virtual void preRun();
+     
+    /** Get type of dump */
+    inline DumpType type() const
+    {
+        return _type;
+    }
+    /** Set type of dump */
+    inline void setType( DumpType p)
+    {
+        _type = p;
+    }
+
+    /**
+     * Collect info on dump units
+     */
+    virtual void collectInfo( DumpPos, QString line);
+
     /**
      * Main loop routine that only builds parsing data structures 
      * Concurrent parsing should use this one
@@ -225,11 +264,11 @@ public:
     {
         return curr_line;
     }
-    inline long long int totalLinesNum() const
+    inline DumpPos totalLinesNum() const
     {
         return total_lines_num;
     }
-    inline long long int curLineNum() const
+    inline DumpPos curLineNum() const
     {
         return cur_line_num;
     }
@@ -237,6 +276,30 @@ public:
      * Get parser progress in percentage
      */
     int progress() const;
+    /**
+     * Find unit by given name and phase
+     */    
+    DumpUnitInfo *findUnit( QString name, QString phase);
+    /**
+     * Parse given unit
+     */
+    virtual void parseUnit( DumpUnitInfo *unit);
+    /**
+     * Parse unit with given name and phase
+     */
+    void parseUnit( QString name, QString phase);
+    /**
+     * Get list of routines in dump ( preRun must be executed first)
+     */
+    QStringList routines();
+    /**
+     * Get list of phases for given routine ( preRun must be executed first)
+     */
+    QStringList phases( QString name);
+    /** Parse GCC dump */
+    virtual void parseGCCUnit( DumpUnitInfo *unit);
+    /** Parse Il0 dump */
+    virtual void parseIL0Unit( DumpUnitInfo *unit);
 };
 
 #endif

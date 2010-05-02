@@ -10,6 +10,12 @@
 
 #include "main_window.h"
 
+MainWindow::~MainWindow()
+{
+    delete help_parser;
+	//delete conf;
+}
+
 MainWindow::MainWindow()
 {
     QString system = QLatin1String("win");
@@ -18,7 +24,8 @@ MainWindow::MainWindow()
 #endif
     QIcon icon( "images/logo.ico");
     setWindowIcon(icon);
-    
+    help_parser = new Parser("");
+
     /** Find toolbar */
     find_tool_bar = addToolBar (tr("Find"));
     find_tool_bar->toggleViewAction()->setIcon( 
@@ -236,7 +243,41 @@ void MainWindow::openFile( QString fileName)
     if ( rx.indexIn( fileName) == -1 )
     {
         TestParser parser( fileName);
-        parser.mainLoop();
+        parser.preRun();
+        QStringList routine_names = parser.routines();
+        if ( routine_names.count() > 0)
+        {
+            QString routine_name = routine_names.first();
+            bool ok;
+            if ( routine_names.count() > 1)
+            {
+                QString routine = QInputDialog::getItem(  this, tr("Choose routine"),
+                                                          tr("Routine:"),
+                                                          routine_names, 0, false, &ok);
+                if ( ok && !routine.isEmpty())
+                    routine_name = routine;
+            } 
+            if ( !routine_name.isEmpty())
+            {
+                QStringList phase_names = parser.phases( routine_name);
+                QString phase_name = phase_names.first();      
+                if ( 1 || phase_names.count() > 1)
+                {
+                    QString phase = QInputDialog::getItem( this, tr("Choose phase"),
+                                                             tr("Phase:"), phase_names,
+                                                             0, false, &ok);
+                    if ( ok && !phase.isEmpty())
+                        phase_name = phase;
+                }
+                if ( !phase_name.isEmpty())
+                {
+                    parser.parseUnit( routine_name, phase_name);
+                }
+            }
+        } else
+        {
+            parser.mainLoop();
+        }
         connectToGraphView( parser.graphView());
         do_layout = true;
     } else
