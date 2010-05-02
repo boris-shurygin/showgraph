@@ -84,14 +84,15 @@ class MainWindow : public QMainWindow
 private:
     QWidget *view;
 	FindWidget *findWidget;
-	GraphView* graph_view;
+	Parser *help_parser;
+    GraphView* graph_view;
     QProgressBar* progress_bar;
     QList< QDockWidget *> textDocks;
 	Conf* conf;
 public:
     /** Constructor */
     MainWindow();
-
+    ~MainWindow();
 public slots:
     /** Show the open file dialog and open selected file */
     void open();

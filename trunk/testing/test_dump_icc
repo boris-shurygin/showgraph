@@ -1,0 +1,1619 @@
+After Building the Control Flow:
+IL0 PRINT (FLOW GRAPH):
+
+BBLOCK 0:
+(an entry bblock)
+preds:
+succs: 1
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+   6   0 entry extern SI32  main( (SI32) argc_266_V$1c, (P32 *)argv_266_V$1d );
+   7   3 pcs.266_V$1e = 0(SI32);
+  11   4 arg.266_V$20 = 1(SI32);
+
+
+BBLOCK 1:
+preds: 25 0
+succs: 2 26
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  11  69 L69:
+  11  67 if ( arg.266_V$20 < argc_266_V$1c )
+
+
+BBLOCK 2:
+preds: 1
+succs: 10 3
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  12  42 if ( EXPR_CONV.SI8.SI32(*((SI8*) *((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))))) == 45(SI32) )
+
+
+BBLOCK 3:
+preds: 2
+succs: 7 4
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  40  41 if ( arg.266_V$20 == argc_266_V$1c - 2(SI32) )
+
+
+BBLOCK 4:
+preds: 3
+succs: 5 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  45  40 if ( arg.266_V$20 == argc_266_V$1c - 1(SI32) )
+
+
+BBLOCK 5:
+preds: 4
+succs: 6
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  46  38  ( (SI32) t9 ) = load_exec( (SI8 *)*((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))) );  [UNIX_ABI]
+
+
+BBLOCK 6:
+preds: 5
+succs: 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  47  39 pcs.266_V$1e = pcs.266_V$1e / 10(SI32);
+
+
+BBLOCK 7:
+preds: 3
+succs: 8
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  41  34  ( (SI32) t8 ) = sscanf{ic=SSCANF}( (SI8 *)*((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))), (SI8 *)&_2__STRING.8_V$2e, (I16 *)&regs_V$3[7(SI32)] );  [UNIX_ABI]
+
+
+BBLOCK 8:
+preds: 7
+succs: 9 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  41  35 tmp.266_V$1f = t8;
+  42  37 if ( tmp.266_V$1f == 1(SI32) )
+
+
+BBLOCK 9:
+preds: 8
+succs: 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  43  36 pcs.266_V$1e = 10(SI32);
+
+
+BBLOCK 10:
+preds: 2
+succs: 13 11
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  13   9  ( (SI32) t1 ) = strcmp{ic=STRCMP}( (void *)*((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))) + 1(SI32), (void *)&_2__STRING.1_V$24 );  [UNIX_ABI]
+  13  12 if ( t1 == 0(SI32) )
+
+
+BBLOCK 11:
+preds: 10
+succs: 12 14
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  13   7  ( (SI32) t0 ) = strcmp{ic=STRCMP}( (void *)*((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))) + 1(SI32), (void *)&_2__STRING.0_V$23 );  [UNIX_ABI]
+  13   8 if ( t0 == 0(SI32) )
+
+
+BBLOCK 12:
+preds: 13 11
+succs: 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  13  10 L10:
+  14   5 dmode_V$17 = 1(SI32);
+  15   6 goto L1;
+
+
+BBLOCK 13:
+preds: 10
+succs: 12
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  13  11 goto L10;
+
+
+BBLOCK 14:
+preds: 11
+succs: 17 15
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  18  17  ( (SI32) t3 ) = strcmp{ic=STRCMP}( (void *)*((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))) + 1(SI32), (void *)&_2__STRING.3_V$27 );  [UNIX_ABI]
+  18  20 if ( t3 == 0(SI32) )
+
+
+BBLOCK 15:
+preds: 14
+succs: 16 18
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  18  15  ( (SI32) t2 ) = strcmp{ic=STRCMP}( (void *)*((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))) + 1(SI32), (void *)&_2__STRING.2_V$26 );  [UNIX_ABI]
+  18  16 if ( t2 == 0(SI32) )
+
+
+BBLOCK 16:
+preds: 17 15
+succs: 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  18  18 L18:
+  19  13 dmode_V$17 = 2(SI32);
+  20  14 goto L1;
+
+
+BBLOCK 17:
+preds: 14
+succs: 16
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  18  19 goto L18;
+
+
+BBLOCK 18:
+preds: 15
+succs: 19 20
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  23  23  ( (SI32) t4 ) = strcmp{ic=STRCMP}( (void *)*((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))) + 1(SI32), (void *)&_2__STRING.4_V$28 );  [UNIX_ABI]
+  23  24 if ( t4 == 0(SI32) )
+
+
+BBLOCK 19:
+preds: 18
+succs: 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  24  21 rad_V$18 = 0(I32);
+  25  22 goto L1;
+
+
+BBLOCK 20:
+preds: 18
+succs: 21 22
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  28  27  ( (SI32) t5 ) = strcmp{ic=STRCMP}( (void *)*((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))) + 1(SI32), (void *)&_2__STRING.5_V$29 );  [UNIX_ABI]
+  28  28 if ( t5 == 0(SI32) )
+
+
+BBLOCK 21:
+preds: 20
+succs: 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  29  25 rad_V$18 = 1(I32);
+  30  26 goto L1;
+
+
+BBLOCK 22:
+preds: 20
+succs: 23 24
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  33  31  ( (SI32) t6 ) = strcmp{ic=STRCMP}( (void *)*((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))) + 1(SI32), (void *)&_2__STRING.6_V$2a );  [UNIX_ABI]
+  33  32 if ( t6 == 0(SI32) )
+
+
+BBLOCK 23:
+preds: 22
+succs: 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  34  29 rad_V$18 = 2(I32);
+  35  30 goto L1;
+
+
+BBLOCK 24:
+preds: 22
+succs: 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  38  33  ( (SI32) t7 ) = fprintf{ic=FPRINTF}( (_IO_FILE_R_V$0 *)stderr_V$1, (SI8 *)&_2__STRING.7_V$2c, (SI8 *)*((P32*) (argv_266_V$1d + arg.266_V$20 * 4(I32))) );  [UNIX_ABI]
+
+
+BBLOCK 25:
+preds: 24 23 21 19 16 12 9 8 6 4
+succs: 1
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  50   1 L1:
+  11  43 arg.266_V$20 = arg.266_V$20 + 1(SI32);
+  11  68 goto L69;
+
+
+BBLOCK 26:
+preds: 1
+succs: 27 29
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  50  47 if ( pcs.266_V$1e != 1(SI32) )
+
+
+BBLOCK 27:
+preds: 26
+succs: 28
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  51  45  ( (SI32) t10 ) = fprintf{ic=FPRINTF}( (_IO_FILE_R_V$0 *)stderr_V$1, (SI8 *)&_2__STRING.9_V$30 );  [UNIX_ABI]
+
+
+BBLOCK 28:
+preds: 27
+succs:
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  57  46 exit{ic=EXIT}( (SI32) 1(SI32) );  [UNIX_ABI]
+
+
+BBLOCK 29:
+preds: 26
+succs: 30
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  60  48  ( (SI32) t11 ) = printf{ic=PRINTF}( (SI8 *)&_2__STRING.10_V$32 );  [UNIX_ABI]
+
+
+BBLOCK 30:
+preds: 44 29
+succs: 31 45
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  62  75 L75:
+  62  73 if ( 1(SI32) )
+
+
+BBLOCK 31:
+preds: 30
+succs: 32
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  64  49  ( (SI32) t12 ) = w_read( (SI32) EXPR_CONV.I16.SI32(regs_V$3[7(SI32)]) );  [UNIX_ABI]
+
+
+BBLOCK 32:
+preds: 31
+succs: 33
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  64  50 tmp.277_V$34 = t12;
+  65  51 regs_V$3[7(SI32)] = EXPR_CONV.SI32.I16(EXPR_CONV.I16.SI32(regs_V$3[7(SI32)]) + 2(SI32));
+  66  52 i.277_V$33 = 0(SI32);
+
+
+BBLOCK 33:
+preds: 43 32
+succs: 34 44
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  66  72 L72:
+  66  70 if ( 1(SI32) )
+
+
+BBLOCK 34:
+preds: 33
+succs: 35 43
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  67  61 if ( (tmp.277_V$34 & EXPR_CONV.I16.SI32(codes_V$12[i.277_V$33])) == EXPR_CONV.I16.SI32(codes_V$13[i.277_V$33]) )
+
+
+BBLOCK 35:
+preds: 34
+succs: 36
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  68  53 tick(  );  [UNIX_ABI]
+
+
+BBLOCK 36:
+preds: 35
+succs: 37 39
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  69  56 if ( dmode_V$17 >= 1(SI32) )
+
+
+BBLOCK 37:
+preds: 36
+succs: 38
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  70  54  ( (SI32) t13 ) = _IO_putc{ic=IO_PUTC}( (SI32) 10(SI32), (_IO_FILE_R_V$0 *)stdout_V$0 );  [UNIX_ABI]
+
+
+BBLOCK 38:
+preds: 37
+succs: 39
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  71  55 d_print( (_IO_FILE_R_V$0 *)stdout_V$0, (I32) 0(I32) );  [UNIX_ABI]
+
+
+BBLOCK 39:
+preds: 38 36
+succs: 40 41
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  73  58 if ( dmode_V$17 >= 2(SI32) )
+
+
+BBLOCK 40:
+preds: 39
+succs: 41
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  74  57 dbg_proc(  );  [UNIX_ABI]
+
+
+BBLOCK 41:
+preds: 40 39
+succs: 42
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  75  59 (* (codes_V$16[i.277_V$33]))( (I16) EXPR_CONV.SI32.I16(tmp.277_V$34) );  [UNIX_ABI]
+
+
+BBLOCK 42:
+preds: 41
+succs: 44
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  76  60 goto L2;
+
+
+BBLOCK 43:
+preds: 34
+succs: 33
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  66  62 i.277_V$33 = i.277_V$33 + 1(SI32);
+  66  71 goto L72;
+
+
+BBLOCK 44:
+preds: 42 33
+succs: 30
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  78   2 L2:
+  62  74 goto L75;
+
+
+BBLOCK 45:
+preds: 30
+succs:
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  80  65 return ( (SI32) 0(SI32) );
+
+
+BBLOCK 46:
+preds:
+succs:
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  81  66 return ;
+
+
+Root Context C0.1 {
+} C0.1
+After Building the Control Flow:
+IL0 PRINT (FLOW GRAPH):
+
+BBLOCK 0:
+(an entry bblock)
+preds:
+succs: 4 1
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  90   0 entry extern P32.SI8  buildPar( (I8) par_317_V$35, (void *)nextWord_317_V$36, (I32) radix_317_V$37 );
+  92   1 regnum.317_V$39 = EXPR_CONV.SI32.SI8(EXPR_CONV.I8.SI32(par_317_V$35) & 7(SI32));
+  95  96 t26 = radix_317_V$37;
+  95  97 if ( t26 == 0(I32) )
+
+
+BBLOCK 1:
+preds: 0
+succs: 3 2
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  95  98 if ( t26 == 1(I32) )
+
+
+BBLOCK 2:
+preds: 1
+succs: 5
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 100   4 rad.317_V$3a = &_2__STRING.13_V$3e;
+
+
+BBLOCK 3:
+preds: 1
+succs: 5
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  98   3 rad.317_V$3a = &_2__STRING.12_V$3c;
+  97  89 goto L87;
+
+
+BBLOCK 4:
+preds: 0
+succs: 5
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  96   2 rad.317_V$3a = &_2__STRING.11_V$3b;
+  95  88 goto L87;
+
+
+BBLOCK 5:
+preds: 4 3 2
+succs: 7 6
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+  95  87 L87:
+ 102  70 t25 = EXPR_CONV.I8.SI32(par_317_V$35) & 56(SI32);
+ 102  80 if ( t25 - 0(SI32) <= 56(SI32) )
+
+
+BBLOCK 6:
+preds: 5
+succs: 60
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 171  81 goto L82;
+
+
+BBLOCK 7:
+preds: 5
+succs: 8 59 11 18 25 32 35 42 49
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 102  83 igoto ( __1.TAG.2_0[(t25 - 0(SI32))] );
+
+
+BBLOCK 8:
+preds: 7
+succs: 9
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 104  71 tag_anchor ( tag(..1.2_0.TAG.00)(P32));
+
+
+BBLOCK 9:
+preds: 8
+succs: 10
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 104   9  ( (SI32) t0 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)&_2__STRING.14_V$3f, (SI32) EXPR_CONV.SI8.SI32(regnum.317_V$39) );  [UNIX_ABI]
+
+
+BBLOCK 10:
+preds: 9
+succs: 63
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 105  10 goto L7;
+
+
+BBLOCK 11:
+preds: 7
+succs: 12
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 108  72 tag_anchor ( tag(..1.2_0.TAG.08)(P32));
+
+
+BBLOCK 12:
+preds: 11
+succs: 14 13
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 108  16 if ( EXPR_CONV.SI8.SI32(regnum.317_V$39) == 7(SI32) )
+
+
+BBLOCK 13:
+preds: 12
+succs: 17
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 113  15  ( (SI32) t3 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)&_2__STRING.16_V$42, (SI32) EXPR_CONV.SI8.SI32(regnum.317_V$39) );  [UNIX_ABI]
+
+
+BBLOCK 14:
+preds: 12
+succs: 15
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 109  12  ( (I16) t1 ) = (* (nextWord_317_V$36))(  );  [UNIX_ABI]
+
+
+BBLOCK 15:
+preds: 14
+succs: 16
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 109  13  ( (SI32) t2 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)rad.317_V$3a, (SI8 *)&_2__STRING.15_V$40, (SI32) EXPR_CONV.I16.SI32(t1) );  [UNIX_ABI]
+
+
+BBLOCK 16:
+preds: 15
+succs: 17
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 110  14 wordsnum_V$1b = wordsnum_V$1b + 1(SI32);
+
+
+BBLOCK 17:
+preds: 16 13
+succs: 63
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 114  17 goto L7;
+
+
+BBLOCK 18:
+preds: 7
+succs: 19
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 117  73 tag_anchor ( tag(..1.2_0.TAG.010)(P32));
+
+
+BBLOCK 19:
+preds: 18
+succs: 21 20
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 117  23 if ( EXPR_CONV.SI8.SI32(regnum.317_V$39) == 7(SI32) )
+
+
+BBLOCK 20:
+preds: 19
+succs: 24
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 122  22  ( (SI32) t6 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)&_2__STRING.17_V$43, (SI32) EXPR_CONV.SI8.SI32(regnum.317_V$39) );  [UNIX_ABI]
+
+
+BBLOCK 21:
+preds: 19
+succs: 22
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 118  19  ( (I16) t4 ) = (* (nextWord_317_V$36))(  );  [UNIX_ABI]
+
+
+BBLOCK 22:
+preds: 21
+succs: 23
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 118  20  ( (SI32) t5 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)rad.317_V$3a, (SI8 *)&_2__STRING.15_V$40, (SI32) EXPR_CONV.I16.SI32(t4) );  [UNIX_ABI]
+
+
+BBLOCK 23:
+preds: 22
+succs: 24
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 119  21 wordsnum_V$1b = wordsnum_V$1b + 1(SI32);
+
+
+BBLOCK 24:
+preds: 23 20
+succs: 63
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 123  24 goto L7;
+
+
+BBLOCK 25:
+preds: 7
+succs: 26
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 126  74 tag_anchor ( tag(..1.2_0.TAG.018)(P32));
+
+
+BBLOCK 26:
+preds: 25
+succs: 28 27
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 126  30 if ( EXPR_CONV.SI8.SI32(regnum.317_V$39) == 7(SI32) )
+
+
+BBLOCK 27:
+preds: 26
+succs: 31
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 131  29  ( (SI32) t9 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)&_2__STRING.19_V$46, (SI32) EXPR_CONV.SI8.SI32(regnum.317_V$39) );  [UNIX_ABI]
+
+
+BBLOCK 28:
+preds: 26
+succs: 29
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 127  26  ( (I16) t7 ) = (* (nextWord_317_V$36))(  );  [UNIX_ABI]
+
+
+BBLOCK 29:
+preds: 28
+succs: 30
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 127  27  ( (SI32) t8 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)rad.317_V$3a, (SI8 *)&_2__STRING.18_V$45, (SI32) EXPR_CONV.I16.SI32(t7) );  [UNIX_ABI]
+
+
+BBLOCK 30:
+preds: 29
+succs: 31
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 128  28 wordsnum_V$1b = wordsnum_V$1b + 1(SI32);
+
+
+BBLOCK 31:
+preds: 30 27
+succs: 63
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 132  31 goto L7;
+
+
+BBLOCK 32:
+preds: 7
+succs: 33
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 135  75 tag_anchor ( tag(..1.2_0.TAG.020)(P32));
+
+
+BBLOCK 33:
+preds: 32
+succs: 34
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 135  33  ( (SI32) t10 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)&_2__STRING.20_V$47, (SI32) EXPR_CONV.SI8.SI32(regnum.317_V$39) );  [UNIX_ABI]
+
+
+BBLOCK 34:
+preds: 33
+succs: 63
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 136  34 goto L7;
+
+
+BBLOCK 35:
+preds: 7
+succs: 36
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 139  76 tag_anchor ( tag(..1.2_0.TAG.028)(P32));
+
+
+BBLOCK 36:
+preds: 35
+succs: 38 37
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 139  40 if ( EXPR_CONV.SI8.SI32(regnum.317_V$39) == 7(SI32) )
+
+
+BBLOCK 37:
+preds: 36
+succs: 41
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 144  39  ( (SI32) t13 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)&_2__STRING.22_V$4a, (SI32) EXPR_CONV.SI8.SI32(regnum.317_V$39) );  [UNIX_ABI]
+
+
+BBLOCK 38:
+preds: 36
+succs: 39
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 140  36  ( (I16) t11 ) = (* (nextWord_317_V$36))(  );  [UNIX_ABI]
+
+
+BBLOCK 39:
+preds: 38
+succs: 40
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 140  37  ( (SI32) t12 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)rad.317_V$3a, (SI8 *)&_2__STRING.21_V$49, (SI32) EXPR_CONV.I16.SI32(t11) );  [UNIX_ABI]
+
+
+BBLOCK 40:
+preds: 39
+succs: 41
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 141  38 wordsnum_V$1b = wordsnum_V$1b + 1(SI32);
+
+
+BBLOCK 41:
+preds: 40 37
+succs: 63
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 145  41 goto L7;
+
+
+BBLOCK 42:
+preds: 7
+succs: 43
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 147  77 tag_anchor ( tag(..1.2_0.TAG.030)(P32));
+
+
+BBLOCK 43:
+preds: 42
+succs: 44
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 149  43  ( (void *)t14 ) = malloc{ic=MALLOC}( (I32) 50(I32) );  [UNIX_ABI]
+
+
+BBLOCK 44:
+preds: 43
+succs: 45
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 149  44 tmp.323_V$4b = t14;
+ 150  45  ( (SI32) t15 ) = sprintf{ic=SPRINTF}( (SI8 *)tmp.323_V$4b, (SI8 *)&_2__STRING.23_V$4c, (SI8 *)rad.317_V$3a );  [UNIX_ABI]
+
+
+BBLOCK 45:
+preds: 44
+succs: 46
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 151  46  ( (I16) t16 ) = (* (nextWord_317_V$36))(  );  [UNIX_ABI]
+
+
+BBLOCK 46:
+preds: 45
+succs: 47
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 151  47  ( (SI32) t17 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)tmp.323_V$4b, (SI8 *)&_2__STRING.21_V$49, (SI32) EXPR_CONV.I16.SI32(t16), (SI32) EXPR_CONV.SI8.SI32(regnum.317_V$39) );  [UNIX_ABI]
+
+
+BBLOCK 47:
+preds: 46
+succs: 48
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 152  48 wordsnum_V$1b = wordsnum_V$1b + 1(SI32);
+ 153  49 free{ic=FREE}( (void *)tmp.323_V$4b );  [UNIX_ABI]
+
+
+BBLOCK 48:
+preds: 47
+succs: 63
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 155  50 goto L7;
+
+
+BBLOCK 49:
+preds: 7
+succs: 50
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 158  78 tag_anchor ( tag(..1.2_0.TAG.038)(P32));
+
+
+BBLOCK 50:
+preds: 49
+succs: 56 51
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 158  60 if ( EXPR_CONV.SI8.SI32(regnum.317_V$39) == 7(SI32) )
+
+
+BBLOCK 51:
+preds: 50
+succs: 52
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 162  54  ( (void *)t20 ) = malloc{ic=MALLOC}( (I32) 50(I32) );  [UNIX_ABI]
+
+
+BBLOCK 52:
+preds: 51
+succs: 53
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 162  55 tmp.324_V$4e = t20;
+ 163  56  ( (SI32) t21 ) = sprintf{ic=SPRINTF}( (SI8 *)tmp.324_V$4e, (SI8 *)&_2__STRING.25_V$50, (SI8 *)rad.317_V$3a );  [UNIX_ABI]
+
+
+BBLOCK 53:
+preds: 52
+succs: 54
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 164  57  ( (I16) t22 ) = (* (nextWord_317_V$36))(  );  [UNIX_ABI]
+
+
+BBLOCK 54:
+preds: 53
+succs: 55
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 164  58  ( (SI32) t23 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)tmp.324_V$4e, (SI8 *)&_2__STRING.21_V$49, (SI32) EXPR_CONV.I16.SI32(t22), (SI32) EXPR_CONV.SI8.SI32(regnum.317_V$39) );  [UNIX_ABI]
+
+
+BBLOCK 55:
+preds: 54
+succs: 58
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 165  59 free{ic=FREE}( (void *)tmp.324_V$4e );  [UNIX_ABI]
+
+
+BBLOCK 56:
+preds: 50
+succs: 57
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 159  52  ( (I16) t18 ) = (* (nextWord_317_V$36))(  );  [UNIX_ABI]
+
+
+BBLOCK 57:
+preds: 56
+succs: 58
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 159  53  ( (SI32) t19 ) = sprintf{ic=SPRINTF}( (SI8 *)&res.317_V$38, (SI8 *)rad.317_V$3a, (SI8 *)&_2__STRING.24_V$4d, (SI32) EXPR_CONV.I16.SI32(t18) );  [UNIX_ABI]
+
+
+BBLOCK 58:
+preds: 57 55
+succs: 63
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 167  61 wordsnum_V$1b = wordsnum_V$1b + 1(SI32);
+ 168  62 goto L7;
+
+
+BBLOCK 59:
+preds: 7
+succs: 60
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 102  79 tag_anchor ( tag(..1.2_0.TAG.DEFAULT)(P32));
+
+
+BBLOCK 60:
+preds: 59 6
+succs: 61
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 171  82 L82:
+ 171  64  ( (SI32) t24 ) = fprintf{ic=FPRINTF}( (_IO_FILE_R_V$0 *)stderr_V$1, (SI8 *)&_2__STRING.26_V$52 );  [UNIX_ABI]
+
+
+BBLOCK 61:
+preds: 60
+succs:
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 173  65 exit{ic=EXIT}( (SI32) 1(SI32) );  [UNIX_ABI]
+
+
+BBLOCK 62:
+preds:
+succs: 63
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 173  66 goto L7;
+
+
+BBLOCK 63:
+preds: 62 58 48 41 34 31 24 17 10
+succs:
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 174   7 L7:
+ 175  68 return ( (SI8 *)&res.317_V$38 );
+
+
+BBLOCK 64:
+preds:
+succs:
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 176  69 return ;
+
+
+Root Context C0.1 {
+} C0.1
+After Building the Control Flow:
+IL0 PRINT (FLOW GRAPH):
+
+BBLOCK 0:
+(an entry bblock)
+preds:
+succs: 1
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 180   0 entry extern P32.SI8  disasm( (void *)nextWord_325_V$53, (I32) radix_325_V$54 );
+ 183   2 index.325_V$57 = 0(SI32);
+ 187   3  ( (I16) t0 ) = (* (nextWord_325_V$53))(  );  [UNIX_ABI]
+
+
+BBLOCK 1:
+preds: 0
+succs: 2
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 187   4 code.325_V$55 = t0;
+ 188   5 wordsnum_V$1b = wordsnum_V$1b + 1(SI32);
+
+
+BBLOCK 2:
+preds: 3 1
+succs: 3 4
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 189  37 L37:
+ 189  35 if ( (EXPR_CONV.I16.SI32(code.325_V$55) & EXPR_CONV.I16.SI32(codes_V$12[index.325_V$57])) != EXPR_CONV.I16.SI32(codes_V$13[index.325_V$57]) )
+
+
+BBLOCK 3:
+preds: 2
+succs: 2
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 190   6 index.325_V$57 = index.325_V$57 + 1(SI32);
+ 189  36 goto L37;
+
+
+BBLOCK 4:
+preds: 2
+succs: 5 7
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 192  10 if ( EXPR_CONV.I16.SI32(codes_V$12[index.325_V$57]) == 0(SI32) )
+
+
+BBLOCK 5:
+preds: 4
+succs: 6
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 193   8  ( (SI32) t1 ) = fprintf{ic=FPRINTF}( (_IO_FILE_R_V$0 *)stderr_V$1, (SI8 *)&_2__STRING.27_V$5b, (SI32) EXPR_CONV.I16.SI32(code.325_V$55) );  [UNIX_ABI]
+
+
+BBLOCK 6:
+preds: 5
+succs:
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 195   9 return ( (SI8 *)0(I32) );
+
+
+BBLOCK 7:
+preds: 4
+succs: 8
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 198  11  ( (SI32) t2 ) = sprintf{ic=SPRINTF}( (SI8 *)&tmpstr_V$1a, (SI8 *)&_2__STRING.28_V$5c, (SI8 *)&codes_V$14[index.325_V$57] );  [UNIX_ABI]
+
+
+BBLOCK 8:
+preds: 7
+succs: 9
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 200  12  ( (I32) t3 ) = strlen{ic=STRLEN}( (SI8 *)&codes_V$15[index.325_V$57] );  [UNIX_ABI]
+ 200  13 parnum.325_V$58 = EXPR_CONV.I32.SI32(t3);
+ 201  14 i.325_V$59 = parnum.325_V$58 - 1(SI32);
+
+
+BBLOCK 9:
+preds: 26 8
+succs: 10 27
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 201  41 L41:
+ 201  39 if ( i.325_V$59 >= 0(SI32) )
+
+
+BBLOCK 10:
+preds: 9
+succs: 11 13
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 202  16 if ( i.325_V$59 == 0(SI32) )
+
+
+BBLOCK 11:
+preds: 10
+succs: 12 13
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 202  38 if ( parnum.325_V$58 > 1(SI32) )
+
+
+BBLOCK 12:
+preds: 11
+succs: 13
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 202  15  ( (SI8 *)t4 ) = strncat{ic=STRNCAT}( (SI8 *)&tmpstr_V$1a, (SI8 *)&_2__STRING.29_V$5d, (I32) 50(I32) );  [UNIX_ABI]
+
+
+BBLOCK 13:
+preds: 12 11 10
+succs: 23 14
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 203  28 if ( EXPR_CONV.SI8.SI32(codes_V$15[index.325_V$57][i.325_V$59]) == 114(SI32) )
+
+
+BBLOCK 14:
+preds: 13
+succs: 20 15
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 205  26  ( (SI32) t9 ) = strcmp{ic=STRCMP}( (SI8 *)&codes_V$14[index.325_V$57], (SI8 *)&_2__STRING.32_V$63 );  [UNIX_ABI]
+ 205  27 if ( t9 == 0(SI32) )
+
+
+BBLOCK 15:
+preds: 14
+succs: 17 16
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 212  25 if ( EXPR_CONV.SI8.SI32(codes_V$15[index.325_V$57][i.325_V$59]) == 97(SI32) )
+
+
+BBLOCK 16:
+preds: 15
+succs: 24
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 220  24 par.325_V$56 = EXPR_CONV.SI32.I8((EXPR_CONV.I16.SI32(code.325_V$55) & 63(SI32) << 6(SI32) * i.325_V$59) a>> 6(SI32) * i.325_V$59);
+
+
+BBLOCK 17:
+preds: 15
+succs: 18
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 215  21  ( (SI32) t7 ) = sprintf{ic=SPRINTF}( (SI8 *)&tmp.329_V$61[0(SI32)], (SI8 *)&_2__STRING.31_V$62, (SI32) 2(SI32) * EXPR_CONV.SI8.SI32(EXPR_CONV.SI32.SI8(EXPR_CONV.I16.SI32(code.325_V$55) & 255(SI32))) );  [UNIX_ABI]
+
+
+BBLOCK 18:
+preds: 17
+succs: 19
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 216  22  ( (SI8 *)t8 ) = strncat{ic=STRNCAT}( (SI8 *)&tmpstr_V$1a, (SI8 *)&tmp.329_V$61[0(SI32)], (I32) 50(I32) );  [UNIX_ABI]
+
+
+BBLOCK 19:
+preds: 18
+succs: 27
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 217  23 goto L1;
+
+
+BBLOCK 20:
+preds: 14
+succs: 21
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 208  18  ( (SI32) t5 ) = sprintf{ic=SPRINTF}( (SI8 *)&tmp.328_V$5e[0(SI32)], (SI8 *)&_2__STRING.30_V$60, (SI32) (EXPR_CONV.I16.SI32(code.325_V$55) & 448(SI32)) a>> 6(SI32), (SI32) EXPR_CONV.I16.SI32(code.325_V$55) & 63(SI32) );  [UNIX_ABI]
+
+
+BBLOCK 21:
+preds: 20
+succs: 22
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 209  19  ( (SI8 *)t6 ) = strncat{ic=STRNCAT}( (SI8 *)&tmpstr_V$1a, (SI8 *)&tmp.328_V$5e[0(SI32)], (I32) 50(I32) );  [UNIX_ABI]
+
+
+BBLOCK 22:
+preds: 21
+succs: 27
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 210  20 goto L1;
+
+
+BBLOCK 23:
+preds: 13
+succs: 24
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 204  17 par.325_V$56 = EXPR_CONV.SI32.I8((EXPR_CONV.I16.SI32(code.325_V$55) & 7(SI32) << 6(SI32) * i.325_V$59) a>> 6(SI32) * i.325_V$59);
+
+
+BBLOCK 24:
+preds: 23 16
+succs: 25
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 221  29  ( (SI8 *)t10 ) = buildPar( (I8) par.325_V$56, (void *)nextWord_325_V$53, (I32) radix_325_V$54 );  [UNIX_ABI]
+
+
+BBLOCK 25:
+preds: 24
+succs: 26
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 221  30  ( (SI8 *)t11 ) = strncat{ic=STRNCAT}( (SI8 *)&tmpstr_V$1a, (SI8 *)t10, (I32) 50(I32) );  [UNIX_ABI]
+
+
+BBLOCK 26:
+preds: 25
+succs: 9
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 201  31 i.325_V$59 = i.325_V$59 - 1(SI32);
+ 201  40 goto L41;
+
+
+BBLOCK 27:
+preds: 22 19 9
+succs:
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 224   1 L1:
+ 224  33 return ( (SI8 *)&tmpstr_V$1a );
+
+
+BBLOCK 28:
+preds:
+succs:
+exec: 0
+prob: 50
+context: C0.1, attr:
+
+
+ 225  34 return ;
+
+
+Root Context C0.1 {
+} C0.1

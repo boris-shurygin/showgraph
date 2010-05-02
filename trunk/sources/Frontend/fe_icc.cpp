@@ -1,6 +1,6 @@
 /**
- * @file: fe_gcc.cpp
- * Implementation of GCC Frontend
+ * @file: fe_icc.cpp
+ * Implementation of ICC Frontend
  */
 /* 
  * Frontend in ShowGraph tool.
@@ -8,28 +8,29 @@
  */
 #include "fe_iface.h"
 
+
 /** Check if this line starts a new node text section */
 bool
-TestParser::nodeStartGCC( QString line)
+TestParser::nodeStartIL0( QString line)
 {
-    return line.indexOf(";; Start of basic block") != -1;
+    return line.indexOf("BBLOCK") != -1;
 }
 /** Check whether the given line should be treated as a next line */
 bool
-TestParser::nextLineGCC( QString line)
+TestParser::nextLineIL0( QString line)
 {
     return true;
 }
 
 void
-TestParser::parseLineGCC( QString line)
-{   
+TestParser::parseLineIL0( QString line)
+{
     QString n_str("Node ");
     QString e_str("Edge ");
     /** Node recognition */
-    QRegExp node_rx("^;; Start of basic block");
-    QRegExp preds_rx("^;; Pred edge ");
-    QRegExp succs_rx("^;; Succ edge ");
+    QRegExp node_rx("BBLOCK (\\d+)");
+    QRegExp preds_rx("^preds:");
+    QRegExp succs_rx("^succs:");
     QTextStream stream( stdout);
 
             
@@ -107,31 +108,27 @@ TestParser::parseLineGCC( QString line)
         }
     } else if ( node_rx.indexIn( line) != -1 )
     {
-		QRegExp num_rx("-> (\\d+)");
-        if ( num_rx.indexIn( line) != -1)
+		bool good_id = false;
+		int ir_id = node_rx.cap(1).toInt( &good_id);
+		QString text = QString("BBLOCK ").append( node_rx.cap(1));
+        QString name = n_str.append( node_rx.cap(1));
+        
+        /** Add node to symtab */
+        if ( symtab.find( name ) == symtab.end())
         {
-            bool good_id = false;
-		    int ir_id = num_rx.cap(1).toInt( &good_id);
-		    QString text = QString("Block ").append( num_rx.cap(1));
-            QString name = n_str.append( num_rx.cap(1));
-            
-            /** Add node to symtab */
-            if ( symtab.find( name ) == symtab.end())
-            {
-                SymNode* node = new SymNode( name);
-                curr_node = static_cast<CFNode *>( graph->graph()->newNode());
-                curr_node->setDoc( new QTextDocument());
-                node->setNode( curr_node);
-                node->node()->item()->setPlainText( text);
-		        if ( good_id)
-		        {
-			        node->node()->setIRId( ir_id);
-		        }
-                symtab[ name] = node;
-    #ifdef _DEBUG
-                //stream << name << endl;
-    #endif
-            }
+            SymNode* node = new SymNode( name);
+            curr_node = static_cast<CFNode *>( graph->graph()->newNode());
+            curr_node->setDoc( new QTextDocument());
+            node->setNode( curr_node);
+            node->node()->item()->setPlainText( text);
+		    if ( good_id)
+		    {
+			    node->node()->setIRId( ir_id);
+		    }
+            symtab[ name] = node;
+#ifdef _DEBUG
+            //stream << name << endl;
+#endif
         }
     } else
     {
@@ -144,13 +141,13 @@ TestParser::parseLineGCC( QString line)
     }
 }
 
-/** Parse GCC dump */
-void TestParser::parseGCCUnit( DumpUnitInfo *unit)
+/** Parse IL0 dump */
+void TestParser::parseIL0Unit( DumpUnitInfo *unit)
 {
     total_lines_num = 0;
     DumpPos beg = unit->pos();
     DumpPos end = unit->end();
-     if ( !file.isOpen() && !file.open( QIODevice::ReadOnly))
+    if ( !file.isOpen() && !file.open( QIODevice::ReadOnly))
     {
         return;
     }
@@ -180,24 +177,24 @@ void TestParser::parseGCCUnit( DumpUnitInfo *unit)
     {
         curr_line = in.readLine();
         cur_line_num++;
-        if ( !nextLineGCC( curr_line))
+        if ( !nextLineIL0( curr_line))
         {
             line.append( curr_line);
         } else
         {
             if ( !line.isNull())
             {
-                if ( nodeStopGCC( line))
+                if ( nodeStopIL0( line))
                 {
                     endNode();
                     setStateDefault();
                 }
-                if ( nodeStartGCC( line))
+                if ( nodeStartIL0( line))
                 {
                     setStateNode();
                     startNode();
                 }             
-                parseLineGCC( line);
+                parseLineIL0( line);
             }
             line = curr_line;
         }

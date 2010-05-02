@@ -148,6 +148,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\fe_icc.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\fe_test.cpp"
 				>
 			</File>

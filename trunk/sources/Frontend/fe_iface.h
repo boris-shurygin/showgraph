@@ -12,6 +12,8 @@
 #ifndef FE_IFACE_H
 #define FE_IFACE_H
 
+class Parser;
+
 #include <QMessageBox>
 #include <QTextStream>
 #include <QRegExp>
