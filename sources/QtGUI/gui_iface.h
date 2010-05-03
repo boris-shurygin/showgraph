@@ -39,7 +39,8 @@
 #define GUI_IFACE_H
 
 #include "gview_iface.h"
-#include "../IR/ir_iface.h"
 #include "../Frontend/fe_iface.h"
+#include "../IR/ir_iface.h"
+#include "text_view.h"
 #include "main_window.h"
 #endif

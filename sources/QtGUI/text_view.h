@@ -38,12 +38,12 @@ class TextView: public QTextBrowser
     /** Highlighter used to format the text */
 	DumpHighlighter * hl;
 
-    GNode *node;
+    CFNode *node;
 public:
 	/**
 	 * Constructor
 	 */
-	TextView( GNode *n);
+	TextView( CFNode *n);
 
 	/**
 	 * Destructor

@@ -12,7 +12,8 @@
 
 MainWindow::~MainWindow()
 {
-    delete help_parser;
+    if ( isNotNullP( parser))
+        delete parser;
 	//delete conf;
 }
 
@@ -24,7 +25,7 @@ MainWindow::MainWindow()
 #endif
     QIcon icon( "images/logo.ico");
     setWindowIcon(icon);
-    help_parser = new Parser("");
+    parser = NULL;
 
     /** Find toolbar */
     find_tool_bar = addToolBar (tr("Find"));
@@ -152,23 +153,25 @@ void MainWindow::textClicked( const QUrl & link)
 
 void MainWindow::showNodeText( GNode *node)
 {
-	if ( isNotNullP( node->doc()))
+	CFNode *cf_node = static_cast< CFNode *>( node);
+    if ( isNotNullP( node->doc()))
 	{
 		if ( !node->isTextShown())
 		{
 			QDockWidget *dock = new QDockWidget( QString("Node %1").arg( node->irId()), this);
-			TextView* text_view = new TextView( node);
+			TextView* text_view = new TextView( cf_node);
 			dock->setWidget( text_view);
 			addDockWidget(Qt::RightDockWidgetArea, dock);
 			text_view->setPlainText( node->doc()->toPlainText());
-			node->setTextShown();
-			node->item()->setTextDock( dock);
+			cf_node->setTextShown();
+			cf_node->item()->setTextDock( dock);
 			textDocks.push_back( dock);
-			text_view->highlightText();
+            cf_node->graph()->parser()->highlightText( text_view->document());
+            //text_view->highlightText();
 			connect( text_view, SIGNAL( anchorClicked( const QUrl &)), this, SLOT( textClicked(const QUrl &)));
 		} else
 		{
-			node->item()->textDock()->show();
+			cf_node->item()->textDock()->show();
 		}
 	}
 }
@@ -242,9 +245,11 @@ void MainWindow::openFile( QString fileName)
     /** Not a graph description - run parser */
     if ( rx.indexIn( fileName) == -1 )
     {
-        TestParser parser( fileName);
-        parser.preRun();
-        QStringList routine_names = parser.routines();
+        if ( isNotNullP( parser))
+            delete parser;
+        parser = new TestParser( fileName);
+        parser->preRun();
+        QStringList routine_names = parser->routines();
         if ( routine_names.count() > 0)
         {
             QString routine_name = routine_names.first();
@@ -259,9 +264,9 @@ void MainWindow::openFile( QString fileName)
             } 
             if ( !routine_name.isEmpty())
             {
-                QStringList phase_names = parser.phases( routine_name);
+                QStringList phase_names = parser->phases( routine_name);
                 QString phase_name = phase_names.first();      
-                if ( 1 || phase_names.count() > 1)
+                if ( phase_names.count() > 1)
                 {
                     QString phase = QInputDialog::getItem( this, tr("Choose phase"),
                                                              tr("Phase:"), phase_names,
@@ -271,14 +276,14 @@ void MainWindow::openFile( QString fileName)
                 }
                 if ( !phase_name.isEmpty())
                 {
-                    parser.parseUnit( routine_name, phase_name);
+                    parser->parseUnit( routine_name, phase_name);
                 }
             }
         } else
         {
-            parser.mainLoop();
+            parser->mainLoop();
         }
-        connectToGraphView( parser.graphView());
+        connectToGraphView( parser->graphView());
         do_layout = true;
     } else
     {

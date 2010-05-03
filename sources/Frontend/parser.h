@@ -135,6 +135,7 @@ protected:
     bool look_for_phase;    
     int num_blocks;
     bool unit_info_collected;
+    DumpUnitInfo *cur_unit;
 
     /** states of the parser */
     enum ParserState

@@ -29,3 +29,8 @@ CFNode::~CFNode()
 {
 
 }
+
+CFG* CFNode::graph() const
+{
+    return static_cast< CFG*>( AuxNode::graph());
+}
