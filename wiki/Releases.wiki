@@ -1,5 +1,12 @@
 #summary Release History
 
+===Version 1.0.3===
+  * Added toolbars, however on some systems icons are not shown - under investigation
+  * Added parser and other GUI support for GCC and ICC dumps, user can browse dumps now
+  * Context menus for nodes, graph and edge
+  * Split edit mode and view mode, can be switched selecting from graph's context menu
+  * Added progress bar for watching over layout computation
+
 ===Version 1.0.2===
   * Focus+Context view with animated nodes movement and fading of graph part that is out of scope
   * Source docs excluded from release
