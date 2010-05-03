@@ -203,6 +203,9 @@ public:
     {
         return isStateNode() && nodeStartIL0( line);
     }
+    void highlightText( QTextDocument * doc);
+    void highlightTextGCC( QTextDocument * doc);
+    void highlightTextIL0( QTextDocument * doc);
 };
 
 #endif

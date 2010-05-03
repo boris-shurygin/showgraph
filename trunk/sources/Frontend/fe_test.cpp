@@ -14,6 +14,8 @@ TestParser::TestParser( QString str):
     graph = new GraphView();
     graph->setGraph( new CFG( graph));
     graph->scene()->setItemIndexMethod( QGraphicsScene::NoIndex);
+    static_cast< CFG *>( graph->graph())->setParser( this);
+    setType( DUMP_TYPE_UNKNOWN);
 }
 
 TestParser::~TestParser()
@@ -140,4 +142,67 @@ TestParser::parseLine( QString line)
         node_text.append( line).append( "\n");
     }
 }
+/**
+ * Select apropriate highlighter or run the default one
+ */
+void TestParser::highlightText( QTextDocument * doc)
+{
+    switch( type())
+    {
+    case DUMP_TYPE_GCC_CF:
+        highlightTextGCC( doc);
+        return;
+    case DUMP_TYPE_ICC_IL0:
+        highlightTextIL0( doc);
+        return;
+    case DUMP_TYPE_UNKNOWN:
+    default:
+        break;
+    }
+    QTextCursor cursor( doc);
+    QString text = doc->toPlainText();
+    QRegExp exp("Node (\\d+)");
+    int index = text.indexOf( exp);
+    while (index >= 0)
+    {
+        int length = exp.matchedLength();
 
+        QTextCharFormat link_fmt;
+        //link_fmt.setFontWeight(QFont::Bold);
+        link_fmt.setForeground(Qt::blue);
+        link_fmt.setFontUnderline( true);
+        link_fmt.setAnchor( true);
+        link_fmt.setAnchorHref( exp.cap( 1));
+        cursor.setPosition( index);
+        cursor.setPosition( index + length, QTextCursor::KeepAnchor);
+        cursor.removeSelectedText();
+        cursor.insertText( QString( "Node %1").arg( exp.cap( 1)), link_fmt);
+        index = text.indexOf( exp, index + length);
+    }
+
+    QRegExp edge_rx("CF EDGE (\\d+) \\[(\\d+)->(\\d+)\\]");
+    index = text.indexOf( edge_rx);
+    while (index >= 0)
+    {
+        int length = edge_rx.matchedLength();
+        
+        QTextCharFormat plain;
+        QTextCharFormat link_fmt;
+        //link_fmt.setFontWeight(QFont::Bold);
+        link_fmt.setForeground(Qt::blue);
+        link_fmt.setFontUnderline( true);
+        link_fmt.setAnchor( true);
+        link_fmt.setAnchorHref( edge_rx.cap( 2));
+        cursor.setPosition( index);
+        cursor.setPosition( index + length, QTextCursor::KeepAnchor);
+        cursor.removeSelectedText();
+        cursor.insertText( QString( "CF EDGE %1 [").arg( edge_rx.cap( 1)), plain);
+        cursor.insertText( edge_rx.cap( 2), link_fmt);
+        cursor.insertText( QString( "->"), plain);
+        link_fmt.setAnchorHref( edge_rx.cap( 3));
+        cursor.insertText( edge_rx.cap( 3), link_fmt);
+        cursor.insertText( QString( "]"), plain);
+         
+        index = text.indexOf( edge_rx, index + length);
+    }
+}

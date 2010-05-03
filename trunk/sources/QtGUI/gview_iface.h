@@ -49,6 +49,5 @@ const qreal MAX_OPACITY = 6;
 #include "edge_item.h"
 #include "node_item.h"
 #include "graph_view.h"
-#include "text_view.h"
 
 #endif /* GVIEW_IFACE_H */

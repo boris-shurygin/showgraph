@@ -17,6 +17,7 @@
 class CFG: public GGraph
 {
     IR * priv_ir;
+    TestParser *_parser;
 public:
     /** Constructor */
     CFG( GraphView *v);
@@ -75,6 +76,16 @@ public:
     inline void setIR( IR *new_ir)
     {
         priv_ir = new_ir;
+    }
+    /** Get parser */
+    inline TestParser * parser() const
+    {
+        return _parser;
+    }
+    /** Set parser */
+    inline void setParser(TestParser * p)
+    {
+        _parser = p;
     }
 };
 

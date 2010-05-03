@@ -213,3 +213,72 @@ void TestParser::parseGCCUnit( DumpUnitInfo *unit)
         out( "Finished parsing");
 #endif
 }
+
+void 
+TestParser::highlightTextGCC( QTextDocument * doc)
+{
+    QTextCursor cursor( doc);
+    QString text = doc->toPlainText();
+    QRegExp exp(";; Start of basic block ([^\\n]*)");
+    int index = 0;
+    if ( (index = text.indexOf( exp)) != -1)
+    {
+        int length = exp.matchedLength();
+        int num_index = 0;
+        QString line = exp.cap( 1);
+        int arrow_index = line.indexOf( "->");
+        if ( arrow_index != -1)
+        {
+            cursor.setPosition( index);
+            cursor.setPosition( index + length, QTextCursor::KeepAnchor);
+            cursor.removeSelectedText();
+            QTextCharFormat plain;
+            QTextCharFormat link_fmt;
+            link_fmt.setForeground(Qt::blue);
+            link_fmt.setFontUnderline( true);
+            link_fmt.setAnchor( true);
+            QRegExp num_rx(" (\\d+)");
+            cursor.insertText( QString( ";; Start of basic block ("), plain);
+            while ( (num_index = line.indexOf( num_rx, num_index)) != -1)
+            {
+                if ( num_index > arrow_index)
+                {
+                    num_index += num_rx.matchedLength();
+                    cursor.insertText( QString( ") -> "), plain);
+                    link_fmt.setAnchorHref( num_rx.cap( 1));
+                    cursor.insertText( num_rx.cap( 1), link_fmt);
+                    break;
+                } else
+                {
+                    num_index += num_rx.matchedLength();
+                    cursor.insertText( QString( " "), plain);
+                    link_fmt.setAnchorHref( num_rx.cap( 1));
+                    cursor.insertText( num_rx.cap( 1), link_fmt);
+                }
+            }
+        }
+    }
+    QRegExp edge_rx(";; (Succ|Pred) edge(\\s+)(\\d+)");
+    index = text.indexOf( edge_rx);
+    while (index >= 0)
+    {
+        int length = edge_rx.matchedLength();
+        
+        QTextCharFormat plain;
+        QTextCharFormat link_fmt;
+        link_fmt.setForeground(Qt::blue);
+        link_fmt.setFontUnderline( true);
+        link_fmt.setAnchor( true);
+        link_fmt.setAnchorHref( edge_rx.cap( 3));
+        cursor.setPosition( index);
+        cursor.setPosition( index + length, QTextCursor::KeepAnchor);
+        cursor.removeSelectedText();
+        cursor.insertText( QString( ";; "), plain);
+        cursor.insertText( QString( "%1 edge%2")
+                           .arg( edge_rx.cap( 1))
+                           .arg( edge_rx.cap( 2)),
+                           link_fmt);
+        cursor.insertText( edge_rx.cap( 3), link_fmt);
+        index = text.indexOf( edge_rx, index + length);
+    }
+}

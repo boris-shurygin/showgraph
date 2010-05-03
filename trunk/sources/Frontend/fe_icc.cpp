@@ -210,3 +210,81 @@ void TestParser::parseIL0Unit( DumpUnitInfo *unit)
         out( "Finished parsing");
 #endif
 }
+
+void
+TestParser::highlightTextIL0( QTextDocument * doc)
+{
+    QTextCursor cursor( doc);
+    QString text = doc->toPlainText();
+    QRegExp exp("BBLOCK (\\d+)");
+    int index = text.indexOf( exp);
+    while (index >= 0)
+    {
+        int length = exp.matchedLength();
+
+        QTextCharFormat link_fmt;
+        //link_fmt.setFontWeight(QFont::Bold);
+        link_fmt.setForeground(Qt::blue);
+        link_fmt.setFontUnderline( true);
+        link_fmt.setAnchor( true);
+        link_fmt.setAnchorHref( exp.cap( 1));
+        cursor.setPosition( index);
+        cursor.setPosition( index + length, QTextCursor::KeepAnchor);
+        cursor.removeSelectedText();
+        cursor.insertText( QString( "BBLOCK %1").arg( exp.cap( 1)), link_fmt);
+        index = text.indexOf( exp, index + length);
+    }
+
+    QRegExp pred_rx("preds:([^\\n]*)");
+    if ( (index = text.indexOf( pred_rx)) != -1)
+    {
+        int length = pred_rx.matchedLength();
+        int num_index = 0;
+        cursor.setPosition( index);
+        cursor.setPosition( index + length, QTextCursor::KeepAnchor);
+        cursor.removeSelectedText();
+        
+        QString pred_line = pred_rx.cap( 1);
+        QTextCharFormat plain;
+        QTextCharFormat link_fmt;
+        //link_fmt.setFontWeight(QFont::Bold);
+        link_fmt.setForeground(Qt::blue);
+        link_fmt.setFontUnderline( true);
+        link_fmt.setAnchor( true);
+        QRegExp num_rx(" (\\d+)");
+        cursor.insertText( QString( "preds:"), plain);
+        while ( (num_index = pred_line.indexOf( num_rx, num_index)) != -1)
+        {
+            num_index += num_rx.matchedLength();
+            cursor.insertText( QString( " "), plain);
+            link_fmt.setAnchorHref( num_rx.cap( 1));
+            cursor.insertText( num_rx.cap( 1), link_fmt);
+        }
+    }
+    QRegExp succs_rx("succs:([^\\n]*)");
+    if ( (index = text.indexOf( succs_rx)) != -1)
+    {
+        int length = succs_rx.matchedLength();
+        int num_index = 0;
+        cursor.setPosition( index);
+        cursor.setPosition( index + length, QTextCursor::KeepAnchor);
+        cursor.removeSelectedText();
+        
+        QString succ_line = succs_rx.cap( 1);
+        QTextCharFormat plain;
+        QTextCharFormat link_fmt;
+        //link_fmt.setFontWeight(QFont::Bold);
+        link_fmt.setForeground(Qt::blue);
+        link_fmt.setFontUnderline( true);
+        link_fmt.setAnchor( true);
+        QRegExp num_rx(" (\\d+)");
+        cursor.insertText( QString( "succs:"), plain);
+        while ( (num_index = succ_line.indexOf( num_rx, num_index)) != -1)
+        {
+            num_index += num_rx.matchedLength();
+            cursor.insertText( QString( " "), plain);
+            link_fmt.setAnchorHref( num_rx.cap( 1));
+            cursor.insertText( num_rx.cap( 1), link_fmt);
+        }
+    }
+}

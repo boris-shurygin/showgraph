@@ -84,7 +84,7 @@ class MainWindow : public QMainWindow
 private:
     QWidget *view;
 	FindWidget *findWidget;
-	Parser *help_parser;
+	TestParser *parser;
     GraphView* graph_view;
     QProgressBar* progress_bar;
     QList< QDockWidget *> textDocks;

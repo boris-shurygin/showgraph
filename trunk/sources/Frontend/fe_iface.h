@@ -13,11 +13,13 @@
 #define FE_IFACE_H
 
 class Parser;
+class TestParser;
+
 
 #include <QMessageBox>
 #include <QTextStream>
 #include <QRegExp>
-#include "../Graph/graph_iface.h"
+#include "../IR/ir_iface.h"
 #include "../QtGUI/gui_iface.h"
 #include "symtab.h"
 #include "parser.h"

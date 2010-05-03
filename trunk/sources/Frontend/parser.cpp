@@ -77,6 +77,7 @@ Parser::findUnit( QString name, QString phase)
 void 
 Parser::parseUnit( DumpUnitInfo *unit)
 {
+    setType( unit->type());
     switch( unit->type())
     {
     case DUMP_TYPE_UNKNOWN:

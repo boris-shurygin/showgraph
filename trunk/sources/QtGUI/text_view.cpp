@@ -35,7 +35,7 @@ void DumpHighlighter::highlightBlock(const QString &text)
 /**
  * TextView Constructor
  */
-TextView::TextView( GNode *n): node( n), hl( NULL)
+TextView::TextView( CFNode *n): node( n), hl( NULL)
 {
 	setOpenLinks( false);
 }
@@ -45,7 +45,7 @@ TextView::TextView( GNode *n): node( n), hl( NULL)
  */
 void TextView::highlightText()
 {
-	//hl = new DumpHighlighter( document());
+	 //hl = new DumpHighlighter( document());
 	 QTextCursor cursor( document());
 	 QString text = document()->toPlainText();
 	 QRegExp exp("Node (\\d+)");
@@ -175,7 +175,8 @@ void TextView::mouseReleaseEvent( QMouseEvent * ev)
         int id = -1;
         if ( nodeIdClicked( ev->pos(), &id))
         {
-            GNode *new_node = node->graph()->view()->findNodeById( id);
+            CFNode *new_node = 
+                static_cast< CFNode *>( node->graph()->view()->findNodeById( id));
             if ( isNotNullP( new_node)) 
             {
                 if( !new_node->isTextShown())
@@ -187,9 +188,9 @@ void TextView::mouseReleaseEvent( QMouseEvent * ev)
                     new_node->setTextShown();
                     document()->clear();
                     setPlainText( new_node->doc()->toPlainText());
-                    highlightText();
+                    new_node->graph()->parser()->highlightText( document());
                     node = new_node;
-                    dock->setWindowTitle( new_node->item()->toPlainText());
+                    dock->setWindowTitle( QString("Node %1").arg( node->irId()));
                 } else
                 {
 	                new_node->item()->textDock()->show();
