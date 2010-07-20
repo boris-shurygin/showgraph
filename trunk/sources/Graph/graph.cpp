@@ -137,7 +137,7 @@ GraphT< Graph, Node, Edge>::newNodeImpl( GraphUid id)
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
     
     /** Create node */
-	Graph *gp = (Graph *)this;
+    Graph *gp = (Graph *)this;
     void *some_p = ( void *) gp->CreateNode( (Graph *)this, id);
     Node *node_p = ( Node *)some_p;
     NodeListIt* it = node_p->GetGraphIt();

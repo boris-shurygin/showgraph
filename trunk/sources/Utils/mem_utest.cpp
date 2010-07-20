@@ -25,11 +25,12 @@ public:
 typedef Ref< TestObj> ObjRef;
 
 /**
- * Test smart pointers, objects and pools
+ * Test smart pointers
  */
-bool uTestMem()
+static bool
+uTestRef()
 {
-	/** #Test smart pointers behaviour */
+/** #Test smart pointers behaviour */
 	ObjRef ref = new TestObj(); /** Test constructor from pointer */
     ObjRef ref2; /** Test default constructor */
 	
@@ -56,11 +57,100 @@ bool uTestMem()
 	} catch( int a)
 	{
 		catched = true;
+		ref2->a = a;
 	}
 	assertd( catched);
 	
 	/** Test ref to pointer conversion and Obj destructor */
 	delete ref2;
+    return true;
+}
 
+
+/**
+ * Test memory pools
+ */
+static bool
+uTestPools()
+{
+    class PoolBase: public PoolObj
+    {
+        virtual void setVal( quint32 val) = 0;
+        virtual quint32 val() const = 0;
+    };
+
+    class MyPoolObj: public PoolBase
+    {
+        quint32 priv_field;
+    public:
+        /** Some public fields */
+        quint32 a;
+        quint32 b;
+        bool *called;
+        /** Base class routines implementation */
+        void setVal( quint32 val)
+        {
+            priv_field = val;
+        }
+        quint32 val() const
+        {
+            return priv_field;
+        }
+        ~MyPoolObj()
+        {
+            *called = true;
+        }
+    };
+    Pool *pool = new FixedPool< MyPoolObj>();
+    MyPoolObj *p1 = new ( pool) MyPoolObj();
+    MyPoolObj *p2 = new ( pool) MyPoolObj();
+    bool called_destructor1 = false;
+    bool called_destructor2 = false;
+
+    ASSERT( p1 != p2);
+    p1->a = 1;
+    p2->a = 2;
+    p1->b = 3;
+    p2->b = 4;
+    p1->called = &called_destructor1;
+    p2->called = &called_destructor2;
+
+    p1->setVal( 5);
+    p2->setVal( 6);
+    ASSERT( p1->a != p1->b);
+    ASSERT( p1->a != p2->a);
+    ASSERT( p1->b != p2->a);
+    ASSERT( p1->b != p2->b);
+    ASSERT( p1->a != p2->a);
+    
+    ASSERT( !called_destructor1);
+    ASSERT( !called_destructor2);
+    
+    pool->destroy( p1);
+    
+    ASSERT( called_destructor1);
+    ASSERT( !called_destructor2);
+
+    pool->destroy( p2);
+    
+    ASSERT( called_destructor1);
+    ASSERT( called_destructor2);
+
+    delete pool;
+    return true;
+}
+
+
+/**
+ * Test smart pointers, objects and pools
+ */
+bool uTestMem()
+{
+	/** Test smart pointers */
+    if ( !uTestRef())
+        return false;
+    /** Test memory pools */
+    if ( !uTestPools())
+        return false;
 	return true;
 }

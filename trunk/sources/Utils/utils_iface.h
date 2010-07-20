@@ -7,10 +7,13 @@
  * Utils library in Showgraph tool
  * Copyright (C) 2009  Boris Shurygin
  */
+#pragma once
+
 #ifndef UTILS_IFACE_H
 #define UTILS_IFACE_H
 #include <stdio.h>
 #include <QTextStream>
+#include <QtGlobal>
 #include "misc.h"
 #include "asrt.h"
 #include "print.h"

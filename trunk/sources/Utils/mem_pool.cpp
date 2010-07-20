@@ -10,15 +10,37 @@
 
 using namespace Mem;
 
-/** Create fixed pool with default parameters */
-FixedPool::FixedPool(): Pool( POOL_FIXED), entry_count( 0)
+/**
+ * Default operator 'new' is disabled
+ */
+void *
+PoolObj::operator new( size_t size)
 {
-
+    ASSERT( 0);
+    return NULL;
 }
-
-/** Destroy the pool */
-FixedPool::~FixedPool()
+/**
+ * Default operator 'delete' is disabled
+ */
+void 
+PoolObj::operator delete( void *ptr)
 {
-    /** Check that all entries are freed */
-    assertd( entry_count == 0);
+    ASSERT( 0);
+}
+/**
+ * Default operator 'new[]' is disabled
+ */
+void *
+PoolObj::operator new[]( size_t size)
+{
+    ASSERT( 0);
+    return NULL;
+}
+/**
+ * Default operator 'delete[]' is disabled
+ */
+void 
+PoolObj::operator delete[]( void *ptr)
+{
+    ASSERT( 0);
 }

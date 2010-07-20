@@ -1,10 +1,22 @@
 /**
- * @file: misc.h 
+ * @file: asrt.h 
  * Assertion related routines of Utils library for ShowGraph
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef ASRT_H
 #define ASRT_H
+
+#if !defined(ASSERTD)
+#  ifdef _DEBUG
+#    define ASSERTD(cond) Q_ASSERT(cond)
+#  else
+#    define ASSERTD(cond)
+#  endif
+#endif
+
+#if !defined(ASSERT)
+#  define ASSERT(cond) Q_ASSERT(cond)
+#endif
 
 /**
  * Type of error

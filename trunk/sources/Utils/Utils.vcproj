@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="Utils"
 	ProjectGUID="{21E81E7E-0E8B-4CBB-BBFB-9319CCA98EC4}"
 	RootNamespace="Utils"
@@ -150,6 +150,18 @@
 		</File>
 		<File
 			RelativePath=".\mem.h"
+			>
+		</File>
+		<File
+			RelativePath=".\mem_chunk.h"
+			>
+		</File>
+		<File
+			RelativePath=".\mem_entry.h"
+			>
+		</File>
+		<File
+			RelativePath=".\mem_fixed_pool.h"
 			>
 		</File>
 		<File
