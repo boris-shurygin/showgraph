@@ -12,7 +12,6 @@
  */
 #ifndef LIST_H
 #define LIST_H
-
 /**
  * Types of direction in lists.
  * Lists are built from left to right by default.
@@ -22,12 +21,12 @@
 enum ListDir
 {
     /** Right direction */
-	LIST_DIR_RIGHT = 0,
+    LIST_DIR_RIGHT = 0,
     /** Default direction */
     LIST_DIR_DEFAULT = LIST_DIR_RIGHT,
-	/** Left Direction */
+    /** Left Direction */
     LIST_DIR_LEFT = 1,
-	/** Direction reverse to default */
+    /** Direction reverse to default */
     LIST_DIR_RDEFAULT = LIST_DIR_LEFT,
     /** Number of directions */
     LIST_DIR_NUM = 2
@@ -46,7 +45,7 @@ ListRDir( ListDir dir)
 
 
 /**
- * Class for objects that should have pointers to next/prev objects of their type( behave like list elements)
+ * Container for list elements. Data is accessed via pointer
  * Implements headless list data structure
  * @ingroup List
  */
@@ -181,5 +180,263 @@ public:
         Detach();
     }
 };
+
+/**
+ * Class for objects that should have pointers to next/prev objects of their type( behave like list elements)
+ * Inherited object can be member of several lists
+ * Implements headless list data structure
+ * Data is accessed by static cast -> less overhead since no additional indirection
+ * @ingroup List
+ */
+template <unsigned int dim> class MListItem
+{
+    MListItem< dim> * peer[ dim][ LIST_DIR_NUM];
+    typedef unsigned int ListId;
+    
+    
+    
+    /** Get neighbour */
+    inline MListItem< dim> * peerInDir( ListId list, ListDir dir) const
+    {
+        ASSERTD( list < dim);
+        return peer[ list][ dir];
+    }
+    
+    /** Set neighbour */
+    inline void setPeerInDir( ListId list, MListItem< dim> *p, ListDir dir)
+    {
+        ASSERTD( list < dim);
+        peer[list][ dir] = p;
+    }
+    /** Set all pointeers to peeers to zero */
+    inline void zeroLinks()
+    {
+        for ( ListId list = 0, list < dim, list++)
+        {
+            setPeerInDir( list, NULL, LIST_DIR_DEFAULT);
+            setPeerInDir( list, NULL, LIST_DIR_RDEFAULT);
+        }
+    }
+public:
+    /** Default peers gets */
+    /** Return next peer in default direction */
+    inline MListItem< dim> *next( ListId list) const
+    {
+        return peerInDir( ListId list, LIST_DIR_DEFAULT);
+    }
+    /** Return prev peer in default direction */
+    inline MListItem< dim>* prev( ListId list) const
+    {
+        return peerInDir( ListId list, LIST_DIR_RDEFAULT);
+    }
+    /** Set next peer */
+    inline void setNext( ListId list, MListItem< dim> *n)
+    {
+        setPeerInDir( list, n, LIST_DIR_DEFAULT);
+    }
+    /** Set previous peer */
+    inline void setPrev( ListId list, MListItem< dim> *p)
+    {
+        setPeerInDir( list, p, LIST_DIR_RDEFAULT);
+    }
+    
+    /** Attach this item to peeer in give direction */
+    inline void attachInDir( ListId list, MListItem< dim>* p, ListDir dir)
+    {
+        ListDir rdir = ListRDir( dir);
+        setPeerInDir( list, p, dir);
+        setPeerInDir( list, NULL, rdir);
+
+        if ( isNotNullP( p))
+        {
+            MListItem< dim>* rdir_peer = p->peerInDir( ListId list, rdir);
+            if ( isNotNullP( rdir_peer))
+            {
+                rdir_peer->setPeerInDir( list, this, dir);
+            }
+            p->setPeerInDir( list, this, rdir);
+            setPeerInDir( list, rdir_peer, rdir);
+        }
+    }
+    
+    /** Attach in default direction */
+    inline void attach( ListId list, MListItem< dim>* peer)
+    {
+        attachInDir( ListId list, peer, LIST_DIR_DEFAULT);
+    }
+
+    /** Detach from neighbours */
+    inline void detach( ListId list)
+    {
+        ASSERTD( list < dim);
+        /** Correct links in peers */
+        if ( isNotNullP( peer[ list][ LIST_DIR_DEFAULT]))
+        {
+            peer[ list][ LIST_DIR_DEFAULT]->setPeerInDir( list, peer[ list][ LIST_DIR_RDEFAULT], LIST_DIR_RDEFAULT);
+        }
+        if ( isNotNullP( peer[ LIST_DIR_RDEFAULT]))
+        {
+            peer[ list][ LIST_DIR_RDEFAULT]->setPeerInDir( list, peer[ list][ LIST_DIR_DEFAULT], LIST_DIR_DEFAULT);
+        }
+        setPeerInDir( list, NULL, LIST_DIR_DEFAULT);
+        setPeerInDir( list, NULL, LIST_DIR_RDEFAULT);
+    }
+    /** Detach from all lists */
+    inline void detachAll()
+    {
+        for ( ListId list = 0, list < dim, list++)
+        {
+            detach( list);
+        }    
+    }
+
+    /** Default constructor */
+    MListItem()
+    {
+        zeroLinks();
+    };
+
+    /** Insert element before the given one */
+    MListItem( ListId list, MListItem< dim> *peer)
+    {
+        zeroLinks();
+        attachInDir( ListId list, peer, LIST_DIR_DEFAULT);
+    }
+
+    /** Insert element in given direction */
+    MListItem( ListId list, MListItem< dim> *peer, ListDir dir)
+    {
+        zeroLinks();
+        attachInDir( ListId list, peer, dir);
+    }
+
+    /** Destructor */
+    ~MListItem()
+    {
+        detachAll();
+    }
+};
+
+/**
+ * Class for objects that should have pointers to next/prev objects of their type( behave like list elements)
+ * Specilized for one list
+ * Implements headless list data structure
+ * Data is accessed by static cast -> less overhead since no additional indirection
+ * @ingroup List
+ */
+template<> class MListItem<1>
+{
+    MListItem< 1> * peer[ LIST_DIR_NUM];
+    
+    /** Get neighbour */
+    inline MListItem< 1> * peerInDir( ListDir dir) const
+    {
+        return peer[ dir];
+    }
+    
+    /** Set neighbour */
+    inline void setPeerInDir( MListItem< 1> *p, ListDir dir)
+    {
+        peer[ dir] = p;
+    }
+    /** Set all pointeers to peeers to zero */
+    inline void zeroLinks()
+    {
+        setPeerInDir( NULL, LIST_DIR_DEFAULT);
+        setPeerInDir( NULL, LIST_DIR_RDEFAULT);
+    }
+public:
+    /** Default peers gets */
+    /** Return next peer in default direction */
+    inline MListItem< 1> *next() const
+    {
+        return peerInDir( LIST_DIR_DEFAULT);
+    }
+    /** Return prev peer in default direction */
+    inline MListItem< 1>* prev() const
+    {
+        return peerInDir( LIST_DIR_RDEFAULT);
+    }
+    /** Set next peer */
+    inline void setNext( MListItem< 1> *n)
+    {
+        setPeerInDir( n, LIST_DIR_DEFAULT);
+    }
+    /** Set previous peer */
+    inline void setPrev( MListItem< 1> *p)
+    {
+        setPeerInDir( p, LIST_DIR_RDEFAULT);
+    }
+    
+    /** Attach this item to peeer in give direction */
+    inline void attachInDir( MListItem< 1>* p, ListDir dir)
+    {
+        ListDir rdir = ListRDir( dir);
+        setPeerInDir( p, dir);
+        setPeerInDir( NULL, rdir);
+
+        if ( isNotNullP( p))
+        {
+            MListItem< 1>* rdir_peer = p->peerInDir( rdir);
+            if ( isNotNullP( rdir_peer))
+            {
+                rdir_peer->setPeerInDir( this, dir);
+            }
+            p->setPeerInDir( this, rdir);
+            setPeerInDir( rdir_peer, rdir);
+        }
+    }
+    
+    /** Attach in default direction */
+    inline void attach( MListItem< 1>* peer)
+    {
+        attachInDir( peer, LIST_DIR_DEFAULT);
+    }
+
+    /** Detach from neighbours */
+    inline void detach()
+    {
+        /** Correct links in peers */
+        if ( isNotNullP( peer[ LIST_DIR_DEFAULT]))
+        {
+            peer[ LIST_DIR_DEFAULT]->setPeerInDir( peer[ LIST_DIR_RDEFAULT], LIST_DIR_RDEFAULT);
+        }
+        if ( isNotNullP( peer[ LIST_DIR_RDEFAULT]))
+        {
+            peer[ LIST_DIR_RDEFAULT]->setPeerInDir( peer[ LIST_DIR_DEFAULT], LIST_DIR_DEFAULT);
+        }
+        setPeerInDir( NULL, LIST_DIR_DEFAULT);
+        setPeerInDir( NULL, LIST_DIR_RDEFAULT);
+    }
+
+    /** Default constructor */
+    MListItem()
+    {
+        zeroLinks();
+    };
+
+    /** Insert element before the given one */
+    MListItem( MListItem< 1> *peer)
+    {
+        zeroLinks();
+        attachInDir( peer, LIST_DIR_DEFAULT);
+    }
+
+    /** Insert element in given direction */
+    MListItem( MListItem< 1> *peer, ListDir dir)
+    {
+        zeroLinks();
+        attachInDir( peer, dir);
+    }
+
+    /** Destructor */
+    ~MListItem()
+    {
+        detach();
+    }
+};
+
+/** Short name */
+typedef MListItem< 1> SListItem;
 
 #endif

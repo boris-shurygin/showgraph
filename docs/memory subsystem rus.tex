@@ -5,12 +5,14 @@
 \usepackage{ucs}
 \usepackage[utf8x]{inputenc}
 \usepackage[english,russian]{babel}
-\usepackage[unicode,colorlinks=true, linkcolor=blue]{hyperref}
-\usepackage{tikz} 
+\usepackage[unicode,colorlinks=true, linkcolor=black]{hyperref}
+\usepackage{tikz}
+\usepackage{listings}
 \usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit}
 \newcommand{\plaincode}[1]{\noindent\textsf{#1}}
 \newcommand{\operatorcode}[1]{\textbf{#1}}
 \begin{document} 
+\lstset{language=[Visual]C++}
 
 \title{Подсистема управления памятью в приложении ShowGraph. Обоснование дизайна и внутреннее устройство.}
 \author{Б. В. Шурыгин}
@@ -165,5 +167,19 @@
 
 Для реализации подсчета ссылок используются 3 типа указателей: стандартный, обратный указатель и временный указатель. Стандарный указатель участвует в подсчете ссылок, а обратный и временный -- нет. Связи между объектами могут быть организованы любым образом, но при образовании циклических ссылок утечка памяти может остаться незамеченой. С учетом этого, в случае, если нужно ссылаться в две стороны лучше использовать обратный указатель для одной из ссылок.
 
-\centerline\plaincode{TO BE CONTINUED...}
+\begin{lstlisting}
+/**
+ * Long comment 
+ * See if it is typeset correctly
+ */
+namespace NM
+{
+	// Short comment
+	class A
+	{
+
+	};
+};
+\end{lstlisting}
+
 \end{document}

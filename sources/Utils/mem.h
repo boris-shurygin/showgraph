@@ -25,13 +25,41 @@
 #  define USE_REF_COUNTERS
 #endif
 
-/* Class pool predeclaration */
-class Pool;
+#include <QtGlobal>
+
+namespace Mem
+{
+    /* Class pool predeclaration */
+    class Pool;
+}
+/**
+ * Low level functinality for Mem package 
+ * @defgroup MemImpl Memory Manager Low Level
+ */
+namespace MemImpl
+{
+    /* Predeclaration of mem entry class */
+    template < class Data> class Entry;
+    /* Predeclaration of chunk class */
+    template < class Data> class Chunk;
+    /** position in chunk */
+    typedef quint8 ChunkPos;
+    /** Max number of entries in chunk */
+#ifndef MEM_SMALL_CHUNKS
+    const quint8 MAX_CHUNK_ENTRIES = ( quint8)( -1);
+#else
+    const quint8 MAX_CHUNK_ENTRIES = 2;
+#endif
+    /** 'NULL' equivalent for ChunkPos */
+    const ChunkPos UNDEF_POS = MAX_CHUNK_ENTRIES; 
+};
 
 #include <stdlib.h>
 #include "mem_ref.h" /** Memory reference */
 #include "mem_obj.h" /** Memory object base class */
+#include "mem_chunk.h" /** Memory chunk class */
 #include "mem_pool.h" /** Memory pool */
-
+#include "mem_entry.h" /** Memory entry class */
+#include "mem_fixed_pool.h" /** Memory pool */
 
 #endif /* MEM_H */

@@ -9,7 +9,7 @@
 #pragma once
 
 #ifndef MEM_H
-#	error
+#    error
 #endif
 
 #ifndef MEM_POOL_H
@@ -21,13 +21,13 @@ namespace Mem
      * Type for  memory entry size  
      * @ingroup Mem
      */
-    typedef unsigned int EntrySize;
+    typedef quint32 EntrySize;
 
     /** 
      * Type for number of memory entries 
      * @ingroup Mem
      */
-    typedef unsigned int EntryNum;
+    typedef quint32 EntryNum;
 
     /**
      * Pool types
@@ -50,68 +50,62 @@ namespace Mem
      */
     class Pool
     {
-        /** Types of the pool */
-        PoolType tp;
     public:
-        /** Create pool, by default it is pool of fixed-size entries */
-        inline Pool(): tp( POOL_FIXED){};
-        /** Create pool of given type */
-        inline Pool( PoolType t): tp( t){};
+        /** Allocate new memory block */
+        virtual void* allocate( size_t size) = 0;
+        /** Free memory block */
+        virtual void deallocate( void *ptr) = 0;
+        /** Functionality of 'operator delete' for pooled objects */
+        virtual void destroy( void *ptr) = 0;
     };
 
     /**
-     * Memory pool with fixed-size chunks
+     * Base class for all objects allocated in pools
+     *
      * @ingroup Mem
-     */
-    class FixedPool: Pool
+     */    
+    class PoolObj
     {
-        /** Size of one entry */
-        EntrySize entry_size; 
-        
-        /** Number of used entries */
-        EntryNum entry_count;
     public:
+        /** Default operator 'new' is disabled */
+        void *operator new ( size_t size);
+        /** Default operator 'delete' is disabled */
+        void operator delete( void *ptr);
         
-        /** Create fixed pool with default parameters */
-        FixedPool();
+        /** Default operator 'new' is disabled */
+        void *operator new[] ( size_t size);
+        /** Default operator 'delete' is disabled */
+        void operator delete[] ( void *ptr);
         
-        /** Destroy the pool */
-        ~FixedPool();
-
-        /** Create new entry */
-        inline Obj * newEntry( EntrySize sz)
-        {
-            /** -# Check size parameter */
-            assertd( sz > 0);
-            assertd( sz >= sizeof( Obj));
-            if ( entry_size == 0)
-            {
-                entry_size = sz;
-            }
-            assertd( sz == entry_size);
-            
-            /** -# Increase entry count */
-            entry_count++;
-
-            /** -# STUB: simply calling malloc instead of intended pool logic */
-            return ( Obj* )malloc( sz);
-        }
-
-        /** Free entry */
-        inline void freeEntry( Obj * entry)
-        {
-            /** @{ */
-            /** -# Check entry count */
-            assertd( entry_count != 0);
-            
-            /** -# Decrease entry count */
-            entry_count--;
-            
-            /** -# STUB: simply calling free instead of intended pool logic */
-            free( entry);
-            
-            /** @} */
-        }
+        /** Placement new */
+        inline void *operator new ( size_t size, Pool* pool);
+        /**
+         * Operator 'delete' corresponding to placement new
+         * WARNING: Compiler won't call this for deletion. 
+         *          It is needed for freeing memory in case of exceptions in constructor
+         */
+        inline void operator delete( void *ptr, Pool* pool);
+        /** Destructor is to be called by 'destroy' routine of pool class */
+        virtual ~PoolObj(){};
     };
+
+    /**
+     * Placement new
+     */
+    inline void *
+    PoolObj::operator new ( size_t size, Pool* pool)
+    {
+        return pool->allocate( size);
+    }
+    /**
+     * Operator 'delete' corresponding to placement new
+     * WARNING: Compiler won't call this for deletion. 
+     *          It is needed for freeing memory in case of exceptions in constructor
+     */
+    inline void
+    PoolObj::operator delete( void *ptr, Pool* pool)
+    {
+        pool->deallocate( ptr);
+    }
 }; /* namespace Mem */
 #endif /* MEM_POOL_H */
