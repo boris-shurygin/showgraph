@@ -6,13 +6,13 @@
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
+#include "graph_iface.h"
 
 /**
  * Edge destructor.
  * delete edge from graph's list of edges
  */
-template <class Graph, class Node, class Edge>
-EdgeT<Graph, Node, Edge>::~EdgeT()
+Edge::~Edge()
 {
     //out("Deleted edge");
     element.parentNode().removeChild( element);
@@ -24,9 +24,8 @@ EdgeT<Graph, Node, Edge>::~EdgeT()
 /**
  * Print edge in DOT format to stdout
  */
-template <class Graph, class Node, class Edge>
 void
-EdgeT<Graph, Node, Edge>::debugPrint()
+Edge::debugPrint()
 {
     /**
      * Check that edge is printable
@@ -42,9 +41,8 @@ EdgeT<Graph, Node, Edge>::debugPrint()
 /**
  * Low level correction of node's edge list in corresponding direction
  */
-template <class Graph, class Node, class Edge>
 void
-EdgeT<Graph, Node, Edge>::detachFromNode( GraphDir dir)
+Edge::detachFromNode( GraphDir dir)
 {
     if ( isNotNullP( node( dir)))
     {
@@ -54,13 +52,12 @@ EdgeT<Graph, Node, Edge>::detachFromNode( GraphDir dir)
         nodes[ dir] = 0;
     }
 }
-
 /**
  * Update DOM tree element
  */
-template <class Graph, class Node, class Edge>
+
 void
-EdgeT<Graph, Node, Edge>::updateElement()
+Edge::updateElement()
 {
     element.setAttribute( "source", pred()->id());
     element.setAttribute( "target", succ()->id());
@@ -69,9 +66,9 @@ EdgeT<Graph, Node, Edge>::updateElement()
 /**
  * read properties from DOM tree element
  */
-template <class Graph, class Node, class Edge>
+
 void
-EdgeT<Graph, Node, Edge>::readFromElement( QDomElement e)
+Edge::readFromElement( QDomElement e)
 {
     element = e;
 }

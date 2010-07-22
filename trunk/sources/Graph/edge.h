@@ -17,7 +17,7 @@
  *  It has two Nodes as its end points. As edge is member of 3 lists it
  *  has 3 corresponding pointers to items of these lists
  */
-template <class Graph, class Node, class Edge> class EdgeT: public Marked, public Numbered
+class Edge: public Marked, public Numbered
 {
 public:
 	/** Edge list item type */
@@ -42,7 +42,7 @@ protected:
 	friend class Node;
 
     /** Constructors are made private, only nodes and graph can create edges */
-    EdgeT( Graph *_graph_p, GraphUid _id, Node *_pred, Node* _succ): uid(_id), graph_p(_graph_p), graph_it()
+    Edge( Graph *_graph_p, GraphUid _id, Node *_pred, Node* _succ): uid(_id), graph_p(_graph_p), graph_it()
     {
         graph_it.setData( (Edge*) this);
         n_it[ GRAPH_DIR_UP] = EdgeListIt();
@@ -140,23 +140,14 @@ public:
      *      edge->DetachFromNode( GRAPH_DIR_DOWN);
      *      delete edge;
      */
-    virtual ~EdgeT();
+    virtual ~Edge();
 
     /**
      * Connect edge to a node in specified direction.
      * Note that node treats this edge in opposite direction. I.e. an edge that has node in
      * GRAPH_DIR_UP is treated as edge in GRAPH_DIR_DOWN directions inside that node
      */
-    void setNode( Node *n, GraphDir dir)
-    {
-        assert( isNotNullP( n));
-        nodes[ dir] = n;
-        if ( n != NULL)
-        {
-            n->AddEdgeInDir( (Edge *)this, 
-                ((dir == GRAPH_DIR_UP)? GRAPH_DIR_DOWN : GRAPH_DIR_UP));
-        }
-    }
+    inline void setNode( Node *n, GraphDir dir);
     
     /**
      * Connect edge with given node as a predecessor
@@ -249,17 +240,7 @@ public:
 	 * Original edge goes to new node. 
 	 * Return new node.
 	 */
-    inline Node *insertNode()
-    {
-        Node *tmp_succ = succ();
-        Node *new_node = graph()->newNode();
-        detachFromNode( GRAPH_DIR_DOWN);
-        setSucc( new_node);
-        graph()->newEdge( new_node, tmp_succ);
-        return new_node;
-    }
+    inline Node *insertNode();
 };
-
-#include "edge.cpp"
 
 #endif

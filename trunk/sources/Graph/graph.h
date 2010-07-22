@@ -20,7 +20,7 @@
  *  A graph has pointers to its first edge and node which allows iteration through them using nextEdge
  *  and nextNode methods of Node and Edge classes
  */
-template <class Graph, class Node, class Edge > class GraphT: public MarkerManager, public NumManager, public QDomDocument
+class Graph: public MarkerManager, public NumManager, public QDomDocument
 {
 public:
     /** Node list item type */
@@ -57,29 +57,34 @@ private:
      */
 	Edge * newEdgeImpl( Node * pred, Node * succ);
 
+    /** Node creation routine is to be overloaded by derived class */
+	virtual Node * CreateNode( int _id);
+	/** Edge creation routine is to be overloaded by derived class */
+    virtual Edge * CreateEdge( int _id, Node *_pred, Node* _succ);
+
 public:
     /** Constructor */
-    GraphT();
+    Graph();
     
     /** Destructor */
-    virtual ~GraphT();
+    virtual ~Graph();
 
     /** Create new node in graph */
-    virtual Node * newNode();
+    Node * newNode();
 
     /** Create new node in graph and fills it with info in element */
-    virtual Node * newNode( QDomElement e);
+    Node * newNode( QDomElement e);
 
     /**
      * Create edge between two nodes.
      * We do not support creation of edge with undefined endpoints
      */
-    virtual Edge * newEdge( Node * pred, Node * succ);
+    Edge * newEdge( Node * pred, Node * succ);
     /**
      * Create edge between two nodes from an XML description
      * We do not support creation of edge with undefined endpoints
      */
-	virtual Edge * newEdge( Node * pred, Node * succ, QDomElement e);
+	Edge * newEdge( Node * pred, Node * succ, QDomElement e);
 
     /**
      * Remove node from node list of graph
@@ -148,11 +153,6 @@ public:
      */
     virtual void debugPrint();
     
-    /** Node creation routine is to be overloaded by derived class */
-	virtual void * CreateNode( Graph *graph_p, int _id);
-	/** Edge creation routine is to be overloaded by derived class */
-    virtual void * CreateEdge( Graph *graph_p, int _id, Node *_pred, Node* _succ);
-    
     /**
      * Clear unused markers from marked objects
      */
@@ -173,7 +173,5 @@ public:
      */
     void readFromXML( QString filename);
 };
-
-#include "graph.cpp"
 
 #endif

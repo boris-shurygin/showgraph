@@ -9,8 +9,9 @@
 /** 
  * Destructor. Corrects list of nodes in corresponding graph and deletes adjacent edges
  */
-template <class Graph, class Node, class Edge>
-NodeT<Graph, Node, Edge>::~NodeT()
+#include "graph_iface.h"
+
+Node::~Node()
 {
     Edge *edge;
     //out("Deleted Node");
@@ -38,61 +39,10 @@ NodeT<Graph, Node, Edge>::~NodeT()
 }
 
 /**
- * Add an edge to this node in specified direction
- */
-template <class Graph, class Node, class Edge>
-void
-NodeT<Graph, Node, Edge>::AddEdgeInDir( Edge *edge, GraphDir dir)
-{
-    assert( isNotNullP( edge));
-    EdgeListIt *it = edge->GetNodeIt( RevDir( dir));
-    if ( isNotNullP( first_edge[ dir]))
-    {
-        it->Attach( first_edge[ dir]->GetNodeIt( RevDir( dir)));
-    }
-    first_edge[ dir] = edge;
-}
-
-/**
- * delete edge pointed by iterator in specidied direction
- */
-template <class Graph, class Node, class Edge>
-void
-NodeT<Graph, Node, Edge>::deleteEdgeInDir( GraphDir dir, Edge* edge)
-{
-    assert( isNotNullP( edge));
-    if( first_edge[ dir] == edge)
-    {
-        first_edge[ dir] = edge->nextEdgeInDir( dir);
-    }
-}
-
-/**
  * Print node in Dot format to stdout
  */
-template <class Graph, class Node, class Edge>
 void
-NodeT<Graph, Node, Edge>::debugPrint()
+Node::debugPrint()
 {
     out("%llu;", id());
-}
-
-/**
- * Update DOM tree element
- */
-template <class Graph, class Node, class Edge>
-void
-NodeT<Graph, Node, Edge>::updateElement()
-{
-    element.setAttribute( "id", id());
-}
-
-/**
- * read properties from DOM tree element
- */
-template <class Graph, class Node, class Edge>
-void
-NodeT<Graph, Node, Edge>::readFromElement( QDomElement e)
-{
-    element = e;
 }

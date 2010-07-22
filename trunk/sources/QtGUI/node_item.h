@@ -140,7 +140,6 @@ protected:
     /** Contructor of node with specified position */
     GNode( GGraph *graph_p, int _id, QPointF _pos);
 
-    friend class GraphT< GGraph, GNode, GEdge>;
     friend class GGraph;
     
 public:

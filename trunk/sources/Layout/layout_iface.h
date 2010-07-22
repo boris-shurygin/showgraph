@@ -41,7 +41,15 @@ const qreal EDGE_CONTROL_HEIGHT = 5;
 /** Vertical spacing between ranks */
 const qreal RANK_SPACING = 40;
 
+
+/** Rank type and its undefined constant */
+typedef unsigned int Rank;
+/** Rank undefined value constant */
+const Rank RANK_UNDEF = (Rank) (-1);
+
 #include "../Graph/graph_iface.h"
+#include "aux_node.h"
+#include "aux_edge.h"
 #include "aux_graph.h"
 #include "node_group.h"
 
