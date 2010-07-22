@@ -28,8 +28,6 @@ protected:
     /** Destructor */
     virtual ~GEdge();
 
-    friend class GraphT< GGraph, GNode, GEdge>;
-    friend class NodeT< GGraph, GNode, GEdge>;
     friend class GGraph;
     friend class Node;
 public:

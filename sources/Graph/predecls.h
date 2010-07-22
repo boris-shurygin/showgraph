@@ -10,6 +10,7 @@
 #define GRAPH_PREDECLS_H
 
 #include <QDomDocument>
+#include <QtGlobal>
 #include <QtGui>
 #include <QList>
 #include <QLinkedList>
@@ -48,18 +49,18 @@ RevDir( GraphDir dir)
 }
 
 /** Number type used for numbering nodes and edges in graph */
-typedef unsigned int GraphNum;
+typedef quint32 GraphNum;
 /** Node/edge ID type */
-typedef unsigned long long GraphUid;
+typedef quint64 GraphUid;
 
 /** Maximum number of nodes */
 const GraphNum GRAPH_MAX_NODE_NUM = ( GraphNum)( -1);
 /** Maximum number of edges */
 const GraphNum GRAPH_MAX_EDGE_NUM = ( GraphNum)( -1);
 
-template <class Graph, class Node, class Edge> class GraphT;
-template <class Graph, class Node, class Edge> class NodeT;
-template <class Graph, class Node, class Edge> class EdgeT;
+class Graph;
+class Node;
+class Edge;
 
 #include "marker.h"
 #include "num.h"

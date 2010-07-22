@@ -10,9 +10,9 @@
 #define GRAPH_IFACE_H
 #include "predecls.h"
 
-#include "graph.h"
-#include "node.h"
 #include "edge.h"
+#include "node.h"
+#include "graph.h"
 #include "agraph.h"
 
 /**
@@ -77,5 +77,8 @@
 #ifndef foreachNode
 #  define foreachNode(node, graph) ITERATE_GRAPH_NODES(node, graph)
 #endif
+
+/** Implementation of inlined functinality */
+#include "edge_inline.h"
 
 #endif

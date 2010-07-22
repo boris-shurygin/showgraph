@@ -16,7 +16,7 @@
  * A graph node has two lists of edges which represent predecessors and successors.
  * It is also a member of node list in graph.
  */
-template <class Graph, class Node, class Edge> class NodeT: public Marked, public Numbered
+class Node: public Marked, public Numbered
 {
 public:
     /** Node list item type */
@@ -41,7 +41,7 @@ protected:
         return &graph_it;
     }
     /** We can't create nodes separately, do it through newNode method of graph */
-    NodeT( Graph *_graph_p, GraphUid _id):uid(_id), graph_p( _graph_p), graph_it(), element()
+    Node( Graph *_graph_p, GraphUid _id):uid(_id), graph_p( _graph_p), graph_it(), element()
     {
         first_edge[ GRAPH_DIR_UP] = NULL;
         first_edge[ GRAPH_DIR_DOWN] = NULL;
@@ -63,7 +63,7 @@ public:
     /**
      * Destructor
      */
-    virtual ~NodeT();
+    virtual ~Node();
     
     /**
 	 * Return corresponding element
@@ -190,6 +190,50 @@ public:
     virtual void readFromElement( QDomElement elem);
 };
 
-#include "node.cpp"
+/**
+ * Add an edge to this node in specified direction
+ */
+inline void
+Node::AddEdgeInDir( Edge *edge, GraphDir dir)
+{
+    assert( isNotNullP( edge));
+    EdgeListIt *it = edge->GetNodeIt( RevDir( dir));
+    if ( isNotNullP( first_edge[ dir]))
+    {
+        it->Attach( first_edge[ dir]->GetNodeIt( RevDir( dir)));
+    }
+    first_edge[ dir] = edge;
+}
+
+/**
+ * delete edge pointed by iterator in specidied direction
+ */
+inline void
+Node::deleteEdgeInDir( GraphDir dir, Edge* edge)
+{
+    assert( isNotNullP( edge));
+    if( first_edge[ dir] == edge)
+    {
+        first_edge[ dir] = edge->nextEdgeInDir( dir);
+    }
+}
+
+/**
+ * Update DOM tree element
+ */
+inline void
+Node::updateElement()
+{
+    element.setAttribute( "id", id());
+}
+
+/**
+ * read properties from DOM tree element
+ */
+inline void
+Node::readFromElement( QDomElement e)
+{
+    element = e;
+}
 
 #endif

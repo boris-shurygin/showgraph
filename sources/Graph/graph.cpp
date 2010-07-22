@@ -6,11 +6,12 @@
  * Graph library, internal representation of graphs in ShowGraph tool.
  * Copyright (C) 2009  Boris Shurygin
  */
+#include "graph_iface.h"
+
 /**
  * Constructor.
  */
-template <class Graph, class Node, class Edge> 
-GraphT< Graph, Node, Edge>::GraphT()
+Graph::Graph()
 {
     node_next_id = 0;
     edge_next_id = 0;
@@ -25,8 +26,7 @@ GraphT< Graph, Node, Edge>::GraphT()
 /**
  * Destructor - removes all nodes
  */
-template <class Graph, class Node, class Edge> 
-GraphT< Graph, Node, Edge>::~GraphT()
+Graph::~Graph()
 {
     for ( Node *node = firstNode();
           isNotNullP( node);
@@ -41,9 +41,8 @@ GraphT< Graph, Node, Edge>::~GraphT()
 /**
  * Build graph from XML description
  */
-template <class Graph, class Node, class Edge> 
 void
-GraphT< Graph, Node, Edge>::readFromXML( QString filename)
+Graph::readFromXML( QString filename)
 {
     QFile file( filename);
 
@@ -97,39 +96,22 @@ GraphT< Graph, Node, Edge>::readFromXML( QString filename)
 }
 
 /** Node/Edge creation routines can be overloaded by derived class */
-template <class Graph, class Node, class Edge>
-void * 
-GraphT< Graph, Node, Edge>::CreateNode( Graph *graph_p, int _id)
-{
-    return new Node ( graph_p, _id);
-}
-
-template <class Graph, class Node, class Edge>
-void * 
-GraphT< Graph, Node, Edge>::CreateEdge( Graph *graph_p, int _id, Node *_pred, Node* _succ)
-{
-    return new Edge( graph_p, _id, _pred, _succ);
-}
-
-/**
- * Creation node in graph
- */
-template <class Graph, class Node, class Edge>
 Node * 
-GraphT< Graph, Node, Edge>::newNode()
+Graph::CreateNode( int _id)
 {
-    Node * node_p = newNodeImpl( node_next_id);
-    node_p->setElement( createElement( "node"));
-    documentElement().appendChild( node_p->elem());
-    return node_p;
+    return new Node ( this, _id);
 }
 
+Edge * 
+Graph::CreateEdge( int _id, Node *_pred, Node* _succ)
+{
+    return new Edge( this, _id, _pred, _succ);
+}
 /**
  * Creation node in graph implementation
  */
-template <class Graph, class Node, class Edge>
-Node * 
-GraphT< Graph, Node, Edge>::newNodeImpl( GraphUid id)
+inline Node * 
+Graph::newNodeImpl( GraphUid id)
 {
     /**
      * Check that we have available node id 
@@ -137,9 +119,7 @@ GraphT< Graph, Node, Edge>::newNodeImpl( GraphUid id)
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
     
     /** Create node */
-    Graph *gp = (Graph *)this;
-    void *some_p = ( void *) gp->CreateNode( (Graph *)this, id);
-    Node *node_p = ( Node *)some_p;
+    Node *node_p = CreateNode( id);
     NodeListIt* it = node_p->GetGraphIt();
     
     /** Add node to graph's list of nodes */
@@ -160,9 +140,21 @@ GraphT< Graph, Node, Edge>::newNodeImpl( GraphUid id)
 /**
  * Creation node in graph
  */
-template <class Graph, class Node, class Edge>
 Node * 
-GraphT< Graph, Node, Edge>::newNode( QDomElement e)
+Graph::newNode()
+{
+    Node * node_p = newNodeImpl( node_next_id);
+    node_p->setElement( createElement( "node"));
+    documentElement().appendChild( node_p->elem());
+    return node_p;
+}
+
+
+/**
+ * Creation node in graph
+ */
+Node * 
+Graph::newNode( QDomElement e)
 {
     assert( !e.isNull());
     assert( e.tagName() == QString( "node"));
@@ -177,15 +169,14 @@ GraphT< Graph, Node, Edge>::newNode( QDomElement e)
  * Create edge between two nodes.
  * We do not support creation of edge with undefined endpoints
  */
-template <class Graph, class Node, class Edge>
-Edge * 
-GraphT< Graph, Node, Edge>::newEdgeImpl( Node * pred, Node * succ)
+inline Edge * 
+Graph::newEdgeImpl( Node * pred, Node * succ)
 {
     /**
      * Check that we have available edge id 
      */
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
-    Edge *edge_p = ( Edge *) this->CreateEdge( (Graph *)this, edge_next_id++, pred, succ);
+    Edge *edge_p = CreateEdge( edge_next_id++, pred, succ);
     EdgeListIt* it = edge_p->GetGraphIt();
     if ( isNotNullP( first_edge))
     {
@@ -200,9 +191,8 @@ GraphT< Graph, Node, Edge>::newEdgeImpl( Node * pred, Node * succ)
  * Create edge between two nodes.
  * We do not support creation of edge with undefined endpoints
  */
-template <class Graph, class Node, class Edge>
 Edge * 
-GraphT< Graph, Node, Edge>::newEdge( Node * pred, Node * succ)
+Graph::newEdge( Node * pred, Node * succ)
 {
     Edge *edge_p = newEdgeImpl( pred, succ);
     edge_p->setElement( createElement( "edge"));
@@ -214,9 +204,8 @@ GraphT< Graph, Node, Edge>::newEdge( Node * pred, Node * succ)
  * Create edge between two nodes.
  * We do not support creation of edge with undefined endpoints
  */
-template <class Graph, class Node, class Edge>
 Edge * 
-GraphT< Graph, Node, Edge>::newEdge( Node * pred, Node * succ, QDomElement e)
+Graph::newEdge( Node * pred, Node * succ, QDomElement e)
 {
     Edge *edge_p = newEdgeImpl( pred, succ);
     edge_p->setElement( e);
@@ -228,9 +217,8 @@ GraphT< Graph, Node, Edge>::newEdge( Node * pred, Node * succ, QDomElement e)
  * Note: Iterates through nodes and edges separately instead
  *       of iterating through nodes and at iterating through edges of each node
  */
-template <class Graph, class Node, class Edge>
 void 
-GraphT< Graph, Node, Edge>::debugPrint()
+Graph::debugPrint()
 {
     Node *n;
     Edge *e;
@@ -251,9 +239,8 @@ GraphT< Graph, Node, Edge>::debugPrint()
 /**
  * Implementation for numerations cleanup
  */
-template <class Graph, class Node, class Edge>
 void 
-GraphT< Graph, Node, Edge>::clearNumerationsInObjects()
+Graph::clearNumerationsInObjects()
 {
     Node *n;
     Edge *e;
@@ -272,9 +259,8 @@ GraphT< Graph, Node, Edge>::clearNumerationsInObjects()
 /**
  * Implementation for markers cleanup
  */
-template <class Graph, class Node, class Edge>
 void 
-GraphT< Graph, Node, Edge>::clearMarkersInObjects()
+Graph::clearMarkersInObjects()
 {
     Node *n;
     Edge *e;
@@ -293,9 +279,8 @@ GraphT< Graph, Node, Edge>::clearMarkersInObjects()
 /**
  * Implementation for markers cleanup
  */
-template <class Graph, class Node, class Edge>
 void 
-GraphT< Graph, Node, Edge>::writeToXML( QString filename)
+Graph::writeToXML( QString filename)
 {
     QFile file( filename);
     if (!file.open(QFile::WriteOnly | QFile::Text))
