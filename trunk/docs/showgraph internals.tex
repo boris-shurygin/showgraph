@@ -1,0 +1,74 @@
+\documentclass{article}
+\usepackage{mathtext}
+\usepackage{cmap}
+\usepackage[T1]{fontenc}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[english]{babel}
+\usepackage[unicode,colorlinks=true, linkcolor=black]{hyperref}
+\usepackage{tikz}
+\usepackage{listings}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit}
+\begin{document} 
+\lstset{language=[Visual]C++}
+
+\title{ShowGraph Internals\\Implementation Document.}
+\author{Boris Shurygin}
+
+\maketitle
+
+\tableofcontents
+
+\section{Abstract}
+This document describes internal infrastructure of ShowGraph tool. It gives a brief overview of overall degin and provides detailed overview of the key components.
+ 
+\section{Overview}
+Showgraph architecture...
+\section{Key Components}
+This section describes interfaces and key implementation aspects of ShowGraph's key components. Components are described in order of increasing complexity: from basic ones to the ones built above them.
+\subsection{Intrusive data structures}
+Several components in ShowGraph are implemented with use of intrusive data structures. These structures are graph and various kinds of lists. They store all pointers needed for their operation within the client objects. This is implemented via inheritance. Common interface for these structure would be like this:
+\begin{lstlisting}
+class ListItem
+{
+    ListItem *next_p;
+public:
+    void setNext( ListItem *n) { next = n};
+    ListItem *next() const { return next_p};
+};
+
+template< class Data> class ListIface:  virtual public ListItem
+{
+public:
+    Data *next() const
+    {
+        return static_cast< Data*>( ListItem::next())
+    }
+};
+\end{lstlisting}
+To use this list user can inherit from this interface:
+\begin{lstlisting}
+class Data: public ListIface< Data> 
+{
+    int a;
+public:
+    void setA( int a_){ a= a_;}
+	 int getA() { return a;}
+};
+\end{lstlisting}
+\subsection{Tools}
+\subsubsection{Asserts}
+\subsubsection{I $\backslash$ O primitives}
+\subsubsection{Lists}
+\subsection{Memory Managment Framework}
+\subsubsection{Pools}
+\subsubsection{Smart pointers}
+\subsection{Graph Representation}
+\subsection{Automatic Graph Layout}
+\subsection{Frontend}
+\subsection{GUI Implementation}
+\section{Project Organization}
+\subsection{Building}
+\subsection{Unit Testing}
+\subsection{Distribution}
+\end{document}

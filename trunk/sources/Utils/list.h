@@ -311,10 +311,40 @@ public:
     }
 
     /** Destructor */
-    ~MListItem()
+    virtual ~MListItem()
     {
         detachAll();
     }
+};
+
+/**
+ * Interface for Multi-list
+ * @ingroup List
+ */
+template < class Item, unsigned int dim> class MListIface: virtual public MListItem< dim>
+{
+public:
+    /** Return next item in default direction */
+    inline Item *next( ListId list) const
+    {
+        return static_cast< Item *>( MListItem< dim>::next( list));
+    }
+    /** Return prev item in default direction */
+    inline Item* prev( ListId list) const
+    {
+        return static_cast< Item *>( MListItem< dim>::prev( list));
+    }
+    /** Insert element before the given one */
+    inline MListIface( ListId list):
+        MListItem< dim>( list){};
+
+    /** Insert element before the given one */
+    inline MListIface( ListId list, Item *peer):
+        MListItem< dim>( list, peer){};
+
+    /** Insert element in given direction */
+    inline MListIface( ListId list, Item *peer, ListDir dir):
+        MListItem< dim>( list, peer, dir){};
 };
 
 /**
@@ -339,14 +369,14 @@ template<> class MListItem<1>
     {
         peer[ dir] = p;
     }
+
+public:
     /** Set all pointeers to peeers to zero */
     inline void zeroLinks()
     {
         setPeerInDir( NULL, LIST_DIR_DEFAULT);
         setPeerInDir( NULL, LIST_DIR_RDEFAULT);
-    }
-public:
-    /** Default peers gets */
+    }    /** Default peers gets */
     /** Return next peer in default direction */
     inline MListItem< 1> *next() const
     {
@@ -430,13 +460,71 @@ public:
     }
 
     /** Destructor */
-    ~MListItem()
+    virtual ~MListItem()
     {
         detach();
     }
 };
 
-/** Short name */
+/** Short name for simple list item */
 typedef MListItem< 1> SListItem;
+
+/**
+ * Specialization of interface for simple list
+ * @ingroup List
+ */
+template< class Item> class MListIface< Item, 1>: virtual public SListItem
+{
+public:
+    /** Return next item in default direction */
+    inline Item *next() const
+    {
+        return static_cast< Item *>( SListItem::next());
+    }
+    /** Return prev item in default direction */
+    inline Item* prev() const
+    {
+        return static_cast< Item *>( SListItem::prev());
+    }
+    /** Insert element before the given one */
+    inline MListIface(): SListItem(){};
+    /** Insert element before the given one */
+    inline MListIface( Item *peer):
+        SListItem( peer){};
+
+    /** Insert element in given direction */
+    inline MListIface( Item *peer, ListDir dir):
+        SListItem( peer, dir){};
+};
+
+/**
+ * Specialization of interface for simple list
+ * @ingroup List
+ */
+template< class Item> class SListIface: virtual public SListItem
+{
+public:
+    /** Return next item in default direction */
+    inline Item *next() const
+    {
+        return static_cast< Item *>( SListItem::next());
+    }
+    /** Return prev item in default direction */
+    inline Item* prev() const
+    {
+        return static_cast< Item *>( SListItem::prev());
+    }
+    /** Insert element before the given one */
+    inline SListIface():
+        SListItem(){};
+
+    /** Insert element before the given one */
+    inline SListIface( Item *peer):
+        SListItem( peer){};
+
+    /** Insert element in given direction */
+    inline SListIface( Item *peer, ListDir dir):
+        SListItem( peer, dir){};
+};
 
 #endif
