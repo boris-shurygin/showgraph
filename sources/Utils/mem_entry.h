@@ -24,15 +24,7 @@ namespace MemImpl
      */
     template < class Data> class Entry: private Data
     {
-        /** Own position of this entry in chunk */
-        ChunkPos my_pos;
-        /** Position of next free entry in chunk */
-        ChunkPos next_free_pos;
-    private:
-        /** Private constructor to prevent direct creation of such objects */
-        Entry();
-        /** Private destructor */
-        ~Entry();
+    public:
         /** Get position */
         inline ChunkPos pos() const;
         /** Get position of next free chunk */
@@ -41,8 +33,18 @@ namespace MemImpl
         inline void setPos( ChunkPos pos);
         /** Set position of next free chunk */
         inline void setNextFree( ChunkPos next);
-        /** Get pointer to chunk */
-        inline Chunk * chunk() const;
+    private:
+        /** Classes fixed pool and chunk should have access to data and constructors */
+        friend class Chunk<Data>;
+
+        /** Own position of this entry in chunk */
+        ChunkPos my_pos;
+        /** Position of next free entry in chunk */
+        ChunkPos next_free_pos;
+        /** Private constructor to prevent direct creation of such objects */
+        Entry();
+        /** Private destructor */
+        ~Entry();
     };
 
     /**

@@ -46,12 +46,12 @@ namespace MemImpl
     typedef quint8 ChunkPos;
     /** Max number of entries in chunk */
 #ifndef MEM_SMALL_CHUNKS
-    const quint8 MAX_CHUNK_ENTRIES = ( quint8)( -1);
+    const quint8 MAX_CHUNK_ENTRIES_NUM = ( quint8)( -1);
 #else
-    const quint8 MAX_CHUNK_ENTRIES = 2;
+    const quint8 MAX_CHUNK_ENTRIES_NUM = 2;
 #endif
     /** 'NULL' equivalent for ChunkPos */
-    const ChunkPos UNDEF_POS = MAX_CHUNK_ENTRIES; 
+    const ChunkPos UNDEF_POS = MAX_CHUNK_ENTRIES_NUM; 
 };
 
 #include <stdlib.h>
