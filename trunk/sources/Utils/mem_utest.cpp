@@ -73,13 +73,13 @@ uTestRef()
 static bool
 uTestPools()
 {
-    class PoolBase: public PoolObj
+    class PoolBase: public PoolObj 
     {
         virtual void setVal( quint32 val) = 0;
         virtual quint32 val() const = 0;
     };
 
-    class MyPoolObj: public PoolBase
+    class MyPoolObj: public PoolBase, public SListIface< MyPoolObj, SListItem>
     {
         quint32 priv_field;
     public:
@@ -136,6 +136,22 @@ uTestPools()
     ASSERT( called_destructor1);
     ASSERT( called_destructor2);
 
+    /** More objects */
+    MyPoolObj *obj = NULL;
+    for ( int i = 0; i < 20000; i++)
+    {
+        MyPoolObj *prev_obj = obj;
+        obj = new ( pool) MyPoolObj();
+        obj->called = &called_destructor1;
+        obj->attach( prev_obj);
+        prev_obj = obj->next();
+    }
+    while ( isNotNullP( obj))
+    {
+        MyPoolObj *next = obj->next();
+        pool->destroy( obj);
+        obj = next;
+    }
     delete pool;
     return true;
 }

@@ -149,6 +149,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\list_utest.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\mem.h"
 			>
 		</File>

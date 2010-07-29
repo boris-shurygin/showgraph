@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[11pt,twoside,a4paper]{article}
 \usepackage{mathtext}
 \usepackage{cmap}
 \usepackage[T1]{fontenc}
@@ -12,23 +12,22 @@
 \begin{document} 
 \lstset{language=[Visual]C++}
 
-\title{ShowGraph Internals\\Implementation Document.}
+\title{ShowGraph Internals.\\ \textsf{The Implementation Document}}
 \author{Boris Shurygin}
 
 \maketitle
-
+\begin{abstract}
+This document describes internal infrastructure of ShowGraph tool. ShowGraph is a simple graph editor which is capable of performing automatic layout for directed graphs. It is also capable of reading compiler dumps of control flow graphs allowing visualization of compiler IR. Currently GCC and ICC compilers are supported. This document gives a brief overview of ShowGraph's overall design and provides detailed description of the key components.
+\end{abstract}
 \tableofcontents
-
-\section{Abstract}
-This document describes internal infrastructure of ShowGraph tool. It gives a brief overview of overall degin and provides detailed overview of the key components.
- 
 \section{Overview}
-Showgraph architecture...
+Showgraph architecture\ldots
 \section{Key Components}
 This section describes interfaces and key implementation aspects of ShowGraph's key components. Components are described in order of increasing complexity: from basic ones to the ones built above them.
 \subsection{Intrusive data structures}
-Several components in ShowGraph are implemented with use of intrusive data structures. These structures are graph and various kinds of lists. They store all pointers needed for their operation within the client objects. This is implemented via inheritance. Common interface for these structure would be like this:
+Several components in ShowGraph are implemented with use of intrusive data structures. These structures share one key feature: they store all pointers needed for their operation within the client objects. This is implemented via inheritance. Typical interface for these structure would be like this:
 \begin{lstlisting}
+/** Implementation */
 class ListItem
 {
     ListItem *next_p;
@@ -36,8 +35,8 @@ public:
     void setNext( ListItem *n) { next = n};
     ListItem *next() const { return next_p};
 };
-
-template< class Data> class ListIface:  virtual public ListItem
+/** Interface */
+template< class Data, class Base> class ListIface: public Base
 {
 public:
     Data *next() const
@@ -46,9 +45,10 @@ public:
     }
 };
 \end{lstlisting}
-To use this list user can inherit from this interface:
+Here the ``\lstinline{class Base}'' parameter of template must be somehow derived from ListItem. To use this list user can inherit from this interface:
 \begin{lstlisting}
-class Data: public ListIface< Data> 
+/** Client code */
+class Data: public ListIface< Data, ListItem> 
 {
     int a;
 public:
@@ -56,11 +56,141 @@ public:
 	 int getA() { return a;}
 };
 \end{lstlisting}
+Lets discuss this example in detail. Class \lstinline{ListItem} implements simple intrusive one-way connected list. If we derive user class \lstinline{Data} from \lstinline{ListItem} directly we can make use of \lstinline{setNext(...)} method. But method \lstinline{next()} returns \lstinline{ListItem *} and user have to cast it to pointer to \lstinline{Data}. That's what interface class \lstinline{ListIface} was made for. Its intent was to avoid pushing programmer using the data structures to manually cast pointers in his code. It makes interface more elegant and saves a lot of effort. 
+
+This could be achieved without separating interface from implementation. Interface of this merged structure would look like:
+\begin{lstlisting}
+/** Implementation */
+template < class T> class ListItem
+{
+    T *next_p;
+public:
+    void setNext( T *n) { next = n};
+    T *next() const { return next_p};
+};
+/** Client code */
+class Data: public ListItem< Data> 
+{
+    int a;
+public:
+    void setA( int a_){ a= a_;}
+	 int getA() { return a;}
+};
+\end{lstlisting}
+This achieves short term goal of making intrusive list of user objects. 
+
+Complications arise when we derive some class from \lstinline{Data} class. In this case we would have to write casts anyway:
+\begin{lstlisting}
+/** Client code */
+class Data: public ListItem< Data> 
+{
+    int a;
+public:
+    void setA( int a_){ a= a_;}
+	 int getA() { return a;}
+};
+/** Derived class */
+class ComplexData: public Data
+{
+    /** Useful extending code */
+public:
+    ComplexData *next() const
+    {
+        return static_cast< ComplexData>( Data::next());
+    }
+};
+\end{lstlisting}
+Instead of doing this, separated interface can be inherited by derived class also.
+\begin{lstlisting}
+/** Client code */
+class Data: public ListIface< Data, ListItem> 
+{
+    int a;
+public:
+    void setA( int a_){ a= a_;}
+	 int getA() { return a;}
+};
+/** Derived class */
+class ComplexData: public ListIface< ComplexData, Data>
+{
+    /** Useful extending code */
+public:
+    /** 
+     * Do not need to implement container-related routines
+     */
+};
+\end{lstlisting}
+
+This kind of design for intrusive data structures is used for list-related classes and for graphs.
+
 \subsection{Tools}
+Tools are placed in Utils project in ShowGraph's Visual Studio solution. They are used by other components of the system and form the basement of our application's architecture. Like every other level of ShowGraph's architecture they extensively use Qt libraries.
+
+
+\subsubsection{Host Abstraction}
+Host abstraction is not really a piece of code in this project. It is rather a convention, that for every primitive type we use appropriate Qt type. These types are available through \lstinline{#include <QtGlobal>} directive.
+
 \subsubsection{Asserts}
-\subsubsection{I $\backslash$ O primitives}
+There are two types of asserts in ShowGraph: template functions throwing exceptions and macros that just die with printing line number.
+
+Most commonly used asserts are assert macros based on Qt's \lstinline{Q_ASSERT}. They are \lstinline{ASSERT( bool cond)} and \lstinline{ASSERTD( bool cond)}. The difference between them is that \lstinline{ASSERT} stays in release mode and \lstinline{ASSERTD} is removed from release code. 
+
+Function-based asserts are used for checking errors that do not cause application to die immediately and can be recovered by catching exception in proper place. They are intended for use in release code. However \lstinline{assertd( bool cond)} routine can be used for debug-only asserts.
+
 \subsubsection{Lists}
+There are three kinds of lists used in ShowGraph project:
+\begin{description}
+\item[ListItem] is a doubly-connected list that stores pointers to client data
+\item[MListItem] is an intrusive multi-list element. List number is a template parameter. Like other intrusive data structures in ShowGraph it has corresponding interface \lstinline{MListIface}.
+\item[SListItem] is a specialization of \lstinline{MListItem} for single list. Its corresponding interface template is \lstinline{SListIface}.
+\end{description}
+
+All of these lists have similar interface when working with list structure. Routines \lstinline{next()} and \lstinline{prev()} allows traversing the list in default directions. Routine \lstinline{next()} returns list element in default direction and \lstinline{prev()} returns list element in reverse direction. There are also interfaces like \lstinline{peerInDir(...)} that allows writing algorithms parameterized with traverse direction. 
+
+One can connect and element into list by invoking \lstinline{attach(...)}. Alternatively if element is created with appropriate constructor it is also connected into list.
+
+For \lstinline{MListItem} all these routines have additional parameter that specifies the list for this operations. An example usage of this list would be:
+\begin{lstlisting}
+/** See sources/Utils/list_utest.cpp for this code */
+#include "utils_iface.h"
+
+/** Define the lists we use */
+enum ListTypes
+{
+    LIST_ONE,
+    LIST_TWO,
+    LISTS_NUM
+};
+/** Derive class of linked objects */
+class A: public MListIface< A, MListItem<LISTS_NUM>, LISTS_NUM>
+{
+
+};
+/** Derive class from A */
+class B: public MListIface< B, A, LISTS_NUM>
+{
+
+};
+
+/** MList testing */
+static bool uTestMList()
+{
+    B *obj1 = new B();
+    B *obj2 = new B();
+    B *obj3 = new B();
+    obj1->attach( LIST_ONE, obj2);
+    obj1->attach( LIST_TWO, obj3);
+    obj2->detachAll()
+    delete obj2;
+    delete obj1;
+    delete obj3;
+    return true;
+}
+
+\end{lstlisting}
 \subsection{Memory Managment Framework}
+The key principle behind ShowGraph's memory management approach is that we mostly care for objects that can exits in large quantities. These are likely candidates to be allocated in pools. We can also allocate other objects in pools but this is not performance critical and if do this - that would be for the purposes of enforcing leakage detection.
+
 \subsubsection{Pools}
 \subsubsection{Smart pointers}
 \subsection{Graph Representation}

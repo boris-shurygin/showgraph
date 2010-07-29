@@ -10,6 +10,11 @@
 #include "../Frontend/fe_iface.h"
 
 /**
+ * Test list classes
+ */
+bool uTestList();
+
+/**
  * Test memory manager
  */
 bool uTestMem();

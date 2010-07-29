@@ -22,6 +22,7 @@
 #define MEM_H
 
 #ifdef _DEBUG
+#  define CHECK_CHUNKS
 #  define USE_REF_COUNTERS
 #endif
 
