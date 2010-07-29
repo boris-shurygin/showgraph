@@ -20,15 +20,21 @@ namespace MemImpl
     /**
      * Class to control memory chunks
      */
-    template<class Data> class Chunk: public SListIface< Chunk< Data>>
+    template<class Data> class Chunk: public SListIface< Chunk< Data>, SListItem>
     {
         /** Pointer to next free chunk */
         Chunk<Data> *next_free;
         /** position of first free entry */
         ChunkPos free_entry;
+        /** busy entries num */
+        ChunkPos busy;
         /** Get chunk for given number */
         inline Entry<Data> *entry( ChunkPos pos);
+
     public:
+#ifdef CHECK_CHUNKS
+        void *pool;
+#endif  
         /** Constructor */
         inline Chunk();
         /** Get next free chunk */
@@ -37,6 +43,8 @@ namespace MemImpl
         inline void setNextFree( Chunk< Data> *ch);    
         /** Check if this chunk has free entries */
         inline bool isFree() const;
+        /** Check if this chunk is empty */
+        inline bool isEmpty() const;
         /** Initialization of chunk */
         inline void initialize();
         /** Allocate on entry */
@@ -69,6 +77,7 @@ namespace MemImpl
         }
         ASSERTD( e->nextFree() == UNDEF_POS);
         free_entry = 0;
+        busy = 0;
     }
     /** Placement new */
     template <class Data> 
@@ -122,23 +131,34 @@ namespace MemImpl
     {
         return free_entry != UNDEF_POS;
     }
-        
+    /** Check if this chunk is empty */
+    template<class Data> 
+    bool 
+    Chunk< Data>::isEmpty() const
+    {
+        return busy == 0;
+    }      
     /** Allocate one entry */
     template<class Data> 
     Data*
     Chunk< Data>::allocateEntry()
     {
         ASSERTD( this->isFree());
-
-        return static_cast<Data *>( entry( free_entry));
+        Entry< Data> *e = entry( free_entry);
+        Data *res = static_cast<Data *>( e);
+        free_entry = e->nextFree();
+        busy++;
+        return res;
     }
     /** Deallocate one entry */
     template<class Data> 
     void
     Chunk< Data>::deallocateEntry( Entry<Data> *e)
     {
-        free_entry = e->pos();
+        ASSERTD( busy > 0);
         e->setNextFree( free_entry);
+        free_entry = e->pos();
+        busy--;
     }
 }; /* namespace MemImpl */
 #endif /* MEM_CHUNK_H */

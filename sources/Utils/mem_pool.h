@@ -57,6 +57,8 @@ namespace Mem
         virtual void deallocate( void *ptr) = 0;
         /** Functionality of 'operator delete' for pooled objects */
         virtual void destroy( void *ptr) = 0;
+        /** Destructor */
+        virtual ~Pool(){};
     };
 
     /**

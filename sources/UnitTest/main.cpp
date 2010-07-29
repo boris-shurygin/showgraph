@@ -24,6 +24,10 @@ int main(int argc, char **argv)
     if ( conf.option("cl")->isSet())
         return 0;
 
+    /** Tets list classes */
+    if ( !uTestList())
+        return -1;
+
     /** Test memory management */
     if ( !uTestMem())
 		return -1;

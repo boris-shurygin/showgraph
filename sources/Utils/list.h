@@ -181,6 +181,9 @@ public:
     }
 };
 
+/** List number */
+typedef quint16 ListId;
+
 /**
  * Class for objects that should have pointers to next/prev objects of their type( behave like list elements)
  * Inherited object can be member of several lists
@@ -191,11 +194,9 @@ public:
 template <unsigned int dim> class MListItem
 {
     MListItem< dim> * peer[ dim][ LIST_DIR_NUM];
-    typedef unsigned int ListId;
+public:
     
-    
-    
-    /** Get neighbour */
+        /** Get neighbour */
     inline MListItem< dim> * peerInDir( ListId list, ListDir dir) const
     {
         ASSERTD( list < dim);
@@ -211,23 +212,22 @@ template <unsigned int dim> class MListItem
     /** Set all pointeers to peeers to zero */
     inline void zeroLinks()
     {
-        for ( ListId list = 0, list < dim, list++)
+        for ( ListId list = 0; list < dim; list++)
         {
             setPeerInDir( list, NULL, LIST_DIR_DEFAULT);
             setPeerInDir( list, NULL, LIST_DIR_RDEFAULT);
         }
     }
-public:
     /** Default peers gets */
     /** Return next peer in default direction */
     inline MListItem< dim> *next( ListId list) const
     {
-        return peerInDir( ListId list, LIST_DIR_DEFAULT);
+        return peerInDir( list, LIST_DIR_DEFAULT);
     }
     /** Return prev peer in default direction */
     inline MListItem< dim>* prev( ListId list) const
     {
-        return peerInDir( ListId list, LIST_DIR_RDEFAULT);
+        return peerInDir( list, LIST_DIR_RDEFAULT);
     }
     /** Set next peer */
     inline void setNext( ListId list, MListItem< dim> *n)
@@ -249,7 +249,7 @@ public:
 
         if ( isNotNullP( p))
         {
-            MListItem< dim>* rdir_peer = p->peerInDir( ListId list, rdir);
+            MListItem< dim>* rdir_peer = p->peerInDir( list, rdir);
             if ( isNotNullP( rdir_peer))
             {
                 rdir_peer->setPeerInDir( list, this, dir);
@@ -262,7 +262,7 @@ public:
     /** Attach in default direction */
     inline void attach( ListId list, MListItem< dim>* peer)
     {
-        attachInDir( ListId list, peer, LIST_DIR_DEFAULT);
+        attachInDir( list, peer, LIST_DIR_DEFAULT);
     }
 
     /** Detach from neighbours */
@@ -274,7 +274,7 @@ public:
         {
             peer[ list][ LIST_DIR_DEFAULT]->setPeerInDir( list, peer[ list][ LIST_DIR_RDEFAULT], LIST_DIR_RDEFAULT);
         }
-        if ( isNotNullP( peer[ LIST_DIR_RDEFAULT]))
+        if ( isNotNullP( peer[ list][ LIST_DIR_RDEFAULT]))
         {
             peer[ list][ LIST_DIR_RDEFAULT]->setPeerInDir( list, peer[ list][ LIST_DIR_DEFAULT], LIST_DIR_DEFAULT);
         }
@@ -284,7 +284,7 @@ public:
     /** Detach from all lists */
     inline void detachAll()
     {
-        for ( ListId list = 0, list < dim, list++)
+        for ( ListId list = 0; list < dim; list++)
         {
             detach( list);
         }    
@@ -300,14 +300,14 @@ public:
     MListItem( ListId list, MListItem< dim> *peer)
     {
         zeroLinks();
-        attachInDir( ListId list, peer, LIST_DIR_DEFAULT);
+        attachInDir( list, peer, LIST_DIR_DEFAULT);
     }
 
     /** Insert element in given direction */
     MListItem( ListId list, MListItem< dim> *peer, ListDir dir)
     {
         zeroLinks();
-        attachInDir( ListId list, peer, dir);
+        attachInDir( list, peer, dir);
     }
 
     /** Destructor */
@@ -321,7 +321,7 @@ public:
  * Interface for Multi-list
  * @ingroup List
  */
-template < class Item, unsigned int dim> class MListIface: virtual public MListItem< dim>
+template < class Item, class ListBase, unsigned int dim> class MListIface: public ListBase
 {
 public:
     /** Return next item in default direction */
@@ -334,17 +334,17 @@ public:
     {
         return static_cast< Item *>( MListItem< dim>::prev( list));
     }
-    /** Insert element before the given one */
-    inline MListIface( ListId list):
-        MListItem< dim>( list){};
+    /** Default constructor */
+    inline MListIface():
+        ListBase(){};
 
     /** Insert element before the given one */
     inline MListIface( ListId list, Item *peer):
-        MListItem< dim>( list, peer){};
+        ListBase( list, peer){};
 
     /** Insert element in given direction */
     inline MListIface( ListId list, Item *peer, ListDir dir):
-        MListItem< dim>( list, peer, dir){};
+        ListBase( list, peer, dir){};
 };
 
 /**
@@ -376,7 +376,8 @@ public:
     {
         setPeerInDir( NULL, LIST_DIR_DEFAULT);
         setPeerInDir( NULL, LIST_DIR_RDEFAULT);
-    }    /** Default peers gets */
+    }    
+    /** Default peers gets */
     /** Return next peer in default direction */
     inline MListItem< 1> *next() const
     {
@@ -473,7 +474,7 @@ typedef MListItem< 1> SListItem;
  * Specialization of interface for simple list
  * @ingroup List
  */
-template< class Item> class MListIface< Item, 1>: virtual public SListItem
+template< class Item, class ListBase> class MListIface< Item, ListBase, 1>: public ListBase
 {
 public:
     /** Return next item in default direction */
@@ -487,21 +488,21 @@ public:
         return static_cast< Item *>( SListItem::prev());
     }
     /** Insert element before the given one */
-    inline MListIface(): SListItem(){};
+    inline MListIface(): ListBase(){};
     /** Insert element before the given one */
     inline MListIface( Item *peer):
-        SListItem( peer){};
+        ListBase( peer){};
 
     /** Insert element in given direction */
     inline MListIface( Item *peer, ListDir dir):
-        SListItem( peer, dir){};
+        ListBase( peer, dir){};
 };
 
 /**
  * Specialization of interface for simple list
  * @ingroup List
  */
-template< class Item> class SListIface: virtual public SListItem
+template< class Item, class ListBase> class SListIface: public ListBase
 {
 public:
     /** Return next item in default direction */
@@ -516,11 +517,11 @@ public:
     }
     /** Insert element before the given one */
     inline SListIface():
-        SListItem(){};
+        ListBase(){};
 
     /** Insert element before the given one */
     inline SListIface( Item *peer):
-        SListItem( peer){};
+        ListBase( peer){};
 
     /** Insert element in given direction */
     inline SListIface( Item *peer, ListDir dir):
