@@ -18,6 +18,20 @@ class CFG: public GGraph
 {
     IR * priv_ir;
     TestParser *_parser;
+protected:
+    /** Node creation reimplementaiton */
+    virtual Node * CreateNode( int _id)
+    {
+        CFNode* node_p = new CFNode( this, _id);
+        return node_p;
+    }
+    /** Edge creation reimplementation */
+    virtual Edge * CreateEdge( int _id, Node *_pred, Node* _succ)
+    {
+        return new CFEdge(  this, _id,
+                            static_cast<CFNode *>( _pred), 
+                            static_cast<CFNode *>( _succ));
+    }
 public:
     /** Constructor */
     CFG( GraphView *v);
@@ -43,19 +57,6 @@ public:
     {
         return ( GEdge*)newEdge( static_cast< CFNode *>( pred),
                                     static_cast< CFNode *> (succ), e);
-    }
-    /** Node creation reimplementaiton */
-    virtual void * CreateNode( AuxGraph *graph_p, int _id)
-    {
-        CFNode* node_p = new CFNode( static_cast<CFG *>(graph_p), _id);
-        return node_p;
-    }
-    /** Edge creation reimplementation */
-    virtual void * CreateEdge( AuxGraph *graph_p, int _id, GNode *_pred, GNode* _succ)
-    {
-        return new CFEdge(  static_cast<CFG *>( graph_p), _id,
-                              static_cast<CFNode *>( _pred), 
-                              static_cast<CFNode *>( _succ));
     }
     /** Get graph's first edge */
     inline CFEdge* firstEdge() 

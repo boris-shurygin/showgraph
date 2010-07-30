@@ -43,7 +43,7 @@ TestParser::startNode()
 void
 TestParser::endNode()
 {
-    assert( isNotNullP( curr_node));
+    ASSERTD( isNotNullP( curr_node));
     curr_node->doc()->setPlainText( node_text);
 }
 
