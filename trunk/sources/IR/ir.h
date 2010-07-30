@@ -18,6 +18,20 @@
 class IR: public GGraph
 {
     CFG *cf_graph;
+protected:
+    /** Node creation reimplementaiton */
+    virtual Node * CreateNode( int _id)
+    {
+        Expr* node_p = new Expr( this, _id);
+        return node_p;
+    }
+    /** Edge creation reimplementation */
+    virtual Edge * CreateEdge( int _id, GNode *_pred, GNode* _succ)
+    {
+        return new Dep(  this, _id,
+                         static_cast<Expr *>( _pred), 
+                         static_cast<Expr *>( _succ));
+    }
 public:
     /** Constructor */
     IR( GraphView *v);
@@ -43,19 +57,6 @@ public:
     {
         return ( GEdge*)newEdge( static_cast< Expr *>( pred),
                                     static_cast< Expr *> (succ), e);
-    }
-    /** Node creation reimplementaiton */
-    virtual void * CreateNode( AuxGraph *graph_p, int _id)
-    {
-        Expr* node_p = new Expr( static_cast<IR *>(graph_p), _id);
-        return node_p;
-    }
-    /** Edge creation reimplementation */
-    virtual void * CreateEdge( AuxGraph *graph_p, int _id, GNode *_pred, GNode* _succ)
-    {
-        return new Dep(  static_cast<IR *>( graph_p), _id,
-                              static_cast<Expr *>( _pred), 
-                              static_cast<Expr *>( _succ));
     }
     /** Get graph's first edge */
     inline Dep* firstEdge() 

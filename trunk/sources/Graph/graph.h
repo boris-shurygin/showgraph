@@ -56,7 +56,7 @@ private:
      * Implementation of edge creation
      */
 	Edge * newEdgeImpl( Node * pred, Node * succ);
-
+protected:
     /** Node creation routine is to be overloaded by derived class */
 	virtual Node * CreateNode( int _id);
 	/** Edge creation routine is to be overloaded by derived class */

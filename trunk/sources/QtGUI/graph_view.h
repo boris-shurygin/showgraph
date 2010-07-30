@@ -134,6 +134,20 @@ protected:
 	QList< GNode* > sel_nodes;
 	QList< GEdge* > sel_edges;
     GNode *node_in_focus;
+    
+    /** Node creation reimplementaiton */
+    virtual Node * CreateNode( int _id)
+    {
+        GNode* node_p = new GNode( this, _id);
+        return node_p;
+    }
+    /** Edge creation reimplementation */
+    virtual Edge * CreateEdge( int _id, Node *_pred, Node* _succ)
+    {
+        return new GEdge(  this, _id,
+                           static_cast<GNode *>( _pred), 
+                           static_cast<GNode *>( _succ));
+    }
 public:
     /** Constructor */
     inline GGraph( GraphView *v): view_p( v), node_in_focus( NULL)
@@ -164,19 +178,6 @@ public:
     {
         return ( AuxEdge*)newEdge( static_cast< GNode *>( pred),
                                     static_cast< GNode *> (succ), e);
-    }
-    /** Node creation reimplementaiton */
-    virtual void * CreateNode( AuxGraph *graph_p, int _id)
-    {
-        GNode* node_p = new GNode( static_cast<GGraph *>(graph_p), _id);
-        return node_p;
-    }
-    /** Edge creation reimplementation */
-    virtual void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
-    {
-        return new GEdge(  static_cast<GGraph *>( graph_p), _id,
-                              static_cast<GNode *>( _pred), 
-                              static_cast<GNode *>( _succ));
     }
     /** Get graph's first edge */
     inline GEdge* firstEdge() 

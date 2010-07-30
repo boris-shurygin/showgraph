@@ -144,6 +144,18 @@ private:
         return max_rank;
     }
 protected:
+    /** Create node overload */
+    virtual Node * CreateNode( int _id)
+    {
+        return new AuxNode( this, _id);
+    }
+    /** Create edge overload */
+    virtual Edge * CreateEdge( int _id, Node *_pred, Node* _succ)
+    {
+        return new AuxEdge( this, _id, 
+                            static_cast<AuxNode *>( _pred),
+                            static_cast<AuxNode *>( _succ) );
+    }
     /** Get node that is considered root one after the layout */
     AuxNode* rootNode();
     /** Arrange nodes horizontally */
@@ -198,16 +210,6 @@ public:
     {
         out( "AuxGraph debug print");
         Graph::debugPrint();
-    }
-    /** Create node overload */
-    virtual void * CreateNode( AuxGraph *graph_p, int _id)
-    {
-        return new AuxNode( graph_p, _id);
-    }
-    /** Create edge overload */
-    virtual void * CreateEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _succ)
-    {
-        return new AuxEdge( graph_p, _id, _pred, _succ);
     }
     inline void freePlacementMarker()
     {
