@@ -16,6 +16,7 @@ GNode::GNode( GGraph *graph_p, int _id):
 	text_shown( false)
 {
     item_p = new NodeItem( this);
+    graph()->view()->scene()->addItem( item_p);
 	setIRId( id());
     graph()->invalidateRanking();
     if ( graph()->view()->isContext())
@@ -35,6 +36,7 @@ GNode::GNode( GGraph *graph_p, int _id, QPointF _pos):
 {
     item_p = new NodeItem( this);
     item_p->setPos( _pos);
+	graph()->view()->scene()->addItem( item_p);
 	setIRId( id());
     graph()->invalidateRanking();
     if ( graph()->view()->isContext())

@@ -32,7 +32,6 @@ GNode*
 GGraph::newNode()
 {
     GNode* n = static_cast< GNode *>( AuxGraph::newNode());
-    view()->scene()->addItem( n->item());
     return n;
 }
 
@@ -41,8 +40,6 @@ GGraph::newEdge( GNode* pred, GNode* succ)
 {
     GEdge* e = 
         static_cast< GEdge *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ));
-    view()->scene()->addItem( e->item());
-    e->item()->adjust();
     return e;
 }
 
@@ -50,7 +47,6 @@ GNode*
 GGraph::newNode( QDomElement e)
 {
     GNode* n =  static_cast< GNode *>( AuxGraph::newNode( e));
-    view()->scene()->addItem( n->item());
     return n;
 }
 
@@ -59,8 +55,6 @@ GGraph::newEdge( GNode* pred, GNode* succ, QDomElement e)
 {
     GEdge* edge_p = 
         static_cast< GEdge *>( AuxGraph::newEdge( (AuxNode *)pred, (AuxNode *)succ, e));
-    view()->scene()->addItem( edge_p->item());
-    edge_p->item()->adjust();
     return edge_p;
 }
 
