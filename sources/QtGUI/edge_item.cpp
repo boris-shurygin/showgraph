@@ -16,6 +16,9 @@ GEdge::GEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ):
     AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ)
 {
     item_p = new EdgeItem( this);
+    graph()->view()->scene()->addItem( item_p);
+    item_p->adjust();
+    
     graph()->invalidateRanking();
 }
    
