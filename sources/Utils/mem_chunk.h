@@ -17,13 +17,22 @@
 
 namespace MemImpl
 {
+    /** Chunk lists identificators */
+    enum ChunkListType
+    {
+        CHUNK_LIST_ALL,
+        CHUNK_LIST_FREE,
+        CHUNK_LISTS_NUM
+    };
+
     /**
      * Class to control memory chunks
      */
-    template<class Data> class Chunk: public SListIface< Chunk< Data>, SListItem>
+    template<class Data> class Chunk: 
+        public MListIface< Chunk< Data>, // List client data
+                           MListItem< CHUNK_LISTS_NUM>, // base class: pure multi-list item
+                           CHUNK_LISTS_NUM > // Lists number
     {
-        /** Pointer to next free chunk */
-        Chunk<Data> *next_free;
         /** position of first free entry */
         ChunkPos free_entry;
         /** busy entries num */
@@ -37,10 +46,6 @@ namespace MemImpl
 #endif  
         /** Constructor */
         inline Chunk();
-        /** Get next free chunk */
-        inline Chunk< Data> *nextFree() const;
-        /** Set Next free chunk */
-        inline void setNextFree( Chunk< Data> *ch);    
         /** Check if this chunk has free entries */
         inline bool isFree() const;
         /** Check if this chunk is empty */
@@ -109,21 +114,6 @@ namespace MemImpl
                                   + sizeof( Entry< Data>) * pos);
     }
    
-    /** Get next free chunk */
-    template<class Data> 
-    Chunk< Data>*
-    Chunk< Data>::nextFree() const
-    {
-        return next_free;
-    }
-
-    /** Set next free chunk */
-    template<class Data> 
-    void
-    Chunk< Data>::setNextFree( Chunk< Data> *ch)
-    {
-        next_free = ch;
-    }
     /** Check if this chunk has free entries */
     template<class Data> 
     bool 
