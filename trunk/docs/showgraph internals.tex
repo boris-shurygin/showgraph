@@ -189,16 +189,112 @@ static bool uTestMList()
 
 \end{lstlisting}
 \subsection{Memory Managment Framework}
-The key principle behind ShowGraph's memory management approach is that we mostly care for objects that can exits in large quantities. These are likely candidates to be allocated in pools. We can also allocate other objects in pools but this is not performance critical and if do this - that would be for the purposes of enforcing leakage detection.
+The key principle behind ShowGraph's memory management approach is that we mostly care for objects that can exits in large quantities. These objects are likely to benefit from allocation in pools. We can also allocate other objects in pools but this is not performance critical and if do this - that would be for the purposes of enforcing leakage detection.
 
 \subsubsection{Pools}
+A \emph{memory pool} is a technique for managing application's memory needs by providing some additional functionality over standard library routines. One piece of memory allocated by a pool is called an \emph{entry}. All memory pools in ShowGraph project share the same interface: they allow for allocation of some memory piece and for deallocation of previously allocated one. By design pools are not suited for allocating arrays of objects since some kind of pools are not able to allocate enough ammount of continuous memory ( e.g. FixedPool have chunks with fixed number of entries). That's why \lstinline{operator new[]} is prohibited for pool-stored object (\lstinline{operator delete[]} is prohibited as well). Base class that defines pool interface is located in \lstinline{Mem} namespace and looks like:
+\begin{lstlisting}
+class Pool
+{
+    public:
+        /** Allocate new memory block */
+        virtual void* allocate( size_t size) = 0;
+        /** Free memory block */
+        virtual void deallocate( void *ptr) = 0;
+        /** 
+          * Functionality of 'operator delete'
+          * for pooled objects
+          */
+        virtual void destroy( void *ptr) = 0;
+};
+\end{lstlisting}
+Member methods are named quite straightforward: \lstinline{Pool::allocate} allocates entries, \lstinline{Pool::deallocate} performs deallocation and  \lstinline{Pool::destroy} calls object's destructor before calling  \lstinline{Pool::deallocate}. Pool-controlled objects must be derived from  \lstinline{PoolObj}.
+\begin{lstlisting}
+/**
+ * Base class for all objects allocated in pools
+ */    
+class PoolObj
+{
+  public:
+    /** Default operator 'new' is disabled */
+    void *operator new ( size_t size);
+    /** Default operator 'delete' is disabled */
+    void operator delete( void *ptr);
+    /** Default operator 'new' is disabled */
+    void *operator new[] ( size_t size);
+    /** Default operator 'delete' is disabled */
+    void operator delete[] ( void *ptr);
+       
+    /** Placement new */
+    inline void *operator new ( size_t size, Pool* pool);
+    
+    /**
+     * Operator 'delete' corresponding to placement new
+     * WARNING: Compiler won't call this for deletion. 
+     *          It is needed for freeing memory in  
+     *          case of exceptions in constructor
+     */
+    inline void operator delete( void *ptr, Pool* pool);
+    
+    /** To be called by 'destroy' routine of pool class */
+    virtual ~PoolObj(){};
+};
+\end{lstlisting}
+After derivation object of user class can be created like this:
+\begin{lstlisting}
+class MyClass: public PoolObj
+{
+   /* Some useful code */        
+};
+
+void somefunc( Pool *pool)
+{
+    MyClass *ptr = new ( pool) MyClass();
+    pool->destroy( ptr); // Calls destructor
+}
+\end{lstlisting}
+
+A \emph{Fixed pool} is a pool that creates entries of the same size which is defined by pool parameter. It uses the knowledge of the entry-size for optimization of allocation/deallocation process and for simplifying the internal bookkeeping. This simplification significantly speeds up pool's operation.
+
+Fixed pools are created by instantiation of \lstinline{FixedPool< class Data>} template which implements interface of the \lstinline{Pool} class. The template parameter ``\lstinline{class Data}'' defines the user's object type which determines the pool's entry size.
+
+Internal implementation of a fixed pool is based on allocating memory in so-called \emph{chunks}. A \emph{chunk} is a continuous block of memory which holds a number of entries and is allocated with one call to system. The allocated memory is managed by the pool and released to system when pool doesn't need it. This policy effectively avoids calling \lstinline{malloc/free} for every entry and prevents fragmentation. \lstinline{FixedPool} class trades off compactness for quickness and uses additional info for every entry. Every entry keeps:
+\begin{itemize}
+\item Its own number. To calculate pointer to chunk info from pointer to entry.
+\item Number of next free entry in this chunk. For speeding up the allocation.
+\item Debug info like allocation/deallocation event number or ``free'' flag for checking double deallocation.
+\end{itemize}
+The chunks are organized in doubly-liked list to have constant time for chunk creation/destruction. Free chunks are also linked in list to speed up the allocation. 
+
+On allocation request pool simply gets its first free chunk and returns pointer to its first entry. On deallocation pointer to chunk is calculated from pointer to entry using its own number and entry is simply connected to the head of free entry list in the chunk. The chunk itself is enrolled in the list of free chunks if it isn't already there. If the chunk is completely empty after this deallocation it may be deleted if there are other free chunks present. Both allocation and deallocation demand constant time unless we have to allocate a new chunk or free existing empty one.
+
+To decrease memory usage overhead the numbers in entries are effectively one byte each. Thats two byte per entry overhead if we don't align entries on 8, 16, 32 or 64 bytes. Thus memory overhead is significant if we store small objects in such a pool but for a list unit this overhead is about 25\% and for graph's node or edge it is $\sim$6,2\%.
+
 \subsubsection{Smart pointers}
+
+
 \subsection{Graph Representation}
+
+
 \subsection{Automatic Graph Layout}
+
+
 \subsection{Frontend}
+
+
 \subsection{GUI Implementation}
+
+
 \section{Project Organization}
+
+
 \subsection{Building}
+
+
 \subsection{Unit Testing}
+
+
 \subsection{Distribution}
+
+
 \end{document}
