@@ -63,7 +63,6 @@ uTestRef()
 	
 	/** Test ref to pointer conversion and Obj destructor */
 	delete ref2;
-    PrintUtils::out( "sizeof (TestObj) = %d", sizeof(TestObj));
     return true;
 }
 

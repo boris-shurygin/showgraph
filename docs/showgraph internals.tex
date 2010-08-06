@@ -189,7 +189,7 @@ static bool uTestMList()
 
 \end{lstlisting}
 \subsection{Memory Managment Framework}
-The key principle behind ShowGraph's memory management approach is that we mostly care for objects that can exits in large quantities. These objects are likely to benefit from allocation in pools. We can also allocate other objects in pools but this is not performance critical and if do this - that would be for the purposes of enforcing leakage detection.
+The key principle behind ShowGraph's memory management approach is that we mostly care for objects that can exits in large quantities. These objects are likely to benefit from allocation in pools. We can also allocate other objects in pools but this is not performance critical and if we do this - that would be for the purposes of enforcing leakage detection.
 
 \subsubsection{Pools}
 A \emph{memory pool} is a technique for managing application's memory needs by providing some additional functionality over standard library routines. One piece of memory allocated by a pool is called an \emph{entry}. All memory pools in ShowGraph project share the same interface: they allow for allocation of some memory piece and for deallocation of previously allocated one. By design pools are not suited for allocating arrays of objects since some kind of pools are not able to allocate enough ammount of continuous memory ( e.g. FixedPool have chunks with fixed number of entries). That's why \lstinline{operator new[]} is prohibited for pool-stored object (\lstinline{operator delete[]} is prohibited as well). Base class that defines pool interface is located in \lstinline{Mem} namespace and looks like:
@@ -268,7 +268,7 @@ The chunks are organized in doubly-liked list to have constant time for chunk cr
 
 On allocation request pool simply gets its first free chunk and returns pointer to its first entry. On deallocation pointer to chunk is calculated from pointer to entry using its own number and entry is simply connected to the head of free entry list in the chunk. The chunk itself is enrolled in the list of free chunks if it isn't already there. If the chunk is completely empty after this deallocation it may be deleted if there are other free chunks present. Both allocation and deallocation demand constant time unless we have to allocate a new chunk or free existing empty one.
 
-To decrease memory usage overhead the numbers in entries are effectively one byte each. Thats two byte per entry overhead if we don't align entries on 8, 16, 32 or 64 bytes. Thus memory overhead is significant if we store small objects in such a pool but for a list unit this overhead is about 25\% and for graph's node or edge it is $\sim$6,2\%.
+To decrease memory usage overhead the numbers in entries are effectively one byte each. Thats two byte per entry overhead if we don't align entries on 8, 16, 32 or 64 bytes. Thus memory overhead is significant if we store small objects in such a pool but for a list unit this overhead is about 25\% and for graph's node or edge it is $\sim$6.2\%.
 
 \subsubsection{Smart pointers}
 
