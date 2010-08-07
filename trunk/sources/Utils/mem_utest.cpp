@@ -1,5 +1,5 @@
 /**
- * @file: graph_utest.cpp 
+ * @file: mem_utest.cpp 
  * Implementation of testing of memory manager
  */
 /*

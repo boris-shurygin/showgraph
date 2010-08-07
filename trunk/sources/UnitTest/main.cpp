@@ -23,18 +23,10 @@ int main(int argc, char **argv)
 
     if ( conf.option("cl")->isSet())
         return 0;
-
-    /** Tets list classes */
-    if ( !uTestList())
+	
+    /** Test utils */
+    if ( !uTestUtils())
         return -1;
-
-    /** Test memory management */
-    if ( !uTestMem())
-		return -1;
-
-    /** Test configuration classes functionality */
-    if ( !uTestConf())
-    	return -1;
 
 	/** Test graph package */
     if ( !uTestGraph())

@@ -197,11 +197,19 @@
 			>
 		</File>
 		<File
+			RelativePath=".\singleton.h"
+			>
+		</File>
+		<File
 			RelativePath=".\utils.cpp"
 			>
 		</File>
 		<File
 			RelativePath=".\utils_iface.h"
+			>
+		</File>
+		<File
+			RelativePath=".\utils_utest.cpp"
 			>
 		</File>
 	</Files>

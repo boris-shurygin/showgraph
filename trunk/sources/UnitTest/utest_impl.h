@@ -10,19 +10,9 @@
 #include "../Frontend/fe_iface.h"
 
 /**
- * Test list classes
+ * Test Utils package
  */
-bool uTestList();
-
-/**
- * Test memory manager
- */
-bool uTestMem();
-
-/**
- * Test configuration-related functionality
- */
-bool uTestConf();
+bool uTestUtils();
 
 /**
  * Graph library unit testing

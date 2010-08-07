@@ -18,6 +18,7 @@
 #include "asrt.h"
 #include "print.h"
 #include "list.h"
+#include "singleton.h"
 //#include "mem.h"
 #include "conf.h"
 
@@ -26,5 +27,20 @@ namespace Utils
 {
     using namespace PrintUtils;
 };
+
+/**
+ * Test list classes
+ */
+bool uTestList();
+
+/**
+ * Test memory manager
+ */
+bool uTestMem();
+
+/**
+ * Test configuration-related functionality
+ */
+bool uTestConf();
 
 #endif
