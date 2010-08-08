@@ -169,6 +169,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\mem_mgr.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\mem_mgr.h"
+			>
+		</File>
+		<File
 			RelativePath=".\mem_obj.h"
 			>
 		</File>
