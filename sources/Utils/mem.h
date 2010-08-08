@@ -24,21 +24,28 @@
 #ifdef _DEBUG
 #  define CHECK_CHUNKS
 #  define USE_REF_COUNTERS
+#  define USE_MEM_EVENTS
 #endif
 
 #include <QtGlobal>
 
+/** Namespace for memory-related routines */
 namespace Mem
 {
     /* Class pool predeclaration */
     class Pool;
 }
+
+
+
 /**
  * Low level functinality for Mem package 
  * @defgroup MemImpl Memory Manager Low Level
  */
 namespace MemImpl
 {
+    /** Low-level implementation of memory manager */
+    class MemInfo;
     /* Predeclaration of mem entry class */
     template < class Data> class Entry;
     /* Predeclaration of chunk class */
@@ -55,12 +62,19 @@ namespace MemImpl
     const ChunkPos UNDEF_POS = MAX_CHUNK_ENTRIES_NUM; 
 };
 
+namespace Mem
+{
+    /** Singleton for memory manager */
+    typedef Single< MemImpl::MemInfo> MemMgr;
+};
+
 #include <stdlib.h>
-#include "mem_ref.h" /** Memory reference */
-#include "mem_obj.h" /** Memory object base class */
-#include "mem_chunk.h" /** Memory chunk class */
-#include "mem_pool.h" /** Memory pool */
-#include "mem_entry.h" /** Memory entry class */
+#include "mem_mgr.h"        /** Memory manager */
+#include "mem_ref.h"        /** Memory reference */
+#include "mem_obj.h"        /** Memory object base class */
+#include "mem_chunk.h"      /** Memory chunk class */
+#include "mem_pool.h"       /** Memory pool */
+#include "mem_entry.h"      /** Memory entry class */
 #include "mem_fixed_pool.h" /** Memory pool */
 
 #endif /* MEM_H */

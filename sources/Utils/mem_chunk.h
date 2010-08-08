@@ -134,7 +134,11 @@ namespace MemImpl
     Chunk< Data>::allocateEntry()
     {
         ASSERTD( this->isFree());
+        
         Entry< Data> *e = entry( free_entry);
+#ifdef USE_MEM_EVENTS        
+        MemMgr::instance()->allocEvent();
+#endif        
         Data *res = static_cast<Data *>( e);
         free_entry = e->nextFree();
         busy++;
@@ -146,6 +150,9 @@ namespace MemImpl
     Chunk< Data>::deallocateEntry( Entry<Data> *e)
     {
         ASSERTD( busy > 0);
+#ifdef USE_MEM_EVENTS        
+        MemMgr::instance()->deallocEvent();
+#endif 
         e->setNextFree( free_entry);
         free_entry = e->pos();
         busy--;
