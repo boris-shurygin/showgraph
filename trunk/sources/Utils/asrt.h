@@ -14,6 +14,14 @@
 #  endif
 #endif
 
+#if !defined(ASSERT_XD)
+#  ifdef _DEBUG
+#    define ASSERT_XD(cond, where, what) Q_ASSERT_X(cond, where, what)
+#  else
+#    define ASSERT_XD(cond, where, what)
+#  endif
+#endif
+
 #if !defined(ASSERT)
 #  define ASSERT(cond) Q_ASSERT(cond)
 #endif

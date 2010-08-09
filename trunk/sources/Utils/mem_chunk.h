@@ -42,8 +42,10 @@ namespace MemImpl
 
     public:
 #ifdef CHECK_CHUNKS
-        void *pool;
-#endif  
+        void *pool;       
+        /** Get chunk's first busy entry */
+        inline Entry<Data> *firstBusyEntry();
+#endif
         /** Constructor */
         inline Chunk();
         /** Check if this chunk has free entries */
@@ -77,10 +79,18 @@ namespace MemImpl
             e = ( Entry< Data> *)( (quint8 *) this 
                                        + sizeof( Chunk< Data>) 
                                        + sizeof( Entry< Data>) * i);
+            /** Initialization of every entry */
             e->setPos( i);
             e->setNextFree( i + 1);
+#ifdef CHECK_ENTRY
+            e->is_busy = false;
+#endif
+#ifdef USE_MEM_EVENTS        
+            e->alloc_event = 0;
+            e->dealloc_event = 0;
+#endif 
         }
-        ASSERTD( e->nextFree() == UNDEF_POS);
+        MEM_ASSERTD( e->nextFree() == UNDEF_POS, "Chunk size constant and undefined value do not match");
         free_entry = 0;
         busy = 0;
     }
@@ -108,12 +118,32 @@ namespace MemImpl
     Entry< Data>*
     Chunk< Data>::entry( ChunkPos pos)
     {
-        ASSERTD( pos != UNDEF_POS);
+        MEM_ASSERTD( pos != UNDEF_POS, "Requested entry with undefined number");
         return ( Entry< Data> *)( (quint8 *) this 
                                   + sizeof( Chunk< Data>) 
                                   + sizeof( Entry< Data>) * pos);
     }
    
+#ifdef CHECK_CHUNKS        
+    /** Get chunk's first busy entry */
+    template<class Data> 
+    Entry< Data>*
+    Chunk< Data>::firstBusyEntry()
+    {
+        Entry<Data> *e = NULL;
+        
+        for ( int i = 0; i < MAX_CHUNK_ENTRIES_NUM; i++)
+        {
+            e = ( Entry< Data> *)( (quint8 *) this 
+                                       + sizeof( Chunk< Data>) 
+                                       + sizeof( Entry< Data>) * i);
+            if ( e->is_busy)
+                return e;
+        }
+        return NULL;
+    }
+#endif
+
     /** Check if this chunk has free entries */
     template<class Data> 
     bool 
@@ -133,11 +163,14 @@ namespace MemImpl
     Data*
     Chunk< Data>::allocateEntry()
     {
-        ASSERTD( this->isFree());
+        MEM_ASSERTD( this->isFree(), "Trying to allocated entry in a full chunk");
         
         Entry< Data> *e = entry( free_entry);
+#ifdef CHECK_ENTRY
+        e->is_busy = true;
+#endif
 #ifdef USE_MEM_EVENTS        
-        MemMgr::instance()->allocEvent();
+        e->alloc_event = MemMgr::instance()->allocEvent();
 #endif        
         Data *res = static_cast<Data *>( e);
         free_entry = e->nextFree();
@@ -149,9 +182,14 @@ namespace MemImpl
     void
     Chunk< Data>::deallocateEntry( Entry<Data> *e)
     {
-        ASSERTD( busy > 0);
+        MEM_ASSERTD( busy > 0, "Trying to deallocate entry of an empty chunk");
+#ifdef CHECK_ENTRY
+        MEM_ASSERTD( e->is_busy, 
+                     "Trying to deallocate entry that is free. Check deallocation event ID");
+        e->is_busy = false;
+#endif
 #ifdef USE_MEM_EVENTS        
-        MemMgr::instance()->deallocEvent();
+        e->dealloc_event = MemMgr::instance()->deallocEvent();
 #endif 
         e->setNextFree( free_entry);
         free_entry = e->pos();
