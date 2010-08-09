@@ -133,7 +133,9 @@ Host abstraction is not really a piece of code in this project. It is rather a c
 \subsubsection{Asserts}
 There are two types of asserts in ShowGraph: template functions throwing exceptions and macros that just die with printing line number.
 
-Most commonly used asserts are assert macros based on Qt's \lstinline{Q_ASSERT}. They are \lstinline{ASSERT( bool cond)} and \lstinline{ASSERTD( bool cond)}. The difference between them is that \lstinline{ASSERT} stays in release mode and \lstinline{ASSERTD} is removed from release code. 
+Most commonly used asserts are assert macros based on Qt's \lstinline{Q_ASSERT} and \lstinline{Q_ASSERT_X}. They are \lstinline{ASSERT( bool cond)}, \lstinline{ASSERTD( bool cond)}, and \lstinline{ASSERT_XD( cond, where, what)}. The difference between 'D' version and the macros without 'D' on the end is that \lstinline{ASSERT} stays in release mode and macros like \lstinline{ASSERTD} are removed from release code. 
+
+Some modules define their own asserts. For example memory manager uses  \lstinline{MEM_ASSERTD( cond, what)} that reports error to happen in 'Memory Manager' and describes the error.
 
 Function-based asserts are used for checking errors that do not cause application to die immediately and can be recovered by catching exception in proper place. They are intended for use in release code. However \lstinline{assertd( bool cond)} routine can be used for debug-only asserts.
 
@@ -269,6 +271,8 @@ The chunks are organized in doubly-liked list to have constant time for chunk cr
 On allocation request pool simply gets its first free chunk and returns pointer to its first entry. On deallocation pointer to chunk is calculated from pointer to entry using its own number and entry is simply connected to the head of free entry list in the chunk. The chunk itself is enrolled in the list of free chunks if it isn't already there. If the chunk is completely empty after this deallocation it may be deleted if there are other free chunks present. Both allocation and deallocation demand constant time unless we have to allocate a new chunk or free existing empty one.
 
 To decrease memory usage overhead the numbers in entries are effectively one byte each. Thats two byte per entry overhead if we don't align entries on 8, 16, 32 or 64 bytes. Thus memory overhead is significant if we store small objects in such a pool but for a list unit this overhead is about 25\% and for graph's node or edge it is $\sim$6.2\%.
+
+When built in debug mode the fixed pool keeps track of every entry's allocation and deallocation ID. This allows programmer to put in a breakpoint if a memory leak or double-delete occurred. The conditional breakpoint should be placed in \lstinline{MemInfo::allocReg( n)} or \lstinline{MemInfo::deallocReg( n)} where 'n' should be the ID that can be obtained from suspicious entry.
 
 \subsubsection{Smart pointers}
 

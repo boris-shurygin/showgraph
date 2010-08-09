@@ -41,6 +41,19 @@ namespace MemImpl
         ChunkPos my_pos;
         /** Position of next free entry in chunk */
         ChunkPos next_free_pos;
+
+#ifdef CHECK_ENTRY        
+        /** Debug info: entry status */
+        bool is_busy;
+#endif
+
+#ifdef USE_MEM_EVENTS        
+        /** Debug info: alloc event */
+        MemEventId alloc_event;
+        /** Debug info: dealloc event */
+        MemEventId dealloc_event;
+#endif  
+
         /** Private constructor to prevent direct creation of such objects */
         Entry();
         /** Private destructor */

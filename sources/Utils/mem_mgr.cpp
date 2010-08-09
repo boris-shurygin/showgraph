@@ -15,8 +15,8 @@ SINGLETON_INSTANCE( MemInfo);
 
 MemInfo::MemInfo()
 {
-    alloc_counter = 0;
-    dealloc_counter = 0;
+    alloc_counter = 1;
+    dealloc_counter = 1;
 }
 
 /** Place for breakpoint on event number */

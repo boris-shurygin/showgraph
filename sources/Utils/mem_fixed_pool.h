@@ -40,6 +40,10 @@ namespace Mem
         void deallocate( void *ptr);
         /** Functionality of 'operator delete' for pooled objects */
         void destroy( void *ptr); 
+#ifdef _DEBUG
+        /** Get first busy chunk */
+        inline MemImpl::Chunk< Data> *firstBusyChunk();
+#endif
     private:        
         /** Number of used entries */
         EntryNum entry_count;
@@ -72,13 +76,28 @@ namespace Mem
     template < class Data> 
     FixedPool< Data>::~FixedPool()
     {
-        /** Check that all entries are freed */
-        ASSERTD( entry_count == 0);
         /** Deallocated cached chunks */
         while ( isNotNullP( first_chunk))
         {
             deallocateChunk( first_chunk);
         }
+        /** Check that all entries are freed */
+        MEM_ASSERTD( entry_count == 0, "Trying to delete non-empty pool");
+    }
+
+    /** Get first busy chunk */
+    template < class Data> 
+    MemImpl::Chunk< Data> *
+    FixedPool< Data>::firstBusyChunk()
+    {
+        MemImpl::Chunk< Data> *chunk = first_chunk;
+        while ( isNotNullP( chunk))
+        {
+            if ( !chunk->isEmpty())
+                return chunk;
+            chunk = chunk->next( MemImpl::CHUNK_LIST_ALL);
+        }
+        return NULL;
     }
 
     /** Allocate one chunk */
@@ -86,8 +105,8 @@ namespace Mem
     MemImpl::Chunk< Data> *
     FixedPool< Data>::allocateChunk()
     {
-        /** We should only allocate chunk*/
-        ASSERTD( isNullP( free_chunk ));
+        /** We should only allocate chunk if there are no free chunks left */
+        MEM_ASSERTD( isNullP( free_chunk ), "Tried to deallocate chunk while there is a free chunk");
         
         /** Allocate memory for chunk */
         void *chunk_mem = 
@@ -112,8 +131,13 @@ namespace Mem
     FixedPool<Data>::deallocateChunk( MemImpl::Chunk< Data> *chunk)
     {
 #ifdef CHECK_CHUNKS
-        ASSERTD( chunk->isEmpty());
-        ASSERTD( areEqP( chunk->pool, this));
+        if ( !chunk->isEmpty())
+        {
+            MEM_ASSERTD( isNotNullP( chunk->firstBusyEntry()),
+                         "Can't get first busy entry of non-empty chunk");
+            MEM_ASSERTD( 0, "Deallocated chunk is not empty. Check allocation ID of some busy entry");
+        }
+        MEM_ASSERTD( areEqP( chunk->pool, this), "Deallocated chunk does not belong to this pool");
 #endif
         if ( areEqP( first_chunk, chunk))
         {
@@ -139,7 +163,8 @@ namespace Mem
     void* 
     FixedPool<Data>::allocate( size_t size)
     {
-        ASSERTD( sizeof( Data) == size);
+        MEM_ASSERTD( sizeof( Data) == size,
+                     "Allocation size doesn't match FixedPool's template parameter size");
         void *ptr = NULL;
         /** If we don't have a free chunk */
         if ( isNullP( free_chunk))
@@ -147,7 +172,7 @@ namespace Mem
             /** We need to create new chunk */
             allocateChunk();
         } 
-        ASSERTD( free_chunk->isFree());
+        MEM_ASSERTD( free_chunk->isFree(), "Pool's first free chunk is not free");
         /** allocate one entry */
         ptr = ( void *)free_chunk->allocateEntry();
         /** if no more entries left */
@@ -167,8 +192,11 @@ namespace Mem
     FixedPool<Data>::deallocate( void *ptr)
     {
         /** @{*/
+        /** -# Check pointer */
+        MEM_ASSERTD( isNotNullP( ptr), "Deallocation tried on NULL pointer");
+        
         /** -# Check entry count */
-        ASSERTD( entry_count > 0); 
+        MEM_ASSERTD( entry_count > 0, "Trying deallocate entry of an empty pool"); 
 
         MemImpl::Entry< Data> *e =(MemImpl::Entry< Data> *) ptr;
         
@@ -177,7 +205,7 @@ namespace Mem
 
 #ifdef CHECK_CHUNKS
         /** -# Check that we are deleting entry from this pool */
-        ASSERT( areEqP( this, chunk->pool)); 
+        MEM_ASSERTD( areEqP( this, chunk->pool), "Trying deallocate entry from a wrong pool"); 
 #endif
         /**
          * If chunk is free already - it must be in free list 
@@ -216,7 +244,7 @@ namespace Mem
     {
         /** @{*/
         /** -# Check null pointer( in DEBUG mode) */
-        ASSERTD( isNotNullP( ptr));
+        MEM_ASSERTD( isNotNullP( ptr), "Destruction tried on NULL pointer");
         
         /** -# Call destructor */
         Data *data_p = static_cast< Data *>( ptr);

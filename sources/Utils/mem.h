@@ -23,11 +23,16 @@
 
 #ifdef _DEBUG
 #  define CHECK_CHUNKS
+#  define CHECK_ENTRY
 #  define USE_REF_COUNTERS
 #  define USE_MEM_EVENTS
 #endif
 
 #include <QtGlobal>
+
+#if !defined(MEM_ASSERTD)
+#    define MEM_ASSERTD(cond, what) ASSERT_XD(cond, "Memory manager", what)
+#endif
 
 /** Namespace for memory-related routines */
 namespace Mem
