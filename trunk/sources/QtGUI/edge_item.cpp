@@ -333,8 +333,14 @@ EdgeItem::paint( QPainter *painter,
     if ( option->levelOfDetail < 0.1)
         return;
 
-    const qreal spline_detail_level = 0.4;
-    const qreal draw_arrow_detail_level = 0.3;
+    /** Do not draw edges when adjacent nodes intersect */
+    QPolygonF pred_rect = mapFromItem( pred()->item(), pred()->item()->boundingRect());
+    QPolygonF succ_rect = mapFromItem( succ()->item(), succ()->item()->boundingRect());
+    if ( !succ_rect.intersected( pred_rect).isEmpty())
+        return;
+
+    static const qreal spline_detail_level = 0.4;
+    static const qreal draw_arrow_detail_level = 0.3;
     QPointF curr_point;
     QLineF line = QLineF();
     curr_point = srcP;
@@ -424,7 +430,7 @@ EdgeItem::paint( QPainter *painter,
         {
             QPainterPath arrow_path;
             arrow_path.addPolygon( QPolygonF() << dstP << destArrowP1 << destArrowP2 <<  dstP);
-            path = path.united( arrow_path);
+            //path = path.united( arrow_path);
             painter->drawPolygon(QPolygonF() << dstP << destArrowP1 << destArrowP2);
         }
     }

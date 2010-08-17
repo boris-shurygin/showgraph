@@ -19,8 +19,7 @@ int main(int argc, char **argv)
     conf.addOption( new Option( OPT_STRING, "f", "file", "input graph description file name"));
     conf.addOption( new Option( OPT_STRING, "o", "output", "output image file name"));
     conf.readArgs( argc, argv);
-    conf.printOpts(); // Print options to console
-
+    
     Option *fopt = conf.longOption("file");
     Option *out_opt = conf.longOption("output");
     
@@ -36,6 +35,9 @@ int main(int argc, char **argv)
             outname = out_opt->string();
         }
         r.render( xmlname, outname);
+    } else
+    {
+        conf.printOpts(); // Print options to console
     }
     //return app.exec();
 }

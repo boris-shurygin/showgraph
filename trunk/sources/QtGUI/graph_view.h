@@ -193,6 +193,10 @@ public:
      * Run layout procedure
      */
     void doLayout();
+    /**
+     * Run layout procedure in single thread mode
+     */
+    void doLayoutSingle();
 
     /**
      * Assign placement coordinates to node items

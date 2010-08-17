@@ -32,8 +32,13 @@ bool Renderer::render( QString xmlname, QString outname)
     /** Read graph from XML */
     graph_view->graph()->readFromXML( xmlname);
  
-    /** Perform layout */
-    graph_view->graph()->doLayout();
+    /**
+     * Perform layout in single thread. 
+     * Multi thread wouldn't work since we do not run QApplication::exec() and there is not event loop
+     */
+    graph_view->graph()->doLayoutSingle();
+
+    /** Get scene rectangle */
     QRectF scene_rect( graph_view->scene()->itemsBoundingRect()
                        .adjusted( -IMAGE_RECT_ADJUST, -IMAGE_RECT_ADJUST,
                                    IMAGE_RECT_ADJUST, IMAGE_RECT_ADJUST));
