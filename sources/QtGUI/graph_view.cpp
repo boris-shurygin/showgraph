@@ -406,6 +406,41 @@ void GGraph::doLayout()
     }
 }
 
+/**
+ * Run layout procedure in single thread
+ */
+void GGraph::doLayoutSingle()
+{
+    if ( view()->isContext())
+    {
+        if ( rankingValid())
+        {
+            arrangeHorizontally();
+        } else
+        {
+            /** Run layout algorithm */
+	        AuxGraph::doLayout();
+            UpdatePlacement();
+        }
+    } else
+    {
+        GNode *n;
+        GEdge *e;
+        
+        foreachNode( n, this)
+        {
+            n->item()->hide();
+        }
+        foreachEdge( e, this)
+        {
+            e->item()->hide();
+        }
+        /** Run layout algorithm */
+	    AuxGraph::doLayout();
+        layoutPostProcess();
+    }
+}
+
 void GGraph::layoutPostProcess()
 {
     UpdatePlacement();

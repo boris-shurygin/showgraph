@@ -146,7 +146,6 @@ uTestPools()
         obj->attach( prev_obj);
         prev_obj = obj->next();
     }
-    obj = obj->next();
     while ( isNotNullP( obj))
     {
         MyPoolObj *next = obj->next();

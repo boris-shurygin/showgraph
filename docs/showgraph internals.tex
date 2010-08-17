@@ -190,6 +190,53 @@ static bool uTestMList()
 }
 
 \end{lstlisting}
+
+\subsubsection{Singleton}
+To provide means for creating unique objects of some class the template \lstinline{Single<class Unique>} was introduced. Its implemtation is slightly different from common implementations of Singleton programming pattern. The key difference is that creation and destruction of singleton object is not automatic with Single template. There are routines \lstinline{init()} and \lstinline{deinit()} for these purposes. 
+
+Other aspects of implementation are conventional. A pointer to unique object can be obtained via \lstinline{instance()} routine. A pointer is a static member of Single object. 
+
+Constructors, destructor and assignment of client object should be made private and instance of Single template should be made friend of the client class.
+
+Here is an example of singleton usage:
+\begin{lstlisting}
+class A;
+typedef Single< A> SingleA;
+
+/** Sample class */
+class A
+{
+private:
+    /** private constructors, assignment and destructor */
+    A(){};
+    A( const A&){};
+    A& operator =( const A&){};
+    ~A(){};
+    /** Needed for singleton creation */
+    friend SingleA;
+};
+/** static assignment of 0 to instance pointer */
+SINGLETON_INSTANCE( A);    
+
+/**
+ * Test simple singleton
+ */
+int main()
+{
+    SingleA::init();
+
+    A* a1 = SingleA::instance();
+    A* a2 = SingleA::instance();
+    ASSERT( areEqP( a1, a2));
+    SingleA::deinit();
+    return 0;
+}
+\end{lstlisting}
+
+This type of singleton is intended for objects that are inexpensive to create and do not occupy a lot of critical resources. Examples may be classes that implement logging, some statistics collection. Real example can be found in memory manager class that uses singleton-based implementation of counters for memory events like allocations and deallocations.
+
+For single object that have expensive creation and destruction and we may not need that object in runtime, this type of singleton does not suit well. We don't have a real automatically-handled singleton implementation yet.
+
 \subsection{Memory Managment Framework}
 The key principle behind ShowGraph's memory management approach is that we mostly care for objects that can exits in large quantities. These objects are likely to benefit from allocation in pools. We can also allocate other objects in pools but this is not performance critical and if we do this - that would be for the purposes of enforcing leakage detection.
 
@@ -268,14 +315,20 @@ Internal implementation of a fixed pool is based on allocating memory in so-call
 \end{itemize}
 The chunks are organized in doubly-liked list to have constant time for chunk creation/destruction. Free chunks are also linked in list to speed up the allocation. 
 
-On allocation request pool simply gets its first free chunk and returns pointer to its first entry. On deallocation pointer to chunk is calculated from pointer to entry using its own number and entry is simply connected to the head of free entry list in the chunk. The chunk itself is enrolled in the list of free chunks if it isn't already there. If the chunk is completely empty after this deallocation it may be deleted if there are other free chunks present. Both allocation and deallocation demand constant time unless we have to allocate a new chunk or free existing empty one.
+On allocation request pool simply gets its first free chunk and returns pointer to its first entry. On deallocation, pointer to chunk is calculated from pointer to entry using its own number and entry is simply connected to the head of free entry list in the chunk. The chunk itself is enrolled in the list of free chunks if it isn't already there. If the chunk is completely empty after this deallocation it may be deleted if there are other free chunks present. Both allocation and deallocation demand constant time unless we have to allocate a new chunk or free existing empty one.
 
 To decrease memory usage overhead the numbers in entries are effectively one byte each. Thats two byte per entry overhead if we don't align entries on 8, 16, 32 or 64 bytes. Thus memory overhead is significant if we store small objects in such a pool but for a list unit this overhead is about 25\% and for graph's node or edge it is $\sim$6.2\%.
 
-When built in debug mode the fixed pool keeps track of every entry's allocation and deallocation ID. This allows programmer to put in a breakpoint if a memory leak or double-delete occurred. The conditional breakpoint should be placed in \lstinline{MemInfo::allocReg( n)} or \lstinline{MemInfo::deallocReg( n)} where 'n' should be the ID that can be obtained from suspicious entry.
+When project is built in debug mode the pools keep track of every entry's allocation and deallocation ID. This allows programmer to put in a breakpoint if a memory leak or double-delete occurred. The conditional breakpoint should be placed in \lstinline{MemInfo::allocReg( n)} or \lstinline{MemInfo::deallocReg( n)} where 'n' should be the ID that can be obtained from suspicious entry.
 
 \subsubsection{Smart pointers}
+Smart pointers are in the process of design now. They are not used in project at the moment. They are to be used for two purposes:
+\begin{itemize}
+\item Dangling pointer check
+\item Reference counter implementation
+\end{itemize}
 
+There are still numerous open questions to be considered in smart pointers implementation. Should they be intrusive/external? Do they need to interact with pool's functionality? Should we allow conversion of smart pointer to plain pointer? How do we support conversions between smart pointers?
 
 \subsection{Graph Representation}
 
@@ -290,15 +343,40 @@ When built in debug mode the fixed pool keeps track of every entry's allocation 
 
 
 \section{Project Organization}
+Currently ShowGraph is being developed for Windows using Visual Studio 2005. Therefore project is organized around VS solution. Other operating systems or build systems are not supported. This is likely to change in nearest future. There are plans of supporting Linux and using \emph{make} tool for building.
+
+Lets see what's inside the MS VS solution. There are mainly four target projects in solution: `autodoc', `Gui', `Console' and `UnitTest'. `Autodoc' project uses \emph{Doxygen} tool to create documentation from source code. `Gui' and `Console' projects generate binaries for GUI and console versions of ShowGraph. GUI version is primary version for most users and console version is provided to enable using showgraph from console and in scripts for graph image generation. Console version is also supposed to be used in automated testing of ShowGraph's layout engine. `UnitTest' is supposed to be built and run as a sort of sanity check for tools and most packages if it exits with 0 the check is to be considered passed.
 
 
 \subsection{Building}
+Any of four targets can be built separately. Or one can build the whole solution to get them all.
 
+To work with project one needs:
+\begin{itemize}
+\item MS Visual Studio 2005 ( or higher, but that was not tested)\
+\item Subversion client. My personal favorite for Windows is TortoiseSVN http://tortoisesvn.net/
+\end{itemize}
 
-\subsection{Unit Testing}
+MSVS is of course `a must' at the moment as it is main development tool. There will be a choice once the projects supports gcc, make and others. SVN is needed to get the sources. Follow these steps to build the ShowGraph tools:
+\begin{enumerate}
+\item Install and build Qt http://qt.nokia.com/
+\item Checkout sources from http://showgraph.googlecode.com/svn/trunk/
+\item Add Qt directories `bin', `lib', and some `include' directories to VC++ directories in MS VS options
+\item Run `Build Solution' in Visual Studio
+\end{enumerate}
 
+\subsection{Testing}
+Due to lack of resources the testing process in not clearly defined. Up to this moment all testing was done by hand of developer without any standard procedure. There are no clearly stated quality requirements and formal process. Automated testing and semi-automated testing is described below.
+
+\subsubsection{Unit Testing}
+Components of showgraph have some unit testing. These tests are written as a sanity check and provide very basic quality check. In addition GUI is not really covered with unit tests.
+
+These tests are run by building UnitTest project and running the resulting executable binary. These tests use asserts for checking. In case of failure application immediately crashes. Normal execution with 0 return code signals that all tests have passed.
+
+\subsubsection{Automated Testing}
+Not yet implemented. I plan to write a script that runs console version of ShowGraph and measures the execution time.
 
 \subsection{Distribution}
-
+No setup application have been developed. ShowGraph is distributed via plain copying of binary + manifest file + Qt libraries.
 
 \end{document}
