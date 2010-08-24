@@ -1,0 +1,15 @@
+Showgraphcl testing resutls for my home pc:
+Configuration:
+
+WinXP professional (sp3)
+Intel Core 2 Duo ( E4600, 2.4 GHz)
+2 GB mem ( 2.41 GHz)
+
+Results( test runtimes):
+main_gcc: 0.50702699025472
+disasm_icc: 0.461663961410522
+test1: 4.79161810874939
+buildPar_gcc: 0.492304007212321
+disasm_gcc: 0.413543065388997
+main_icc: 0.656479358673096
+buildPar_icc: 0.869741042455037

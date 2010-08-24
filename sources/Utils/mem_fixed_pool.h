@@ -84,7 +84,7 @@ namespace Mem
         /** Check that all entries are freed */
         MEM_ASSERTD( entry_count == 0, "Trying to delete non-empty pool");
     }
-
+#ifdef _DEBUG
     /** Get first busy chunk */
     template < class Data> 
     MemImpl::Chunk< Data> *
@@ -99,7 +99,7 @@ namespace Mem
         }
         return NULL;
     }
-
+#endif
     /** Allocate one chunk */
     template < class Data> 
     MemImpl::Chunk< Data> *

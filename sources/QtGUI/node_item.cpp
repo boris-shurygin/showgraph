@@ -154,8 +154,9 @@ GNode::readFromElement( QDomElement e)
     
     if ( e.hasAttribute( "x") && e.hasAttribute( "y"))
     {
-        item()->setPos( e.attribute( "x").toDouble(),
-                        e.attribute( "y").toDouble());
+        qreal x = e.attribute( "x").toDouble();
+        qreal y = e.attribute( "y").toDouble();
+        item()->setPos( x, y);
     }
     if ( e.hasAttribute( "label"))
     {

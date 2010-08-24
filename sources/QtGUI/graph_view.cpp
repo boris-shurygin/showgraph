@@ -1087,13 +1087,14 @@ void GraphView::toggleSmoothFocus( bool smooth)
 
 void GraphView::toggleViewMode( bool context)
 {
-    view_mode = context? CONTEXT_VIEW : WHOLE_GRAPH_VIEW;
-    if ( context)
+    if ( context && CONTEXT_VIEW != view_mode)
     {
-         graph()->clearNodesPriority();
-    } else
+        view_mode = CONTEXT_VIEW;
+        graph()->clearNodesPriority();
+    } else if ( !context && WHOLE_GRAPH_VIEW != view_mode)
     {
-         graph()->showWholeGraph();
+        view_mode = WHOLE_GRAPH_VIEW;
+        graph()->showWholeGraph();
     }
 }
 
