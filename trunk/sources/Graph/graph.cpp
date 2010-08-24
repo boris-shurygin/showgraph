@@ -51,6 +51,7 @@ Graph::readFromXML( QString filename)
 
     if ( !setContent( &file))
     {
+        GRAPH_ASSERTD( 0, "Not a good-formated xml file");
         file.close();
         return;
     }

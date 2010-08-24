@@ -62,6 +62,10 @@ class Graph;
 class Node;
 class Edge;
 
+#if !defined(GRAPH_ASSERTD)
+#    define GRAPH_ASSERTD(cond, what) ASSERT_XD(cond, "Graph", what)
+#endif
+
 #include "marker.h"
 #include "num.h"
 
