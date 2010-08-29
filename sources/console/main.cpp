@@ -10,7 +10,7 @@
 /**
  * The entry point for console version of ShowGraph
  */
-int main(int argc, char **argv)
+static int doAll( int argc, char **argv)
 {
     QApplication app(argc, argv);
     app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
@@ -40,4 +40,19 @@ int main(int argc, char **argv)
         conf.printOpts(); // Print options to console
     }
     //return app.exec();
+    return 0;
+}
+
+/**
+ * Main routine
+ */
+int main( int argc, char **argv)
+{
+    MemMgr::init();
+    
+    int res = doAll( argc, argv);
+           
+    MemMgr::deinit();
+    
+    return res;
 }

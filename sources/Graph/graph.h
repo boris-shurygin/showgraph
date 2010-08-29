@@ -48,6 +48,8 @@ private:
      */
     GraphUid edge_next_id;
 
+
+
     /**
      * Implementation of node creation
      */
@@ -57,14 +59,45 @@ private:
      */
 	Edge * newEdgeImpl( Node * pred, Node * succ);
 protected:
-    /** Node creation routine is to be overloaded by derived class */
-	virtual Node * CreateNode( int _id);
-	/** Edge creation routine is to be overloaded by derived class */
-    virtual Edge * CreateEdge( int _id, Node *_pred, Node* _succ);
+    /**
+     * Pool for nodes
+     */
+    Pool *node_pool;
 
+    /**
+     * Pool for edges
+     */
+    Pool *edge_pool;
+
+    /** Node creation routine is to be overloaded by derived class */
+	virtual Node * createNode( int _id);
+	/** Edge creation routine is to be overloaded by derived class */
+    virtual Edge * createEdge( int _id, Node *_pred, Node* _succ);
+    
+
+
+    /** Pools' creation routine */
+    virtual void createPools();
+    /** Pools' destruction routine */
+    virtual void destroyPools();
+
+    /** Get pool of nodes */
+    inline Pool *nodePool() const
+    {
+        return node_pool;
+    }
+    /** Get pool of edges */
+    inline Pool *edgePool() const
+    {
+        return edge_pool;
+    }
 public:
-    /** Constructor */
-    Graph();
+    /**
+     * Constructor. 
+     * From inherited classes it may be called with 'false'
+     * vaule of the parameter to prevent pools creation
+     */
+    Graph( bool create_pools);
     
     /** Destructor */
     virtual ~Graph();
@@ -85,11 +118,23 @@ public:
      * We do not support creation of edge with undefined endpoints
      */
 	Edge * newEdge( Node * pred, Node * succ, QDomElement e);
+    
+    /** Node deletion routine is to be overloaded by derived class */
+    inline void deleteNode( void *n)
+    {
+        node_pool->destroy( n);
+    }
 
+    /** Edge deletion routine is to be overloaded by derived class */
+    inline void deleteEdge( void *e)
+    {
+        edge_pool->destroy( e);
+    }
+    
     /**
      * Remove node from node list of graph
      */
-    inline void deleteNode( Node* node)
+    inline void detachNode( Node* node)
     {
         assert( isNotNullP( node));
         assert( node->graph() == this);
@@ -105,7 +150,7 @@ public:
     /**
      * Remove edge from edge list of graph
      */
-    inline void deleteEdge( Edge * edge)
+    inline void detachEdge( Edge * edge)
     {
         assert( isNotNullP( edge));
         assert( edge->graph() == this);

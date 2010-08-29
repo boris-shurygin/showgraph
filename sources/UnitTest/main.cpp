@@ -21,6 +21,8 @@ int main(int argc, char **argv)
     
     Option *cl = conf.option("cl");
 
+    MemMgr::init();
+    
     if ( conf.option("cl")->isSet())
         return 0;
 	
@@ -39,4 +41,5 @@ int main(int argc, char **argv)
     /** Test GUI package */
     /* if ( uTestGUI(argc, argv) != 0)
         return -1; */
+    MemMgr::deinit();
 }

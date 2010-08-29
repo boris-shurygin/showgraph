@@ -53,7 +53,7 @@ MainWindow::MainWindow()
     connect(findWidget->toolPrevious, SIGNAL(clicked()), this, SLOT(findPrev()));
     connect(findWidget->editFind, SIGNAL(returnPressed()), this, SLOT(findNext()));
     graph_view = new GraphView();
-    graph_view->setGraph( new CFG( graph_view));
+    graph_view->setGraph( new CFG( graph_view, true));
     graph_view->setEditable();
     graph_view->toggleEditableAction()->setChecked( true);
     setAcceptDrops( true);
@@ -288,7 +288,7 @@ void MainWindow::openFile( QString fileName)
     } else
     {
         graph_view = new GraphView();
-        graph_view->setGraph( new CFG( graph_view));
+        graph_view->setGraph( new CFG( graph_view, true));
         connectToGraphView( graph_view);
         graph_view->graph()->readFromXML( fileName);
     }
@@ -477,7 +477,7 @@ void MainWindow::newGraph()
     removeGraphView();
 
     graph_view = new GraphView();
-    graph_view->setGraph( new CFG( graph_view));
+    graph_view->setGraph( new CFG( graph_view, true));
     graph_view->setEditable();
     graph_view->toggleEditableAction()->setChecked( true);
     connectToGraphView( graph_view);

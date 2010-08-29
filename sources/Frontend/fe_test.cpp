@@ -12,7 +12,7 @@ TestParser::TestParser( QString str):
     Parser( str), curr_node( NULL)
 {
     graph = new GraphView();
-    graph->setGraph( new CFG( graph));
+    graph->setGraph( new CFG( graph, true));
     graph->scene()->setItemIndexMethod( QGraphicsScene::NoIndex);
     static_cast< CFG *>( graph->graph())->setParser( this);
     setType( DUMP_TYPE_UNKNOWN);

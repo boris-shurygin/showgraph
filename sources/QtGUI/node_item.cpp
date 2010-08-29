@@ -101,7 +101,7 @@ GNode::~GNode()
         
         foreach ( GNode *n, nodes)
         {
-            delete n;
+            graph()->deleteNode( n);
         }
 		graph()->freeMarker( m);
     }

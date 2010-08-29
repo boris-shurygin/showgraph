@@ -136,23 +136,33 @@ protected:
     GNode *node_in_focus;
     
     /** Node creation reimplementaiton */
-    virtual Node * CreateNode( int _id)
+    virtual Node * createNode( int _id)
     {
-        GNode* node_p = new GNode( this, _id);
+        GNode* node_p = new ( node_pool) GNode( this, _id);
         return node_p;
     }
     /** Edge creation reimplementation */
-    virtual Edge * CreateEdge( int _id, Node *_pred, Node* _succ)
+    virtual Edge * createEdge( int _id, Node *_pred, Node* _succ)
     {
-        return new GEdge(  this, _id,
-                           static_cast<GNode *>( _pred), 
-                           static_cast<GNode *>( _succ));
+        return new ( edge_pool) GEdge(  this, _id,
+                                        static_cast<GNode *>( _pred), 
+                                        static_cast<GNode *>( _succ));
     }
 public:
     /** Constructor */
-    inline GGraph( GraphView *v): view_p( v), node_in_focus( NULL)
+    inline GGraph( GraphView *v, bool create_pools):
+        AuxGraph( false),
+        view_p( v),
+        node_in_focus( NULL)
 	{
 		nodeTextIsShown = newMarker();
+ 
+        /** Pools' creation routine */
+        if ( create_pools)
+        {
+            node_pool = new FixedPool< GNode>();
+            edge_pool = new FixedPool< GEdge>();
+        }
     }
     
     /** Destructor */

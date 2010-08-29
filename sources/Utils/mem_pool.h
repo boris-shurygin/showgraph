@@ -68,7 +68,29 @@ namespace Mem
      */    
     class PoolObj
     {
-    public:
+#ifdef CHECK_DELETE
+        bool to_be_deleted;
+#endif  
+        /** Copy constructor disabled*/
+        PoolObj( PoolObj &obj){};
+        /** Assignment disabled */
+        PoolObj& operator = ( const PoolObj& obj){ return *this;};
+
+        public:
+#ifdef CHECK_DELETE
+        /** Default constructor */
+        PoolObj(): to_be_deleted( false){};
+
+        /** Mark for deletion */
+        inline void toBeDeleted()
+        {
+            MEM_ASSERTD( !to_be_deleted, "Tried to mark object for deletion more than once");
+            to_be_deleted = true;
+        }
+#else
+        /** Default constructor */
+        inline PoolObj(){};
+#endif
         /** Default operator 'new' is disabled */
         void *operator new ( size_t size);
         /** Default operator 'delete' is disabled */
@@ -88,7 +110,12 @@ namespace Mem
          */
         inline void operator delete( void *ptr, Pool* pool);
         /** Destructor is to be called by 'destroy' routine of pool class */
-        virtual ~PoolObj(){};
+        virtual ~PoolObj()
+        {
+#ifdef CHECK_DELETE
+            MEM_ASSERTD( to_be_deleted, "Deleted pool object not through pool interface. Probably operator delete used.");
+#endif        
+        }
     };
 
     /**

@@ -10,9 +10,14 @@
 #include "ir_impl.h"
 
 /** Constructor */
-IR::IR( GraphView *v): GGraph( v)
+IR::IR( GraphView *v, bool create_pools): GGraph( v, false)
 {
-
+    /** Pools' creation routine */
+    if ( create_pools)
+    {
+        node_pool = new FixedPool< Expr>();
+        edge_pool = new FixedPool< Dep>();
+    }
 }
 
 /** Destructor */

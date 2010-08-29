@@ -15,12 +15,24 @@ AuxNode::~AuxNode()
 /**
  * Default constructor
  */
-AuxGraph::AuxGraph(): ranking_valid( false), levels(), layout_in_process( false) 
+AuxGraph::AuxGraph( bool create_pools):
+    Graph( false),
+    ranking_valid( false),
+    levels(),
+    layout_in_process( false) 
 {
     ranking = newNum();
     order = newNum();
     
     watcher = new QFutureWatcher<void>();
+    
+    /** Pools' creation routine */
+    if ( create_pools)
+    {
+        node_pool = new FixedPool< AuxNode>();
+        edge_pool = new FixedPool< AuxEdge>();
+    }
+ 
     connect( watcher, SIGNAL(finished()), this, SLOT( layoutNextStep()));
 }
 

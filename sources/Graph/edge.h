@@ -17,7 +17,7 @@
  *  It has two Nodes as its end points. As edge is member of 3 lists it
  *  has 3 corresponding pointers to items of these lists
  */
-class Edge: public Marked, public Numbered
+class Edge: public Marked, public Numbered, public PoolObj
 {
 public:
 	/** Edge list item type */
@@ -133,12 +133,13 @@ public:
      *  Deletion from node lists MUST be performed manually.
      *  Example: 
      *      Graph graph;
-     *      Edge * edge = graph.newEdge();
+     *      ...
+     *      Edge * edge = graph.newEdge(...);
      *  
      *      //Typical deletion of edge is done by consequent calls of
      *      edge->DetachFromNode( GRAPH_DIR_UP);
      *      edge->DetachFromNode( GRAPH_DIR_DOWN);
-     *      delete edge;
+     *      graph.deleteEdge( edge);
      */
     virtual ~Edge();
 

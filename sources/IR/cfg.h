@@ -20,21 +20,21 @@ class CFG: public GGraph
     TestParser *_parser;
 protected:
     /** Node creation reimplementaiton */
-    virtual Node * CreateNode( int _id)
+    virtual Node * createNode( int _id)
     {
-        CFNode* node_p = new CFNode( this, _id);
+        CFNode* node_p = new ( node_pool) CFNode( this, _id);
         return node_p;
     }
     /** Edge creation reimplementation */
-    virtual Edge * CreateEdge( int _id, Node *_pred, Node* _succ)
+    virtual Edge * createEdge( int _id, Node *_pred, Node* _succ)
     {
-        return new CFEdge(  this, _id,
-                            static_cast<CFNode *>( _pred), 
-                            static_cast<CFNode *>( _succ));
+        return new ( edge_pool) CFEdge(  this, _id,
+                                         static_cast<CFNode *>( _pred), 
+                                         static_cast<CFNode *>( _succ));
     }
 public:
     /** Constructor */
-    CFG( GraphView *v);
+    CFG( GraphView *v, bool create_pools);
     /** Destructor */
     ~CFG();
     /** New graphical node */

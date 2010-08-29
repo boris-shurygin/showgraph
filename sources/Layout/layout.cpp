@@ -612,7 +612,7 @@ void AuxGraph::doLayout()
         AuxNode *next = n->nextNode();
         if ( n->isEdgeControl())
         {
-            delete n;
+            deleteNode( n);
         }
         n = next;
     }
@@ -655,7 +655,7 @@ void AuxGraph::doLayoutConcurrent()
         AuxNode *next = n->nextNode();
         if ( n->isEdgeControl())
         {
-            delete n;
+            deleteNode( n);
         }
         n = next;
     }

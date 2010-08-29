@@ -21,21 +21,21 @@ Node::~Node()
     {
         Edge* next = edge->nextSucc();
         //edge->detachFromNode( GRAPH_DIR_DOWN);// Edge is detached from succ node
-        delete edge;
+        graph()->deleteEdge( edge);
         edge = next;
     }
     for ( edge = firstPred(); isNotNullP( edge);)
     {
         Edge* next = edge->nextPred();
         //edge->detachFromNode( GRAPH_DIR_UP);// Edge is detached from pred node
-        delete edge;
+        graph()->deleteEdge( edge);
         edge = next;
     }
     
     element.parentNode().removeChild( element);
 
     /** delete myself from graph */
-    graph_p->deleteNode( ( Node *)this);
+    graph_p->detachNode( this);
 }
 
 /**

@@ -21,11 +21,18 @@
 #ifndef MEM_H
 #define MEM_H
 
+#undef CHECK_CHUNKS
+#undef CHECK_ENTRY
+#undef USE_REF_COUNTERS
+#undef USE_MEM_EVENTS
+#undef CHECK_DELETE
+
 #ifdef _DEBUG
 #  define CHECK_CHUNKS
 #  define CHECK_ENTRY
 #  define USE_REF_COUNTERS
 #  define USE_MEM_EVENTS
+#  define CHECK_DELETE
 #endif
 
 #include <QtGlobal>

@@ -245,9 +245,14 @@ namespace Mem
         /** @{*/
         /** -# Check null pointer( in DEBUG mode) */
         MEM_ASSERTD( isNotNullP( ptr), "Destruction tried on NULL pointer");
-        
-        /** -# Call destructor */
+
         Data *data_p = static_cast< Data *>( ptr);
+        
+#ifdef CHECK_DELETE
+        /** -# Mark for deletion */
+        data_p->toBeDeleted();
+#endif
+        /** -# Call destructor */
         data_p->~Data();
         
         /** -# Free memory */

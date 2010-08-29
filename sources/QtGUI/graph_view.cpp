@@ -17,13 +17,13 @@ inline qreal scaleVal( qreal zoom_scale)
 GGraph::~GGraph()
 {
     freeMarker( nodeTextIsShown);
-	for ( GNode *node = firstNode();
+    for ( GNode *node = firstNode();
           isNotNullP( node);
           )
     {
         GNode* next = node->nextNode();
         int ir_id = node->irId();
-        delete node;
+        deleteNode( node);
         node = next;
     }
 }
@@ -81,7 +81,7 @@ void GGraph::deleteNodes()
 {
     foreach (GNode *n, sel_nodes)
     {
-        delete n;
+        deleteNode( n);
     }
     sel_nodes.clear();
 }
@@ -325,14 +325,14 @@ void GGraph::deleteEdgeWithControls( GEdge *edge)
 		edges << pred->firstPred();
         pred = pred->firstPred()->pred();
     }
-    delete edge;
+    deleteEdge( edge);
 	foreach ( GEdge *e, edges)
     {
-        delete e;
+        deleteEdge( e);
     }
     foreach ( GNode *n, nodes)
     {
-        delete n;
+        deleteNode( n);
     }
 	
 }
@@ -526,7 +526,7 @@ GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
         {
             graph()->emptySelection();
             graph()->setNodeInFocus( NULL);
-            delete qgraphicsitem_cast<NodeItem *>( node)->node();
+            graph()->deleteNode( qgraphicsitem_cast<NodeItem *>( node)->node());
         }
     }
     QGraphicsView::mouseDoubleClickEvent( ev);   
