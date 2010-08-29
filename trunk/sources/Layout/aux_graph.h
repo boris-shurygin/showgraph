@@ -145,16 +145,16 @@ private:
     }
 protected:
     /** Create node overload */
-    virtual Node * CreateNode( int _id)
+    virtual Node * createNode( int _id)
     {
-        return new AuxNode( this, _id);
+        return new ( node_pool) AuxNode( this, _id);
     }
     /** Create edge overload */
-    virtual Edge * CreateEdge( int _id, Node *_pred, Node* _succ)
+    virtual Edge * createEdge( int _id, Node *_pred, Node* _succ)
     {
-        return new AuxEdge( this, _id, 
-                            static_cast<AuxNode *>( _pred),
-                            static_cast<AuxNode *>( _succ) );
+        return new ( edge_pool) AuxEdge( this, _id, 
+                                         static_cast<AuxNode *>( _pred),
+                                         static_cast<AuxNode *>( _succ) );
     }
     /** Get node that is considered root one after the layout */
     AuxNode* rootNode();
@@ -173,7 +173,7 @@ signals:
     void layoutDone();
 public:
     /** Default constructor */
-    AuxGraph();
+    AuxGraph( bool create_pools);
     /** Destructor */
     virtual ~AuxGraph();
 

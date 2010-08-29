@@ -16,7 +16,7 @@ Edge::~Edge()
 {
     //out("Deleted edge");
     element.parentNode().removeChild( element);
-    graph_p->deleteEdge( ( Edge *)this);
+    graph_p->detachEdge( this);
     detachFromNode( GRAPH_DIR_UP);
     detachFromNode( GRAPH_DIR_DOWN);
 }

@@ -54,6 +54,8 @@ sub initInfo
     
     #should be OS-dependent
     $info->{showgraph} = abs_path( addPath( $info->{bindir},"showgraphcl.exe"));
+    
+    #iteration number for taking average runtime to get more stable results
     $info->{iterations} = 3;
     return $info;
 }
@@ -154,7 +156,8 @@ sub printResults
 sub runTest
 {
     my ( $info, $test, $filename) = @_;
-    my $cmd = $info->{showgraph}." -f ".addPath( $info->{testdir}, $filename)." -o ".$test.".png";
+    my $outname = $test.".png";
+    my $cmd = $info->{showgraph}." -f ".addPath( $info->{testdir}, $filename)." -o ".$outname;
     
     dprint( TESTS, "Running ".$cmd);
     
@@ -163,8 +166,23 @@ sub runTest
     for ( my $i = 0; $i < $info->{iterations}; $i++)
     {
         my $start = gettimeofday();
+        
+        #remove picture file if it is there
+        if ( -f $outname)
+        {
+            unlink $outname;
+        }
+        
+        #run test
         system $cmd;
         my $stop = gettimeofday();
+        
+        #check that file with picture is present
+        if ( !(-f $outname))
+        {
+            $info->{results}->{$test} = FAIL;
+            return;
+        }
         $runtime += $stop - $start;
     }
     # Save arithmetic mean

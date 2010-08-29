@@ -6,7 +6,6 @@
  * Copyright (C) 2009  Boris Shurygin
  */
 #include "utils_iface.h"
-#include "mem.h"
 
 using namespace Mem;
 

@@ -281,11 +281,14 @@ public:
         }
         return NODE_NODE_MARGIN;
     }
+    
+    /** Destructor */
+    virtual ~AuxNode();
 
 protected:
     /** We can't create nodes separately, do it through newNode method of graph */
     AuxNode( AuxGraph *graph_p, int _id);
-    ~AuxNode();
+    
     friend class AuxGraph;
 };
 

@@ -12,10 +12,11 @@
 #include "../Frontend/fe_iface.h"
 #include <windows.h>
 
+
 /**
- * The entry point for GUI version of ShowGraph
+ * all the actions
  */
-int main(int argc, char **argv)
+static int doAll( int argc, char **argv)
 {
     Conf conf;
     conf.addOption( new Option( OPT_STRING, "f", "file", "input graph description file name"));
@@ -35,5 +36,20 @@ int main(int argc, char **argv)
         QString filename = fopt->string();
         mainWin.openFile( filename);
     }
+    
     return app.exec();
+}
+
+/**
+ * The entry point for GUI version of ShowGraph
+ */
+int main(int argc, char **argv)
+{
+    MemMgr::init();
+    
+    int res = doAll( argc, argv);
+           
+    MemMgr::deinit();
+    
+    return res;
 }

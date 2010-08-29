@@ -125,9 +125,9 @@ class AGraph: public Graph
 
 
     /** Node creation overload */
-    Node * CreateNode( Graph *graph_p, int _id);
+    Node * createNode( int _id);
 	/** Edge creation overload */
-    Edge * CreateEdge( int _id, Node *_pred, Node* _succ);
+    Edge * createEdge( int _id, Node *_pred, Node* _succ);
 
     public:
             
@@ -153,6 +153,18 @@ class AGraph: public Graph
     {
         return static_cast< ANode *>( Graph::firstNode());
     }
+    /** Pools' creation routine */
+    void createPools()
+    {
+        node_pool = new FixedPool< ANode>();
+        edge_pool = new FixedPool< AEdge>();
+    }
+
+    AGraph( bool create_pools): Graph( false)
+    {
+        if ( create_pools)
+            createPools();
+    }
 };
 
 /** Node constructor */
@@ -170,14 +182,14 @@ inline AEdge::AEdge( AGraph *graph_p, int _id, ANode *_pred, ANode* _succ):
 }
         
 /** Node creation overload */
-inline Node * AGraph::CreateNode( Graph *graph_p, int _id)
+inline Node * AGraph::createNode( int _id)
 {
-    return new ANode( this, _id);
+    return new ( nodePool()) ANode( this, _id);
 }
 /** Edge creation overload */
-inline Edge * AGraph::CreateEdge( int _id, Node *_pred, Node* _succ)
+inline Edge * AGraph::createEdge( int _id, Node *_pred, Node* _succ)
 {
-    return new AEdge( this, _id, static_cast<ANode*>( _pred), static_cast< ANode *>(_succ));
+    return new ( edgePool()) AEdge( this, _id, static_cast<ANode*>( _pred), static_cast< ANode *>(_succ));
 } 
 
 /** Get first edge in given direction */

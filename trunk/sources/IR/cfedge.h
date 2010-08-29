@@ -19,12 +19,13 @@ class CFEdge: public GEdge
 protected:    
     /** Default constructor */
     CFEdge( CFG *graph_p, int _id, CFNode *_pred, CFNode* _succ);
-    /** Destructor */
-    virtual ~CFEdge();
 
     friend class CFG;
     friend class CFNode;
 public:
+    /** Destructor */
+    virtual ~CFEdge();
+    
     /**
      * Return pointer to graph
      */

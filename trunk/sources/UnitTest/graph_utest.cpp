@@ -15,9 +15,9 @@ using namespace std;
   */
 bool uTestGraphOwn()
 {
-    AGraph graph;
+    AGraph graph( true);
     ANode *dummy = graph.newNode();
-    delete dummy;
+    graph.deleteNode( dummy);
     ANode *pred = graph.newNode();
     ANode *succ = graph.newNode();
     AEdge *edge = graph.newEdge( pred, succ);
@@ -56,9 +56,9 @@ bool uTestNodeEdge()
  */
 bool uTestMarkers()
 {
-    AGraph graph;
+    AGraph graph( true);
     ANode *dummy = graph.newNode();
-    delete dummy;
+    graph.deleteNode( dummy);
     ANode *pred = graph.newNode();
     ANode *succ = graph.newNode();
     AEdge *edge = graph.newEdge( pred, succ);
@@ -106,7 +106,7 @@ bool uTestMarkers()
     {
         ANode *tmp = n;
         n = n->nextNode();
-        delete tmp;
+        graph.deleteNode( tmp);
     }
     return true;
 }
@@ -186,7 +186,7 @@ static bool uTestNumerations()
  */
 bool uTestSave()
 {
-    AGraph graph;
+    AGraph graph( true);
 
     /** 
      *  Check basic operation of graph library
@@ -207,7 +207,7 @@ bool uTestSave()
         }
     }
     graph.newEdge( nodes[ 8], nodes[ 4]);
-    delete nodes[ 8];
+    graph.deleteNode( nodes[ 8]);
     graph.debugPrint();
     graph.writeToXML( QString ( "test.xml"));
     return true;
@@ -218,7 +218,7 @@ bool uTestSave()
  */
 bool uTestLoad()
 {
-    AGraph graph;
+    AGraph graph( true);
     graph.readFromXML( QString( "test.xml"));
     graph.debugPrint();
     return true;

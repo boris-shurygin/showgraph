@@ -162,13 +162,11 @@ uTestPools()
  */
 bool uTestMem()
 {
-    MemMgr::init();
     /** Test smart pointers */
     if ( !uTestRef())
         return false;
     /** Test memory pools */
     if ( !uTestPools())
         return false;
-    MemMgr::deinit();
     return true;
 }

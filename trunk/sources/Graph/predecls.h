@@ -24,6 +24,7 @@ using namespace std;
  * namespaces import
  */
 using namespace Utils;
+using namespace Mem;
 
 /**
  * Directions type in graph

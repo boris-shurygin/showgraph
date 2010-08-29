@@ -10,9 +10,14 @@
 #include "ir_impl.h"
 
 /** Constructor */
-CFG::CFG( GraphView *v): GGraph( v)
+CFG::CFG( GraphView *v, bool create_pools): GGraph( v, false)
 {
-
+    /** Pools' creation routine */
+    if ( create_pools)
+    {
+        node_pool = new FixedPool< CFNode>();
+        edge_pool = new FixedPool< CFEdge>();
+    }
 }
 
 /** Destructor */

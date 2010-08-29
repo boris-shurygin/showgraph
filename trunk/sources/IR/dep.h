@@ -36,12 +36,14 @@ class Dep: public GEdge
 protected:    
     /** Default constructor */
     Dep( IR *graph_p, int _id, Expr *_pred, Expr* _succ);
-    /** Destructor */
-    virtual ~Dep();
+
 
     friend class IR;
     friend class Expr;
 public:
+    /** Destructor */
+    virtual ~Dep();
+
     /**
      * Return pointer to graph
      */

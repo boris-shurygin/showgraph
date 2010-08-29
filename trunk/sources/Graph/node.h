@@ -16,7 +16,7 @@
  * A graph node has two lists of edges which represent predecessors and successors.
  * It is also a member of node list in graph.
  */
-class Node: public Marked, public Numbered
+class Node: public Marked, public Numbered, public PoolObj
 {
 public:
     /** Node list item type */

@@ -20,21 +20,21 @@ class IR: public GGraph
     CFG *cf_graph;
 protected:
     /** Node creation reimplementaiton */
-    virtual Node * CreateNode( int _id)
+    virtual Node * createNode( int _id)
     {
-        Expr* node_p = new Expr( this, _id);
+        Expr* node_p = new ( node_pool) Expr( this, _id);
         return node_p;
     }
     /** Edge creation reimplementation */
-    virtual Edge * CreateEdge( int _id, GNode *_pred, GNode* _succ)
+    virtual Edge * createEdge( int _id, GNode *_pred, GNode* _succ)
     {
-        return new Dep(  this, _id,
-                         static_cast<Expr *>( _pred), 
-                         static_cast<Expr *>( _succ));
+        return new ( edge_pool) Dep(  this, _id,
+                                      static_cast<Expr *>( _pred), 
+                                      static_cast<Expr *>( _succ));
     }
 public:
     /** Constructor */
-    IR( GraphView *v);
+    IR( GraphView *v, bool create_pools);
     /** Destructor */
     ~IR();
     /** New graphical node */

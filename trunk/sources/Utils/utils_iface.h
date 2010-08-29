@@ -19,7 +19,7 @@
 #include "print.h"
 #include "list.h"
 #include "singleton.h"
-//#include "mem.h"
+#include "mem.h"
 #include "conf.h"
 
 

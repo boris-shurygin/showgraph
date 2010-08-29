@@ -11,16 +11,20 @@
 /**
  * Constructor.
  */
-Graph::Graph()
+Graph::Graph( bool create_pools):
+    node_next_id( 0),
+    edge_next_id( 0),
+    node_num( 0),
+    edge_num( 0),
+    first_node( NULL),
+    first_edge( NULL),
+    node_pool( NULL),
+    edge_pool( NULL)
 {
-    node_next_id = 0;
-    edge_next_id = 0;
-    node_num = 0;
-    edge_num = 0;
-    first_node = NULL;
-    first_edge = NULL;
     QDomElement root = createElement("graph");
     appendChild( root);
+    if ( create_pools)
+        createPools();
 }
 
 /**
@@ -33,9 +37,25 @@ Graph::~Graph()
           )
     {
         Node* next = node->nextNode();
-        delete node;
+        deleteNode( node);
         node = next;
     }
+    destroyPools();
+}
+
+/** Pools' creation routine */
+void Graph::createPools()
+{
+    node_pool = new FixedPool< Node>();
+    edge_pool = new FixedPool< Edge>();
+}
+
+/** Pools' destruction routine */
+void Graph::destroyPools()
+{
+    delete (void *)NULL;//For test
+    delete node_pool;
+    delete edge_pool;
 }
 
 /**
@@ -98,16 +118,17 @@ Graph::readFromXML( QString filename)
 
 /** Node/Edge creation routines can be overloaded by derived class */
 Node * 
-Graph::CreateNode( int _id)
+Graph::createNode( int _id)
 {
-    return new Node ( this, _id);
+    return new ( node_pool) Node ( this, _id);
 }
 
 Edge * 
-Graph::CreateEdge( int _id, Node *_pred, Node* _succ)
+Graph::createEdge( int _id, Node *_pred, Node* _succ)
 {
-    return new Edge( this, _id, _pred, _succ);
+    return new ( edge_pool) Edge( this, _id, _pred, _succ);
 }
+
 /**
  * Creation node in graph implementation
  */
@@ -120,7 +141,7 @@ Graph::newNodeImpl( GraphUid id)
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
     
     /** Create node */
-    Node *node_p = CreateNode( id);
+    Node *node_p = this->createNode( id);
     NodeListIt* it = node_p->GetGraphIt();
     
     /** Add node to graph's list of nodes */
@@ -177,7 +198,7 @@ Graph::newEdgeImpl( Node * pred, Node * succ)
      * Check that we have available edge id 
      */
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
-    Edge *edge_p = CreateEdge( edge_next_id++, pred, succ);
+    Edge *edge_p = this->createEdge( edge_next_id++, pred, succ);
     EdgeListIt* it = edge_p->GetGraphIt();
     if ( isNotNullP( first_edge))
     {

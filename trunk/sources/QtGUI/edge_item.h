@@ -25,8 +25,7 @@ class GEdge: public AuxEdge
 protected:
     /** Default constructor */
     GEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ);
-    /** Destructor */
-    virtual ~GEdge();
+
 
     friend class GGraph;
     friend class Node;
@@ -35,6 +34,9 @@ public:
      * Return pointer to graph
      */
     GGraph *graph() const;
+
+    /** Destructor */
+    virtual ~GEdge();
 
     /**
      * Return associated graphics item
