@@ -516,6 +516,8 @@ GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
         if ( isEditable() && !scene()->itemAt( mapToScene( ev->pos())))
         {
             GNode* node = graph()->newNode();
+            QString text = QString("Node %1").arg( node->id());
+            node->item()->setPlainText( text);
             node->item()->setPos( mapToScene( p));
         }
     } else if( isEditable() 

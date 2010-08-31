@@ -33,6 +33,7 @@ namespace MemImpl
                            MListItem< CHUNK_LISTS_NUM>, // base class: pure multi-list item
                            CHUNK_LISTS_NUM > // Lists number
     {
+        void *dummy_ptr; //for alignment
         /** position of first free entry */
         ChunkPos free_entry;
         /** busy entries num */

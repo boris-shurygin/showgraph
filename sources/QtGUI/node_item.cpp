@@ -194,8 +194,6 @@ bool GNode::isNodeInFocus() const
 void 
 NodeItem::SetInitFlags()
 {
-    QString text = QString("Node %1").arg( node()->id());
-    setPlainText( text);
     setFlag( ItemIsMovable);
     setFlag( ItemIsFocusable, false);
     setCacheMode( DeviceCoordinateCache);
