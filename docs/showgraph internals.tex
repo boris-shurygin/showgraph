@@ -21,7 +21,22 @@ This document describes internal infrastructure of ShowGraph tool. ShowGraph is 
 \end{abstract}
 \tableofcontents
 \section{Overview}
-Showgraph architecture\ldots
+This section gives a brief overview of its internal structure. All the mentioned components have more detailed description in the \emph{``Key Components''} section.
+
+As its name suggests the ShowGraph program is a tool for graph visualization. It is capable of showing a graph in interactive window and allows user to edit it, save it and load it. Additionally ShowGraph has parsers for ICC's and GCC's prints of intermediate representation to extract control flow graph from them. There are two versions of ShowGraph: interactive GUI version and command-line version for rendering graph from XML representation.
+
+The components that interact with the user directly are GUI, command line parser and compiler IR parser which is called ``frontend'' in ShowGraph project. GUI of course is the most exposed to the user component. All graphical parts of ShowGraph are implemented inside it. It deals with things like windows, menus, buttons, toolbars and of course graphical representation of graph (call it graph view). GUI features are based on Qt library and graph view employs Qt's GraphicsView framework. Nodes and Edges are implemented as subclasses of QGraphicsItem class.
+
+Of course QGraphicsView does not know anything about graph as a data structure and would not perform 2D graph layout for us. This functionality is implemented in \emph{layout} component which places nodes and routes edges to obtain a layout for graph.
+
+The graph representation itself is implemented in \emph{graph} component. It deals with the graph that has set of nodes and edges, the node that has lists of predecessors and successors edges and the edge that has predecessor and successor nodes. The graph is based on low level tools such as lists and memory pools.
+
+Memory pools are part of memory management framework. The only used type of memory pool at the moment is the fixed pool. This type of pool allows for fast allocation and deallocation of memory but works with entries of the same size. To create entries of different sizes one has to create specialized pool for each size.
+
+There are some very low-level tools like lists, assertion macros and a singleton template that are use by other components. Lists are a family of classes that implement doubly-liked lists with usual prev/next pointers. 
+
+Implementation language of ShowGraph is C++. External dependencies are Qt 4.5 library and Microsoft's runtime library for C++. ShowGraph is in active development process and changing rapidly. Things described in this document may change soon, but I'll try to keep the document consistent with the current state of ShowGraph sources.
+
 \section{Key Components}
 This section describes interfaces and key implementation aspects of ShowGraph's key components. Components are described in order of increasing complexity: from basic ones to the ones built above them.
 \subsection{Intrusive data structures}
