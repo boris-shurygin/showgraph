@@ -66,9 +66,17 @@ Edge::updateElement()
 /**
  * read properties from DOM tree element
  */
-
 void
 Edge::readFromElement( QDomElement e)
 {
     element = e;
+}
+
+/** Node checking routine */
+bool Edge::checkNodes( Node* _pred, Node* _succ)
+{
+    return isNotNullP( _pred)
+           && isNotNullP( _succ)
+           && areEqP( this->graph(), _pred->graph())
+           && areEqP( _pred->graph(), _succ->graph());
 }

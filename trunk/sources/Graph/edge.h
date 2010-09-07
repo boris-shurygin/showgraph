@@ -35,6 +35,9 @@ private:
     Node *nodes[ GRAPH_DIRS_NUM]; //Adjacent nodes
     EdgeListIt n_it[ GRAPH_DIRS_NUM];//Position in each node's list
 
+    /** Node checking routine */
+    bool checkNodes( Node* _pred, Node* _succ);
+        
 protected:
     /** Graph should have access to Edge's members */
     friend class Graph;
@@ -44,6 +47,8 @@ protected:
     /** Constructors are made private, only nodes and graph can create edges */
     Edge( Graph *_graph_p, GraphUid _id, Node *_pred, Node* _succ): uid(_id), graph_p(_graph_p), graph_it()
     {
+        GRAPH_ASSERTD( checkNodes( _pred, _succ),
+                       "Predecessor and sucessor used in edge construction belong to different graphs");
         graph_it.setData( (Edge*) this);
         n_it[ GRAPH_DIR_UP] = EdgeListIt();
         n_it[ GRAPH_DIR_DOWN] = EdgeListIt();
