@@ -187,9 +187,9 @@ bool GNode::isNodeInFocus() const
     return areEqP( this, graph()->nodeInFocus());
 }
 
-/**
- * NodeItem implementation
- */
+/*********************** NodeItem implementation ***************************************/
+
+
 /** Initialization */
 void 
 NodeItem::SetInitFlags()
@@ -199,6 +199,12 @@ NodeItem::SetInitFlags()
     setCacheMode( DeviceCoordinateCache);
     setZValue(2);
     QGraphicsItem::setCursor( Qt::ArrowCursor);
+    /**
+     * Sets text to create text control. 
+     * FIXME: Should find a way to prevent this for edgeControl nodes, since text
+     *        contol is not needed for them and this procedure is quite expensive
+     */
+    setPlainText( "");
 }
 
 /**
@@ -338,7 +344,7 @@ void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
         node()->firstSucc()->item()->setSelected( true);
     }
     QGraphicsTextItem::mousePressEvent(event);
-	update();
+    update();
 }
 
 /**

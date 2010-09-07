@@ -346,6 +346,31 @@ Smart pointers are in the process of design now. They are not used in project at
 There are still numerous open questions to be considered in smart pointers implementation. Should they be intrusive/external? Do they need to interact with pool's functionality? Should we allow conversion of smart pointer to plain pointer? How do we support conversions between smart pointers?
 
 \subsection{Graph Representation}
+Graph representation in ShowGraph has different aspects. Of course there are classes Graph, Edge and Node, but graph representation have some more features: it has built-in support for markers and numbering of nodes and edges. It can be also dumped to an XML file and read from it.
+
+\subsubsection{Graph, Edges and Nodes}
+Graph class represents graph as a set of nodes and edges. Graph has lists of nodes and edges which can be traversed by getting graph's first node or edge and using methods \lstinline{nextNode( node)} and \lstinline{nextEdge( edge)}. 
+
+Graph has memory pools for nodes and edges. Operators \lstinline{new} and \lstinline{delete} are can't be applied to nodes and edges (constructors are also private).  They can be created by newNode and newEdge methods of graph. To destroy node or edge object one should use deleteNode/deleteEdge methods of graph. Using graph's methods instead of direct calls of \lstinline{new} and \lstinline{delete} is not only dictated by graph's pool system but also supports memory ownership concept: nodes' and edges' memory is owned by the graph.
+
+As one would normally expect a node has pointers to adjacent edges. These pointers are divided in two groups: predecessors and successors. At the moment Showgraph supports directed graphs only. A node also has a unique ID that is used for storing graph in XML form and for debug purposes. This id is unique for all nodes of a graph, not only the once that are living at particular point in execution but for deleted nodes also, i.e. ID is never reused. A node has pointer to the graph so it can't belong to more than one graph. Since node is a list item in graph's node list one can traverse the list with nextNode method. Adjacent edges' lists can be obtained by firstPred() and firstSucc() methods.
+
+An edge has a predecessor and successor (let's call them ``pred'' and ``succ'' for short). Note that if some edge $e$ has successor node $n$ this edge would be predecessor of $n$ and vice versa. Like a node an edge has its unique id and pointer to graph (which is redundant since pred and succ of node are valid pointers to nodes by design and graph can be obtained from any of them).
+
+\subsubsection{Markers and Numerations}
+Every node and edge can be marked and numbered. To do this one can acquire a marker or numeration from graph. When a marker is created there are no nodes/edges in graph marked with it. Same for a fresh numeration there are no node numbered with it. Number of simultaneously alive markers/numerations is limited so they should be freed after use.
+
+Interfaces for markers and numerations are quite similar so let's see one of them: interface for using numeration. Numeration can be obtained from `NumManager' ( graph is a subclass of it) by method \lstinline{newNum}. One use it with the subclasses of `Numbered' class to number the objects (nodes/edges or some others). Routines for this are \lstinline{isNumbered}, \lstinline{number}, \lstinline{setNumber}, \lstinline{unNumber} and \lstinline{clear}. The latter both set the number to \emph{`unknown'} value but \lstinline{unNumber} says if an object was numbered in given numeration.
+
+On low level numerations and markers are implemented as a pair: index and value. This is done to minimize cleaning frequency. Let's see how it works.
+
+Markers can be implemented as a simple index to an array of booleans which store information about object being marked or not. In this case we would have to clean all objects once we are done with marker or leave it to the client classes. The first would be quite expensive: it could add another $N$ multiplier to complexity of algorithms that use markers. The second one is what we tried to avoid: forcing client classes to implement a bunch of copy paste code that would manage the markers and objects marked with them.
+
+Instead of doing this we use an \emph{index} and a \emph{value}. To check if an object is marked we see if in markers array a proper position has corresponding value. A new value is created each time we create a marker and index is selected among free positions (that's why we have limited number of markers at any given execution point). We create new value by incrementing the last created value. We wipe out dead makers after we have reached the maximum of value variable capacity and start giving values from the beginning. Numerations are implemented in the same manner.
+
+
+\subsubsection{XML representation}
+\subsubsection{Subclassing Graph}
 
 
 \subsection{Automatic Graph Layout}
