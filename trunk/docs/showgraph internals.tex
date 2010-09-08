@@ -358,7 +358,7 @@ As one would normally expect a node has pointers to adjacent edges. These pointe
 An edge has a predecessor and successor (let's call them ``pred'' and ``succ'' for short). Note that if some edge $e$ has successor node $n$ this edge would be predecessor of $n$ and vice versa. Like a node an edge has its unique id and pointer to graph (which is redundant since pred and succ of node are valid pointers to nodes by design and graph can be obtained from any of them).
 
 \subsubsection{Markers and Numerations}
-Every node and edge can be marked and numbered. To do this one can acquire a marker or numeration from graph. When a marker is created there are no nodes/edges in graph marked with it. Same for a fresh numeration there are no node numbered with it. Number of simultaneously alive markers/numerations is limited so they should be freed after use.
+Every node and edge can be marked and numbered. To do this one can acquire a marker or numeration from graph. When a marker is created there are no nodes/edges in graph marked with it. This is also true for a fresh numeration. If you create new numeration there are no nodes numbered with it. Number of simultaneously alive markers/numerations is limited so they should be freed after use.
 
 Interfaces for markers and numerations are quite similar so let's see one of them: interface for using numeration. Numeration can be obtained from `NumManager' ( graph is a subclass of it) by method \lstinline{newNum}. One use it with the subclasses of `Numbered' class to number the objects (nodes/edges or some others). Routines for this are \lstinline{isNumbered}, \lstinline{number}, \lstinline{setNumber}, \lstinline{unNumber} and \lstinline{clear}. The latter both set the number to \emph{`unknown'} value but \lstinline{unNumber} says if an object was numbered in given numeration.
 
@@ -368,10 +368,31 @@ Markers can be implemented as a simple index to an array of booleans which store
 
 Instead of doing this we use an \emph{index} and a \emph{value}. To check if an object is marked we see if in markers array a proper position has corresponding value. A new value is created each time we create a marker and index is selected among free positions (that's why we have limited number of markers at any given execution point). We create new value by incrementing the last created value. We wipe out dead makers after we have reached the maximum of value variable capacity and start giving values from the beginning. Numerations are implemented in the same manner.
 
-
 \subsubsection{XML representation}
-\subsubsection{Subclassing Graph}
+Graph can be stored in an XML file. The format is quite straightforward and I believe that the following example would be sufficient. This is what graph's XML representation looks like:
+\begin{lstlisting}
+<graph>
+    <node x="-4" y="-203" id="0" label="Node 0" />
+    <node x="-64" y="-103" id="1" label="Node 1" />
+    <node x="50" y="-103" id="2" label="Node 2" />
+    <edge target="1" source="0" />
+    <edge target="2" source="0" />
+</graph>
+\end{lstlisting}
+Note that edge properties `target' and `source' address nodes in terms of node's `id'.
 
+\subsubsection{Subclassing Graph}
+A set of classes that behave like a ShowGraph's graph should consist of at least three classes: a representation for graph as a whole, a class for node-like objects and a class for edge-like objects. Lets call them `MyGraph', `MyNode' and `MyEdge'. These class should be derived from Graph, Node and Edge classes accordingly. Unfortunately there are more things to do before this subclasses operate as a graph. Here is the list:
+\begin{itemize}
+\item Predeclare MyGraph, MyNode and MyEdge
+\item Make them inherent classes of Graph, Node and Edge using \emph{public} keyword
+\item Declare MyGraph as a frined of MyNode and MyEdge. Declare MyNode friend of MyEdge
+\item Write code for creating pools of proper size. A good place to put this is MyGraph's contructor. Graph's constructor has a boolean parameter that tells it whether it should create pools. When calling it from subclass you should call Graph's constructor with \emph{`false'}. It would be reasonable make the constructor with the boolean parameter to allow next level subclasses to prevent pools creation.
+\item Implement functions createNode and createEdge so that they call operator new for MyNode and MyEdge.
+\item Implement functions that should operate in terms of MyGraph, MyNode and MyEdge by writing static casts of result of corresponding base class functions.
+\end{itemize}
+
+The last step looks awfully awkward. A more elegant solution is found already, I'm considering using templates for this. All these steps are done in `Graph/agraph.h' which provides a fairly small and understandable  example.
 
 \subsection{Automatic Graph Layout}
 
