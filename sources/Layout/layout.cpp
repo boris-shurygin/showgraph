@@ -297,7 +297,7 @@ AuxGraph::findEnterNodes()
                  && pred_node->isMarked( visited))
             {
                 //Backedge in reverse traversal terms. Consider edge's predecessor as enter node
-                stack.push( new DfsStepInfo( pred_node));
+                stack.push( new DfsStepInfo( edge->succ()));
             }
             if ( pred_node->mark( visited))
                  rev_trav.push( new DfsStepInfo( pred_node, GRAPH_DIR_UP));
@@ -347,7 +347,7 @@ void AuxGraph::classifyEdges()
     Marker doneMarker = newMarker(); // Marker for nodes that are finished
     AuxEdge* e;
 
-    foreachEdge( e, this)
+    foreachEdge ( e, this)
     {
         e->setUnknown();   
     }
@@ -355,8 +355,13 @@ void AuxGraph::classifyEdges()
 	/* Fill the traverse stack with enter nodes */
 	QStack< DfsStepInfo *> stack = findEnterNodes();
     
+    foreach ( DfsStepInfo *info, stack)
+    {
+        info->node->mark( m);
+    }
+
     /* Walk graph with marker and perform classification */
-    while( !stack.isEmpty())
+    while ( !stack.isEmpty())
     {
         DfsStepInfo *info = stack.top();
         AuxNode *node = info->node;
