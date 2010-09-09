@@ -21,7 +21,7 @@ This document describes internal infrastructure of ShowGraph tool. ShowGraph is 
 \end{abstract}
 \tableofcontents
 \section{Overview}
-This section gives a brief overview of its internal structure. All the mentioned components have more detailed description in the \emph{``Key Components''} section.
+This section gives a brief overview of ShowGraph's internal structure. All the mentioned components have more detailed description in the \emph{``Key Components''} section.
 
 As its name suggests the ShowGraph program is a tool for graph visualization. It is capable of showing a graph in interactive window and allows user to edit it, save it and load it. Additionally ShowGraph has parsers for ICC's and GCC's prints of intermediate representation to extract control flow graph from them. There are two versions of ShowGraph: interactive GUI version and command-line version for rendering graph from XML representation.
 
@@ -379,7 +379,9 @@ Graph can be stored in an XML file. The format is quite straightforward and I be
     <edge target="2" source="0" />
 </graph>
 \end{lstlisting}
-Note that edge properties `target' and `source' address nodes in terms of node's `id'.
+There are obviously two main tags: node and edge. Edge properties `target' and `source' mean `id' of successor and predecessor nodes. Node label is not a basic property of graph it is additional data of GNode (which is a node of visualized graph). Node's `x' and `y' are also properties of GNode.
+
+Each level in graph inheritance hierarchy has its own additional properties for node and edge. Some of them can be stored in XML. At each level graph can be stored and read from XML. It won't cause an error if XML is stored by one graph. For example a visualized graph saved to XML can be read by basic graph which will ignore fields it does not recognize.
 
 \subsubsection{Subclassing Graph}
 A set of classes that behave like a ShowGraph's graph should consist of at least three classes: a representation for graph as a whole, a class for node-like objects and a class for edge-like objects. Lets call them `MyGraph', `MyNode' and `MyEdge'. These class should be derived from Graph, Node and Edge classes accordingly. Unfortunately there are more things to do before this subclasses operate as a graph. Here is the list:
@@ -389,12 +391,44 @@ A set of classes that behave like a ShowGraph's graph should consist of at least
 \item Declare MyGraph as a frined of MyNode and MyEdge. Declare MyNode friend of MyEdge
 \item Write code for creating pools of proper size. A good place to put this is MyGraph's contructor. Graph's constructor has a boolean parameter that tells it whether it should create pools. When calling it from subclass you should call Graph's constructor with \emph{`false'}. It would be reasonable make the constructor with the boolean parameter to allow next level subclasses to prevent pools creation.
 \item Implement functions createNode and createEdge so that they call operator new for MyNode and MyEdge.
+\item Implement writing (and reading) of MyNode's and MyEdge's additional data to XML file.
 \item Implement functions that should operate in terms of MyGraph, MyNode and MyEdge by writing static casts of result of corresponding base class functions.
 \end{itemize}
 
 The last step looks awfully awkward. A more elegant solution is found already, I'm considering using templates for this. All these steps are done in `Graph/agraph.h' which provides a fairly small and understandable  example.
 
 \subsection{Automatic Graph Layout}
+ShowGraph performs automated layout of directed graph on a plane. Layout is done via Sugiyama-like algorithm. Nodes are placed from top to bottom. Algorithm assumes that graph has a `common direction' and tries to place nodes in such a way that for most of the edges the successor is lower than the predecessor. It is implemented as a multi-step routine. The steps are:
+\begin{enumerate}
+\item Make list of graph's enter nodes
+\item Make graph acyclic by inverting some edges. This is done by inverting graph's backedges.
+\item Rank nodes, to find level of every node and insert pseudo nodes on edges that span across multiple levels. This gives us vertical position of every node.
+\item Compute horizontal coordinate, wich uses barycenter heuristic to position a node close to the nodes connected with it on other levels
+\end{enumerate}
+Each of these steps make heuristic decisions that need tuning and require improvement. The implemented version of far from a mature layout algorithm like Graphviz's \emph{dot} (http://www.graphviz.org) or aiSee (http://aisee.de). In fact the implemented version of ShowGraph's layout method is strongly influenced by paper \emph{`A method for drawing directed graphs'} describing dot's algorithm.
+
+\subsubsection{Finding Enters}
+One of algorithm's heuristic says that nodes that do not have predecessors should be placed on topmost level in layout. This rule generally supports idea of drawing edges in downward direction. Levels of the other nodes are computed relatively to these \emph{`enter nodes'}. All nodes that are reachable from these enters can be assigned to a level basing on the distance from enter. We keep track of reachable nodes by marking them. When we find an enter node we mark all nodes that we can reach from it. In the end we should mark all the nodes in graph. The problem is that sometimes there are no nodes without predecessors or some subgraph is unreachable from the enter nodes (e.g. a loop that does not have edges going to it). In this case we can't compute levels for some nodes and have to make a heuristic decision selecting nodes that would be placed at the top.
+
+One of the simple solutions would be to break unreachable loops by selecting random unreachable node and enrolling it into enter list. This solution can result in the placement of two connected nodes on the same level. Though we could cope with that later, it would complicate edge routing which can be a very simple procedure if we do not have to draw edges around nodes on the same level. Another effect of this is that selecting random nodes for the top we do not really support the top-down fashion of graph placement. This means that we would have to draw a lot of edges in upward direction.
+
+If we look deeper into the problem of unreachable loops, we can see that there is a useful property of these loops. They do not have entering edges but they can have exiting edges. So there are loops that have outgoing edges and there are loops without them. 
+
+An exit edge of the loop gives us an opportunity for better placement of nodes that became unreachable due to being successors of an unreachable loop. To do this we go upwards from nodes without successors and look for a backedges (in terms of upward traversal) of such loops and simply add its successors to enter list. This 'pseudo enter' node makes a good enter point since a loop body and loop's successors are reachable from it. These nodes then can be placed in natural top-down direction and the edge that was backedge in upward traversal will be drawn from bottom to top.
+
+Now that we done upward traversal we have to deal with loops that do not have any enters/exits. Here our algorithm gives up and simply adds random node of such loop to enter list. Breaking infinite loop this way does not guarantee that all previously unreachable nodes will become reachable. So we add nodes reachable from our new enter and select next random node from nodes that are still unreachable. We repeat this until all nodes in graph are marked.
+
+This method gives us such a list of enter nodes that every node is reachable from at list one enter node.
+
+\subsubsection{Making Graph Acyclic}
+Given the list of enter nodes we perform DFS to classify edges. Then we invert backedges and voil\'a graph becomes acyclic.
+
+\subsubsection{Ranking}
+A rank of a node is its max distance from the enter nodes. It is an integral non-negative value. We start from enter nodes and assign ranks in downward pass. Every node is visited when its predecessors have been visited. The algorithm also takes in account inverted edges.
+
+Nodes of the same rank form level. Each level has a height property which is the maximum height among its nodes. Levels are positioned vertically in order from 0 to the maximum node rank. Zero level is the topmost. Level's vertical position determines its nodes' vertical position. All nodes of a level are vertically adjusted to make their center's aligned.
+
+\subsubsection{Horizontal Placement}
 
 
 \subsection{Frontend}
