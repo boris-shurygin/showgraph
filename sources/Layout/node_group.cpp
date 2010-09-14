@@ -13,6 +13,10 @@
 bool compareBc( AuxNode* node1,
                 AuxNode* node2)
 {
+    if ( qFuzzyCompare( node1->bc(), node2->bc()))
+    {
+        return node1->order() < node2->order();
+    }
     return ( node1->bc() < node2->bc());
 }
 

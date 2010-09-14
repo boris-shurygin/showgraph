@@ -47,6 +47,10 @@ typedef unsigned int Rank;
 /** Rank undefined value constant */
 const Rank RANK_UNDEF = (Rank) (-1);
 
+#if !defined(LAYOUT_ASSERTD)
+#    define LAYOUT_ASSERTD(cond, what) ASSERT_XD(cond, "Layout", what)
+#endif
+
 #include "../Graph/graph_iface.h"
 #include "aux_node.h"
 #include "aux_edge.h"

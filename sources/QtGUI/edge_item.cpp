@@ -10,7 +10,7 @@
 #include <QVector>
 
 //#define SHOW_CONTROL_POINTS
-//#define SHOW_BACKEDGES
+#define SHOW_BACKEDGES
 
 GEdge::GEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ):
     AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ)
@@ -375,7 +375,7 @@ EdgeItem::paint( QPainter *painter,
         if ( option->state & QStyle::State_Selected)
         {
 #ifdef SHOW_BACKEDGES
-            if ( isInverted())
+            if ( edge()->isInverted())
             {
                 painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             } else
@@ -387,7 +387,7 @@ EdgeItem::paint( QPainter *painter,
         } else
         {
 #ifdef SHOW_BACKEDGES
-            if ( isInverted())
+            if ( edge()->isInverted())
             {
                 painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             } else

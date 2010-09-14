@@ -166,7 +166,8 @@ void MainWindow::showNodeText( GNode *node)
 			cf_node->setTextShown();
 			cf_node->item()->setTextDock( dock);
 			textDocks.push_back( dock);
-            cf_node->graph()->parser()->highlightText( text_view->document());
+            if ( isNotNullP( cf_node->graph()->parser()))
+                cf_node->graph()->parser()->highlightText( text_view->document());
             //text_view->highlightText();
 			connect( text_view, SIGNAL( anchorClicked( const QUrl &)), this, SLOT( textClicked(const QUrl &)));
 		} else

@@ -421,12 +421,12 @@ Now that we done upward traversal we have to deal with loops that do not have an
 This method gives us such a list of enter nodes that every node is reachable from at list one enter node.
 
 \subsubsection{Making Graph Acyclic}
-Given the list of enter nodes we perform DFS to classify edges. Then we invert backedges and voil\'a graph becomes acyclic.
+Given the list of enter nodes we perform DFS to classify edges. Then we invert backedges and voil\'a, graph becomes acyclic.
 
 \subsubsection{Ranking}
 A rank of a node is its max distance from the enter nodes. It is an integral non-negative value. We start from enter nodes and assign ranks in downward pass. Every node is visited when its predecessors have been visited. The algorithm also takes in account inverted edges.
 
-Nodes of the same rank form level. Each level has a height property which is the maximum height among its nodes. Levels are positioned vertically in order from 0 to the maximum node rank. Zero level is the topmost. Level's vertical position determines its nodes' vertical position. All nodes of a level are vertically adjusted to make their center's aligned.
+Nodes of the same rank form level. Each level has a height property which is the maximum height among its nodes. Levels are positioned vertically in order from 0 to the maximum node rank. Zero level is the topmost. Level's vertical position determines its nodes' vertical position. All nodes of a level are vertically adjusted to make their centers aligned.
 
 \subsubsection{Horizontal Placement}
 

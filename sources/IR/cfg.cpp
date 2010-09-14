@@ -18,6 +18,7 @@ CFG::CFG( GraphView *v, bool create_pools): GGraph( v, false)
         node_pool = new FixedPool< CFNode>();
         edge_pool = new FixedPool< CFEdge>();
     }
+    _parser = NULL;
 }
 
 /** Destructor */
