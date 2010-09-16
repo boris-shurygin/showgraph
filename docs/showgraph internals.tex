@@ -25,11 +25,11 @@ This section gives a brief overview of ShowGraph's internal structure. All the m
 
 As its name suggests the ShowGraph program is a tool for graph visualization. It is capable of showing a graph in interactive window and allows user to edit it, save it and load it. Additionally ShowGraph has parsers for ICC's and GCC's prints of intermediate representation to extract control flow graph from them. There are two versions of ShowGraph: interactive GUI version and command-line version for rendering graph from XML representation.
 
-The components that interact with the user directly are GUI, command line parser and compiler IR parser which is called ``frontend'' in ShowGraph project. GUI of course is the most exposed to the user component. All graphical parts of ShowGraph are implemented inside it. It deals with things like windows, menus, buttons, toolbars and of course graphical representation of graph (call it graph view). GUI features are based on Qt library and graph view employs Qt's GraphicsView framework. Nodes and Edges are implemented as subclasses of QGraphicsItem class.
+The components that interact with the user directly are GUI, command line parser and compiler IR parser which is called ``frontend'' in ShowGraph project. GUI of course is the most exposed to the user component. All graphical parts of ShowGraph are implemented inside it. It deals with things like windows, menus, buttons, toolbars and of course graphical representation of graph (call it graph view). GUI features are based on Qt library and graph view employs Qt's `Graphics View' framework. Nodes and Edges are implemented as subclasses of QGraphicsItem class.
 
 Of course QGraphicsView does not know anything about graph as a data structure and would not perform 2D graph layout for us. This functionality is implemented in \emph{layout} component which places nodes and routes edges to obtain a layout for graph.
 
-The graph representation itself is implemented in \emph{graph} component. It deals with the graph that has set of nodes and edges, the node that has lists of predecessors and successors edges and the edge that has predecessor and successor nodes. The graph is based on low level tools such as lists and memory pools.
+The graph representation itself is implemented in \emph{graph} component. It deals with the graph as a set of nodes and edges. A node has the lists of the predecessor and successor edges and an edge has the predecessor and successor nodes. The graph is based on low level tools such as lists and memory pools.
 
 Memory pools are part of memory management framework. The only used type of memory pool at the moment is the fixed pool. This type of pool allows for fast allocation and deallocation of memory but works with entries of the same size. To create entries of different sizes one has to create specialized pool for each size.
 
@@ -428,8 +428,110 @@ A rank of a node is its max distance from the enter nodes. It is an integral non
 
 Nodes of the same rank form level. Each level has a height property which is the maximum height among its nodes. Levels are positioned vertically in order from 0 to the maximum node rank. Zero level is the topmost. Level's vertical position determines its nodes' vertical position. All nodes of a level are vertically adjusted to make their centers aligned.
 
-\subsubsection{Horizontal Placement}
+For further steps edges should connect nodes that are from neighbor levels. To enforce this we insert pseudo nodes on each edge that spans across multiple levels. These pseudo nodes are used as the bending points for the long edges.
 
+\subsubsection{Horizontal Placement}
+Horizontal placement has several passes. They can be upward and downward. Depending on pass direction algorithm processes levels one by one in order of decreasing or increasing rank. First the nodes within a level form a list that is sorted according to an ordering heuristic. By now this list is sorted according to barycenter heuristic. Then nodes in the list are given coordinates. They are simply assigned coordinate that will put center of the node according right in barycenter position. The problem is that nodes can be placed too close to each other and start intersecting. Let's see an example:\\
+\begin{tikzpicture}
+%Example of grouping	part1 
+	[
+	 	 %Styles
+       inner sep=3mm,       
+       placed_node/.style={rectangle,draw=black!50,fill=black!10,thick},
+		 pending_node/.style={rectangle,draw=black!20},
+		 pending_node_a/.style={rectangle,draw=black!40,dashed,very thick},
+	    group_node/.style={inner sep=0.5mm, rectangle,draw=black!40,dashed},
+		 label_simple/.style={rectangle}
+    ]
+
+    %Node placement
+    \matrix[row sep=5mm,column sep=2mm] {
+	    %Level 1
+	    \node (level1)[label_simple] {Level 1}; &
+       \path (0,0) ++(2,0) node (node1) [placed_node] {Node1}
+	    ++(3,0) node (node2) [placed_node] {Node2}; \\
+       %Level 2
+	    \node (level2)[label_simple] {Level 2}; &
+       \path (0,0) ++(2,0) node (node3) [pending_node] {Node3}
+       ++(1.5,0) node (node4) [pending_node_a] {Node4}
+       ++(1.5,0) node (node5) [pending_node] {Node5};\\
+   };
+
+   %Edges
+   \path
+       (node1) edge [->] (node3)
+       (node1) edge [->] (node4)
+       (node2) edge [->] (node5)
+		 (node2) edge [->] (node4);
+\end{tikzpicture}
+
+As you can see node 4 intersects with nodes 3 and 5. To prevent this the horizontal placement algorithm uses grouping. It finds intersecting nodes and groups them. The group is placed as a whole. Its width is the sum of included nodes' widths with separations between nodes. Grouping is started with each node in its own group. Then intersecting groups are merged into new one. This new group is also tested for the intersection and merged with the others if necessary. And so on until there are no intersecting groups.\\
+\begin{tikzpicture}
+%Example of grouping	part2 
+	[
+	 	 %Styles
+       inner sep=3mm,       
+       placed_node/.style={rectangle,draw=black!50,fill=black!10,thick},
+		 pending_node/.style={rectangle,draw=black!20},
+		 group_node/.style={inner sep=1mm, rectangle,draw=black!40,dashed},
+		 label_simple/.style={rectangle}
+    ]
+
+    %Node placement
+    \matrix[row sep=5mm,column sep=2mm] {
+	    %Level 1
+	    \node (level1)[label_simple] {Level 1}; &
+       \path ++(1.1,0) node (node1) [placed_node] {Node1}
+	    ++(3,0) node (node2) [placed_node] {Node2}; \\
+       %Level 2
+	    \node (level2)[label_simple] {Level 2}; &
+       \path node (node3) [pending_node] {Node3}
+       node (node4) [pending_node, right=of node3] {Node4}
+       node (node5) [pending_node, right=of node4] {Node5};
+       \node (group1) [group_node, fit=(node3) (node4)] {};
+		 \node (group2) [group_node, fit=(group1) (node5)] {};\\
+   };
+
+   %Edges
+   \path
+       (node1) edge [->] (node3)
+       (node1) edge [->] (node4)
+       (node2) edge [->] (node5)
+		 (node2) edge [->] (node4);
+\end{tikzpicture}\\
+In this example first nodes 3 and 4 are grouped together. Then their group is merged with group consisting only of node5. Now nodes are placed without intersection.\\
+\begin{tikzpicture}
+%Example of grouping	part3 
+	[
+	 	 %Styles
+       inner sep=3mm,       
+       placed_node/.style={rectangle,draw=black!50,fill=black!10,thick},
+		 pending_node/.style={rectangle,draw=black!20,dashed},
+		 pending_node_a/.style={rectangle,draw=black!40,dashed,very thick},
+	    group_node/.style={inner sep=0.5mm, rectangle,draw=black!40,dashed},
+		 label_simple/.style={rectangle}
+    ]
+
+    %Node placement
+    \matrix[row sep=5mm,column sep=2mm] {
+	    %Level 1
+	    \node (level1)[label_simple] {Level 1}; &
+       \path ++(1.1,0) node (node1) [placed_node] {Node1}
+	    ++(3,0) node (node2) [placed_node] {Node2}; \\
+       %Level 2
+	    \node (level2)[label_simple] {Level 2}; &
+       \path node (node3) [placed_node] {Node3}
+       node (node4) [placed_node, right=of node3] {Node4}
+       node (node5) [placed_node, right=of node4] {Node5};\\
+   };
+
+   %Edges
+   \path
+       (node1) edge [->] (node3)
+       (node1) edge [->] (node4)
+       (node2) edge [->] (node5)
+		 (node2) edge [->] (node4);
+\end{tikzpicture}
 
 \subsection{Frontend}
 
