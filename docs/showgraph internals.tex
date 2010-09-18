@@ -556,7 +556,7 @@ To work with project one needs:
 
 MSVS is of course `a must' at the moment as it is main development tool. There will be a choice once the projects supports gcc, make and others. SVN is needed to get the sources. Follow these steps to build the ShowGraph tools:
 \begin{enumerate}
-\item Install and build Qt http://qt.nokia.com/
+\item Install and build Qt (see http://qt.nokia.com/)
 \item Checkout sources from http://showgraph.googlecode.com/svn/trunk/
 \item Add Qt directories `bin', `lib', and some `include' directories to VC++ directories in MS VS options
 \item Run `Build Solution' in Visual Studio
@@ -566,7 +566,7 @@ MSVS is of course `a must' at the moment as it is main development tool. There w
 Due to lack of resources the testing process in not clearly defined. Up to this moment all testing was done by hand of developer without any standard procedure. There are no clearly stated quality requirements and formal process. Automated testing and semi-automated testing is described below.
 
 \subsubsection{Unit Testing}
-Components of showgraph have some unit testing. These tests are written as a sanity check and provide very basic quality check. In addition GUI is not really covered with unit tests.
+Components of showgraph have some unit testing. These tests are written as a sanity check and provide very basic quality check. As a result GUI is not really covered with unit tests.
 
 These tests are run by building UnitTest project and running the resulting executable binary. These tests use asserts for checking. In case of failure application immediately crashes. Normal execution with 0 return code signals that all tests have passed.
 
