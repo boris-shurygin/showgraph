@@ -10,7 +10,7 @@
 #include <QVector>
 
 //#define SHOW_CONTROL_POINTS
-#define SHOW_BACKEDGES
+//#define SHOW_BACKEDGES
 
 GEdge::GEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ):
     AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ)
