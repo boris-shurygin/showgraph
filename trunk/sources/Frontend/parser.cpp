@@ -12,6 +12,9 @@
 #  define SHOW_UNITS
 #endif
 
+/**
+ * Convert dump type to the descripting string
+ */
 inline QString
 typeToStr( DumpType tp)
 {

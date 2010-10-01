@@ -16,6 +16,9 @@
 #include "../QtGUI/gui_iface.h"
 #include "../Frontend/fe_iface.h"
 
+/**
+ * Object that performs rendering
+ */
 class Renderer: public QObject
 {
 public:

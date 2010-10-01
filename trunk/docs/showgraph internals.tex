@@ -1,4 +1,4 @@
-\documentclass[11pt,twoside,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage{mathtext}
 \usepackage{cmap}
 \usepackage[T1]{fontenc}
@@ -23,19 +23,19 @@ This document describes internal infrastructure of ShowGraph tool. ShowGraph is 
 \section{Overview}
 This section gives a brief overview of ShowGraph's internal structure. All the mentioned components have more detailed description in the \emph{``Key Components''} section.
 
-As its name suggests the ShowGraph program is a tool for graph visualization. It is capable of showing a graph in interactive window and allows user to edit it, save it and load it. Additionally ShowGraph has parsers for ICC's and GCC's prints of intermediate representation to extract control flow graph from them. There are two versions of ShowGraph: interactive GUI version and command-line version for rendering graph from XML representation.
+As its name suggests the ShowGraph program is a tool for graph visualization. It is capable of showing graph in an interactive window and allows user to edit it, save it and load it. Additionally ShowGraph offers parsers for intermediate representation dumps of ICC and GCC compilers to extract control flow graph from them. There are two versions of ShowGraph: interactive GUI version and command-line version for rendering graph from XML representation.
 
-The components that interact with the user directly are GUI, command line parser and compiler IR parser which is called ``frontend'' in ShowGraph project. GUI of course is the most exposed to the user component. All graphical parts of ShowGraph are implemented inside it. It deals with things like windows, menus, buttons, toolbars and of course graphical representation of graph (call it graph view). GUI features are based on Qt library and graph view employs Qt's `Graphics View' framework. Nodes and Edges are implemented as subclasses of QGraphicsItem class.
+The components that interact with the user directly are GUI, command line parser and compiler IR parser which is called ``frontend'' in ShowGraph project. The GUI of course is the most exposed to the user component. All graphical parts of ShowGraph are implemented inside it. It deals with things like windows, menus, buttons, toolbars and of course graphical representation of graph (we call it \emph{graph view}). GUI features are based on Qt library and graph view employs Qt's `Graphics View' framework. Nodes and Edges are implemented as subclasses of QGraphicsItem class.
 
-Of course QGraphicsView does not know anything about graph as a data structure and would not perform 2D graph layout for us. This functionality is implemented in \emph{layout} component which places nodes and routes edges to obtain a layout for graph.
+Of course QGraphicsView knows nothing about graph as a data structure and would not perform 2D graph layout for us. This functionality is implemented in \emph{layout} component which places nodes and routes edges to obtain a layout for graph.
 
 The graph representation itself is implemented in \emph{graph} component. It deals with the graph as a set of nodes and edges. A node has the lists of the predecessor and successor edges and an edge has the predecessor and successor nodes. The graph is based on low level tools such as lists and memory pools.
 
-Memory pools are part of memory management framework. The only used type of memory pool at the moment is the fixed pool. This type of pool allows for fast allocation and deallocation of memory but works with entries of the same size. To create entries of different sizes one has to create specialized pool for each size.
+The Memory pools are part of the memory management framework. The only used type of memory pool at the moment is the fixed pool. This type of pool allows for fast allocation and deallocation of memory but works with entries of the same size. To create entries of different sizes one has to create a specialized pool for each size.
 
-There are some very low-level tools like lists, assertion macros and a singleton template that are use by other components. Lists are a family of classes that implement doubly-liked lists with usual prev/next pointers. 
+There are some very low-level tools like lists, assertion macros and a singleton template that are used by the other components. The Lists are a family of classes that implement doubly-liked lists with the usual prev/next pointers. 
 
-Implementation language of ShowGraph is C++. External dependencies are Qt 4.5 library and Microsoft's runtime library for C++. ShowGraph is in active development process and changing rapidly. Things described in this document may change soon, but I'll try to keep the document consistent with the current state of ShowGraph sources.
+The implementation language of the ShowGraph is C++. External dependencies are Qt 4.5 library and Microsoft's runtime library for C++. ShowGraph is in the active development process and changes rapidly. Things described in this document may change soon, but I'll try to keep the document consistent with the current state of ShowGraph sources.
 
 \section{Key Components}
 This section describes interfaces and key implementation aspects of ShowGraph's key components. Components are described in order of increasing complexity: from basic ones to the ones built above them.
@@ -71,7 +71,7 @@ public:
 	 int getA() { return a;}
 };
 \end{lstlisting}
-Lets discuss this example in detail. Class \lstinline{ListItem} implements simple intrusive one-way connected list. If we derive user class \lstinline{Data} from \lstinline{ListItem} directly we can make use of \lstinline{setNext(...)} method. But method \lstinline{next()} returns \lstinline{ListItem *} and user have to cast it to pointer to \lstinline{Data}. That's what interface class \lstinline{ListIface} was made for. Its intent was to avoid pushing programmer using the data structures to manually cast pointers in his code. It makes interface more elegant and saves a lot of effort. 
+Lets discuss this example in detail. Class \lstinline{ListItem} implements simple intrusive one-way connected list. If we derive user class \lstinline{Data} from \lstinline{ListItem} directly we can make use of \lstinline{setNext(...)} method. But method \lstinline{next()} returns \lstinline{ListItem *} and user have to cast it to pointer to \lstinline{Data}. That's what interface class \lstinline{ListIface} was made for. Its intent was to avoid pushing programmer, who uses the data structures to manually cast pointers in his code. Leaving out the casts makes the interface more elegant and saves a lot of effort. 
 
 This could be achieved without separating interface from implementation. Interface of this merged structure would look like:
 \begin{lstlisting}
@@ -533,11 +533,15 @@ In this example first nodes 3 and 4 are grouped together. Then their group is me
 		 (node2) edge [->] (node4);
 \end{tikzpicture}
 
-\subsection{Frontend}
-
+There are three passes of horizontal placement first downward, upward and second downward. They are done to make placement of successorless and predecessorless nodes more reasonable. At the time we run first downward pass we have to compute predecessor-less nodes' coordinates regardless of the successors' coordinates. Then when we go upwards we consider coordinates of successorless nodes instead of 0 which is result of barycenter heuristic for them. Similarly on the final pass we place predecessorless nodes accordingly to the results of the upwards pass.
 
 \subsection{GUI Implementation}
+GUI is based on the Qt libraries. Graph visualization is done by the Graphics View framework classes. Nodes and edges have QGraphicsItem subclasses to show them in QGraphicsView window. The graph view as a widget is a subclass of QGraphicsView. Other things like buttons, menus and toolbars have nothing special.
 
+\subsection{Frontend}
+Frontend supports dumps of GCC's (4th version) and ICC's intermediate representations.
+
+It is implemented as a simple line by line parser. There are two modes of operation. First one is fast and only looks for routine names and compiler phase names. Second one looks for nodes' and edges' descriptions and builds graph from them. The node text is attached to the node as a QDocument object.
 
 \section{Project Organization}
 Currently ShowGraph is being developed for Windows using Visual Studio 2005. Therefore project is organized around VS solution. Other operating systems or build systems are not supported. This is likely to change in nearest future. There are plans of supporting Linux and using \emph{make} tool for building.

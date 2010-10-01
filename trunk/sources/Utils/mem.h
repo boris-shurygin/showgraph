@@ -37,6 +37,9 @@
 
 #include <QtGlobal>
 
+/**
+ * Debug assert in memory manager
+ */
 #if !defined(MEM_ASSERTD)
 #    define MEM_ASSERTD(cond, what) ASSERT_XD(cond, "Memory manager", what)
 #endif

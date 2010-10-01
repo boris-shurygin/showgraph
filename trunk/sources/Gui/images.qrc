@@ -1,0 +1,22 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>logo.ico</file>
+    <file>images/win/Edit/Edit.ico</file>
+    <file>images/win/Synchronize/Synchronize.ico</file>
+    <file>images/win/Find/Find.ico</file>
+    <file>images/win/Open/Open.ico</file>
+    <file>images/win/Save/Save.ico</file>
+    <file>images/win/Log Out/Log Out.ico</file>
+    <file>images/win/Information/Information.ico</file>
+    <file>images/win/New/New.ico</file>
+    <file>images/win/Synchronize/Synchronize.ico</file>
+    <file>images/win/Zoom In/Zoom In.ico</file>
+    <file>images/win/Zoom Out/Zoom Out.ico</file>
+    <file>images/win/Download/Download.ico</file>
+    <file>images/win/Print/Print.ico</file>
+    <file>images/win/closetab.png</file>
+    <file>images/win/previous.png</file>
+    <file>images/win/next.png</file>
+    <file>images/wrap.png</file>
+</qresource>
+</RCC>

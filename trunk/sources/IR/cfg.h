@@ -90,6 +90,9 @@ public:
     }
 };
 
+/**
+ * CFG view class
+ */
 class CFView: public GraphView
 {
 

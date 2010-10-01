@@ -47,6 +47,9 @@ typedef unsigned int Rank;
 /** Rank undefined value constant */
 const Rank RANK_UNDEF = (Rank) (-1);
 
+/**
+ * Debug assert for layout library
+ */
 #if !defined(LAYOUT_ASSERTD)
 #    define LAYOUT_ASSERTD(cond, what) ASSERT_XD(cond, "Layout", what)
 #endif
