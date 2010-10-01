@@ -93,7 +93,8 @@
 			OutputDirectory="$(SolutionDir)\bin"
 			IntermediateDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
-			CharacterSet="2"
+			UseOfMFC="0"
+			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -113,7 +114,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="0"
@@ -129,12 +130,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib QtGui4.lib QtCore4.lib QtXml4.lib"
+				UseLibraryDependencyInputs="true"
+				AdditionalDependencies="qtmain.lib QtGui.lib QtCore.lib QtXml.lib imm32.lib winmm.lib ws2_32.lib qico.lib qtiff.lib qgif.lib qmng.lib qjpeg.lib"
 				OutputFile="$(OutDir)\showgraph.exe"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				EntryPointSymbol=""
+				ResourceOnlyDLL="false"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -170,6 +176,34 @@
 		<File
 			RelativePath=".\Gui1.rc"
 			>
+		</File>
+		<File
+			RelativePath=".\images.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\images.qrc"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Compiling Images to CPP file"
+					CommandLine="rcc -o images.cpp images.qrc"
+					Outputs="images.cpp"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Compiling Images to CPP file"
+					CommandLine="rcc images.qrc -o images.cpp"
+					Outputs="images.cpp"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\logo.ico"

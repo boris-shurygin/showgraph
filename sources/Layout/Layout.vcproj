@@ -80,7 +80,8 @@
 			OutputDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
 			IntermediateDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
-			CharacterSet="2"
+			UseOfMFC="0"
+			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -101,7 +102,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="0"

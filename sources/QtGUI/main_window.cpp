@@ -1,4 +1,4 @@
-/**
+    /**
  * @file: main_window.cpp 
  * Implementation of MainWindow class
  */
@@ -19,18 +19,14 @@ MainWindow::~MainWindow()
 
 MainWindow::MainWindow()
 {
-    QString system = QLatin1String("win");
-#ifdef Q_OS_MAC
-    system = QLatin1String("mac");
-#endif
-    QIcon icon( "images/logo.ico");
+    QIcon icon( ":/logo.ico");
     setWindowIcon(icon);
     parser = NULL;
 
     /** Find toolbar */
     find_tool_bar = addToolBar (tr("Find"));
     find_tool_bar->toggleViewAction()->setIcon( 
-        QIcon(QString::fromUtf8("images/%1/Find/Find.ico").arg(system)));
+        QIcon(QString::fromUtf8(":/images/win/Find/Find.ico")));
     find_tool_bar->toggleViewAction()->setShortcut(tr("Ctrl+F"));
     
     createActions();
@@ -540,45 +536,41 @@ void MainWindow::about()
 
 void MainWindow::createActions()
 {
-    QString system = QLatin1String("win");
-#ifdef Q_OS_MAC
-    system = QLatin1String("mac");
-#endif
-    openAct = new QAction( QIcon(QString::fromUtf8("images/%1/Open/Open.ico").arg(system)),
+    openAct = new QAction( QIcon(":/images/win/Open/Open.ico"),
                            tr("&Open..."), this);
     openAct->setShortcut(tr("Ctrl+O"));
     connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
-    saveAsAct = new QAction( QIcon(QString::fromUtf8("images/%1/Save/Save.ico").arg(system)),
+    saveAsAct = new QAction( QIcon(":/images/win/Save/Save.ico"),
                              tr("&Save As..."), this);
     saveAsAct->setShortcut(tr("Ctrl+S"));
     connect( saveAsAct, SIGNAL(triggered()), this, SLOT( saveAs()));
 
-    exitAct = new QAction( QIcon(QString::fromUtf8("images/%1/Log Out/Log Out.ico").arg(system)),
+    exitAct = new QAction( QIcon(QString::fromUtf8(":/images/win/Log Out/Log Out.ico")),
                            tr("E&xit"), this);
     exitAct->setShortcut(tr("Ctrl+Q"));
     connect( exitAct, SIGNAL(triggered()), this, SLOT( close()));
 
-    aboutAct = new QAction( QIcon(QString::fromUtf8("images/%1/Information/Information.ico").arg(system)),
+    aboutAct = new QAction( QIcon(QString::fromUtf8(":/images/win/Information/Information.ico")),
                             tr("&About"), this);
     connect( aboutAct, SIGNAL(triggered()), this, SLOT( about()));
 
-    newGraphAct = new QAction( QIcon(QString::fromUtf8("images/%1/New/New.ico").arg(system)),
+    newGraphAct = new QAction( QIcon(QString::fromUtf8(":/images/win/New/New.ico")),
                                tr("&New"), this);
     newGraphAct->setShortcut(tr("Ctrl+N"));
     connect( newGraphAct, SIGNAL(triggered()), this, SLOT( newGraph()));
 
-    layoutRunAct = new QAction( QIcon(QString::fromUtf8("images/%1/Synchronize/Synchronize.ico").arg(system)),
+    layoutRunAct = new QAction( QIcon(QString::fromUtf8(":/images/win/Synchronize/Synchronize.ico")),
                                 tr("&Run Layout"), this);
     layoutRunAct->setShortcut(tr("F5"));
     connect( layoutRunAct, SIGNAL(triggered()), this, SLOT( runLayout()));
 
-    zoomInAct = new QAction( QIcon(QString::fromUtf8("images/%1/Zoom In/Zoom In.ico").arg(system)),
+    zoomInAct = new QAction( QIcon(QString::fromUtf8(":/images/win/Zoom In/Zoom In.ico")),
                              tr("&Zoom In"), this);
     //zoomInAct->setShortcut(Qt::Key_Plus);
     connect( zoomInAct, SIGNAL(triggered()), this, SLOT( zoomIn()));
 
-    zoomOutAct = new QAction( QIcon(QString::fromUtf8("images/%1/Zoom Out/Zoom Out.ico").arg(system)),
+    zoomOutAct = new QAction( QIcon(QString::fromUtf8(":/images/win/Zoom Out/Zoom Out.ico")),
                               tr("&Zoom Out"), this);
     //zoomOutAct->setShortcut(Qt::Key_Minus);
     connect( zoomOutAct, SIGNAL(triggered()), this, SLOT( zoomOut()));
@@ -587,12 +579,12 @@ void MainWindow::createActions()
     zoomOrigAct->setShortcut(tr("Ctrl+A"));
     connect( zoomOrigAct, SIGNAL(triggered()), this, SLOT( zoomOrig()));
 
-    exportImageAct = new QAction( QIcon(QString::fromUtf8("images/%1/Download/Download.ico").arg(system)),
+    exportImageAct = new QAction( QIcon(QString::fromUtf8(":/images/win/Download/Download.ico")),
                                   tr("&Export Image..."), this);
     exportImageAct->setShortcut(tr("Ctrl+E"));
     connect( exportImageAct, SIGNAL(triggered()), this, SLOT( exportImage()));
 
-    printAct = new QAction( QIcon(QString::fromUtf8("images/%1/Print/Print.ico").arg(system)),
+    printAct = new QAction( QIcon(QString::fromUtf8(":/images/win/Print/Print.ico")),
                             tr("&Print"), this);
     printAct->setShortcut( tr("Ctrl+P"));
     connect( printAct, SIGNAL( triggered()), this, SLOT( printContents()));
@@ -676,7 +668,7 @@ FindWidget::FindWidget(QWidget *parent)
 #endif
 
     //toolClose = new QToolButton(this);
-    //toolClose->setIcon(QIcon(QString::fromUtf8("images/%1/closetab.png").arg(system)));
+    //toolClose->setIcon(QIcon(QString::fromUtf8(":/images/%1/closetab.png").arg(system)));
     //toolClose->setAutoRaise(true);
     //hboxLayout->addWidget(toolClose);
  

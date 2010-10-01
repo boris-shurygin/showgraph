@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="QtGUI"
 	ProjectGUID="{C74995DD-8FE9-4022-8766-7BCE51065554}"
 	RootNamespace="QtGUI"
@@ -82,6 +82,7 @@
 			OutputDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
 			IntermediateDirectory="$(SolutionDir)\objects\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
+			UseOfMFC="0"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -103,7 +104,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"

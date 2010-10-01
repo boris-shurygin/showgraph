@@ -8,6 +8,9 @@
  */
 #include "gview_impl.h"
 
+/**
+ * Compute scale parameter from user-controlled zoom factor
+ */
 inline qreal scaleVal( qreal zoom_scale)
 {
     return qPow( qreal(2), zoom_scale / qreal(5));
@@ -768,7 +771,7 @@ void GraphView::createActions()
     connect( showSuccAct, SIGNAL(triggered()), this, SLOT( showEdgeSucc()));
 
     editableSwitchAct = 
-        new QAction( QIcon( QString::fromUtf8("images/%1/Edit/Edit.ico").arg( system)),
+        new QAction( QIcon( QString::fromUtf8(":/images/%1/Edit/Edit.ico").arg( system)),
                      tr("Editable"), this);
     editableSwitchAct->setCheckable( true);
     editableSwitchAct->setChecked( false);
@@ -777,7 +780,7 @@ void GraphView::createActions()
     insertNodeAct = new QAction(tr("Insert node"), this);
    
     runLayoutAct = 
-        new QAction( QIcon( QString::fromUtf8("images/%1/Synchronize/Synchronize.ico").arg( system)),
+        new QAction( QIcon( QString::fromUtf8(":/images/%1/Synchronize/Synchronize.ico").arg( system)),
                      tr("&Run Layout"), this);
     connect( runLayoutAct, SIGNAL(triggered()), this, SLOT( runLayout()));
 }

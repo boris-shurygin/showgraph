@@ -6,6 +6,7 @@
 #ifndef ASRT_H
 #define ASRT_H
 
+/** Debug assert */
 #if !defined(ASSERTD)
 #  ifdef _DEBUG
 #    define ASSERTD(cond) Q_ASSERT(cond)
@@ -14,6 +15,7 @@
 #  endif
 #endif
 
+/** Debug assert with description */
 #if !defined(ASSERT_XD)
 #  ifdef _DEBUG
 #    define ASSERT_XD(cond, where, what) Q_ASSERT_X(cond, where, what)
@@ -22,6 +24,7 @@
 #  endif
 #endif
 
+/** Simple assert */
 #if !defined(ASSERT)
 #  define ASSERT(cond) Q_ASSERT(cond)
 #endif
