@@ -133,6 +133,7 @@ protected:
     Marker nodeTextIsShown;
 	QList< GNode* > sel_nodes;
 	QList< GEdge* > sel_edges;
+    QVector< GStyle *> styles;
     GNode *node_in_focus;
     
     /** Node creation reimplementaiton */
@@ -307,6 +308,16 @@ public:
      * Show successor of selected edge
      */
     void showEdgeSucc();
+
+    /**
+     * Save graph as an XML file
+     */
+    //virtual void writeToXML( QString filename);
+
+    /**
+     * Build graph from XML description
+     */
+    virtual void readFromXML( QString filename);
 };
 
 /**

@@ -211,12 +211,12 @@ public:
     /**
      * Save graph as an XML file
      */
-    void writeToXML( QString filename);
+    virtual void writeToXML( QString filename);
 
     /**
      * Build graph from XML description
      */
-    void readFromXML( QString filename);
+    virtual void readFromXML( QString filename);
 };
 
 #endif

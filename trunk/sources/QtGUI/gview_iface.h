@@ -46,6 +46,7 @@ enum {
 /** Max opacity level for items in graph view */
 const qreal MAX_OPACITY = 6;
 
+#include "gstyle.h"
 #include "edge_item.h"
 #include "node_item.h"
 #include "graph_view.h"

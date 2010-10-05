@@ -8,6 +8,9 @@
  */
 #include "graph_iface.h"
 
+/** For XML writing */
+const int IndentSize = 4;
+
 /**
  * Constructor.
  */
@@ -299,7 +302,7 @@ Graph::clearMarkersInObjects()
 }
 
 /**
- * Implementation for markers cleanup
+ * Implementation of XML writing
  */
 void 
 Graph::writeToXML( QString filename)
@@ -311,19 +314,17 @@ Graph::writeToXML( QString filename)
         return;
     }
      
-    /** Clean markers in nodes */
+    /** Update element for each node */
     for ( Node *n = firstNode(); isNotNullP( n); n = n->nextNode())
     {
         n->updateElement();
     }
 
-    /** Clean markers in edges */
+    /** Update element for each edge */
     for ( Edge *e = firstEdge(); isNotNullP( e); e = e->nextEdge())
     {
         e->updateElement();
     }
-
-    const int IndentSize = 4;
 
     QTextStream out( &file);
     save(out, IndentSize);

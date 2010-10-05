@@ -242,6 +242,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\gstyle.h"
+				>
+			</File>
+			<File
 				RelativePath=".\node_item.cpp"
 				>
 			</File>
