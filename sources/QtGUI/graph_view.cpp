@@ -29,6 +29,10 @@ GGraph::~GGraph()
         deleteNode( node);
         node = next;
     }
+    foreach ( GStyle *style, styles)
+    {
+        delete style;
+    }
 }
 
 GNode*
@@ -1177,4 +1181,62 @@ void GraphViewHistory::viewEvent( NavEventType t, GNode *n)
     events.push_back( ev);
     it = events.end();
     it--;
+}
+
+/**
+ * Build graph from XML description
+ */
+void
+GGraph::readFromXML( QString filename)
+{
+    QFile file( filename);
+
+    if ( !file.open( QIODevice::ReadOnly))
+        return;
+
+    if ( !setContent( &file))
+    {
+        GRAPH_ASSERTD( 0, "Not a good-formated xml file");
+        file.close();
+        return;
+    }
+    file.close();
+
+    /**
+     * Read nodes and create them
+     */
+    QDomElement docElem = documentElement();
+
+    QDomNode n = docElem.firstChild();
+    QHash< GraphUid, GNode *> n_hash;
+
+    while ( !n.isNull())
+    {
+        QDomElement e = n.toElement(); // try to convert the DOM tree node to an element.
+        
+        if ( !e.isNull() && e.tagName() == QString( "node"))
+        {
+            GNode *node = newNode( e);
+            node->readFromElement( e);
+            n_hash[ e.attribute( "id").toLongLong()] = node;
+        }
+        n = n.nextSibling();
+    }
+    
+    n = docElem.firstChild();
+    while ( !n.isNull())
+    {
+        QDomElement e = n.toElement(); // try to convert the DOM tree node to an element.
+        
+        if ( !e.isNull() && e.tagName() == QString( "edge"))
+        {
+            GraphUid pred_id = e.attribute( "source").toLongLong();
+            GraphUid succ_id = e.attribute( "target").toLongLong();
+            GNode *pred = n_hash[ pred_id];
+            GNode *succ = n_hash[ succ_id];
+            GEdge *edge = newEdge( pred, succ, e);
+            edge->readFromElement( e);
+        }
+        n = n.nextSibling();
+    }
 }
