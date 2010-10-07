@@ -74,8 +74,6 @@ protected:
 	/** Edge creation routine is to be overloaded by derived class */
     virtual Edge * createEdge( int _id, Node *_pred, Node* _succ);
     
-
-
     /** Pools' creation routine */
     virtual void createPools();
     /** Pools' destruction routine */

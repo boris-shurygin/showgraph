@@ -32,11 +32,11 @@ using namespace Mem;
 enum GraphDir
 {
     /** Upward direction */
-	GRAPH_DIR_UP,
+	GRAPH_DIR_UP = 0,
 	/** Downward direction */
-    GRAPH_DIR_DOWN,
+    GRAPH_DIR_DOWN = 1,
 	/** Number of directions in graph */
-    GRAPH_DIRS_NUM
+    GRAPH_DIRS_NUM = 2
 };
 
 /**
