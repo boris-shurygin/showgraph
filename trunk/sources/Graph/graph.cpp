@@ -56,7 +56,6 @@ void Graph::createPools()
 /** Pools' destruction routine */
 void Graph::destroyPools()
 {
-    delete (void *)NULL;//For test
     delete node_pool;
     delete edge_pool;
 }
@@ -145,13 +144,9 @@ Graph::newNodeImpl( GraphUid id)
     
     /** Create node */
     Node *node_p = this->createNode( id);
-    NodeListIt* it = node_p->GetGraphIt();
     
     /** Add node to graph's list of nodes */
-    if ( isNotNullP( first_node))
-    {
-        it->Attach( first_node->GetGraphIt());
-    }
+    node_p->attach( first_node);
     first_node = node_p;
     
     node_num++;
@@ -202,11 +197,7 @@ Graph::newEdgeImpl( Node * pred, Node * succ)
      */
     assert( edge_next_id < GRAPH_MAX_NODE_NUM);
     Edge *edge_p = this->createEdge( edge_next_id++, pred, succ);
-    EdgeListIt* it = edge_p->GetGraphIt();
-    if ( isNotNullP( first_edge))
-    {
-        it->Attach( first_edge->GetGraphIt());
-    }
+    edge_p->attach( EDGE_LIST_GRAPH, first_edge);
     first_edge = edge_p;
     edge_num++;
     return edge_p;

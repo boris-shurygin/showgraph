@@ -10,18 +10,36 @@
 #define EDGE_H
 
 /**
+ * Edge lists identificators
+ * @ingroup Graph 
+ */
+enum EdgeListType
+{
+    EDGE_LIST_PREDS,
+    EDGE_LIST_SUCCS,
+    EDGE_LIST_GRAPH,
+    EDGE_LISTS_NUM
+};
+
+/**
  *  Representation of graph edge
  *
  *  @ingroup Graph  
  *  Edge class implements basic concept of graph edge.
- *  It has two Nodes as its end points. As edge is member of 3 lists it
- *  has 3 corresponding pointers to items of these lists
+ *  It has two Nodes as its end points. Edge is a member of 3 lists: 
+ *  edge list in graph, pred list in succ node and succ list in pred node
  */
-class Edge: public Marked, public Numbered, public PoolObj
+class Edge: 
+    public MListIface< Edge, // List item
+                       MListItem< EDGE_LISTS_NUM>, // base class: pure multi-list item
+                       EDGE_LISTS_NUM >, // Lists number                      
+    public Marked,
+    public Numbered,
+    public PoolObj
 {
 public:
 	/** Edge list item type */
-    typedef ListItem< Edge> EdgeListIt;
+    //typedef ListItem< Edge> EdgeListIt;
 private:
     /** Representation in document */
     QDomElement element;
@@ -29,12 +47,9 @@ private:
     /** Graph part */
     GraphUid uid; //Unique ID
     Graph * graph_p; //Graph
-    EdgeListIt graph_it; //Position in Graph's list of edges
 
     /** Nodes */
     Node *nodes[ GRAPH_DIRS_NUM]; //Adjacent nodes
-    EdgeListIt n_it[ GRAPH_DIRS_NUM];//Position in each node's list
-
     /** Node checking routine */
     bool checkNodes( Node* _pred, Node* _succ);
         
@@ -45,46 +60,13 @@ protected:
 	friend class Node;
 
     /** Constructors are made private, only nodes and graph can create edges */
-    Edge( Graph *_graph_p, GraphUid _id, Node *_pred, Node* _succ): uid(_id), graph_p(_graph_p), graph_it()
+    Edge( Graph *_graph_p, GraphUid _id, Node *_pred, Node* _succ): 
+        uid(_id), graph_p(_graph_p)
     {
         GRAPH_ASSERTD( checkNodes( _pred, _succ),
                        "Predecessor and sucessor used in edge construction belong to different graphs");
-        graph_it.setData( (Edge*) this);
-        n_it[ GRAPH_DIR_UP] = EdgeListIt();
-        n_it[ GRAPH_DIR_DOWN] = EdgeListIt();
-        n_it[ GRAPH_DIR_UP].setData( (Edge*)this);
-        n_it[ GRAPH_DIR_DOWN].setData( (Edge*)this);
         setPred( _pred);
         setSucc( _succ);
-    }
-    /** Pivate routines dealing with iterators */
-    void SetGraphIt( EdgeListIt g_it)
-    {
-        graph_it = g_it;
-    }
-    /** 
-     * Return iterator pointing to this edge in graph's edge list
-     */
-    EdgeListIt *GetGraphIt()
-    {
-        return &graph_it;
-    }
-
-    /** 
-     * Set iterator pointing to this edge in graph's edge list
-     */
-    void SetListIt( GraphDir dir, EdgeListIt it)
-    {
-        n_it[ dir] = it;
-    }
-
-    /** 
-     * Return iterator pointing to this edge in node's edge
-     * list in corresponding direction
-     */
-    EdgeListIt *GetNodeIt( GraphDir dir)
-    {
-        return &n_it[ dir];
     }
 
     /**
@@ -97,7 +79,7 @@ protected:
 	 */
 	inline void detachFromGraph()
     {
-        graph_it.Detach();
+        detach( EDGE_LIST_GRAPH);
     }
 public:
     /**
@@ -197,7 +179,7 @@ public:
      */
     inline Edge* nextEdge()
     {
-        return ( graph_it.next() != NULL )? graph_it.next()->data() : NULL;
+        return next( EDGE_LIST_GRAPH);
     }
 
     /**
@@ -205,8 +187,12 @@ public:
      */
     inline Edge* nextEdgeInDir( GraphDir dir)
     {
-        GraphDir rdir = RevDir( dir);
-        return ( n_it[ rdir].next() != NULL )? n_it[ rdir].next()->data() : NULL;
+        GRAPH_ASSERTD( dir < GRAPH_DIRS_NUM, "Wrong direction parameter");
+        GRAPH_ASSERTD( GRAPH_DIR_DOWN == EDGE_LIST_SUCCS,
+                       "Enums of direction and edge lists are not having right values");
+        GRAPH_ASSERTD( GRAPH_DIR_UP == EDGE_LIST_PREDS,
+                       "Enums of direction and edge lists are not having right values");
+        return next( dir);
     }
     
     /** 

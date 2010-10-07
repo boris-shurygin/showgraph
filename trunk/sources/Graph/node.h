@@ -16,13 +16,8 @@
  * A graph node has two lists of edges which represent predecessors and successors.
  * It is also a member of node list in graph.
  */
-class Node: public Marked, public Numbered, public PoolObj
+class Node: public Marked, public Numbered, public PoolObj, public SListIface< Node, SListItem>
 {
-public:
-    /** Node list item type */
-	typedef ListItem< Node> NodeListIt;
-    /** Edge list item type */
-	typedef ListItem< Edge> EdgeListIt;
 private:
     /** Representation in document */
     QDomElement element;
@@ -30,29 +25,23 @@ private:
     /** Connection with inclusive graph */
     GraphUid uid; // Unique id
     Graph * graph_p;// Pointer to graph
-    NodeListIt graph_it;//Item of graph's list
+
 protected:    
     /** First edges in graph's directions */
     Edge *first_edge[ GRAPH_DIRS_NUM];
 
-    /** Return pointer to graph's list item */
-	NodeListIt* GetGraphIt()
-    {
-        return &graph_it;
-    }
     /** We can't create nodes separately, do it through newNode method of graph */
-    Node( Graph *_graph_p, GraphUid _id):uid(_id), graph_p( _graph_p), graph_it(), element()
+    Node( Graph *_graph_p, GraphUid _id):uid(_id), graph_p( _graph_p), element()
     {
         first_edge[ GRAPH_DIR_UP] = NULL;
         first_edge[ GRAPH_DIR_DOWN] = NULL;
-        graph_it.setData( ( Node*)this);
     }
 	/**
 	 * Detach myself from graph's node list
 	 */
     inline void detachFromGraph()
     {
-        graph_it.Detach();
+        detach();
     }
 	/**
 	 * Graph class controls nodes
@@ -100,7 +89,7 @@ public:
 	 */
     inline Node* nextNode()
     {
-        return ( graph_it.next() != NULL )? graph_it.next()->data() : NULL;
+        return next();
     }
     
     /**
@@ -108,7 +97,7 @@ public:
 	 */
     inline Node* prevNode()
     {
-        return ( graph_it.prev() != NULL )? graph_it.prev()->data() : NULL;
+        return prev();
     }
 
     /**
@@ -197,11 +186,11 @@ inline void
 Node::AddEdgeInDir( Edge *edge, GraphDir dir)
 {
     assert( isNotNullP( edge));
-    EdgeListIt *it = edge->GetNodeIt( RevDir( dir));
-    if ( isNotNullP( first_edge[ dir]))
-    {
-        it->Attach( first_edge[ dir]->GetNodeIt( RevDir( dir)));
-    }
+    GRAPH_ASSERTD( GRAPH_DIR_DOWN == EDGE_LIST_SUCCS,
+                   "Enums of direction and edge lists are not having right values");
+    GRAPH_ASSERTD( GRAPH_DIR_UP == EDGE_LIST_PREDS,
+                   "Enums of direction and edge lists are not having right values");
+    edge->attach( dir, first_edge[ dir]); 
     first_edge[ dir] = edge;
 }
 

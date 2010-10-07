@@ -48,7 +48,7 @@ Edge::detachFromNode( GraphDir dir)
     {
         Node *n = node( dir);
         n->deleteEdgeInDir( RevDir( dir), (Edge* )this);
-        n_it[ dir].Detach();
+        detach( RevDir( dir));
         nodes[ dir] = 0;
     }
 }
