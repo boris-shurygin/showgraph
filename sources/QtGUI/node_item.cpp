@@ -13,7 +13,8 @@ GNode::GNode( GGraph *graph_p, int _id):
     AuxNode( ( AuxGraph *)graph_p, _id),
 	_doc( NULL),
 	ir_id( GRAPH_MAX_NODE_NUM),
-	text_shown( false)
+	text_shown( false),
+    _style( NULL)
 {
     item_p = new NodeItem( this);
     graph()->view()->scene()->addItem( item_p);
@@ -32,7 +33,8 @@ GNode::GNode( GGraph *graph_p, int _id, QPointF _pos):
     AuxNode( ( AuxGraph *)graph_p, _id),
 	_doc( NULL),
 	ir_id( GRAPH_MAX_NODE_NUM),
-	text_shown( false)
+	text_shown( false),
+    _style( NULL)
 {
     item_p = new NodeItem( this);
     item_p->setPos( _pos);
@@ -111,6 +113,9 @@ GNode::~GNode()
     item()->remove();
     graph()->view()->deleteLaterNodeItem( item());
     delete _doc;
+            
+    if ( isNotNullP( _style))
+        _style->decNumItems();
 }
 /**
  * Get the pointer to graph
@@ -140,6 +145,18 @@ GNode::updateElement()
     } else if ( isEdgeLabel())
     {
         e.setAttribute( "type", "edge_label");
+    }
+    /** Save style that describes this node only along with node */
+    if ( isNotNullP( style())) 
+    {     
+        if ( 1 == style()->numItems())
+        {
+            e.removeAttribute("style");
+            style()->writeElement( e, false);
+        } else
+        {
+            e.setAttribute("style", style()->name());
+        }
     }
 }
 
@@ -282,22 +299,29 @@ NodeItem::paint( QPainter *painter,
 
     if ( node()->isSimple() || node()->isEdgeLabel())
     {
+        QPen pen( option->palette.foreground().color(), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
         if ( option->levelOfDetail < 0.1)
         {
             painter->fillRect( borderRect(), option->palette.highlight().color());
         }
         qreal adjust = 3;
+        
+        if ( isNotNullP( node()->style()))
+        {
+            pen = node()->style()->pen();
+            painter->setBrush( node()->style()->brush());
+        }
         if ( bold_border )// ( option->state & QStyle::State_Sunken))
         {
-            painter->setPen( QPen(option->palette.foreground().color(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        } else
-        {
-            painter->setPen( QPen(option->palette.foreground().color(), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        }
+            pen.setWidthF( pen.widthF() + 1);
+        } 
         if ( alternate_background)
         {
             painter->setBrush( option->palette.highlight().color());
         }
+        
+        painter->setPen( pen);
+
         if ( node()->isSimple())
             painter->drawRect( borderRect());
         if ( option->levelOfDetail >= 0.2)

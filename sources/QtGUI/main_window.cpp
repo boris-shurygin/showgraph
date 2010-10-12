@@ -222,8 +222,6 @@ void MainWindow::openFile( QString fileName)
 	if ( fileName.isEmpty())
         return;
 
-    removeGraphView();
-
     QRegExp rx("\\.xml$");
     
     bool do_layout = false;
@@ -242,6 +240,8 @@ void MainWindow::openFile( QString fileName)
     /** Not a graph description - run parser */
     if ( rx.indexIn( fileName) == -1 )
     {
+        removeGraphView();
+
         if ( isNotNullP( parser))
             delete parser;
         parser = new TestParser( fileName);
@@ -280,14 +280,23 @@ void MainWindow::openFile( QString fileName)
         {
             parser->mainLoop();
         }
+
         connectToGraphView( parser->graphView());
         do_layout = true;
     } else
     {
-        graph_view = new GraphView();
-        graph_view->setGraph( new CFG( graph_view, true));
-        connectToGraphView( graph_view);
-        graph_view->graph()->readFromXML( fileName);
+        GraphView *gview = new GraphView();
+        gview->setGraph( new CFG( gview, true));
+        try
+        {
+            gview->graph()->readFromXML( fileName); // can throw GGraphError
+            removeGraphView();
+            connectToGraphView( gview);
+        } catch ( GGraphError err)
+        {
+            QMessageBox::warning( this, tr("Graph Description"), err.message());
+            do_layout = false;
+        }
     }
     
     /** Run layout automatically */

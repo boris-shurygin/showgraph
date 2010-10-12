@@ -1184,6 +1184,56 @@ void GraphViewHistory::viewEvent( NavEventType t, GNode *n)
 }
 
 /**
+ * Implementation of XML writing
+ */
+void 
+GGraph::writeToXML( QString filename)
+{
+    QFile file( filename);
+    if (!file.open(QFile::WriteOnly | QFile::Text))
+    {
+        assert( 0);
+        return;
+    }
+    
+    QList< QDomElement> elements;
+
+    foreach ( GStyle *style, styles)
+    {
+        if ( style->numItems() != 1)
+        {
+            QDomElement e = createElement( "style");
+            elements.push_back( e);
+            style->writeElement( e);
+            //QDomNode e2 = graph()->documentElement().removeChild( e);
+            //assert( !e2.isNull());
+            QDomNode n = documentElement().insertBefore( e, documentElement().firstChild());
+            ASSERTD( !n.isNull());
+        }
+    }
+
+    /** Update element for each node */
+    for ( GNode *n = firstNode(); isNotNullP( n); n = n->nextNode())
+    {
+        n->updateElement();
+    }
+
+    /** Update element for each edge */
+    for ( GEdge *e = firstEdge(); isNotNullP( e); e = e->nextEdge())
+    {
+        e->updateElement();
+    }
+
+    QTextStream out( &file);
+    save(out, IndentSize);
+
+    foreach ( QDomElement el, elements)
+    {
+        QDomNode n = documentElement().removeChild( el);
+        ASSERTD( !n.isNull());
+    }
+}
+/**
  * Build graph from XML description
  */
 void
@@ -1196,9 +1246,8 @@ GGraph::readFromXML( QString filename)
 
     if ( !setContent( &file))
     {
-        GRAPH_ASSERTD( 0, "Not a good-formated xml file");
         file.close();
-        return;
+        throw GGraphError( "Not a good-formated xml file");
     }
     file.close();
 
@@ -1207,36 +1256,119 @@ GGraph::readFromXML( QString filename)
      */
     QDomElement docElem = documentElement();
 
-    QDomNode n = docElem.firstChild();
     QHash< GraphUid, GNode *> n_hash;
-
-    while ( !n.isNull())
+    
+    for ( QDomNode n = docElem.firstChild();
+          !n.isNull();
+          )
     {
         QDomElement e = n.toElement(); // try to convert the DOM tree node to an element.
+        QString error_msg = QString("in line %1: ").arg( n.lineNumber());
+
+        //Not an element, proceed to next node
+        if ( e.isNull())
+            continue;
         
-        if ( !e.isNull() && e.tagName() == QString( "node"))
+        /** Parse element and its attributes */
+        //Node
+        if ( e.tagName() == QString( "node"))
         {
             GNode *node = newNode( e);
             node->readFromElement( e);
             n_hash[ e.attribute( "id").toLongLong()] = node;
+
+            if ( e.hasAttribute("style"))
+            {
+                if ( styles.find( e.attribute("style")) == styles.end())
+                    throw GGraphError( error_msg.append("unknown style"));
+                node->setStyle( styles[ e.attribute("style")]);
+            } else
+            {
+                // Try to parse style-definining fields
+                GStyle *style = new GStyle( e); // possible exception GGraphError
+                if ( style->isDefault())
+                {
+                    delete style;
+                } else
+                {
+                    QString name("node %1 style");
+                    name.arg( node->id());
+                    style->setName( name);
+                    styles[ name] = style;
+                    node->setStyle( style);
+                }
+            }
+        }
+        if ( e.tagName() == QString( "style"))
+        {
+            GStyle *style = new GStyle( e); // possible exception GGraphError
+            styles[ e.attribute( "name")] = style;
+            n = n.nextSibling();
+            documentElement().removeChild( e);
+            continue;
         }
         n = n.nextSibling();
     }
     
-    n = docElem.firstChild();
-    while ( !n.isNull())
+    for ( QDomNode n = docElem.firstChild();
+          !n.isNull();
+          n = n.nextSibling())
     {
         QDomElement e = n.toElement(); // try to convert the DOM tree node to an element.
-        
-        if ( !e.isNull() && e.tagName() == QString( "edge"))
+        QString error_msg = QString("in line %1: ").arg( n.lineNumber());
+
+        /** Cannot convert node to element or this element is not a edge description */
+        if ( e.isNull() 
+             || !( e.tagName() == QString( "edge")))
+             continue;
+       
+        if ( !e.hasAttribute("source"))
+                throw GGraphError( error_msg.append("malformed edge description: no source"));
+
+        if ( !e.hasAttribute("target"))
+            throw GGraphError( error_msg.append("malformed edge description: no target"));
+
+        bool ok = false;
+        GraphUid pred_id = e.attribute( "source").toLongLong( &ok);
+        if ( !ok)
+            throw GGraphError( error_msg.append("malformed edge description: wrong source id"));
+
+        GraphUid succ_id = e.attribute( "target").toLongLong( &ok);
+        if ( !ok)
+            throw GGraphError( error_msg.append("malformed edge description: wrong target id"));
+
+        if ( n_hash.find( pred_id) == n_hash.end())
+            throw GGraphError( error_msg
+                               .append("malformed edge description: predecessor node missing in graph"));
+        if ( n_hash.find( succ_id) == n_hash.end())
+            throw GGraphError( error_msg
+                               .append("malformed edge description: successor node missing in graph"));
+
+        GNode *pred = n_hash[ pred_id];
+        GNode *succ = n_hash[ succ_id];
+        GEdge *edge = newEdge( pred, succ, e);
+        edge->readFromElement( e);
+
+        if ( e.hasAttribute("style"))
         {
-            GraphUid pred_id = e.attribute( "source").toLongLong();
-            GraphUid succ_id = e.attribute( "target").toLongLong();
-            GNode *pred = n_hash[ pred_id];
-            GNode *succ = n_hash[ succ_id];
-            GEdge *edge = newEdge( pred, succ, e);
-            edge->readFromElement( e);
+            if ( styles.find( e.attribute("style")) == styles.end())
+                throw GGraphError( error_msg.append("unknown style"));
+            edge->setStyle( styles[ e.attribute("style")]);
+        } else
+        {
+            // Try to parse style-definining fields
+            GStyle *style = new GStyle( e); // possible exception GGraphError
+            if ( style->isDefault())
+            {
+                delete style;
+            } else
+            {
+                QString name("edge %1 style");
+                name.arg( edge->id());
+                style->setName( name);
+                styles[ name] = style;
+                edge->setStyle( style);
+            }
         }
-        n = n.nextSibling();
     }
 }

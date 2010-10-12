@@ -8,6 +8,19 @@
 #include "render.h"
 
 /**
+ * In debug mode project is linked with Qt's dll-oriented build.
+ * Plugins are supported without any additional actions
+ */
+#ifndef _DEBUG
+  #include <QtPlugin>
+  Q_IMPORT_PLUGIN(qico);
+  Q_IMPORT_PLUGIN(qgif);
+  Q_IMPORT_PLUGIN(qjpeg);
+  Q_IMPORT_PLUGIN(qmng);
+  Q_IMPORT_PLUGIN(qtiff);
+#endif
+
+/**
  * The entry point for console version of ShowGraph
  */
 static int doAll( int argc, char **argv)

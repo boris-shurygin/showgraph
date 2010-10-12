@@ -8,9 +8,6 @@
  */
 #include "graph_iface.h"
 
-/** For XML writing */
-const int IndentSize = 4;
-
 /**
  * Constructor.
  */

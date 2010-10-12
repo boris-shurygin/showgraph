@@ -21,7 +21,8 @@ class GEdge: public AuxEdge
 {
     /** Pointer to corresponding graphics item */
     EdgeItem *item_p;
-
+    /** Graphical appearance style */
+    GStyle *_style;
 protected:
     /** Default constructor */
     GEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ);
@@ -119,6 +120,21 @@ public:
     } 
     /** Insert node of label type */
     GNode *insertLabelNode( QPointF pos);
+        
+    /** Set edge's style */
+    inline void setStyle( GStyle *st)
+    {
+        if ( isNotNullP( _style))
+            _style->decNumItems();
+        _style = st;
+        if ( isNotNullP( _style))
+            _style->incNumItems();
+    }
+    /** Get edge's style */
+    inline GStyle * style() const
+    {
+        return _style;
+    }
 };
 /**
  * Graphics item for visualizing a graph edge

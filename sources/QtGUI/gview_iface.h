@@ -57,18 +57,12 @@ public:
     GGraphError(){};
     /** Message-based constructor*/
     GGraphError( QString str): msg_priv( str){};
-    /** Empty destructor */
-    ~GGraphError();
     /** Get message */
     inline QString message()
     {
         return msg_priv;
     }
 private:
-    /** Copy constructor disabled for now */
-    GGraphError( GGraphError &err){};
-    /** Assignment disabled for now */
-    GGraphError & operator =(GGraphError &err){};
     /** Error message */
     QString msg_priv;
 };
