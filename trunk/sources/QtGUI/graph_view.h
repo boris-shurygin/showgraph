@@ -133,7 +133,7 @@ protected:
     Marker nodeTextIsShown;
 	QList< GNode* > sel_nodes;
 	QList< GEdge* > sel_edges;
-    QVector< GStyle *> styles;
+    QHash< QString, GStyle *> styles;
     GNode *node_in_focus;
     
     /** Node creation reimplementaiton */
@@ -312,7 +312,7 @@ public:
     /**
      * Save graph as an XML file
      */
-    //virtual void writeToXML( QString filename);
+    virtual void writeToXML( QString filename);
 
     /**
      * Build graph from XML description

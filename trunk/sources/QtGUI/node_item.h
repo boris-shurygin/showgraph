@@ -131,6 +131,8 @@ class GNode: public AuxNode
 	bool text_shown;
 	/** Representation of node in graph view */
     NodeItem *item_p; 
+    /** Graphical appearance style */
+    GStyle *_style;
 
     /** Representation of node as text */
     QTextDocument* _doc;
@@ -248,6 +250,20 @@ public:
     virtual inline double height() const
     {
         return item()->boundingRect().height();
+    }
+    /** Set node's style */
+    inline void setStyle( GStyle *st)
+    {
+        if ( isNotNullP( _style))
+            _style->decNumItems();
+        _style = st;
+        if ( isNotNullP( _style))
+            _style->incNumItems();
+    }
+    /** Get node's style */
+    inline GStyle * style() const
+    {
+        return _style;
     }
 };
 #endif

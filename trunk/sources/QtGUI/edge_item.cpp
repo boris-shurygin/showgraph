@@ -13,12 +13,11 @@
 //#define SHOW_BACKEDGES
 
 GEdge::GEdge( GGraph *graph_p, int _id, GNode *_pred, GNode* _succ):
-    AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ)
+    AuxEdge( (AuxGraph *)graph_p, _id, (AuxNode *)_pred, (AuxNode *)_succ), _style( NULL)
 {
     item_p = new EdgeItem( this);
     graph()->view()->scene()->addItem( item_p);
     item_p->adjust();
-    
     graph()->invalidateRanking();
 }
    
@@ -27,6 +26,8 @@ GEdge::~GEdge()
     graph()->invalidateRanking();
     item()->remove();
     graph()->view()->deleteLaterEdgeItem( item());
+    if ( isNotNullP( _style))
+        _style->decNumItems();
 }
 
 GNode * 
@@ -53,6 +54,7 @@ GEdge::graph() const
 void
 GEdge::updateElement()
 {
+#if 0    
     QDomElement e = elem();
     int i = 0;
     QDomElement new_e = graph()->createElement( "edge");
@@ -61,9 +63,23 @@ GEdge::updateElement()
     graph()->documentElement().appendChild( new_e);
     setElement( new_e);
     e = new_e;
-
+#endif
     /* Base class method call to print generic edge properties */
     AuxEdge::updateElement();
+    QDomElement e = elem();
+    /** Save style that describes this edge only along with edge */
+    if ( isNotNullP( style())) 
+    {     
+        if ( 1 == style()->numItems())
+        {
+            e.removeAttribute("style");
+            style()->writeElement( e, false);
+        } else
+        {
+            e.setAttribute("style", style()->name());
+        }
+    }
+
 }
 
 /**
@@ -369,40 +385,26 @@ EdgeItem::paint( QPainter *painter,
     if ( edge()->graph()->view()->isContext())
         painter->setOpacity( opacity);
 
+    QPen pen( option->palette.foreground().color(), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+        
+    if ( isNotNullP( edge()->style()))
+    {
+        pen = edge()->style()->pen();
+    }
+
     // Draw the line itself
     if ( option->levelOfDetail >= spline_detail_level)
     {
         if ( option->state & QStyle::State_Selected)
         {
-#ifdef SHOW_BACKEDGES
-            if ( edge()->isInverted())
-            {
-                painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            } else
-#endif
-            {
-                painter->setPen( QPen( option->palette.foreground().color(), 2,
-                                       Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            }
-        } else
-        {
-#ifdef SHOW_BACKEDGES
-            if ( edge()->isInverted())
-            {
-                painter->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            } else
-#endif
-            {
-                painter->setPen( QPen(option->palette.foreground().color(),
-                                 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            }
-        }
+            pen.setWidthF( pen.widthF() + 1);
+        } 
     } else
     {
-        painter->setPen( QPen(option->palette.foreground().color(),1));
-            
+        pen = QPen( pen.color(),1);
     }
 
+    painter->setPen( pen);
 
     // Draw the arrows if there's enough room and level of detail is appropriate
     if ( option->levelOfDetail >= draw_arrow_detail_level)
@@ -416,8 +418,13 @@ EdgeItem::paint( QPainter *painter,
 
        
         /* NOTE:  Qt::black can be replaced by option->palette.foreground().color() */
-        painter->setBrush(option->palette.foreground().color());
-        
+        if ( isNotNullP( edge()->style()))
+        {
+            painter->setBrush( edge()->style()->pen().color());
+        } else
+        {
+            painter->setBrush(option->palette.foreground().color());
+        }
         if ( edge()->isSelf())
         {
             angle = -2* Pi/3;

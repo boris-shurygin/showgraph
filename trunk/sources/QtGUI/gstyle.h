@@ -36,20 +36,42 @@ public:
     inline QPen pen() const;
     /** Get brush */
     inline QBrush brush() const;
+    /** Set name of style */
+    inline void setName( QString &str);
+    /** Set pen */
+    inline void setPen( QPen &pn);
+    /** Set brush */
+    inline void setBrush( QBrush &br);
+    /** Set pen color */
+    inline void setPenColor( QColor &color);
+    /** Set pen style */
+    inline void setPenStyle( Qt::PenStyle st);
+    /** Set pen width */
+    inline void setPenWidth( qreal width);
+    /** Set brush color */
+    inline void setBrushColor( QColor &color);
     /** Check if style uses default pen */
     inline bool isDefault() const;
     /** Saving to element */
-    inline void writeElement( QDomElement e);
+    inline void writeElement( QDomElement e, bool save_name = true);
+    /** Increase items num */
+    inline void incNumItems();
+    /** Decrease items num */
+    inline void decNumItems();
+    /** Get number of affected items */
+    inline GraphNum numItems();
 private:
     QString name_priv;
     QPen pen_priv;
-    bool dflt_pen;
+    QBrush brush_priv;
+    bool is_default;
+    GraphNum num_items;
     //StyleId id;
 };
 
 /** Constructor */
 inline GStyle::GStyle(): 
-    dflt_pen( true)
+    is_default( true), num_items( 0)
 {}
 
 /** Copy constructor */
@@ -58,39 +80,43 @@ inline GStyle::GStyle( const GStyle& st)
     name_priv = st.name_priv;
     name_priv.append("_copy");
     pen_priv = st.pen_priv;
-    dflt_pen = st.dflt_pen;
+    brush_priv = st.brush_priv;
+    is_default = st.is_default;
+    num_items = 0;
 }
 /** Copy constructor with name specification */
 inline 
 GStyle::GStyle( QString nm, const GStyle& st)
 {
+    num_items = 0;
     name_priv = nm;
     pen_priv = st.pen_priv;
-    dflt_pen = st.dflt_pen;
+    brush_priv = st.brush_priv;
+    is_default = st.is_default;
 }
 
 /** Construction from XML description */
 inline 
 GStyle::GStyle( QDomElement e ): 
-    dflt_pen( true)
+    is_default( true)
 {
+    num_items = 0;
     ASSERTD( !e.isNull());
-    ASSERTD( e.tagName() == QString( "style"));
-
+    
     QString error_msg = QString("in line %1: ").arg( e.lineNumber());
         
     /** A style must be named in XML */
-    if( !e.hasAttribute( "name"))
+    if( e.tagName() == QString( "style") && !e.hasAttribute( "name"))
     {
         throw GGraphError( error_msg.append("style without a name"));
     } else
     {
-       name_priv = e.attribute( "name ");    
+       name_priv = e.attribute( "name");    
     }
     /** Parse pen color */
     if ( e.hasAttribute( "pen_color"))
     {
-        dflt_pen = false;
+        is_default = false;
         QColor color( e.attribute( "pen_color"));
         
         if ( color.isValid())
@@ -104,23 +130,23 @@ GStyle::GStyle( QDomElement e ):
     /** Parse pen style */
     if ( e.hasAttribute( "pen_style"))
     {
-        dflt_pen = false;
+        is_default = false;
         
         QString stl = e.attribute( "pen_style");
         
         if ( stl == "no_pen")
         {
             pen_priv.setStyle( Qt::NoPen);
-        } if ( stl == "solid")
+        } else if ( stl == "solid")
         {
             pen_priv.setStyle( Qt::SolidLine);
-        } if ( stl == "dash")
+        } else if ( stl == "dash")
         {
             pen_priv.setStyle( Qt::DashLine);
-        } if ( stl == "dot")
+        } else if ( stl == "dot")
         {
             pen_priv.setStyle( Qt::DotLine);
-        } if ( stl == "dash_dot")
+        } else if ( stl == "dash_dot")
         {
             pen_priv.setStyle( Qt::DashDotLine);
         } else
@@ -131,7 +157,7 @@ GStyle::GStyle( QDomElement e ):
     /** Parse pen width */
     if ( e.hasAttribute( "pen_width"))
     {
-        dflt_pen = false;
+        is_default = false;
         bool ok;
         qreal width = e.attribute( "pen_width").toDouble( &ok);
         
@@ -142,35 +168,43 @@ GStyle::GStyle( QDomElement e ):
         {
             throw GGraphError( error_msg.append("invalid pen width"));
         }
+    } else
+    {
+        pen_priv.setWidth( 1);
     }
     /** Parse fill color */
     if ( e.hasAttribute( "fill"))
     {
-        dflt_pen = false;
+        is_default = false;
         QString fill = e.attribute( "fill");
         QColor color( fill);
         
         if ( fill == "no_fill")
         {
-            pen_priv.setBrush( Qt::NoBrush);
+            brush_priv.setStyle( Qt::NoBrush);
         } else if ( color.isValid())
         {
-            pen_priv.setBrush( color);
+            brush_priv.setStyle( Qt::SolidPattern);
+            brush_priv.setColor( color);
         } else
         {
             throw GGraphError( error_msg.append("invalid fill color"));
         }
+    } else
+    {
+        brush_priv.setStyle( Qt::NoBrush);
     }
 }
 
 /** Saving to element */
 inline void 
-GStyle::writeElement( QDomElement e)
+GStyle::writeElement( QDomElement e, bool save_name)
 {
-    if ( dflt_pen)
+    if ( is_default)
         return;
     
-    e.setAttribute( "name", name_priv);
+    if ( save_name)
+        e.setAttribute( "name", name_priv);
 
     /** Save pen color */
     e.setAttribute( "pen_color", pen_priv.color().name());
@@ -204,11 +238,9 @@ GStyle::writeElement( QDomElement e)
     e.setAttribute( "pen_width", pen_priv.widthF());
     
     /** Save fill color */
-    QBrush brush = pen_priv.brush();
-    
-    if ( !( Qt::NoBrush == brush.style()))
+    if ( !( Qt::NoBrush == brush_priv.style()))
     {
-        e.setAttribute( "fill", brush.color().name());
+        e.setAttribute( "fill", brush_priv.color().name());
     }
 }
 
@@ -219,7 +251,8 @@ GStyle::operator = ( const GStyle& st)
     name_priv = st.name_priv;
     name_priv.append("_copy");
     pen_priv = st.pen_priv;
-    dflt_pen = st.dflt_pen;
+    is_default = st.is_default;
+    num_items = 0;
 }
 
 /** Get name of style */
@@ -235,11 +268,64 @@ inline QPen GStyle::pen() const
 /** Get brush */
 inline QBrush GStyle::brush() const
 {
-    return pen_priv.brush();
+    return brush_priv;
 }
 /** Check if style uses default pen */
 inline bool GStyle::isDefault() const
 {
-    return dflt_pen;
+    return is_default;
+}
+
+/** Increase items num */
+inline void GStyle::incNumItems()
+{
+    num_items++;
+}
+/** Decrease items num */
+inline void GStyle::decNumItems()
+{
+    ASSERTD( num_items > 0);
+    num_items--;
+}
+/** Get number of affected items */
+inline GraphNum GStyle::numItems()
+{
+    return num_items;
+}
+
+/** Set name of style */
+inline void GStyle::setName( QString &str)
+{
+    name_priv = str;
+}
+/** Set pen */
+inline void GStyle::setPen( QPen &pn)
+{
+    pen_priv = pn;
+}
+/** Set brush */
+inline void GStyle::setBrush( QBrush &br)
+{
+    brush_priv = br;
+}
+/** Set pen color */
+inline void GStyle::setPenColor( QColor &color)
+{
+    pen_priv.setColor( color);
+}
+/** Set pen style */
+inline void GStyle::setPenStyle( Qt::PenStyle st)
+{
+    pen_priv.setStyle( st);
+}
+/** Set pen width */
+inline void GStyle::setPenWidth( qreal width)
+{
+    pen_priv.setWidthF( width);
+}
+/** Set brush color */
+inline void GStyle::setBrushColor( QColor &color)
+{
+    brush_priv.setColor( color);
 }
 #endif /* GSTYLE_H */

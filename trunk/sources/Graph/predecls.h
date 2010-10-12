@@ -59,6 +59,9 @@ const GraphNum GRAPH_MAX_NODE_NUM = ( GraphNum)( -1);
 /** Maximum number of edges */
 const GraphNum GRAPH_MAX_EDGE_NUM = ( GraphNum)( -1);
 
+/** Indentation for XML writing */
+const int IndentSize = 4;
+
 class Graph;
 class Node;
 class Edge;

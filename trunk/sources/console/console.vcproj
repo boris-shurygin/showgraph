@@ -129,7 +129,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib QtGui4.lib QtCore4.lib QtXml4.lib"
+				AdditionalDependencies="qtmain.lib QtGui.lib QtCore.lib QtXml.lib imm32.lib winmm.lib ws2_32.lib qico.lib qtiff.lib qgif.lib qmng.lib qjpeg.lib"
 				OutputFile="$(OutDir)\showgraphcl.exe"
 				GenerateDebugInformation="true"
 				SubSystem="1"
