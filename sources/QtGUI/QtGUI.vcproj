@@ -179,6 +179,10 @@
 				RelativePath=".\moc_main_window.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\moc_style_edit.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="GraphView"
@@ -252,6 +256,24 @@
 			<File
 				RelativePath=".\node_item.h"
 				>
+			</File>
+			<File
+				RelativePath=".\style_edit.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\style_edit.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for StyleEdit"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 style_edit.h -o moc_style_edit.cpp"
+						Outputs="moc_style_edit.cpp"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter

@@ -72,5 +72,6 @@ private:
 #include "edge_item.h"
 #include "node_item.h"
 #include "graph_view.h"
+#include "style_edit.h"
 
 #endif /* GVIEW_IFACE_H */
