@@ -29,11 +29,11 @@ QSize ColorButton::sizeHint() const
 
 StyleEdit::StyleEdit( QWidget *parent)
 {
-    name_combo = new QComboBox( this);
-    name_combo->setEditable( true);
+    //name_combo = new QComboBox( this);
+    //name_combo->setEditable( true);
 
-    name_label = new QLabel( "Name:", this);
-    name_label->setBuddy( name_combo);
+    //name_label = new QLabel( "Name:", this);
+    //name_label->setBuddy( name_combo);
     
     line_color_button = new ColorButton( this);
     line_color_button->setColor( QColor(palette().foreground().color()));
@@ -64,12 +64,16 @@ StyleEdit::StyleEdit( QWidget *parent)
     fill_color_label = new QLabel( "Fill color:", this);
     fill_color_label->setBuddy( fill_color_button);
 
+
+    ok = new QPushButton( "&OK", this);
+    cancel = new QPushButton( "&Cancel", this);
+
     QGridLayout *mainLayout = new QGridLayout;
     //mainLayout->setColumnStretch(1, 3);
     
     //Row 0 name
-    mainLayout->addWidget(name_label, 0, 0, Qt::AlignRight);
-    mainLayout->addWidget(name_combo, 0, 1);
+    //mainLayout->addWidget(name_label, 0, 0, Qt::AlignRight);
+    //mainLayout->addWidget(name_combo, 0, 1);
     //Row 1 line color
     mainLayout->addWidget(line_color_label, 1, 0, Qt::AlignRight);
     mainLayout->addWidget(line_color_button, 1, 1);
@@ -82,13 +86,20 @@ StyleEdit::StyleEdit( QWidget *parent)
     //Row 4 fill color
     mainLayout->addWidget(fill_color_label, 4, 0, Qt::AlignRight);
     mainLayout->addWidget(fill_color_button, 4, 1);
+    // Row 5 ok & cancel
+    mainLayout->addWidget(ok, 5, 0);
+    mainLayout->addWidget(cancel, 5, 1);
+    
     setLayout(mainLayout);
 
-    connect( name_combo, SIGNAL( currentIndexChanged( int)), this, SLOT( changeStyleName()) );
+    //connect( name_combo, SIGNAL( currentIndexChanged( int)), this, SLOT( changeStyleName()) );
     connect( line_color_button, SIGNAL( clicked()), this, SLOT( selectLineColor()) );
     connect( line_style_combo, SIGNAL( currentIndexChanged( int)), this, SLOT( changeLineStyle()) );
     connect( line_width_spin, SIGNAL( valueChanged( double)), this, SLOT( changeLineWidth( double)) );
     connect( fill_color_button, SIGNAL( clicked()), this, SLOT( selectFillColor()) );
+
+    connect( ok, SIGNAL( clicked()), this, SLOT( accept()));
+    connect( cancel, SIGNAL( clicked()), this, SLOT( reject()));
 }
 
 /** Change name of the current style */
@@ -102,18 +113,25 @@ void StyleEdit::selectLineColor()
 {
     QColor color = QColorDialog::getColor();
     line_color_button->setColor( color);
+    gstyle->setPenColor( color);
+    gstyle->setState();
+    emit styleChanged( gstyle);
 }
 
 /** Change line style */
 void StyleEdit::changeLineStyle()
 {
-
+    gstyle->setPenStyle((Qt::PenStyle)line_style_combo->itemData( line_style_combo->currentIndex()).toInt());
+    gstyle->setState();
+    emit styleChanged( gstyle);
 }
 
 /** Change line width */
 void StyleEdit::changeLineWidth( double width)
 {
-
+    gstyle->setPenWidth(line_width_spin->value());
+    gstyle->setState();
+    emit styleChanged( gstyle);
 }
 
 /** Invoke color selection for fill */
@@ -121,4 +139,17 @@ void StyleEdit::selectFillColor()
 {
     QColor color = QColorDialog::getColor();
     fill_color_button->setColor( color);
+    gstyle->setBrush( QBrush( color));
+    gstyle->setState();
+    emit styleChanged( gstyle);
+}
+
+/** Set style */
+void StyleEdit::setGStyle( GStyle *st)
+{
+    gstyle = st;
+    line_color_button->setColor( QColor( st->pen().color()));
+    line_style_combo->findData( gstyle->pen().style());
+    line_width_spin->setValue( gstyle->pen().widthF());
+    fill_color_button->setColor( QColor( st->brush().color()));
 }

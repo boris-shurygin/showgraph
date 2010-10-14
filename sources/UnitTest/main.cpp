@@ -8,6 +8,8 @@
 #include "utest_impl.h"
 #include <windows.h>
 
+#undef UNIT_TEST_GUI
+
 /**
  * The entry point for GUI version of ShowGraph
  */
@@ -38,8 +40,10 @@ int main(int argc, char **argv)
     if ( !uTestFE())
         return -1;
     
+#ifdef UNIT_TEST_GUI
     /** Test GUI package */
     if ( uTestGUI(argc, argv) != 0)
         return -1;
+#endif
     MemMgr::deinit();
 }

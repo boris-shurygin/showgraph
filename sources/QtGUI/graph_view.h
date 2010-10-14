@@ -318,6 +318,14 @@ public:
      * Build graph from XML description
      */
     virtual void readFromXML( QString filename);
+    /**
+     * Show style editor for selected nodes
+     */
+    void showEditNodeStyle();
+    /**
+     * Change node's style
+     */
+    void setNodeStyle( GStyle *style);
 };
 
 /**
@@ -362,6 +370,7 @@ private:
     QAction *showPredAct;
     QAction *showSuccAct;
     QAction *findContextAct;
+    QAction *showEditNodeStyleAct;
     QAction *showTextAct;
     
 	/** Context menus */
@@ -418,8 +427,12 @@ public slots:
     void toggleEdition( bool e);
     /** Insert node in center of view */
     void insertNodeOnCenter();
+    /** Show style editor for node */
+    void showEditNodeStyle();
     /** Run layout */
     void runLayout();
+    /** Change node's style */
+    void setNodeStyle( GStyle *style);
 public:
     QProgressDialog *dialog;
     /** Constants */
@@ -630,6 +643,7 @@ public:
         }
     }
     
+
 };
 
 #endif

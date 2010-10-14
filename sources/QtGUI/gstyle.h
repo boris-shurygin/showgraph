@@ -36,6 +36,8 @@ public:
     inline QPen pen() const;
     /** Get brush */
     inline QBrush brush() const;
+    /** Set default/changed state*/
+    inline void setState( bool default_state = false);
     /** Set name of style */
     inline void setName( QString &str);
     /** Set pen */
@@ -253,6 +255,7 @@ GStyle::operator = ( const GStyle& st)
     pen_priv = st.pen_priv;
     is_default = st.is_default;
     num_items = 0;
+    return *this;
 }
 
 /** Get name of style */
@@ -327,5 +330,10 @@ inline void GStyle::setPenWidth( qreal width)
 inline void GStyle::setBrushColor( QColor &color)
 {
     brush_priv.setColor( color);
+}
+/** Set default/changed state*/
+inline void GStyle::setState( bool default_state)
+{
+    is_default = default_state;
 }
 #endif /* GSTYLE_H */

@@ -73,6 +73,18 @@ void GGraph::selectOneNode( GNode* n)
     n->item()->update();
 }
 
+/**
+ * Change node's style
+ */
+void GGraph::setNodeStyle( GStyle *style)
+{
+    if ( sel_nodes.isEmpty())
+        return;
+
+    GNode* node = sel_nodes.first();
+    node->setStyle( style);
+}
+
 void GGraph::showNodesText()
 {
     foreach (GNode *n, sel_nodes)
@@ -161,6 +173,49 @@ void GGraph::clearNodesPriority()
     foreachNode( n, this)
     {
         n->setPriority( 0);
+    }
+}
+
+void GGraph::showEditNodeStyle()
+{
+    if ( sel_nodes.isEmpty())
+        return;
+    
+    StyleEdit dialog;
+    GNode* node = sel_nodes.first();
+    
+    GStyle* old_style = node->style();
+    GStyle* new_style;
+    if ( isNullP( old_style))
+    {
+        new_style = new GStyle();
+        new_style->setPenColor( QColor( view()->palette().foreground().color()));
+        new_style->setPenWidth( 1);
+    } else
+    {
+        new_style = new GStyle( *node->style());
+    }    
+    dialog.setWindowTitle( "Node style editor");
+    dialog.setGStyle( new_style);
+    node->setStyle( new_style);
+    connect( &dialog, SIGNAL( styleChanged( GStyle *)), view(), SLOT( setNodeStyle( GStyle *)));
+    if ( dialog.exec() == QDialog::Accepted)
+    {
+        if ( isNotNullP( old_style))
+        {
+            *(old_style) = *(new_style);
+            node->setStyle( old_style);
+            delete new_style;
+        } else
+        {
+            QString name = QString("node %1 style").arg(node->id());
+            new_style->setName( name);
+            styles[ name] = new_style;
+        }
+    } else
+    {
+        node->setStyle( old_style);
+        delete new_style;
     }
 }
 
@@ -745,6 +800,12 @@ void GraphView::showSelectedNodesText()
     graph()->showNodesText();
 }
 
+/** Show style editor for node */
+void GraphView::showEditNodeStyle()
+{
+    graph()->showEditNodeStyle();
+}
+
 void GraphView::createActions()
 {
     QString system = QLatin1String("win");
@@ -782,7 +843,10 @@ void GraphView::createActions()
     connect( editableSwitchAct, SIGNAL( toggled( bool)), this, SLOT( toggleEdition( bool)));
     
     insertNodeAct = new QAction(tr("Insert node"), this);
-   
+    
+    showEditNodeStyleAct = new QAction(tr("Change style"), this);
+    connect( showEditNodeStyleAct, SIGNAL( triggered()), this, SLOT(showEditNodeStyle()));
+
     runLayoutAct = 
         new QAction( QIcon( QString::fromUtf8(":/images/%1/Synchronize/Synchronize.ico").arg( system)),
                      tr("&Run Layout"), this);
@@ -811,6 +875,8 @@ QMenu* GraphView::createMenuForNode( GNode *n)
         menu->addSeparator();
         menu->addAction( createSelfEdgeAct);
         createSelfEdgeAct->setEnabled( isEditable());
+        menu->addAction( showEditNodeStyleAct);
+        showEditNodeStyleAct->setEnabled( isEditable());
     }
     return menu;
 }
@@ -1371,4 +1437,12 @@ GGraph::readFromXML( QString filename)
             }
         }
     }
+}
+
+/**
+ * Change node's style
+ */
+void GraphView::setNodeStyle( GStyle *style)
+{
+    graph()->setNodeStyle( style);
 }
