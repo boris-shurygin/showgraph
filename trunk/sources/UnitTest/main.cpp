@@ -39,7 +39,7 @@ int main(int argc, char **argv)
         return -1;
     
     /** Test GUI package */
-    /* if ( uTestGUI(argc, argv) != 0)
-        return -1; */
+    if ( uTestGUI(argc, argv) != 0)
+        return -1;
     MemMgr::deinit();
 }
