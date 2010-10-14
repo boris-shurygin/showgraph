@@ -32,13 +32,17 @@ private:
 /**
  * Widget for creating/editing styles
  */
-class StyleEdit: public QWidget
+class StyleEdit: public QDialog
 {
     Q_OBJECT;
 public:
     /** Constructor */
     StyleEdit( QWidget *parent = 0);
-   
+    /** Set style */
+    void setGStyle( GStyle *);
+signals:
+    void styleChanged( GStyle *style);
+
 public slots:
     /** Change name of the current style */
     void changeStyleName();
@@ -51,6 +55,7 @@ public slots:
     /** Invoke color selection for fill */
     void selectFillColor();
 private:
+    GStyle *gstyle;
     //QHash< QString, GStyle *> styles;
     QLabel *name_label;
     QLabel *line_color_label;
@@ -63,6 +68,8 @@ private:
     QComboBox *line_style_combo;
     QDoubleSpinBox *line_width_spin;
     ColorButton *fill_color_button;
+    QPushButton *ok;
+    QPushButton *cancel;
 };
 
 #endif

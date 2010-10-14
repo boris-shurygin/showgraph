@@ -122,14 +122,7 @@ public:
     GNode *insertLabelNode( QPointF pos);
         
     /** Set edge's style */
-    inline void setStyle( GStyle *st)
-    {
-        if ( isNotNullP( _style))
-            _style->decNumItems();
-        _style = st;
-        if ( isNotNullP( _style))
-            _style->incNumItems();
-    }
+    inline void setStyle( GStyle *st);
     /** Get edge's style */
     inline GStyle * style() const
     {
@@ -225,4 +218,15 @@ public:
     /** Convenience routine for self edge path */
     QPainterPath selfEdgePath() const;
 };
+
+    /** Set edge's style */
+inline void GEdge::setStyle( GStyle *st)
+{
+    if ( isNotNullP( _style))
+        _style->decNumItems();
+    _style = st;
+    if ( isNotNullP( _style))
+        _style->incNumItems();
+    item()->update();
+}
 #endif

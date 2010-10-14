@@ -259,6 +259,7 @@ public:
         _style = st;
         if ( isNotNullP( _style))
             _style->incNumItems();
+        item()->update();
     }
     /** Get node's style */
     inline GStyle * style() const
