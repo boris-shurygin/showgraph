@@ -1,5 +1,5 @@
 <graph>
-    <node x="-25.5" y="20" id="0" label="Block 2" />
+    <node x="-25.5" y="20" pen_style="solid" fill="#ffaaac" pen_width="1" id="0" label="Block 2" pen_color="#000000" />
     <node x="15" y="132" id="1" label="Block 3" />
     <node x="-25.5" y="76" id="2" label="Block 4" />
     <node x="-66" y="132" id="3" label="Block 5" />
@@ -15,10 +15,10 @@
     <node x="-42.62916666666666" y="580" id="13" label="Block 15" />
     <node x="-104.1291666666667" y="636" id="14" label="Block 16" />
     <node x="-17.12916666666666" y="636" id="15" label="Block 17" />
-    <node x="-54.62916666666666" y="692" id="16" label="Block 18" />
-    <node x="-109.5" y="244" id="17" label="Block 19" />
+    <node x="-54.62916666666666" y="692" pen_style="solid" fill="#55ff00" pen_width="2" id="16" label="Block 18" pen_color="#000000" />
+    <node x="-109.5" y="244" pen_style="solid" fill="#ff0000" pen_width="3" id="17" label="Block 19" pen_color="#000000" />
     <node x="-148.1291666666667" y="692" id="18" label="Block 20" />
-    <node x="-52.87916666666666" y="748" id="19" label="Block 21" />
+    <node x="-52.87916666666666" y="748" pen_style="solid" fill="#ffff7f" pen_width="1" id="19" label="Block 21" pen_color="#000000" />
     <node x="-7" y="253" type="edge_control" id="20" label="Node 20" />
     <node x="-7" y="309" type="edge_control" id="21" label="Node 21" />
     <node x="-7" y="365" type="edge_control" id="22" label="Node 22" />
