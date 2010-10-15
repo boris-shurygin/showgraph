@@ -232,7 +232,7 @@ public:
 	 * Original edge goes to new node. 
 	 * Return new node.
 	 */
-    inline Node *insertNode();
+    virtual Node *insertNode();
 };
 
 #endif

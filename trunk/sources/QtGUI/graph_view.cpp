@@ -85,6 +85,18 @@ void GGraph::setNodeStyle( GStyle *style)
     node->setStyle( style);
 }
 
+/**
+ * Change edge's style
+ */
+void GGraph::setEdgeStyle( GStyle *style)
+{
+    if ( sel_edges.isEmpty())
+        return;
+
+    GEdge* edge = sel_edges.first();
+    edge->setStyle( style);
+}
+
 void GGraph::showNodesText()
 {
     foreach (GNode *n, sel_nodes)
@@ -174,6 +186,50 @@ void GGraph::clearNodesPriority()
     {
         n->setPriority( 0);
     }
+}
+
+void GGraph::showEditEdgeStyle()
+{
+    if ( sel_edges.isEmpty())
+        return;
+    
+    StyleEdit dialog;
+    GEdge* edge = sel_edges.first();
+    
+    GStyle* old_style = edge->style();
+    GStyle* new_style;
+    if ( isNullP( old_style))
+    {
+        new_style = new GStyle();
+        new_style->setPenColor( QColor( view()->palette().foreground().color()));
+        new_style->setPenWidth( 1);
+    } else
+    {
+        new_style = new GStyle( *edge->style());
+    }    
+    dialog.setWindowTitle( "Edge style editor");
+    dialog.setGStyle( new_style);
+    edge->setStyle( new_style);
+    connect( &dialog, SIGNAL( styleChanged( GStyle *)), view(), SLOT( setEdgeStyle( GStyle *)));
+    if ( dialog.exec() == QDialog::Accepted)
+    {
+        if ( isNotNullP( old_style))
+        {
+            *(old_style) = *(new_style);
+            edge->setStyle( old_style);
+            delete new_style;
+        } else
+        {
+            QString name = QString("edge %1 style").arg(edge->id());
+            new_style->setName( name);
+            styles[ name] = new_style;
+        }
+    } else
+    {
+        edge->setStyle( old_style);
+        delete new_style;
+    }
+    edge->adjustStyles();
 }
 
 void GGraph::showEditNodeStyle()
@@ -805,6 +861,11 @@ void GraphView::showEditNodeStyle()
 {
     graph()->showEditNodeStyle();
 }
+/** Show style editor for edge */
+void GraphView::showEditEdgeStyle()
+{
+    graph()->showEditEdgeStyle();
+}
 
 void GraphView::createActions()
 {
@@ -846,6 +907,9 @@ void GraphView::createActions()
     
     showEditNodeStyleAct = new QAction(tr("Change style"), this);
     connect( showEditNodeStyleAct, SIGNAL( triggered()), this, SLOT(showEditNodeStyle()));
+
+    showEditEdgeStyleAct = new QAction(tr("Change style"), this);
+    connect( showEditEdgeStyleAct, SIGNAL( triggered()), this, SLOT(showEditEdgeStyle()));
 
     runLayoutAct = 
         new QAction( QIcon( QString::fromUtf8(":/images/%1/Synchronize/Synchronize.ico").arg( system)),
@@ -891,6 +955,8 @@ QMenu* GraphView::createMenuForEdge( GEdge *e)
     deleteItemAct->setEnabled( isEditable());
     menu->addAction( createEdgeLabelAct);
     createEdgeLabelAct->setEnabled( isEditable());
+    menu->addAction( showEditEdgeStyleAct);
+    showEditEdgeStyleAct->setEnabled( isEditable());
     return menu;
 }
 
@@ -1445,4 +1511,12 @@ GGraph::readFromXML( QString filename)
 void GraphView::setNodeStyle( GStyle *style)
 {
     graph()->setNodeStyle( style);
+}
+
+/**
+ * Change edge's style
+ */
+void GraphView::setEdgeStyle( GStyle *style)
+{
+    graph()->setEdgeStyle( style);
 }

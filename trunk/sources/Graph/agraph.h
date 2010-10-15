@@ -88,7 +88,7 @@ public:
         return node( GRAPH_DIR_DOWN);
     }  
     /** insert node on this edge */
-    inline ANode *insertNode()
+    virtual ANode *insertNode()
     {
         return static_cast< ANode *>( Edge::insertNode());
     }
