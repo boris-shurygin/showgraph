@@ -128,6 +128,10 @@ public:
     {
         return _style;
     }
+    /** Insert node */
+    virtual AuxNode *insertNode();
+    /** Make all styles the same across complex edge */
+    void adjustStyles();
 };
 /**
  * Graphics item for visualizing a graph edge

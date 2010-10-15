@@ -61,7 +61,10 @@ GNode::~GNode()
          && isNotNullP( firstPred()->pred())
          && isNotNullP( firstSucc()->succ()))
     {
-        graph()->newEdge( firstPred()->pred(), firstSucc()->succ());
+        GRAPH_ASSERTD( areEqP( firstPred()->style(), firstSucc()->style()),
+                       "Different styles on the same edge");
+        GEdge *e = graph()->newEdge( firstPred()->pred(), firstSucc()->succ());
+        e->setStyle( firstPred()->style());
     } else if ( isSimple())
     {
         QList< GNode *> nodes;

@@ -82,6 +82,28 @@ GEdge::updateElement()
 
 }
 
+/** Make all styles of edges connected with edge control or label the same */
+void
+GEdge::adjustStyles()
+{
+    GNode* succ_n = succ();
+
+    while ( succ_n->isEdgeControl() || succ_n->isEdgeLabel())
+    {
+        assert( isNotNullP( succ_n->firstSucc()));
+        succ_n->firstSucc()->setStyle( style());
+        succ_n = succ_n->firstSucc()->succ();
+    }
+
+    GNode* pred_n = pred();
+
+    while ( pred_n->isEdgeControl() || pred_n->isEdgeLabel())
+    {
+        assert( isNotNullP( pred_n->firstPred()));
+        pred_n->firstPred()->setStyle( style());
+        pred_n = pred_n->firstPred()->pred();
+    }
+}
 /**
  * read properties from DOM tree element
  */
@@ -101,6 +123,20 @@ GEdge::insertLabelNode( QPointF pos)
     new_node->setTypeEdgeLabel();
     new_node->item()->setPlainText( "Label");
     new_node->item()->setPos( pos + QPointF( new_node->item()->borderRect().width()/2, 0));
+    
+    return new_node;
+}
+
+/**
+ * Insert node with style propagation
+ */
+AuxNode *
+GEdge::insertNode()
+{
+    GStyle *st = style();
+    GNode *new_node = static_cast<GNode *>( AuxEdge::insertNode());
+    //new_node->firstPred()->setStyle( st);
+    new_node->firstSucc()->setStyle( st);
     return new_node;
 }
 
@@ -337,7 +373,13 @@ EdgeItem::shape() const
     {
         path.cubicTo( cp1, cp2, dstP);
     }
-    stroker.setWidth( 2);
+    if ( isNotNullP( edge()->style()))
+    {
+        stroker.setWidth( edge()->style()->pen().width() + 1);
+    } else
+    {
+        stroker.setWidth( 2);
+    }
     return stroker.createStroke( path); 
 }
 
@@ -377,7 +419,7 @@ EdgeItem::paint( QPainter *painter,
     {
         path.cubicTo( cp1, cp2, dstP);
     }
-    path = stroker.createStroke(path);
+    //path = stroker.createStroke(path);
     if ( nextToDst == dstP)
         return;
 
@@ -405,7 +447,16 @@ EdgeItem::paint( QPainter *painter,
     }
 
     painter->setPen( pen);
-
+    
+    //Draw edge
+    if ( edge()->isSelf() || option->levelOfDetail >= spline_detail_level)
+    {
+        painter->drawPath( path);
+    } else
+    {
+        painter->drawLine( line);
+    }
+    
     // Draw the arrows if there's enough room and level of detail is appropriate
     if ( option->levelOfDetail >= draw_arrow_detail_level)
     {
@@ -433,6 +484,8 @@ EdgeItem::paint( QPainter *painter,
                                       cos(angle - Pi / 3) * arrowSize);
         destArrowP2 = dstP + QPointF( sin(angle - Pi + Pi / 3) * arrowSize,
                                       cos(angle - Pi + Pi / 3) * arrowSize);
+        pen.setStyle( Qt::SolidLine);
+        painter->setPen( pen);
         if ( succ()->isSimple())
         {
             QPainterPath arrow_path;
@@ -442,14 +495,6 @@ EdgeItem::paint( QPainter *painter,
         }
     }
 
-    //Draw edge
-    if ( edge()->isSelf() || option->levelOfDetail >= spline_detail_level)
-    {
-        painter->drawPath( path);
-    } else
-    {
-        painter->drawLine( line);
-    }
     painter->setOpacity( 1);
 #ifdef SHOW_CONTROL_POINTS
     /** For illustrative purposes */

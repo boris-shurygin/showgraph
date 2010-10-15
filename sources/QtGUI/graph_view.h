@@ -326,6 +326,14 @@ public:
      * Change node's style
      */
     void setNodeStyle( GStyle *style);
+    /**
+     * Show style editor for selected edges
+     */
+    void showEditEdgeStyle();
+    /**
+     * Change edge's style
+     */
+    void setEdgeStyle( GStyle *style);
 };
 
 /**
@@ -371,6 +379,7 @@ private:
     QAction *showSuccAct;
     QAction *findContextAct;
     QAction *showEditNodeStyleAct;
+    QAction *showEditEdgeStyleAct;
     QAction *showTextAct;
     
 	/** Context menus */
@@ -429,10 +438,14 @@ public slots:
     void insertNodeOnCenter();
     /** Show style editor for node */
     void showEditNodeStyle();
+    /** Show style editor for edge */
+    void showEditEdgeStyle();
     /** Run layout */
     void runLayout();
     /** Change node's style */
     void setNodeStyle( GStyle *style);
+    /** Change edge's style */
+    void setEdgeStyle( GStyle *style);
 public:
     QProgressDialog *dialog;
     /** Constants */
