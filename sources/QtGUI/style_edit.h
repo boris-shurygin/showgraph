@@ -50,6 +50,8 @@ public slots:
     void selectLineColor();
     /** Change line style */
     void changeLineStyle();
+    /** Change line style */
+    void changeShape();
     /** Change line width */
     void changeLineWidth( double width);
     /** Invoke color selection for fill */
@@ -62,8 +64,10 @@ private:
     QLabel *line_style_label;
     QLabel *line_width_label;
     QLabel *fill_color_label;
+    QLabel *shape_label;
 
     QComboBox *name_combo;
+    QComboBox *shape_combo;
     ColorButton *line_color_button;
     QComboBox *line_style_combo;
     QDoubleSpinBox *line_width_spin;
