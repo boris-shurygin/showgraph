@@ -232,7 +232,7 @@ EdgeItem::adjust()
     if ( pred()->isSimple())
     {
         QLineF line( srcP, dstP);
-        QPolygonF endPolygon = mapFromItem( pred()->item(), pred()->item()->borderRect());
+        QPolygonF endPolygon = mapFromItem( pred()->item(), pred()->item()->shape().toFillPolygon());
         QPointF p1 = endPolygon.first();
         QPointF p2;
         QPointF intersectPoint;
@@ -251,7 +251,7 @@ EdgeItem::adjust()
     if ( succ()->isSimple())
     {
         QLineF line2( srcP, dstP);
-        QPolygonF endPolygon = mapFromItem( succ()->item(), succ()->item()->borderRect());
+        QPolygonF endPolygon = mapFromItem( succ()->item(), succ()->item()->shape().toFillPolygon());
         QPointF p1 = endPolygon.first();;
         QPointF p2;
         QLineF polyLine;

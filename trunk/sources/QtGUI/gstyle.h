@@ -13,6 +13,73 @@
 typedef quint32 StyleId;
 
 /**
+ * Node shape enum
+ */
+enum NodeShape
+{
+    NODE_SHAPE_BOX,
+    NODE_SHAPE_DEFAULT = NODE_SHAPE_BOX,
+    NODE_SHAPE_ROUNDED_BOX,
+    NODE_SHAPE_CIRCLE,
+    NODE_SHAPE_DIAMOND,
+    NODE_SHAPE_ELLIPSE,
+    NODE_SHAPES_NUM    
+};
+
+/**
+ * Convert node shape to string 
+ */
+static QString
+nodeShape2Str( NodeShape shape)
+{
+    ASSERTD( shape < NODE_SHAPES_NUM);
+    switch ( shape)
+    {
+      case NODE_SHAPE_BOX:
+        return QString("box");
+      case NODE_SHAPE_ROUNDED_BOX:
+        return QString("rounded_box");
+      case NODE_SHAPE_CIRCLE:
+        return QString("circle");
+      case NODE_SHAPE_DIAMOND:
+        return QString("diamond");
+      case NODE_SHAPE_ELLIPSE:
+        return QString("ellipse");
+      default:
+        ASSERTD( 0);
+        return QString(); 
+    }
+    return QString();
+}
+
+/**
+ * Convert string to node shape 
+ */
+static NodeShape
+str2NodeShape( const QString &str)
+{
+    if ( str == "box")
+    {
+        return NODE_SHAPE_BOX;
+    } else if ( str == "rounded_box")
+    {
+        return NODE_SHAPE_ROUNDED_BOX;
+    } else if ( str == "circle")
+    {
+        return NODE_SHAPE_CIRCLE;
+    } else if ( str =="diamond")
+    {
+        return NODE_SHAPE_DIAMOND;
+    } else if ( str == "ellipse")
+    {
+        return NODE_SHAPE_ELLIPSE;
+    } else
+    {
+        return NODE_SHAPES_NUM;
+    }
+}
+
+/**
  * Graphic style for nodes and edges
  */ 
 class GStyle
@@ -24,7 +91,11 @@ public:
     inline GStyle( const GStyle&);
     /** Copy constructor with name specification */
     inline GStyle( QString nm, const GStyle&);
-    /** Construction from XML description */
+    /** 
+     * Construction from XML description
+     * @param Element wih style description
+     * @throws GGraphError
+     */
     inline GStyle( QDomElement e);
     /** Assignment */
     inline GStyle& operator = ( const GStyle&);
@@ -54,6 +125,10 @@ public:
     inline void setBrushColor( QColor &color);
     /** Check if style uses default pen */
     inline bool isDefault() const;
+    /** Get node shape */
+    inline NodeShape shape() const;
+    /** Set node shape */
+    inline void setShape( NodeShape new_shape);
     /** Saving to element */
     inline void writeElement( QDomElement e, bool save_name = true);
     /** Increase items num */
@@ -68,12 +143,13 @@ private:
     QBrush brush_priv;
     bool is_default;
     GraphNum num_items;
+    NodeShape shape_priv;
     //StyleId id;
 };
 
 /** Constructor */
 inline GStyle::GStyle(): 
-    is_default( true), num_items( 0)
+    is_default( true), num_items( 0), shape_priv(NODE_SHAPE_DEFAULT)
 {}
 
 /** Copy constructor */
@@ -84,6 +160,7 @@ inline GStyle::GStyle( const GStyle& st)
     pen_priv = st.pen_priv;
     brush_priv = st.brush_priv;
     is_default = st.is_default;
+    shape_priv = st.shape_priv;
     num_items = 0;
 }
 /** Copy constructor with name specification */
@@ -95,12 +172,14 @@ GStyle::GStyle( QString nm, const GStyle& st)
     pen_priv = st.pen_priv;
     brush_priv = st.brush_priv;
     is_default = st.is_default;
+    shape_priv = st.shape_priv;
 }
 
 /** Construction from XML description */
 inline 
 GStyle::GStyle( QDomElement e ): 
-    is_default( true)
+    is_default( true),
+    shape_priv(NODE_SHAPE_DEFAULT)
 {
     num_items = 0;
     ASSERTD( !e.isNull());
@@ -196,6 +275,18 @@ GStyle::GStyle( QDomElement e ):
     {
         brush_priv.setStyle( Qt::NoBrush);
     }
+    if ( e.hasAttribute("shape"))
+    {
+        NodeShape shp =  str2NodeShape( e.attribute("shape"));
+        if ( shp != NODE_SHAPES_NUM)
+        {
+            is_default = false;        
+            setShape( shp);
+        } else
+        {
+            throw GGraphError( error_msg.append("invalid shape"));
+        }
+    }
 }
 
 /** Saving to element */
@@ -244,6 +335,10 @@ GStyle::writeElement( QDomElement e, bool save_name)
     {
         e.setAttribute( "fill", brush_priv.color().name());
     }
+    if ( NODE_SHAPE_DEFAULT != shape())
+    {
+        e.setAttribute("shape", nodeShape2Str( shape()));
+    }
 }
 
 /** Assignment */
@@ -254,6 +349,8 @@ GStyle::operator = ( const GStyle& st)
     name_priv.append("_copy");
     pen_priv = st.pen_priv;
     is_default = st.is_default;
+    brush_priv = st.brush_priv;
+    shape_priv = st.shape_priv;
     num_items = 0;
     return *this;
 }
@@ -335,5 +432,16 @@ inline void GStyle::setBrushColor( QColor &color)
 inline void GStyle::setState( bool default_state)
 {
     is_default = default_state;
+}
+
+/** Get node shape */
+inline NodeShape GStyle::shape() const
+{
+    return shape_priv;
+}
+/** Set node shape */
+inline void GStyle::setShape( NodeShape new_shape)
+{
+    shape_priv = new_shape;
 }
 #endif /* GSTYLE_H */

@@ -80,6 +80,11 @@ public:
     {
         return Type;
     }
+    /** Get text border rectangle */
+    inline QRectF textRect() const
+    {
+        return QGraphicsTextItem::boundingRect();
+    }
     /** Get the inner border rectangle */
     QRectF borderRect() const;
     /** Get the bounding rectangle */

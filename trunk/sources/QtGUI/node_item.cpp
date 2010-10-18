@@ -8,6 +8,10 @@
  */
 #include "gview_impl.h"
 
+//#define DRAW_AXIS
+const qreal box_adjust = 5;
+        
+
 /** We can't create nodes separately, do it through newNode method of graph */
 GNode::GNode( GGraph *graph_p, int _id):
     AuxNode( ( AuxGraph *)graph_p, _id),
@@ -227,6 +231,133 @@ NodeItem::SetInitFlags()
     setPlainText( "");
 }
 
+/** Path of box type that given inner rectangle */
+inline QRectF boxRect( QRectF rect)
+{
+    return rect.adjusted( -box_adjust, -box_adjust, box_adjust, box_adjust);
+}
+/** Bounding rect that outlines the shape of box type for given inner rectangle */
+inline QPainterPath boxPath( QRectF rect)
+{
+    QPainterPath path;
+    path.addRect( rect.adjusted( -box_adjust, -box_adjust, box_adjust, box_adjust));
+    return path;
+}
+
+/** Path of rounded box type that given inner rectangle */
+inline QRectF rboxRect( QRectF rect)
+{
+    return rect.adjusted( -box_adjust, -box_adjust, box_adjust, box_adjust);
+}
+/** Bounding rect that outlines the shape of rounded box type for given inner rectangle */
+inline QPainterPath rboxPath( QRectF rect)
+{
+    QPainterPath path;
+    path.addRoundedRect( rect.adjusted( -box_adjust, -box_adjust, box_adjust, box_adjust), 2*box_adjust, 2*box_adjust);
+    return path;
+}
+
+/** Path of circle type that given inner rectangle */
+inline QRectF circleRect( QRectF rect)
+{
+    QRectF recta = rect.adjusted( -box_adjust, -box_adjust, box_adjust, box_adjust);
+    qreal radius = sqrt( (recta.width() * recta.width()) + (recta.height() * recta.height())) /2;
+    return QRectF( -radius + rect.width() /2, -radius + rect.height() /2, 2*radius, 2*radius);
+}
+/** Bounding rect that outlines the shape of circle type for given inner rectangle */
+inline QPainterPath circlePath( QRectF rect)
+{
+    QPainterPath path;
+    path.addEllipse( circleRect( rect));
+    return path;
+}
+
+/** Path of diamond type that given inner rectangle */
+inline QRectF diamondRect( QRectF rect)
+{
+    return rect.adjusted( -rect.width() /2, -rect.height() /2, rect.width() /2, rect.height() /2);
+}
+/** Bounding rect that outlines the shape of diamond type for given inner rectangle */
+inline QPainterPath diamondPath( QRectF rect)
+{
+    QRectF drect = diamondRect( rect);
+    QPainterPath path( drect.center() - QPointF(drect.width() / 2, 0));
+    path.lineTo( drect.center() - QPointF(0, drect.height() / 2));
+    path.lineTo( drect.center() + QPointF(drect.width() / 2, 0));
+    path.lineTo( drect.center() + QPointF(0, drect.height() / 2));
+    path.closeSubpath();
+
+    return path;
+}
+
+/** Path of ellipse type that given inner rectangle */
+inline QRectF ellipseRect( QRectF rect)
+{
+    return diamondRect( rect);
+}
+/** Bounding rect that outlines the shape of ellipse type for given inner rectangle */
+inline QPainterPath ellipsePath( QRectF rect)
+{
+    QPainterPath path;
+    path.addEllipse( ellipseRect( rect));
+    return path;
+}
+/**
+ * Implementation of shape calculation
+ */
+inline QPainterPath
+shape2Path( NodeShape shape, QRectF rect)
+{
+    ASSERTD( shape < NODE_SHAPES_NUM);
+    switch ( shape)
+    {
+      case NODE_SHAPE_BOX:
+        return boxPath( rect);
+      case NODE_SHAPE_ROUNDED_BOX:
+        return rboxPath( rect);
+      case NODE_SHAPE_CIRCLE:
+        return circlePath( rect);
+      case NODE_SHAPE_DIAMOND:
+        return diamondPath( rect);
+      case NODE_SHAPE_ELLIPSE:
+        return ellipsePath( rect);
+      default:
+        ASSERTD( 0);
+        QPainterPath path;
+        path.addRect( rect);
+        return path;
+    }
+        QPainterPath path;
+    path.addRect( rect);
+    return path;
+}
+
+/**
+ * Implementation of shape calculation
+ */
+inline QRectF
+shape2Rect( NodeShape shape, QRectF rect)
+{
+    ASSERTD( shape < NODE_SHAPES_NUM);
+    switch ( shape)
+    {
+      case NODE_SHAPE_BOX:
+        return boxRect( rect);
+      case NODE_SHAPE_ROUNDED_BOX:
+        return rboxRect( rect);
+      case NODE_SHAPE_CIRCLE:
+        return circleRect( rect);
+      case NODE_SHAPE_DIAMOND:
+        return diamondRect( rect);
+      case NODE_SHAPE_ELLIPSE:
+        return ellipseRect( rect);
+      default:
+        ASSERTD( 0);
+        return rect; 
+    }
+    return rect;
+}
+
 /**
  * Rectangle that marks border of node
  */
@@ -243,14 +374,18 @@ NodeItem::borderRect() const
               2*( EdgeControlSize + adjust), 2*( EdgeControlSize + adjust));
     } else if ( node()->isEdgeLabel())
     {
-        qreal adjust = 5;
         return QGraphicsTextItem::boundingRect()
-            .adjusted( -adjust, -adjust, adjust, adjust);    
+            .adjusted( -box_adjust, -box_adjust, box_adjust, box_adjust);    
     } else
     {
-        qreal adjust = 5;
-        return QGraphicsTextItem::boundingRect()
-            .adjusted( -adjust, -adjust, adjust, adjust);
+        QRectF rect =  QGraphicsTextItem::boundingRect();
+        if ( isNotNullP( node()->style()))
+        {
+            return shape2Rect( node()->style()->shape(), rect);
+        } else
+        {
+            return rect.adjusted( -box_adjust, -box_adjust, box_adjust, box_adjust);
+        }
     }
 }
 
@@ -280,9 +415,16 @@ NodeItem::shape() const
         return path; 
     } else
     {
-        QPainterPath path;
-        path.addRect( borderRect());
-        return path;
+        QRectF rect =  QGraphicsTextItem::boundingRect();
+        if ( isNotNullP( node()->style()))
+        {
+            return shape2Path( node()->style()->shape(), rect);
+        } else
+        {
+            QPainterPath path;
+            path.addRect( borderRect());
+            return path;
+        }
     }
 }
 
@@ -302,6 +444,13 @@ NodeItem::paint( QPainter *painter,
 
     if ( node()->isSimple() || node()->isEdgeLabel())
     {
+#ifdef DRAW_AXIS
+        QPen axis_pen( "red");
+        painter->setPen( axis_pen);
+        painter->drawRect( borderRect());
+        painter->drawLine( QPoint( -boundingRect().width(), 0), QPoint( boundingRect().width(),0));
+        painter->drawLine( QPoint( 0, -boundingRect().height()), QPoint( 0, boundingRect().height()));
+#endif
         QPen pen( option->palette.foreground().color(), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
         if ( option->levelOfDetail < 0.1)
         {
@@ -326,7 +475,16 @@ NodeItem::paint( QPainter *painter,
         painter->setPen( pen);
 
         if ( node()->isSimple())
-            painter->drawRect( borderRect());
+        {
+            QRectF rect =  QGraphicsTextItem::boundingRect();
+            if ( isNotNullP( node()->style()))
+            {
+                painter->drawPath( shape2Path( node()->style()->shape(), rect));
+            } else
+            {
+                painter->drawRect( borderRect());
+            }
+        }
         if ( option->levelOfDetail >= 0.2)
             QGraphicsTextItem::paint( painter, option, widget);
     } else if ( node()->isEdgeControl())

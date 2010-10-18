@@ -471,7 +471,9 @@ void GGraph::UpdatePlacement()
           isNotNullP( n);
           n = n->nextNode())
     {
-        n->item()->setPos( n->modelX(), n->modelY());
+        qreal x = n->modelX() + ( n->item()->borderRect().width() - n->item()->textRect().width()) / 2;
+        qreal y = n->modelY() + ( n->item()->borderRect().height() - n->item()->textRect().height()) / 2;
+        n->item()->setPos( x, y);
     }
 
     GEdge *e;

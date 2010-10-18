@@ -29,11 +29,15 @@ QSize ColorButton::sizeHint() const
 
 StyleEdit::StyleEdit( QWidget *parent)
 {
-    //name_combo = new QComboBox( this);
-    //name_combo->setEditable( true);
+    shape_combo = new QComboBox( this);
+    shape_combo->addItem(tr("Box"), NODE_SHAPE_BOX);
+    shape_combo->addItem(tr("Rounded box"), NODE_SHAPE_ROUNDED_BOX);
+    shape_combo->addItem(tr("Ellipse"), NODE_SHAPE_ELLIPSE);
+    shape_combo->addItem(tr("Circle"), NODE_SHAPE_CIRCLE);
+    shape_combo->addItem(tr("Diamond"), NODE_SHAPE_DIAMOND);
 
-    //name_label = new QLabel( "Name:", this);
-    //name_label->setBuddy( name_combo);
+    shape_label = new QLabel( "Shape:", this);
+    shape_label->setBuddy( shape_combo);
     
     line_color_button = new ColorButton( this);
     line_color_button->setColor( QColor(palette().foreground().color()));
@@ -72,27 +76,27 @@ StyleEdit::StyleEdit( QWidget *parent)
     //mainLayout->setColumnStretch(1, 3);
     
     //Row 0 name
-    //mainLayout->addWidget(name_label, 0, 0, Qt::AlignRight);
-    //mainLayout->addWidget(name_combo, 0, 1);
+    mainLayout->addWidget( shape_label, 0, 0, Qt::AlignRight);
+    mainLayout->addWidget( shape_combo, 0, 1);
     //Row 1 line color
-    mainLayout->addWidget(line_color_label, 1, 0, Qt::AlignRight);
-    mainLayout->addWidget(line_color_button, 1, 1);
+    mainLayout->addWidget( line_color_label, 1, 0, Qt::AlignRight);
+    mainLayout->addWidget( line_color_button, 1, 1);
     //Row 2 line style
-    mainLayout->addWidget(line_style_label, 2, 0, Qt::AlignRight);
-    mainLayout->addWidget(line_style_combo, 2, 1);
+    mainLayout->addWidget( line_style_label, 2, 0, Qt::AlignRight);
+    mainLayout->addWidget( line_style_combo, 2, 1);
      //Row 3 line width
-    mainLayout->addWidget(line_width_label, 3, 0, Qt::AlignRight);
-    mainLayout->addWidget(line_width_spin, 3, 1);
+    mainLayout->addWidget( line_width_label, 3, 0, Qt::AlignRight);
+    mainLayout->addWidget( line_width_spin, 3, 1);
     //Row 4 fill color
-    mainLayout->addWidget(fill_color_label, 4, 0, Qt::AlignRight);
-    mainLayout->addWidget(fill_color_button, 4, 1);
+    mainLayout->addWidget( fill_color_label, 4, 0, Qt::AlignRight);
+    mainLayout->addWidget( fill_color_button, 4, 1);
     // Row 5 ok & cancel
-    mainLayout->addWidget(ok, 5, 0);
-    mainLayout->addWidget(cancel, 5, 1);
+    mainLayout->addWidget( ok, 5, 0);
+    mainLayout->addWidget( cancel, 5, 1);
     
-    setLayout(mainLayout);
+    setLayout( mainLayout);
 
-    //connect( name_combo, SIGNAL( currentIndexChanged( int)), this, SLOT( changeStyleName()) );
+    connect( shape_combo, SIGNAL( currentIndexChanged( int)), this, SLOT( changeShape()) );
     connect( line_color_button, SIGNAL( clicked()), this, SLOT( selectLineColor()) );
     connect( line_style_combo, SIGNAL( currentIndexChanged( int)), this, SLOT( changeLineStyle()) );
     connect( line_width_spin, SIGNAL( valueChanged( double)), this, SLOT( changeLineWidth( double)) );
@@ -100,6 +104,9 @@ StyleEdit::StyleEdit( QWidget *parent)
 
     connect( ok, SIGNAL( clicked()), this, SLOT( accept()));
     connect( cancel, SIGNAL( clicked()), this, SLOT( reject()));
+
+    setWindowTitle( "Edit style");
+    setWindowFlags( windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
 }
 
 /** Change name of the current style */
@@ -122,6 +129,14 @@ void StyleEdit::selectLineColor()
 void StyleEdit::changeLineStyle()
 {
     gstyle->setPenStyle((Qt::PenStyle)line_style_combo->itemData( line_style_combo->currentIndex()).toInt());
+    gstyle->setState();
+    emit styleChanged( gstyle);
+}
+
+/** Change line style */
+void StyleEdit::changeShape()
+{
+    gstyle->setShape((NodeShape)shape_combo->itemData( shape_combo->currentIndex()).toInt());
     gstyle->setState();
     emit styleChanged( gstyle);
 }
@@ -149,7 +164,8 @@ void StyleEdit::setGStyle( GStyle *st)
 {
     gstyle = st;
     line_color_button->setColor( QColor( st->pen().color()));
-    line_style_combo->findData( gstyle->pen().style());
+    shape_combo->setCurrentIndex( shape_combo->findData( gstyle->shape()));
+    line_style_combo->setCurrentIndex( line_style_combo->findData( gstyle->pen().style()));
     line_width_spin->setValue( gstyle->pen().widthF());
     fill_color_button->setColor( QColor( st->brush().color()));
 }
