@@ -46,7 +46,7 @@ CFNode*
 CFG::newNode( QDomElement e)
 {
     CFNode* n =  static_cast< CFNode *>( GGraph::newNode( e));
-    view()->scene()->addItem( n->item());
+    //view()->scene()->addItem( n->item());
     return n;
 }
 

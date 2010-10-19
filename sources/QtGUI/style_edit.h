@@ -37,7 +37,7 @@ class StyleEdit: public QDialog
     Q_OBJECT;
 public:
     /** Constructor */
-    StyleEdit( QWidget *parent = 0);
+    StyleEdit( QWidget *parent = 0, bool show_additional = false);
     /** Set style */
     void setGStyle( GStyle *);
 signals:
@@ -56,6 +56,8 @@ public slots:
     void changeLineWidth( double width);
     /** Invoke color selection for fill */
     void selectFillColor();
+    /** Change fill style */
+    void changeFillStyle();
 private:
     GStyle *gstyle;
     //QHash< QString, GStyle *> styles;
@@ -67,6 +69,7 @@ private:
     QLabel *shape_label;
 
     QComboBox *name_combo;
+    QCheckBox *fill_check; 
     QComboBox *shape_combo;
     ColorButton *line_color_button;
     QComboBox *line_style_combo;

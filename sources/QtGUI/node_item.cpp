@@ -486,7 +486,10 @@ NodeItem::paint( QPainter *painter,
             }
         }
         if ( option->levelOfDetail >= 0.2)
-            QGraphicsTextItem::paint( painter, option, widget);
+        {
+            if ( painter->isActive())     
+                QGraphicsTextItem::paint( painter, option, widget);
+        }
     } else if ( node()->isEdgeControl())
     {
         if ( option->levelOfDetail < 0.2)
@@ -604,7 +607,7 @@ void NodeItem::focusOutEvent(QFocusEvent *event)
 /**
  * We should adjust edges when entering the text as the size of item changes
  */
-void  NodeItem::keyPressEvent(QKeyEvent *event)
+void NodeItem::keyPressEvent(QKeyEvent *event)
 {
     QGraphicsTextItem::keyPressEvent(event);
     GEdge *edge = NULL;
@@ -617,6 +620,7 @@ void  NodeItem::keyPressEvent(QKeyEvent *event)
     {
         edge->item()->adjust();
     }
+    prepareGeometryChange();
 }
 
 /** 
