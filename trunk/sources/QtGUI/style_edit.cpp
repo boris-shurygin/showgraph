@@ -27,17 +27,23 @@ QSize ColorButton::sizeHint() const
     return QSize( 20,20);
 }
 
-StyleEdit::StyleEdit( QWidget *parent)
+StyleEdit::StyleEdit( QWidget *parent, bool show_additional)
 {
-    shape_combo = new QComboBox( this);
-    shape_combo->addItem(tr("Box"), NODE_SHAPE_BOX);
-    shape_combo->addItem(tr("Rounded box"), NODE_SHAPE_ROUNDED_BOX);
-    shape_combo->addItem(tr("Ellipse"), NODE_SHAPE_ELLIPSE);
-    shape_combo->addItem(tr("Circle"), NODE_SHAPE_CIRCLE);
-    shape_combo->addItem(tr("Diamond"), NODE_SHAPE_DIAMOND);
+    if ( show_additional)
+    {        
+        shape_combo = new QComboBox( this);
+        shape_combo->addItem(tr("Box"), NODE_SHAPE_BOX);
+        shape_combo->addItem(tr("Rounded box"), NODE_SHAPE_ROUNDED_BOX);
+        shape_combo->addItem(tr("Ellipse"), NODE_SHAPE_ELLIPSE);
+        shape_combo->addItem(tr("Circle"), NODE_SHAPE_CIRCLE);
+        shape_combo->addItem(tr("Diamond"), NODE_SHAPE_DIAMOND);
 
-    shape_label = new QLabel( "Shape:", this);
-    shape_label->setBuddy( shape_combo);
+        shape_label = new QLabel( "Shape:", this);
+        shape_label->setBuddy( shape_combo);
+    } else
+    {
+        shape_combo = NULL;
+    }
     
     line_color_button = new ColorButton( this);
     line_color_button->setColor( QColor(palette().foreground().color()));
@@ -62,11 +68,20 @@ StyleEdit::StyleEdit( QWidget *parent)
     line_width_label = new QLabel( "Line width:", this);
     line_width_label->setBuddy( line_width_spin);
 
-    fill_color_button = new ColorButton( this);
-    fill_color_button->setColor( QColor(palette().base().color()));
-    
-    fill_color_label = new QLabel( "Fill color:", this);
-    fill_color_label->setBuddy( fill_color_button);
+    if ( show_additional)
+    {
+        fill_check = new QCheckBox( "Fill", this);
+        fill_color_button = new ColorButton( this);
+        fill_color_button->setColor( QColor(palette().base().color()));
+        
+        fill_color_label = new QLabel( "Fill color:", this);
+        fill_color_label->setBuddy( fill_color_button);
+    } else
+    {
+        fill_color_button = NULL;
+        fill_color_label = NULL;
+        fill_check = NULL;
+    }
 
 
     ok = new QPushButton( "&OK", this);
@@ -76,8 +91,11 @@ StyleEdit::StyleEdit( QWidget *parent)
     //mainLayout->setColumnStretch(1, 3);
     
     //Row 0 name
-    mainLayout->addWidget( shape_label, 0, 0, Qt::AlignRight);
-    mainLayout->addWidget( shape_combo, 0, 1);
+    if ( show_additional)
+    {
+        mainLayout->addWidget( shape_label, 0, 0, Qt::AlignRight);
+        mainLayout->addWidget( shape_combo, 0, 1);
+    }
     //Row 1 line color
     mainLayout->addWidget( line_color_label, 1, 0, Qt::AlignRight);
     mainLayout->addWidget( line_color_button, 1, 1);
@@ -88,19 +106,28 @@ StyleEdit::StyleEdit( QWidget *parent)
     mainLayout->addWidget( line_width_label, 3, 0, Qt::AlignRight);
     mainLayout->addWidget( line_width_spin, 3, 1);
     //Row 4 fill color
-    mainLayout->addWidget( fill_color_label, 4, 0, Qt::AlignRight);
-    mainLayout->addWidget( fill_color_button, 4, 1);
+    if ( show_additional)
+    {
+        mainLayout->addWidget( fill_check, 4, 0, 1, 2);
+        mainLayout->addWidget( fill_color_label, 5, 0, Qt::AlignRight);
+        mainLayout->addWidget( fill_color_button, 5, 1);
+    }
     // Row 5 ok & cancel
-    mainLayout->addWidget( ok, 5, 0);
-    mainLayout->addWidget( cancel, 5, 1);
+    mainLayout->addWidget( ok, 6, 0);
+    mainLayout->addWidget( cancel, 6, 1);
     
     setLayout( mainLayout);
 
-    connect( shape_combo, SIGNAL( currentIndexChanged( int)), this, SLOT( changeShape()) );
+    if ( show_additional)
+    {
+        connect( shape_combo, SIGNAL( currentIndexChanged( int)), this, SLOT( changeShape()) );
+        connect( fill_color_button, SIGNAL( clicked()), this, SLOT( selectFillColor()) );
+        connect( fill_check, SIGNAL( clicked()), this, SLOT( changeFillStyle()) );
+    }
     connect( line_color_button, SIGNAL( clicked()), this, SLOT( selectLineColor()) );
     connect( line_style_combo, SIGNAL( currentIndexChanged( int)), this, SLOT( changeLineStyle()) );
     connect( line_width_spin, SIGNAL( valueChanged( double)), this, SLOT( changeLineWidth( double)) );
-    connect( fill_color_button, SIGNAL( clicked()), this, SLOT( selectFillColor()) );
+    
 
     connect( ok, SIGNAL( clicked()), this, SLOT( accept()));
     connect( cancel, SIGNAL( clicked()), this, SLOT( reject()));
@@ -148,7 +175,23 @@ void StyleEdit::changeLineWidth( double width)
     gstyle->setState();
     emit styleChanged( gstyle);
 }
-
+/** Set fill style */
+void StyleEdit::changeFillStyle()
+{
+    if ( !fill_check->isChecked())
+    { 
+        QBrush br = gstyle->brush();
+        br.setStyle( Qt::NoBrush);
+        gstyle->setBrush( br);
+    } else
+    {
+        QBrush br = gstyle->brush();
+        br.setStyle( Qt::SolidPattern);
+        gstyle->setBrush( br);
+        gstyle->setState();
+    }
+    emit styleChanged( gstyle);
+}
 /** Invoke color selection for fill */
 void StyleEdit::selectFillColor()
 {
@@ -156,6 +199,7 @@ void StyleEdit::selectFillColor()
     fill_color_button->setColor( color);
     gstyle->setBrush( QBrush( color));
     gstyle->setState();
+    fill_check->setChecked( true);
     emit styleChanged( gstyle);
 }
 
@@ -164,8 +208,19 @@ void StyleEdit::setGStyle( GStyle *st)
 {
     gstyle = st;
     line_color_button->setColor( QColor( st->pen().color()));
-    shape_combo->setCurrentIndex( shape_combo->findData( gstyle->shape()));
+    if ( isNotNullP( shape_combo))
+    {
+        shape_combo->setCurrentIndex( shape_combo->findData( gstyle->shape()));
+        fill_color_button->setColor( QColor( st->brush().color()));
+        fill_check->setChecked( st->brush().style() != Qt::NoBrush);
+        if ( st->brush().style() == Qt::NoBrush)
+        {
+            QBrush br = gstyle->brush();
+            br.setColor( QColor( "white"));
+            gstyle->setBrush( br);
+            fill_color_button->setColor( QColor( "white"));
+        }
+    }
     line_style_combo->setCurrentIndex( line_style_combo->findData( gstyle->pen().style()));
     line_width_spin->setValue( gstyle->pen().widthF());
-    fill_color_button->setColor( QColor( st->brush().color()));
 }

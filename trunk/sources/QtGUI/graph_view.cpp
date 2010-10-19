@@ -237,7 +237,7 @@ void GGraph::showEditNodeStyle()
     if ( sel_nodes.isEmpty())
         return;
     
-    StyleEdit dialog;
+    StyleEdit dialog( NULL, true);
     GNode* node = sel_nodes.first();
     
     GStyle* old_style = node->style();
