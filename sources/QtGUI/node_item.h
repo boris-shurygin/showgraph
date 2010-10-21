@@ -125,6 +125,9 @@ public:
         scene()->removeItem( this);
         node_p = NULL;
     }
+
+    /** Change shape */
+    void shapeChanged();
 };
 /**
  * Representation of model graph node

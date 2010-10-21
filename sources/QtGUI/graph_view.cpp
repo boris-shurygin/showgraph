@@ -83,6 +83,7 @@ void GGraph::setNodeStyle( GStyle *style)
 
     GNode* node = sel_nodes.first();
     node->setStyle( style);
+    node->item()->adjustAssociates();
 }
 
 /**
@@ -95,6 +96,7 @@ void GGraph::setEdgeStyle( GStyle *style)
 
     GEdge* edge = sel_edges.first();
     edge->setStyle( style);
+    edge->item()->adjust();
 }
 
 void GGraph::showNodesText()
@@ -188,6 +190,59 @@ void GGraph::clearNodesPriority()
     }
 }
 
+struct GraphView::StyleEditInfo
+{
+    GEdge* edge;
+    GNode* node;
+    GStyle *old_style;
+    GStyle *new_style;
+    StyleEdit* dialog;
+    StyleEditInfo( GEdge* e, GStyle *olds, GStyle *news, StyleEdit* d):
+        edge( e), node(NULL), old_style(olds), new_style( news), dialog( d)
+    {}
+    StyleEditInfo( GNode* n, GStyle *olds, GStyle *news, StyleEdit* d):
+        edge( NULL), node(n), old_style(olds), new_style( news), dialog( d)
+    {}
+};
+
+/** Style edit finished */
+void GraphView::styleEditFinished( int result)
+{
+    if ( isNotNullP( style_edit_info->node))
+    {
+        GNode *node = style_edit_info->node;
+        GStyle *old_style = style_edit_info->old_style;
+        GStyle *new_style = style_edit_info->new_style;
+
+        if ( result == QDialog::Accepted)
+        {
+            if ( isNotNullP( old_style))
+            {
+                *(old_style) = *(new_style);
+                node->setStyle( old_style);
+                delete new_style;
+            } else
+            {
+                QString name = QString("node %1 style").arg(node->id());
+                new_style->setName( name);
+                graph()->addStyle( name, new_style);
+            }
+        } else
+        {
+            node->setStyle( old_style);
+            delete new_style;
+        }
+        node->item()->adjustAssociates();
+    } else
+    {
+    
+    }
+
+    style_edit_info->dialog->disconnect();
+    style_edit_info->dialog->deleteLater();
+    delete style_edit_info;
+}
+
 void GGraph::showEditEdgeStyle()
 {
     if ( sel_edges.isEmpty())
@@ -230,6 +285,7 @@ void GGraph::showEditEdgeStyle()
         delete new_style;
     }
     edge->adjustStyles();
+    edge->item()->adjust();
 }
 
 void GGraph::showEditNodeStyle()
@@ -237,7 +293,7 @@ void GGraph::showEditNodeStyle()
     if ( sel_nodes.isEmpty())
         return;
     
-    StyleEdit dialog( NULL, true);
+    StyleEdit* dialog = new StyleEdit( NULL, true);
     GNode* node = sel_nodes.first();
     
     GStyle* old_style = node->style();
@@ -250,29 +306,16 @@ void GGraph::showEditNodeStyle()
     } else
     {
         new_style = new GStyle( *node->style());
-    }    
-    dialog.setWindowTitle( "Node style editor");
-    dialog.setGStyle( new_style);
+    }   
+    
+    view()->setStyleEditInfo( new GraphView::StyleEditInfo( node, old_style, new_style, dialog));
+
+    dialog->setWindowTitle( "Node style editor");
+    dialog->setGStyle( new_style);
     node->setStyle( new_style);
-    connect( &dialog, SIGNAL( styleChanged( GStyle *)), view(), SLOT( setNodeStyle( GStyle *)));
-    if ( dialog.exec() == QDialog::Accepted)
-    {
-        if ( isNotNullP( old_style))
-        {
-            *(old_style) = *(new_style);
-            node->setStyle( old_style);
-            delete new_style;
-        } else
-        {
-            QString name = QString("node %1 style").arg(node->id());
-            new_style->setName( name);
-            styles[ name] = new_style;
-        }
-    } else
-    {
-        node->setStyle( old_style);
-        delete new_style;
-    }
+    connect( dialog, SIGNAL( styleChanged( GStyle *)), view(), SLOT( setNodeStyle( GStyle *)));
+    connect( dialog, SIGNAL( finished( int)), view(), SLOT( styleEditFinished( int)));
+    dialog->exec();
 }
 
 void GGraph::showWholeGraph()
@@ -584,7 +627,8 @@ GraphView::GraphView():
     node_animation_timer( 0),
     smooth_focus( false),
     editable( false),
-    view_mode( WHOLE_GRAPH_VIEW)
+    view_mode( WHOLE_GRAPH_VIEW),
+    style_edit_info( NULL)
 {
     QGraphicsScene *scene = new QGraphicsScene( this);
     //scene->setItemIndexMethod( QGraphicsScene::NoIndex);

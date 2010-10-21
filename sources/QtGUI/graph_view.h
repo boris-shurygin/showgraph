@@ -334,6 +334,13 @@ public:
      * Change edge's style
      */
     void setEdgeStyle( GStyle *style);
+    /**
+     * Add a style
+     */
+    void addStyle( QString &name, GStyle *style)
+    {
+        styles[ name] = style;
+    }
 };
 
 /**
@@ -356,6 +363,9 @@ class GraphView: public QGraphicsView
 {
     Q_OBJECT; /** For MOC */
 private:
+    
+    struct StyleEditInfo;
+
     /** Pointer to model graph */   
     GGraph * graph_p;
     /** History of view events */
@@ -401,6 +411,8 @@ private:
     GNode *search_node;
     qreal zoom_scale;
     qreal preferred_zoom;
+
+    StyleEditInfo *style_edit_info;
 protected:
 	void createActions();
 	void createMenus();
@@ -446,6 +458,8 @@ public slots:
     void setNodeStyle( GStyle *style);
     /** Change edge's style */
     void setEdgeStyle( GStyle *style);
+    /** Style edit finished */
+    void styleEditFinished( int result);
 public:
     QProgressDialog *dialog;
     /** Constants */
@@ -655,7 +669,10 @@ public:
             /** deleteItems(); !!! FIXME: MEMORY LEACKAGE( yes, not potential... known leakage) */
         }
     }
-    
+    inline void setStyleEditInfo( StyleEditInfo* info)
+    {
+        style_edit_info = info;
+    }
 
 };
 
