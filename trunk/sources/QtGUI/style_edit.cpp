@@ -163,6 +163,7 @@ void StyleEdit::changeLineStyle()
 /** Change line style */
 void StyleEdit::changeShape()
 {
+    emit styleChanged( gstyle);
     gstyle->setShape((NodeShape)shape_combo->itemData( shape_combo->currentIndex()).toInt());
     gstyle->setState();
     emit styleChanged( gstyle);

@@ -302,6 +302,11 @@ inline QPainterPath ellipsePath( QRectF rect)
     path.addEllipse( ellipseRect( rect));
     return path;
 }
+
+void NodeItem::shapeChanged()
+{
+    prepareGeometryChange();
+}
 /**
  * Implementation of shape calculation
  */
@@ -699,6 +704,7 @@ void NodeItem::adjustAssociates()
             pred->firstPred()->item()->adjust();
         }
     }
+    prepareGeometryChange();
 }
 
 void NodeItem::updateAssociates()
