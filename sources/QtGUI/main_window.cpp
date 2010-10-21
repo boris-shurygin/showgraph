@@ -213,7 +213,7 @@ void MainWindow::open()
     QString fileName =
             QFileDialog::getOpenFileName( this, tr("Open graph File"),
                                           QDir::currentPath(),
-                                          tr("Dump/Text Files ( *.txt);;Graph XML Files ( *.xml);;All Files ( *.*)"));
+                                          tr("All Files ( *.*);;Dump/Text Files ( *.txt);;Graph XML Files ( *.xml)"));
     openFile( fileName);
 }
 
@@ -291,6 +291,8 @@ void MainWindow::openFile( QString fileName)
         {
             gview->graph()->readFromXML( fileName); // can throw GGraphError
             removeGraphView();
+            gview->setEditable();
+            gview->toggleEditableAction()->setChecked( true);
             connectToGraphView( gview);
         } catch ( GGraphError err)
         {
