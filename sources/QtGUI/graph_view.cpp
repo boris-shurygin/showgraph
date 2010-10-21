@@ -778,14 +778,17 @@ GraphView::mouseMoveEvent(QMouseEvent *ev)
 void 
 GraphView::keyPressEvent(QKeyEvent *event)
 {
-    if ( event->key() == Qt::Key_Plus)
-    {
-        zoomIn();
-    } else if ( event->key() == Qt::Key_Minus)
-    {
-        zoomOut();
-    }
     QGraphicsView::keyPressEvent( event);
+    if ( !event->isAccepted())
+    {
+        if ( event->key() == Qt::Key_Plus)
+        {
+            zoomIn();
+        } else if ( event->key() == Qt::Key_Minus)
+        {
+            zoomOut();
+        }
+    }
 }
 
 /**
