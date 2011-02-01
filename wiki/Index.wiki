@@ -1,4 +1,3 @@
-#summary IndexPage
  * [Overview Overview]
  * [Manual User's Manual]
    * [Introduction Introduction]
