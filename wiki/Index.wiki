@@ -1,8 +1,7 @@
 #summary IndexPage
-
- * [Introduction Introduction]
  * [Overview Overview]
  * [Manual User's Manual]
+   * [Introduction Introduction]
    * [GraphEdition Graph Edition]
    * [IRBrowsing IR Browsing]
    * [GraphFiles Graph XML Description]
