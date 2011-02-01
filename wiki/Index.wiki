@@ -1,5 +1,4 @@
- * [Overview Overview]
- * [Manual User's Manual]
+* [Manual User's Manual]
    * [Introduction Introduction]
    * [GraphEdition Graph Edition]
    * [IRBrowsing IR Browsing]
