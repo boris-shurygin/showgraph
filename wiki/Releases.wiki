@@ -1,4 +1,5 @@
 #summary Release History
+#labels Featured
 
 ===Version 1.0.4===
   * Added node/edge styles. Styles are supported in GUI and in XML representation.
