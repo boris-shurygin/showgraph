@@ -1,8 +1,8 @@
 #summary ShowGraph XML file format.
 
-= Introduction =
+= Graph Description =
 
-Here's an example of ShowGraph XML graph representation
+Here's an example of !ShowGraph XML graph representation.
 
 {{{
 <graph>
@@ -30,4 +30,4 @@ Here's an example of ShowGraph XML graph representation
 }}}
 
 Note that colors can be defined by name ( e.g "red") or by RGB code.
-XML representation also stores node coordinates and edge control nodes if you don't want them to be recalculated by automatic layout.
+XML representation also stores node coordinates and edge control nodes if you don't want them to be recalculated by automatic layout. Nodes and edges can have directly specified properties or they can have property `style`, which applies a named style to node.
