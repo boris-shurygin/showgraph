@@ -1,0 +1,35 @@
+<graph>
+    <style pen_style="solid" pen_width="1" shape="diamond" name="node 6 style" pen_color="#000000" />
+    <node x="-26" y="25" pen_style="dot" fill="#f0fff0" pen_width="1" id="0" shape="rounded_box" label="func (a,b)" pen_color="#000000" />
+    <node x="-14.5" y="77" pen_style="solid" fill="#e2ffff" pen_width="1" id="1" label="i  = 0&#xa;s = 0" pen_color="#000000" />
+    <node x="38" y="207" pen_style="solid" fill="#fffbc2" pen_width="1" id="2" shape="diamond" label="b &lt; 1 ?" pen_color="#000000" />
+    <node x="-23.5" y="147" pen_style="solid" fill="#fffbc2" pen_width="1" id="3" shape="diamond" label="a > 10 ? " pen_color="#000000" />
+    <node x="-51.75" y="315" pen_style="solid" fill="#cec97b" pen_width="1" id="5" label="i++" pen_color="#000000" />
+    <node x="77" y="263" pen_style="solid" fill="#e2ffff" pen_width="1" id="7" label="s = 2" pen_color="#000000" />
+    <node x="8" y="263" pen_style="solid" fill="#e2ffff" pen_width="1" id="8" label="s = 1" pen_color="#000000" />
+    <edge target="7" source="2" />
+    <edge target="8" source="2" />
+    <edge target="2" source="3" />
+    <edge target="3" source="1" />
+    <edge target="1" source="0" />
+    <node x="38.5" y="315" pen_style="solid" fill="#e2ffff" pen_width="1" id="9" label="s &lt;&lt; 2" pen_color="#000000" />
+    <edge target="9" source="7" />
+    <edge target="9" source="8" />
+    <node x="-29.75" y="367" pen_style="solid" fill="#bddcdc" pen_width="1" id="10" label="s * 2" pen_color="#000000" />
+    <edge target="10" source="9" />
+    <node x="-37.25" y="419" pen_style="solid" fill="#f0fff0" pen_width="1" id="11" shape="rounded_box" label="return s" pen_color="#000000" />
+    <edge target="11" source="10" />
+    <node x="-72.5" y="263" pen_style="solid" fill="#cec97b" pen_width="1" id="16" label="s+=b" pen_color="#000000" />
+    <edge target="5" source="16" />
+    <node x="-80" y="207" pen_style="solid" fill="#cec97b" pen_width="1" id="17" shape="diamond" label="i &lt; 100 ?" pen_color="#000000" />
+    <edge target="17" source="3" />
+    <edge target="16" source="17" />
+    <edge target="39" pen_style="solid" pen_width="1.25" source="5" pen_color="#960000" />
+    <edge target="37" source="17" />
+    <node x="-92.37055056329612" y="271.7055056329612" type="edge_control" id="37" label="" />
+    <edge target="38" source="37" />
+    <node x="-90.62944943670388" y="325.4466067595535" type="edge_control" id="38" label="" />
+    <edge target="10" source="38" />
+    <node x="-24.75889887340775" y="270.8349550696652" type="edge_control" id="39" label="" />
+    <edge target="17" pen_style="solid" pen_width="1.25" source="39" pen_color="#960000" />
+</graph>
