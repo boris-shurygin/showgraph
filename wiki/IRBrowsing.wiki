@@ -1,0 +1,36 @@
+#summary Browsing Compiler IR Dump with Showgraph.
+
+= Dumping IR to file =
+=== ICC ===
+
+To dump IR in ICC use the following command line:
+{{{
+icc <your src-file> -mP2OPT_il0_print=<num>
+}}}
+where _num_ is a phase number.<br>
+*Stderr* is used as the output stream.<br>
+<br>
+If _num_ = -1 then the dump will be printed after each phase.<br>
+Phase numbering isn't successive, the numbers of phases seem to be chosen at random.<br>
+<br>
+Numbers of the most useful phases:
+  * 6    - after building CFG
+  * 2510 - after some optimizations.
+<br>
+=== GCC ===
+ShowGraph supports GCC 4.x and doesn't support GCC 3 dumps. To dump IR in GCC use the following command line:
+{{{
+gcc <your src-file> -df
+}}}
+The output will be in src-file.cfg
+
+= Browsing IR =
+When IR is dumped you can open dumps file through the `File` menu. !ShowGraph will parse the file and search for routine names. If there are multiple routines in file it will ask you to select routine of interest and then parse it. 
+
+After dump is parsed ShowGraph performs automatic layout and you can see control flow graph in main window. It can be zoomed and panned.
+
+Double click on a node will show its textual representation in !dockable window. Textual representation has !clickable node numbers so that user could browse it like a set of hyperlinked pages. 
+
+Note that in IR browsing mode double click behaves differently from editor mode. However if you want you can enable edition through context menu which is shown by right-clicking on graph background.
+
+http://i43.tinypic.com/34isu3t.jpg
