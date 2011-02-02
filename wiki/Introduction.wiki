@@ -1,4 +1,5 @@
 #summary What ShowGraph is about
+#labels Featured
 
 http://i50.tinypic.com/24ciqdj.jpg
 
