@@ -3,7 +3,7 @@
 http://i50.tinypic.com/24ciqdj.jpg
 
 = Introduction =
-There is no _real_ manual for showgraph, but this wiki pages describe most features that you will need editing graphs.
+There is no _real_ manual for showgraph, but these wiki pages describe most features that you will need when editing graphs.
 
 ShowGraph can be used in two ways:
   # Graph Editor/Viewer
