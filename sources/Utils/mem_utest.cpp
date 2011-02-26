@@ -31,76 +31,76 @@ static bool
 uTestRef()
 {
 /** #Test smart pointers behaviour */
-	ObjRef ref = new TestObj(); /** Test constructor from pointer */
+    ObjRef ref = new TestObj(); /** Test constructor from pointer */
     ObjRef ref2; /** Test default constructor */
-	
-	/** Test operator bool() */
-	assertd( !ref2 && ref);
-	assertd( ref2 == NULL && ref != NULL);
-	/** Test copy constructor */
-	ref2 = ref; 
-	assertd( ref2 && ref);
-	/** Test operator == ( ref) */
-	assertd( ref == ref2);
 
-	/** Test operator -> */
-	ref->a = 2;
+    /** Test operator bool() */
+    assertd( !ref2 && ref);
+    assertd( ref2 == NULL && ref != NULL);
+    /** Test copy constructor */
+    ref2 = ref;
+    assertd( ref2 && ref);
+    /** Test operator == ( ref) */
+    assertd( ref == ref2);
+
+    /** Test operator -> */
+    ref->a = 2;
 #ifdef USE_REF_COUNTERS
-	assertd( ref->refCount() == 2);
+    assertd( ref->refCount() == 2);
 #endif	
-	bool catched = false;
-	
-	/** Test exception generation */
-	try
-	{
-		delete ref;
-	} catch( int a)
-	{
-		catched = true;
-		ref2->a = a;
-	}
-	assertd( catched);
-	
-	/** Test ref to pointer conversion and Obj destructor */
-	delete ref2;
+    bool catched = false;
+
+    /** Test exception generation */
+    try
+    {
+            delete ref;
+    } catch( int a)
+    {
+            catched = true;
+            ref2->a = a;
+    }
+    assertd( catched);
+
+    /** Test ref to pointer conversion and Obj destructor */
+    delete ref2;
     return true;
 }
 
+class PoolBase: public PoolObj 
+{
+    virtual void setVal( quint32 val) = 0;
+    virtual quint32 val() const = 0;
+};
 
+class MyPoolObj: public PoolBase, public SListIface< MyPoolObj, SListItem>
+{
+    quint32 priv_field;
+public:
+    /** Some public fields */
+    quint32 a;
+    quint32 b;
+    bool *called;
+    /** Base class routines implementation */
+    void setVal( quint32 val)
+    {
+        priv_field = val;
+    }
+    quint32 val() const
+    {
+        return priv_field;
+    }
+    ~MyPoolObj()
+    {
+        *called = true;
+    }
+};
 /**
  * Test memory pools
  */
 static bool
 uTestPools()
 {
-    class PoolBase: public PoolObj 
-    {
-        virtual void setVal( quint32 val) = 0;
-        virtual quint32 val() const = 0;
-    };
 
-    class MyPoolObj: public PoolBase, public SListIface< MyPoolObj, SListItem>
-    {
-        quint32 priv_field;
-    public:
-        /** Some public fields */
-        quint32 a;
-        quint32 b;
-        bool *called;
-        /** Base class routines implementation */
-        void setVal( quint32 val)
-        {
-            priv_field = val;
-        }
-        quint32 val() const
-        {
-            return priv_field;
-        }
-        ~MyPoolObj()
-        {
-            *called = true;
-        }
-    };
     Pool *pool = new FixedPool< MyPoolObj>();
     MyPoolObj *p1 = new ( pool) MyPoolObj();
     MyPoolObj *p2 = new ( pool) MyPoolObj();

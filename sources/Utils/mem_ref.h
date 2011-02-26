@@ -109,7 +109,7 @@ namespace Mem
 		 */
 		inline operator RefObj*()
 		{
-			RefObj *ret_val = ptr;
+                        RefObj *ret_val = ptr;
 			assertd( ret_val != NULL);
 			/** Decrement object's ref count */
 			if ( ptr != 0)

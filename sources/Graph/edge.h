@@ -213,7 +213,7 @@ public:
     /**
      * Print edge in dot fomat to stdout
      */
-    virtual inline void debugPrint();
+    virtual void debugPrint();
 
     /** 
      * Update DOM element

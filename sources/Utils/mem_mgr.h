@@ -41,7 +41,7 @@ namespace MemImpl
         MemInfo& operator =( const MemInfo&){};
         ~MemInfo(){};
         /** Needed for singleton creation */
-        friend Mem::MemMgr;
+        friend class Single< MemImpl::MemInfo>;
     };
 };
 #endif /* MEM_MGR_H */

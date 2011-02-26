@@ -143,8 +143,8 @@ namespace Mem
         {
             first_chunk = chunk->next( MemImpl::CHUNK_LIST_ALL);
         }
-        chunk->~Chunk(); 
-        delete[] ( void *)chunk;
+        //chunk->~Chunk();
+        delete[] (quint8 *)chunk;
     }
 
     /** Calculate pointer to chunk from pointer to entry */
