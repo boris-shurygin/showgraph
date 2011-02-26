@@ -74,6 +74,7 @@ Single< T>::instance()
  * WARNING: without calling this macro singleton object won't work
  */
 #define SINGLETON_INSTANCE(CLIENT_CLASS)   \
+template <> \
 CLIENT_CLASS* Single<CLIENT_CLASS>::instance_p = 0;                                       
 
 

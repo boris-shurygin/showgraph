@@ -20,7 +20,7 @@ private:
     A& operator =( const A&){};
     ~A(){};
     /** Needed for singleton creation */
-    friend SingleA;
+    friend class Single< A>;
 };
 /** instantiation of singleton */
 SINGLETON_INSTANCE( A);    

@@ -59,6 +59,8 @@ namespace MemImpl
         inline Data *allocateEntry();
         /** Deallocate one entry */
         inline void deallocateEntry( Entry<Data> *e);
+        /** For some reason GCC asks for it :( */
+        inline void operator delete( void* mem);
         /** Placement new */
         inline void *operator new ( size_t size, void* mem);
         /**
@@ -66,7 +68,7 @@ namespace MemImpl
          * WARNING: Compiler won't call this for deletion. 
          *          It is needed for freeing memory in case of exceptions in constructor
          */
-        inline void operator delete( void *ptr, void* mem);
+        inline void operator delete( void* ptr, void* mem);
     };
     
     /** Constructor */
@@ -102,6 +104,14 @@ namespace MemImpl
     {
         return mem;
     }
+    
+    /** For some reason GCC asks for it :( */
+    template <class Data>
+    void
+    Chunk< Data>::operator delete( void* mem)
+    {
+
+    }
     /**
      * Operator 'delete' corresponding to placement new
      * WARNING: Compiler won't call this for deletion. 
@@ -109,7 +119,7 @@ namespace MemImpl
      */
     template <class Data> 
     void
-    Chunk< Data>::operator delete( void *ptr, void* mem)
+    Chunk< Data>::operator delete( void* ptr, void* mem)
     {
     
     }
