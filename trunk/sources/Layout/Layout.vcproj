@@ -179,6 +179,16 @@
 						Outputs="moc_aux_graph.cpp"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Runnig MOC for AuxGraph"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 aux_graph.h -o moc_aux_graph.cpp"
+						Outputs="moc_aux_graph.cpp"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\aux_node.h"

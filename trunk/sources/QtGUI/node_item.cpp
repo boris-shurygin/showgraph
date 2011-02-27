@@ -220,6 +220,10 @@ NodeItem::SetInitFlags()
 {
     setFlag( ItemIsMovable);
     setFlag( ItemIsFocusable, false);
+// needed for Qt 4.6 and higher
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 6, 0))
+    setFlag( ItemSendsGeometryChanges);
+#endif
     setCacheMode( DeviceCoordinateCache);
     setZValue(2);
     QGraphicsItem::setCursor( Qt::ArrowCursor);

@@ -131,10 +131,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseLibraryDependencyInputs="true"
-				AdditionalDependencies="qtmain.lib QtGui.lib QtCore.lib QtXml.lib imm32.lib winmm.lib ws2_32.lib qico.lib qtiff.lib qgif.lib qmng.lib qjpeg.lib"
+				AdditionalDependencies="qtmain.lib QtGui.lib QtCore.lib QtXml.lib imm32.lib winmm.lib ws2_32.lib qico.lib"
 				OutputFile="$(OutDir)\showgraph.exe"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -190,7 +190,7 @@
 				<Tool
 					Name="VCCustomBuildTool"
 					Description="Compiling Images to CPP file"
-					CommandLine="rcc -o images.cpp images.qrc"
+					CommandLine="rcc -o images.cpp images.qrc&#x0D;&#x0A;"
 					Outputs="images.cpp"
 				/>
 			</FileConfiguration>
@@ -200,7 +200,7 @@
 				<Tool
 					Name="VCCustomBuildTool"
 					Description="Compiling Images to CPP file"
-					CommandLine="rcc images.qrc -o images.cpp"
+					CommandLine="rcc images.qrc -o images.cpp&#x0D;&#x0A;"
 					Outputs="images.cpp"
 				/>
 			</FileConfiguration>
