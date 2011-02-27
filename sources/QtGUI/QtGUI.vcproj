@@ -280,7 +280,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Running MOC for StyleEdit"
-						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 style_edit.h -o moc_style_edit.cpp"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 style_edit.h -o moc_style_edit.cpp&#x0D;&#x0A;"
 						Outputs="moc_style_edit.cpp"
 					/>
 				</FileConfiguration>
