@@ -43,4 +43,10 @@
 #include "../IR/ir_iface.h"
 #include "text_view.h"
 #include "main_window.h"
+
+/** Gui project uses Qt versions 4.4 and higher */
+#if ( QT_VERSION < QT_VERSION_CHECK(4, 4, 0) )
+#  error "Please use Qt version 4.4 and higher"
+#endif
+
 #endif
