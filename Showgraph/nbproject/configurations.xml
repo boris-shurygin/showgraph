@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="69">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <df name="sources" root="../sources">
+      <df name="console" kind="SOURCE_LOGICAL_FOLDER">
+        <in>main.cpp</in>
+        <in>render.cpp</in>
+        <in>render.h</in>
+      </df>
+      <df name="Frontend" kind="SOURCE_LOGICAL_FOLDER">
+        <in>fe_gcc.cpp</in>
+        <in>fe_gcc.h</in>
+        <in>fe_icc.cpp</in>
+        <in>fe_iface.h</in>
+        <in>fe_test.cpp</in>
+        <in>fe_test.h</in>
+        <in>parser.cpp</in>
+        <in>parser.h</in>
+        <in>symtab.h</in>
+      </df>
+      <df name="Graph" kind="SOURCE_LOGICAL_FOLDER">
+        <df name="dist" kind="SOURCE_LOGICAL_FOLDER">
+          <df name="Debug" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="MinGW-Windows" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+        </df>
+        <in>agraph.h</in>
+        <in>edge.cpp</in>
+        <in>edge.h</in>
+        <in>edge_inline.h</in>
+        <in>graph.cpp</in>
+        <in>graph.h</in>
+        <in>graph_iface.h</in>
+        <in>marker.h</in>
+        <in>moc_edge.cpp</in>
+        <in>node.cpp</in>
+        <in>node.h</in>
+        <in>num.h</in>
+        <in>predecls.h</in>
+      </df>
+      <df name="Gui" kind="SOURCE_LOGICAL_FOLDER">
+        <df name="images" kind="SOURCE_LOGICAL_FOLDER">
+          <df name="mac" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="win" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="Add" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Archive" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Audio Disk" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Burn Disk" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Calendar" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Cancel" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Check" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Compact Disk" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Copy" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Copy v2" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Cut" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Delete" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Download" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="DVD Disk" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Edit" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Favorites" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Find" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Flash Disk" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Folder" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Forward" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Globe" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Hard Disk" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Help" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Information" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Key" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Log Out" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Mail" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Negative" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="New" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Next" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Open" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Paste" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Pause" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Picture" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Play" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Positive" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Presentation" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Preview" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Previous" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Print" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Properties" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Redo" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Refresh" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Remove" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Rename" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Save" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Search" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Send" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Settings" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Stock Index Down" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Stock Index Up" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Stop" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Synchronize" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Text Document" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Undo" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Upload" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="User" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Zoom In" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="Zoom Out" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+        </df>
+        <in>images.cpp</in>
+        <in>main.cpp</in>
+        <in>resource.h</in>
+        <in>resource1.h</in>
+      </df>
+      <df name="IR" kind="SOURCE_LOGICAL_FOLDER">
+        <in>cfedge.cpp</in>
+        <in>cfedge.h</in>
+        <in>cfg.cpp</in>
+        <in>cfg.h</in>
+        <in>cfnode.cpp</in>
+        <in>cfnode.h</in>
+        <in>dep.cpp</in>
+        <in>dep.h</in>
+        <in>expr.cpp</in>
+        <in>expr.h</in>
+        <in>ir.cpp</in>
+        <in>ir.h</in>
+        <in>ir_iface.h</in>
+        <in>ir_impl.h</in>
+        <in>moc_ir.cpp</in>
+      </df>
+      <df name="Layout" kind="SOURCE_LOGICAL_FOLDER">
+        <in>aux_edge.h</in>
+        <in>aux_graph.cpp</in>
+        <in>aux_graph.h</in>
+        <in>aux_node.h</in>
+        <in>layout.cpp</in>
+        <in>layout_iface.h</in>
+        <in>moc_aux_graph.cpp</in>
+        <in>node_group.cpp</in>
+        <in>node_group.h</in>
+      </df>
+      <df name="QtGUI" kind="SOURCE_LOGICAL_FOLDER">
+        <df name="images" kind="SOURCE_LOGICAL_FOLDER">
+          <df name="mac" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="win" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+        </df>
+        <in>edge_item.cpp</in>
+        <in>edge_item.h</in>
+        <in>graph_view.cpp</in>
+        <in>graph_view.h</in>
+        <in>gstyle.h</in>
+        <in>gui_iface.h</in>
+        <in>gui_impl.h</in>
+        <in>gview_iface.h</in>
+        <in>gview_impl.h</in>
+        <in>main_window.cpp</in>
+        <in>main_window.h</in>
+        <in>moc_edge_item.cpp</in>
+        <in>moc_graph_view.cpp</in>
+        <in>moc_graph_widget.cpp</in>
+        <in>moc_main_window.cpp</in>
+        <in>moc_style_edit.cpp</in>
+        <in>node_item.cpp</in>
+        <in>node_item.h</in>
+        <in>style_edit.cpp</in>
+        <in>style_edit.h</in>
+        <in>text_view.cpp</in>
+        <in>text_view.h</in>
+      </df>
+      <df name="UnitTest" kind="SOURCE_LOGICAL_FOLDER">
+        <in>fe_utest.cpp</in>
+        <in>graph_utest.cpp</in>
+        <in>gui_utest.cpp</in>
+        <in>main.cpp</in>
+        <in>utest_impl.h</in>
+      </df>
+      <df name="Utils" kind="SOURCE_LOGICAL_FOLDER">
+        <df name="dist" kind="SOURCE_LOGICAL_FOLDER">
+          <df name="Debug" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="MinGW-Windows" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+        </df>
+        <in>asrt.h</in>
+        <in>conf.cpp</in>
+        <in>conf.h</in>
+        <in>conf_utest.cpp</in>
+        <in>list.h</in>
+        <in>list_utest.cpp</in>
+        <in>mem.h</in>
+        <in>mem_chunk.h</in>
+        <in>mem_entry.h</in>
+        <in>mem_fixed_pool.h</in>
+        <in>mem_mgr.cpp</in>
+        <in>mem_mgr.h</in>
+        <in>mem_obj.h</in>
+        <in>mem_pool.cpp</in>
+        <in>mem_pool.h</in>
+        <in>mem_ref.h</in>
+        <in>mem_utest.cpp</in>
+        <in>misc.h</in>
+        <in>print.h</in>
+        <in>singleton.h</in>
+        <in>ulist.h</in>
+        <in>utils.cpp</in>
+        <in>utils_iface.h</in>
+        <in>utils_utest.cpp</in>
+      </df>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>../Makefile</itemPath>
+      <itemPath>Showgraph-Makefile.mk</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../sources</Elem>
+  </sourceRootList>
+  <projectmakefile>Showgraph-Makefile.mk</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>MinGW|MinGW</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>..</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+          <ccTool>
+            <incDir>
+              <pElem>/c/QtStatic/qt/include</pElem>
+              <pElem>/c/QtStatic/qt/include/QtCore</pElem>
+              <pElem>..</pElem>
+              <pElem>/c/QtStatic/qt/include/Qt</pElem>
+              <pElem>/c/QtStatic/qt/include/QtGui</pElem>
+              <pElem>/c/QtStatic/qt/include/QtXml</pElem>
+            </incDir>
+          </ccTool>
+        </makeTool>
+      </makefileType>
+      <item path="../sources/Gui/resource.h" ex="true" tool="3">
+      </item>
+      <item path="../sources/Gui/resource1.h" ex="true" tool="3">
+      </item>
+      <item path="../sources/Utils/ulist.h" ex="true" tool="3">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
