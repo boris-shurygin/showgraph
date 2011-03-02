@@ -22,6 +22,7 @@ class GEdge;
 class NodeItem;
 class EdgeItem;
 class GraphView;
+class StyleEdit;
 
 #include <QtGui>
 #include <QList>

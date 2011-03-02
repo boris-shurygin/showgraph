@@ -160,9 +160,9 @@ public:
         return priv_level;
     }
     /** Set order */
-    inline void setOrder( int or) 
+    inline void setOrder( int order)
     {
-        priv_order = or;
+        priv_order = order;
     }
     /** Set rank */
     inline void setRank( Rank r)

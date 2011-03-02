@@ -16,15 +16,15 @@ class DumpHighlighter: public QSyntaxHighlighter
 {
 
 public:
-	/**
-	 * Constructor from text document
-	 */
-	DumpHighlighter( QTextDocument *doc): QSyntaxHighlighter( doc){};
+    /**
+     * Constructor from text document
+     */
+    DumpHighlighter( QTextDocument *doc): QSyntaxHighlighter( doc){};
 
-	/**
-	 * Highlight given text
-	 */
-	void highlightBlock(const QString &text);
+    /**
+     * Highlight given text
+     */
+    void highlightBlock(const QString &text);
 };
 
 
@@ -33,36 +33,36 @@ public:
  */
 class TextView: public QTextBrowser
 {
-	//Q_OBJECT; /** For MOC */
+    //Q_OBJECT; /** For MOC */
 
     /** Highlighter used to format the text */
-	DumpHighlighter * hl;
+    DumpHighlighter * hl;
 
     CFNode *node;
 public:
-	/**
-	 * Constructor
-	 */
-	TextView( CFNode *n);
+    /**
+     * Constructor
+     */
+    TextView( CFNode *n);
 
-	/**
-	 * Destructor
-	 */
-	virtual ~TextView();
+    /**
+     * Destructor
+     */
+    virtual ~TextView();
 
-	/**
+    /**
      * Open document in browser
      */
     void openFile( QString fileName);
 
-	/**
-	 * Highlight text
-	 */
-	void highlightText();
+    /**
+     * Highlight text
+     */
+    void highlightText();
     
-    bool TextView::nodeIdClicked( QPoint pos, int *id_p);
+    bool nodeIdClicked( QPoint pos, int *id_p);
     void mouseReleaseEvent( QMouseEvent * mouseEvent);
-	void mousePressEvent( QMouseEvent * mouseEvent);
+    void mousePressEvent( QMouseEvent * mouseEvent);
     void contextMenuEvent(QContextMenuEvent *event);
 };
 

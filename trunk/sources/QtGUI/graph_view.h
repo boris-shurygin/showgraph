@@ -131,8 +131,8 @@ class GGraph: public AuxGraph
     GraphView *view_p;
 protected:
     Marker nodeTextIsShown;
-	QList< GNode* > sel_nodes;
-	QList< GEdge* > sel_edges;
+    QList< GNode* > sel_nodes;
+    QList< GEdge* > sel_edges;
     QHash< QString, GStyle *> styles;
     GNode *node_in_focus;
     
@@ -155,8 +155,8 @@ public:
         AuxGraph( false),
         view_p( v),
         node_in_focus( NULL)
-	{
-		nodeTextIsShown = newMarker();
+    {
+        nodeTextIsShown = newMarker();
  
         /** Pools' creation routine */
         if ( create_pools)
@@ -224,7 +224,7 @@ public:
         return view_p;
     }
     void showNodesText();
-	/**
+    /**
      * Add node to selection
      */
     inline void selectNode( GNode *n)
@@ -242,38 +242,38 @@ public:
         node_in_focus = n;
     }
     void selectOneNode(GNode *n);
-	/**
-	 * Clear list of selected nodes
-	 */
-	inline void emptySelection()
-	{
-		foreach (GNode *n, sel_nodes)
-		{
+    /**
+     * Clear list of selected nodes
+     */
+    inline void emptySelection()
+    {
+        foreach (GNode *n, sel_nodes)
+        {
             n->item()->toRegular();
             n->item()->update();
-    	}
+        }
         sel_nodes.clear();
-		sel_edges.clear();
-	}
-	/**
+        sel_edges.clear();
+    }
+    /**
      * Add node to selection
      */
     inline void selectEdge( GEdge *e)
     {
         sel_edges << e;
     }
-	/**
-	 * Delete scheduled nodes
-	 */
-	void deleteNodes();
+    /**
+     * Delete scheduled nodes
+     */
+    void deleteNodes();
 
-	/** Delete edge with all of the edge controls on it */
-	void deleteEdgeWithControls( GEdge *e);
+    /** Delete edge with all of the edge controls on it */
+    void deleteEdgeWithControls( GEdge *e);
 
-	/**
-	 * Delete scheduled edges
-	 */
-	void deleteEdges();
+    /**
+     * Delete scheduled edges
+     */
+    void deleteEdges();
 
     /**
      * Create self edge on selected node
@@ -290,7 +290,7 @@ public:
      */
     void findContext();
     
-	/**
+    /**
      * Make all nodes of graph visible and eligible for placement
      */
     void showWholeGraph();
@@ -364,7 +364,7 @@ class GraphView: public QGraphicsView
     Q_OBJECT; /** For MOC */
 private:
     
-    struct StyleEditInfo;
+   
 
     /** Pointer to model graph */   
     GGraph * graph_p;
@@ -378,13 +378,13 @@ private:
     QList< NodeItem* > del_node_items;
     QList< EdgeItem* > del_edge_items;
 
-	/** Actions */
+    /** Actions */
     QAction *editableSwitchAct;
     QAction *insertNodeAct;
     QAction *runLayoutAct;
-	QAction *deleteItemAct;
+    QAction *deleteItemAct;
     QAction *createSelfEdgeAct;
-	QAction *createEdgeLabelAct;
+    QAction *createEdgeLabelAct;
     QAction *showPredAct;
     QAction *showSuccAct;
     QAction *findContextAct;
@@ -392,16 +392,16 @@ private:
     QAction *showEditEdgeStyleAct;
     QAction *showTextAct;
     
-	/** Context menus */
-	QMenu *nodeItemMenu;
-	QMenu *edgeItemMenu;
+    /** Context menus */
+    QMenu *nodeItemMenu;
+    QMenu *edgeItemMenu;
     
     /** Temporary data */
     int timer_id;
     int node_animation_timer;
     QPointF curr_pos;
     bool createEdge;
-	bool show_menus;
+    bool show_menus;
     
     bool smooth_focus;
     bool smooth_layout_adjustment;
@@ -412,24 +412,41 @@ private:
     qreal zoom_scale;
     qreal preferred_zoom;
 
-    StyleEditInfo *style_edit_info;
+
 protected:
-	void createActions();
-	void createMenus();
+    void createActions();
+    void createMenus();
 signals:
     /** Signal that node is clicked */
     void nodeClicked( GNode *n);
+public:
+    struct StyleEditInfo
+    {
+        GEdge* edge;
+        GNode* node;
+        GStyle *old_style;
+        GStyle *new_style;
+        StyleEdit* dialog;
+        StyleEditInfo( GEdge* e, GStyle *olds, GStyle *news, StyleEdit* d):
+            edge( e), node(NULL), old_style(olds), new_style( news), dialog( d)
+        {}
+        StyleEditInfo( GNode* n, GStyle *olds, GStyle *news, StyleEdit* d):
+            edge( NULL), node(n), old_style(olds), new_style( news), dialog( d)
+        {}
+    };
+protected:
+    StyleEditInfo *style_edit_info;
 public slots:
-	/** Navigate backward */
+    /** Navigate backward */
     void navPrev();
     /** Navigate forward */
     void navNext();
     /** Clear search node */
     void clearSearch();
-    /** Delete one item	 */
-	void deleteSelected();
-	/** create self edge on selected node */
-	void createSESelected();
+    /** Delete one item     */
+    void deleteSelected();
+    /** create self edge on selected node */
+    void createSESelected();
     /** Create edge label */
     void createEdgeLabel();
     /** Show edge predecessor */
@@ -529,21 +546,21 @@ public:
     {
         graph_p = g;
     }
-	/** Get pointer to model graph */
+    /** Get pointer to model graph */
     inline GGraph *graph() const
     {
         return graph_p;
     }
-	/** Get context menu for nodes */
-	inline QMenu *nodeMenu() const
-	{
-		return nodeItemMenu;
-	}
-	/** Get context menu for edges */
-	inline QMenu *edgeMenu() const
-	{
-		return edgeItemMenu;
-	}
+    /** Get context menu for nodes */
+    inline QMenu *nodeMenu() const
+    {
+        return nodeItemMenu;
+    }
+    /** Get context menu for edges */
+    inline QMenu *edgeMenu() const
+    {
+        return edgeItemMenu;
+    }
 
     /** Create menu for particular node */
     virtual QMenu* createMenuForNode( GNode *n);
@@ -551,11 +568,11 @@ public:
     /** Create menu for particular edge */
     virtual QMenu* createMenuForEdge( GEdge *e);
 
-	void dragEnterEvent( QDragEnterEvent *event);
+    void dragEnterEvent( QDragEnterEvent *event);
 
-	void dropEvent( QDropEvent *event);
-	 
-	void dragMoveEvent( QDragMoveEvent *event);
+    void dropEvent( QDropEvent *event);
+
+    void dragMoveEvent( QDragMoveEvent *event);
 
     /** draw background reimplementation */
     void drawBackground( QPainter *painter, const QRectF &rect);
@@ -572,7 +589,7 @@ public:
     /** Keypress event handler reimplementation */
     void keyPressEvent( QKeyEvent *event);
 
-	/** Mouse wheel event handler reimplementation */
+    /** Mouse wheel event handler reimplementation */
     void wheelEvent( QWheelEvent *event);
     /** Zoom the view in */
     void zoomIn();
@@ -581,7 +598,7 @@ public:
     /** Restore original zoom */
     void zoomOrig();
     /** Do the transofrmation( scale) */
-	void updateMatrix();
+    void updateMatrix();
     /** Focus on node */
     void focusOnNode( GNode *n, bool gen_event);
     /** Start animation for nodes */
@@ -597,7 +614,7 @@ public:
     {
         return createEdge;
     }
-	/** Check if we are in the process of the edge creation */
+    /** Check if we are in the process of the edge creation */
     inline bool isShowContextMenus() const
     {
         return show_menus;
@@ -643,20 +660,20 @@ public:
      */
     void deleteItems();
     
-	/**
-	 * Find node by its ID from dump
-	 */
-	GNode* findNodeById( int id);
-	
-	/**
-	 * Find next node with matching text
-	 */
-	GNode *findNextNodeWithText( QString &findStr, QTextDocument::FindFlags flags);
+    /**
+     * Find node by its ID from dump
+     */
+    GNode* findNodeById( int id);
 
     /**
-	 * Find prev node with matching text
-	 */
-	GNode *findPrevNodeWithText( QString &findStr, QTextDocument::FindFlags flags);
+     * Find next node with matching text
+     */
+    GNode *findNextNodeWithText( QString &findStr, QTextDocument::FindFlags flags);
+
+    /**
+     * Find prev node with matching text
+     */
+    GNode *findPrevNodeWithText( QString &findStr, QTextDocument::FindFlags flags);
 
     /** 
      * Check that we haven't exceeded the max amount of deleted items

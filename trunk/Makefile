@@ -28,19 +28,25 @@ RELEASE_OBJECTS_DIR := $(OBJECT_DIR)/release
 
 #Compiler configureations
 
+#Includes
 QT_INCLUDE_DIRS = include \
                   include/Qt \
-				  include/QtGui \
-				  include/QtXml \
-				  include/QtCore
+                  include/QtGui \
+                  include/QtXml \
+                  include/QtCore
 
 RELEASE_INCLUDE_FLAGS = $(addprefix -I$(QT_RELEASE_DIR)/, $(QT_INCLUDE_DIRS))
 DEBUG_INCLUDE_FLAGS = $(addprefix -I$(QT_DEBUG_DIR)/, $(QT_INCLUDE_DIRS))
 
+# Final debug and release flags
 DEBUG_CPPFLAGS = -D_DEBUG
 RELEASE_CPPFLAGS = $(RELEASE_INCLUDE_FLAGS)
 
-
+# Library sets for debug and release
+DEBUG_LIBS = qtmaind.lib QtGuid4.lib QtCored4.lib QtXmld4.lib
+RELEASE_LIB_NAMES = qtmain QtGui QtCore QtXml imm32 winmm ws2_32 qico
+RELEASE_LIBS = $(addprefix -l, $(RELEASE_LIB_NAMES))
+RELEASE_LIB_FLAGS = -L$(QT_RELEASE_DIR)/lib -L$(QT_RELEASE_DIR)/plugins/imageformats
 
 SOURCES_CPP:= $(wildcard $(SOURCES)/*/*.cpp $(SOURCES)/*/*.c)
 HEADERS:= $(wildcard $(SOURCES)/*/*.h)
@@ -56,7 +62,7 @@ all: showgraph
 #showgraphcl showgraphd showgraphcld
 
 showgraph: $(RELEASE_OBJS_GUI)
-	$(CXX) -o $(BIN_DIR)/$@ $(RELEASE_OBJS_GUI)
+	$(CXX) -static $(RELEASE_LIB_FLAGS) -o $(BIN_DIR)/$@ $(RELEASE_OBJS_GUI) $(RELEASE_LIBS)
 
 #
 # This part generates new CPP files from headers that have Q_OBJECT usage

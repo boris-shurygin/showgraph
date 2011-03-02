@@ -72,7 +72,7 @@ public:
         setNode( n, GRAPH_DIR_DOWN);
     }
     /** Get node in given direction */
-    inline GNode *node( GraphDir dir) const;
+    GNode *node( GraphDir dir) const;
     /** Get predecessor */
     inline GNode *pred() const 
     {
@@ -85,18 +85,18 @@ public:
     }
     
     /** Get real node in given direction */
-    inline GNode* realNode( GraphDir) const;
+    GNode* realNode( GraphDir) const;
 
     /** Get real predecessor */
-	inline GNode* realPred() const
-	{
-		return realNode( GRAPH_DIR_UP);
-	}
-	/** Get real successor */
-	inline GNode* realSucc() const
-	{
-		return realNode( GRAPH_DIR_DOWN);
-	}
+    inline GNode* realPred() const
+    {
+        return realNode( GRAPH_DIR_UP);
+    }
+    /** Get real successor */
+    inline GNode* realSucc() const
+    {
+        return realNode( GRAPH_DIR_DOWN);
+    }
 
     /** Next edge in graph's list */
     inline GEdge* nextEdge()

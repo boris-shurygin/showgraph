@@ -29,6 +29,7 @@ QSize ColorButton::sizeHint() const
 
 StyleEdit::StyleEdit( QWidget *parent, bool show_additional)
 {
+    QColor color;
     if ( show_additional)
     {        
         shape_combo = new QComboBox( this);
@@ -44,9 +45,10 @@ StyleEdit::StyleEdit( QWidget *parent, bool show_additional)
     {
         shape_combo = NULL;
     }
-    
+
+    color = QColor(palette().foreground().color());
     line_color_button = new ColorButton( this);
-    line_color_button->setColor( QColor(palette().foreground().color()));
+    line_color_button->setColor( color);
     
     line_color_label = new QLabel( "Line color:", this);
     line_color_label->setBuddy( line_color_button);
@@ -70,9 +72,10 @@ StyleEdit::StyleEdit( QWidget *parent, bool show_additional)
 
     if ( show_additional)
     {
+        color = QColor(palette().base().color());
         fill_check = new QCheckBox( "Fill", this);
         fill_color_button = new ColorButton( this);
-        fill_color_button->setColor( QColor(palette().base().color()));
+        fill_color_button->setColor( color);
         
         fill_color_label = new QLabel( "Fill color:", this);
         fill_color_label->setBuddy( fill_color_button);
@@ -197,8 +200,9 @@ void StyleEdit::changeFillStyle()
 void StyleEdit::selectFillColor()
 {
     QColor color = QColorDialog::getColor();
+    QBrush brush( color);
     fill_color_button->setColor( color);
-    gstyle->setBrush( QBrush( color));
+    gstyle->setBrush( brush);
     gstyle->setState();
     fill_check->setChecked( true);
     emit styleChanged( gstyle);
@@ -208,18 +212,21 @@ void StyleEdit::selectFillColor()
 void StyleEdit::setGStyle( GStyle *st)
 {
     gstyle = st;
-    line_color_button->setColor( QColor( st->pen().color()));
+    QColor color( st->pen().color());
+    line_color_button->setColor( color);
     if ( isNotNullP( shape_combo))
     {
+        color =  QColor( st->brush().color());
         shape_combo->setCurrentIndex( shape_combo->findData( gstyle->shape()));
-        fill_color_button->setColor( QColor( st->brush().color()));
+        fill_color_button->setColor( color);
         fill_check->setChecked( st->brush().style() != Qt::NoBrush);
         if ( st->brush().style() == Qt::NoBrush)
         {
             QBrush br = gstyle->brush();
-            br.setColor( QColor( "white"));
+            color = QColor( "White");
+            br.setColor( color);
             gstyle->setBrush( br);
-            fill_color_button->setColor( QColor( "white"));
+            fill_color_button->setColor( color);
         }
     }
     line_style_combo->setCurrentIndex( line_style_combo->findData( gstyle->pen().style()));

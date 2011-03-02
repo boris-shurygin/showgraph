@@ -190,21 +190,6 @@ void GGraph::clearNodesPriority()
     }
 }
 
-struct GraphView::StyleEditInfo
-{
-    GEdge* edge;
-    GNode* node;
-    GStyle *old_style;
-    GStyle *new_style;
-    StyleEdit* dialog;
-    StyleEditInfo( GEdge* e, GStyle *olds, GStyle *news, StyleEdit* d):
-        edge( e), node(NULL), old_style(olds), new_style( news), dialog( d)
-    {}
-    StyleEditInfo( GNode* n, GStyle *olds, GStyle *news, StyleEdit* d):
-        edge( NULL), node(n), old_style(olds), new_style( news), dialog( d)
-    {}
-};
-
 /** Style edit finished */
 void GraphView::styleEditFinished( int result)
 {
@@ -255,8 +240,9 @@ void GGraph::showEditEdgeStyle()
     GStyle* new_style;
     if ( isNullP( old_style))
     {
+        QColor color( view()->palette().foreground().color());
         new_style = new GStyle();
-        new_style->setPenColor( QColor( view()->palette().foreground().color()));
+        new_style->setPenColor( color);
         new_style->setPenWidth( 1);
     } else
     {
@@ -300,8 +286,9 @@ void GGraph::showEditNodeStyle()
     GStyle* new_style;
     if ( isNullP( old_style))
     {
+        QColor color( view()->palette().foreground().color());
         new_style = new GStyle();
-        new_style->setPenColor( QColor( view()->palette().foreground().color()));
+        new_style->setPenColor( color);
         new_style->setPenWidth( 1);
     } else
     {

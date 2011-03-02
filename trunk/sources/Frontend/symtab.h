@@ -86,4 +86,4 @@ public:
     }
 };
 
-#endif SYMTAB_H
+#endif // SYMTAB_H

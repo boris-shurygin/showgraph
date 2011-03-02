@@ -83,34 +83,34 @@ private:
     /** Marker for nodes that have are subject to horizontal placement */
     Marker for_placement;
 
-	/** 
-	 * Structure used for dfs traversal loop-wise implementation
-	 * Not part of interface used internally
-	 */
-	struct DfsStepInfo
-	{
-		AuxNode *node; // Node in consideration
-		AuxEdge *edge; // Next edge
+    /**
+     * Structure used for dfs traversal loop-wise implementation
+     * Not part of interface used internally
+     */
+    struct SimpleDfsStepInfo
+    {
+        AuxNode *node; // Node in consideration
+        AuxEdge *edge; // Next edge
 
-		/* Constructor */
-		DfsStepInfo( AuxNode *n)
-		{
-			node = n;
-			edge = n->firstSucc();
-		}
+        /* Constructor */
+        SimpleDfsStepInfo( AuxNode *n)
+        {
+            node = n;
+            edge = n->firstSucc();
+        }
         /* Constructor with direction specification */
-		DfsStepInfo( AuxNode *n, GraphDir dir)
-		{
-			node = n;
-			edge = n->firstEdgeInDir( dir);
-		}
-	};
+        SimpleDfsStepInfo( AuxNode *n, GraphDir dir)
+        {
+            node = n;
+            edge = n->firstEdgeInDir( dir);
+        }
+    };
 
-	/**
-	 * Find enters for graph so that
-	 * for every node there would exist an enter from wich it is reachable
-	 */
-	QStack< DfsStepInfo *> findEnterNodes();
+    /**
+     * Find enters for graph so that
+     * for every node there would exist an enter from wich it is reachable
+     */
+    QStack< SimpleDfsStepInfo *> findEnterNodes();
 
     /**
      * Mark nodes that are reachable down from given node
@@ -310,8 +310,8 @@ inline AuxEdge::AuxEdge( AuxGraph *graph_p, int _id, AuxNode *_pred, AuxNode* _s
     Edge( graph_p, _id, _pred, _succ),
     priv_fixed( true), priv_type( UNKNOWN_TYPE_EDGE) 
 {
-	if ( _pred == _succ)
-		priv_type = SELF_EDGE;
+    if ( _pred == _succ)
+        priv_type = SELF_EDGE;
 };
 
 /** Constructor for node */
