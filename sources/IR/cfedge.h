@@ -47,7 +47,7 @@ public:
         setNode( n, GRAPH_DIR_DOWN);
     }
     /** Get node in given direction */
-    inline CFNode *node( GraphDir dir) const;
+    CFNode *node( GraphDir dir) const;
     /** Get predecessor */
     inline CFNode *pred() const 
     {
@@ -60,18 +60,18 @@ public:
     }
     
     /** Get real node in given direction */
-    inline CFNode* realNode( GraphDir) const;
+    CFNode* realNode( GraphDir) const;
 
     /** Get real predecessor */
-	inline CFNode* realPred() const
-	{
-		return realNode( GRAPH_DIR_UP);
-	}
-	/** Get real successor */
-	inline CFNode* realSucc() const
-	{
-		return realNode( GRAPH_DIR_DOWN);
-	}
+    inline CFNode* realPred() const
+    {
+        return realNode( GRAPH_DIR_UP);
+    }
+    /** Get real successor */
+    inline CFNode* realSucc() const
+    {
+        return realNode( GRAPH_DIR_DOWN);
+    }
 
     /** Next edge in graph's list */
     inline CFEdge* nextEdge()

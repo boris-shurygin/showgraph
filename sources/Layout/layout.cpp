@@ -167,33 +167,33 @@ AuxGraph::markReachableDown( AuxNode *n,
     trav.push( n);
     n->mark( m);
     while ( !trav.isEmpty())
-	{
-		AuxNode *n = trav.pop();
-		AuxEdge *e;
-		
-		foreachSucc( e, n)
-		{
-			AuxNode* succ = e->succ();
-			if ( succ->mark( m))
-			{
-				marked++;
-				trav.push( succ);
-			}
-		}
-	}
+    {
+        AuxNode *n = trav.pop();
+        AuxEdge *e;
+
+        foreachSucc( e, n)
+        {
+            AuxNode* succ = e->succ();
+            if ( succ->mark( m))
+            {
+                marked++;
+                trav.push( succ);
+            }
+        }
+    }
     return marked;
 }
 
 /**
  * Find enter nodes
  */
-QStack< AuxGraph::DfsStepInfo *>
+QStack< AuxGraph::SimpleDfsStepInfo *>
 AuxGraph::findEnterNodes()
 {
-	QStack< DfsStepInfo *> stack;
+    QStack< SimpleDfsStepInfo *> stack;
     Marker m = newMarker();
-	GraphNum marked = 0;
-	QStack< AuxNode *> trav;
+    GraphNum marked = 0;
+    QStack< AuxNode *> trav;
 
     /** Find nodes that have no predecessors */
     for ( AuxNode *n = firstNode();
@@ -203,92 +203,92 @@ AuxGraph::findEnterNodes()
         if ( isNullP( n->firstPred()))
         {
             n->mark( m);
-			marked++;
-			stack.push( new DfsStepInfo( n));
-			trav.push( n);
-		} else
-		{
-			bool has_valid_pred = false;
-			AuxEdge* e = n->firstPred();
-			
-			while ( isNotNullP( e))
-			{
-				if ( areNotEqP( e->pred(),n))
-				{
-					has_valid_pred = true;
-					break;
-				}
-				e = e->nextPred();
-			}
-			if ( !has_valid_pred)
-			{
-				n->mark( m);
-				marked++;
-				stack.push( new DfsStepInfo( n));
-				trav.push( n);
-			}
-		}
+            marked++;
+            stack.push( new SimpleDfsStepInfo( n));
+            trav.push( n);
+        } else
+        {
+            bool has_valid_pred = false;
+            AuxEdge* e = n->firstPred();
+
+            while ( isNotNullP( e))
+            {
+                if ( areNotEqP( e->pred(),n))
+                {
+                    has_valid_pred = true;
+                    break;
+                }
+                e = e->nextPred();
+            }
+            if ( !has_valid_pred)
+            {
+                n->mark( m);
+                marked++;
+                stack.push( new SimpleDfsStepInfo( n));
+                trav.push( n);
+            }
+        }
     }
-	/** Mark nodes from enters */
-	while ( !trav.isEmpty())
-	{
-		AuxNode *n = trav.pop();
-		AuxEdge *e;
-		
-		ForEdges( n, e, Succ)
-		{
-			AuxNode* succ = e->succ();
-			if ( succ->mark( m))
-			{
-				marked++;
-				trav.push( succ);
-			}
-		}
-	}
-	/** Check if we're done */
-	if ( marked == nodeCount())
-	{
-		freeMarker( m);
-		return stack;
-	}
-	
+    /** Mark nodes from enters */
+    while ( !trav.isEmpty())
+    {
+        AuxNode *n = trav.pop();
+        AuxEdge *e;
+
+        ForEdges( n, e, Succ)
+        {
+            AuxNode* succ = e->succ();
+            if ( succ->mark( m))
+            {
+                marked++;
+                trav.push( succ);
+            }
+        }
+    }
+    /** Check if we're done */
+    if ( marked == nodeCount())
+    {
+        freeMarker( m);
+        return stack;
+    }
+
     /** Begin traverse from exits */
-    QStack< DfsStepInfo *> rev_trav;
+    QStack< SimpleDfsStepInfo *> rev_trav;
     Marker visited = newMarker();
-	
+
     /* Fill stack with nodes that have no successors */
     for ( AuxNode *n = firstNode();
           isNotNullP( n);
           n = n->nextNode())
     {
-		bool has_valid_succ = false;
-		
-		if ( n->isMarked( m))
-			continue;
-		
-		AuxEdge* e = n->firstSucc();
-		
-		while ( isNotNullP( e))
-		{
-			if ( !e->succ()->isMarked( m) && areNotEqP( e->succ(),n))
-			{
-				has_valid_succ = true;
-				break;
-			}
-			e = e->nextSucc();
-		}
-		if ( !has_valid_succ)
-		{
-			n->mark( m);
+        bool has_valid_succ = false;
+
+        if ( n->isMarked( m))
+            continue;
+
+        AuxEdge* e = n->firstSucc();
+
+        while ( isNotNullP( e))
+        {
+            if ( !e->succ()->isMarked( m) && areNotEqP( e->succ(),n))
+            {
+                has_valid_succ = true;
+                break;
+            }
+            e = e->nextSucc();
+        }
+        if ( !has_valid_succ)
+        {
+            n->mark( m);
             n->mark( visited);
-            rev_trav.push( new DfsStepInfo( n, GRAPH_DIR_UP));
-		}
+            rev_trav.push( new SimpleDfsStepInfo( n, GRAPH_DIR_UP));
+        }
     }
 
-	/** Upward pass */
+    /** Upward pass */
     while( !rev_trav.isEmpty())
     {
-        DfsStepInfo *info = rev_trav.top();
+        SimpleDfsStepInfo *info = rev_trav.top();
         AuxNode *node = info->node;
         AuxEdge *edge = info->edge;
         
@@ -301,10 +301,10 @@ AuxGraph::findEnterNodes()
                  && pred_node->isMarked( visited))
             {
                 //Backedge in reverse traversal terms. Consider edge's predecessor as enter node
-                stack.push( new DfsStepInfo( edge->succ()));
+                stack.push( new SimpleDfsStepInfo( edge->succ()));
             }
             if ( pred_node->mark( visited))
-                 rev_trav.push( new DfsStepInfo( pred_node, GRAPH_DIR_UP));
+                 rev_trav.push( new SimpleDfsStepInfo( pred_node, GRAPH_DIR_UP));
         } else // We're done with this node
         {
             node->mark( m);
@@ -314,13 +314,13 @@ AuxGraph::findEnterNodes()
         }
     }
     freeMarker( visited);
-	
+
     /** Check if we're done */
-	if ( marked == nodeCount())
-	{
-		freeMarker( m);
-		return stack;
-	}
+    if ( marked == nodeCount())
+    {
+        freeMarker( m);
+        return stack;
+    }
 
     /** 
      *  If we didn't find all the nodes on previous passes then
@@ -333,7 +333,7 @@ AuxGraph::findEnterNodes()
     {
         if ( !n->isMarked( m))
         {
-            stack.push( new DfsStepInfo( n));
+            stack.push( new SimpleDfsStepInfo( n));
             marked+=markReachableDown( n, m);
         }
     }
@@ -356,10 +356,10 @@ void AuxGraph::classifyEdges()
         e->setUnknown();   
     }
 
-	/* Fill the traverse stack with enter nodes */
-	QStack< DfsStepInfo *> stack = findEnterNodes();
+    /* Fill the traverse stack with enter nodes */
+    QStack< SimpleDfsStepInfo *> stack = findEnterNodes();
     
-    foreach ( DfsStepInfo *info, stack)
+    foreach ( SimpleDfsStepInfo *info, stack)
     {
         info->node->mark( m);
     }
@@ -367,7 +367,7 @@ void AuxGraph::classifyEdges()
     /* Walk graph with marker and perform classification */
     while ( !stack.isEmpty())
     {
-        DfsStepInfo *info = stack.top();
+        SimpleDfsStepInfo *info = stack.top();
         AuxNode *node = info->node;
         AuxEdge *edge = info->edge;
         
@@ -388,7 +388,7 @@ void AuxGraph::classifyEdges()
                 }
             }
             if ( succ_node->mark( m))
-                 stack.push( new DfsStepInfo( succ_node));
+                 stack.push( new SimpleDfsStepInfo( succ_node));
         } else // We're done with this node
         {
             node->mark( doneMarker);
@@ -733,28 +733,38 @@ static bool isStartNode( AuxNode *n)
     return true;
 }
 
-/**
- * Assign order to nodes by numbering in a reverse DFS traversal
- */
-void AuxGraph::orderNodesByDFS()
+/** Structure used for dfs traversal */
+struct DfsStepInfo
 {
-    if ( layout_in_process)
-        return;
+    AuxNode *node; // Node in consideration
+    AuxEdge *edge; // Next edge
+    bool inverted;
 
-    /** Structure used for dfs traversal */
-    struct DfsStepInfo
+    /* Constructor */
+    DfsStepInfo( AuxNode *n)
     {
-        AuxNode *node; // Node in consideration
-        AuxEdge *edge; // Next edge
-        bool inverted;
-        
-        /* Constructor */
-        DfsStepInfo( AuxNode *n)
+        LAYOUT_ASSERTD( isNotNullP( n), "Null ptr to node in ordering traversal");
+        node = n;
+        edge = n->firstPred();
+        inverted = false;
+        if ( isNullP( edge))
         {
-            LAYOUT_ASSERTD( isNotNullP( n), "Null ptr to node in ordering traversal");
-            node = n;
-            edge = n->firstPred();
-            inverted = false;
+            inverted = true;
+            edge = node->firstSucc();
+            while ( isNotNullP( edge)
+                    && !edge->isInverted())
+            {
+                edge = edge->nextSucc();
+            }
+            LAYOUT_ASSERTD( isNullP( edge)
+                            || edge->isInverted(), "Should be inverted or null");
+        } else
+        {
+            while ( isNotNullP( edge)
+                    && edge->isInverted())
+            {
+                edge = edge->nextPred();
+            }
             if ( isNullP( edge))
             {
                 inverted = true;
@@ -766,79 +776,69 @@ void AuxGraph::orderNodesByDFS()
                 }
                 LAYOUT_ASSERTD( isNullP( edge)
                                 || edge->isInverted(), "Should be inverted or null");
-            } else
-            {
-                while ( isNotNullP( edge)
-                        && edge->isInverted())
-                {
-                    edge = edge->nextPred();
-                }
-                if ( isNullP( edge))
-                {
-                    inverted = true;
-                    edge = node->firstSucc();
-                    while ( isNotNullP( edge)
-                            && !edge->isInverted())
-                    {
-                        edge = edge->nextSucc();
-                    }
-                    LAYOUT_ASSERTD( isNullP( edge)
-                                    || edge->isInverted(), "Should be inverted or null");
-                } 
             }
         }
-        /** Next edge of this node */
-        void shiftEdge()
+    }
+    /** Next edge of this node */
+    void shiftEdge()
+    {
+        LAYOUT_ASSERTD( isNotNullP( edge), "Null ptr to edge in ordering traversal");
+        if ( inverted)
         {
-            LAYOUT_ASSERTD( isNotNullP( edge), "Null ptr to edge in ordering traversal");
-            if ( inverted)
+            edge = edge->nextSucc();
+            while ( isNotNullP( edge)
+                    && !edge->isInverted())
             {
                 edge = edge->nextSucc();
+            }
+            LAYOUT_ASSERTD( isNullP( edge)
+                            || edge->isInverted(), "Should be inverted or null");
+        } else
+        {
+            edge = edge->nextPred();
+            while ( isNotNullP( edge)
+                    && edge->isInverted())
+            {
+                edge = edge->nextPred();
+            }
+
+            if ( isNullP( edge))
+            {
+                inverted = true;
+                edge = node->firstSucc();
                 while ( isNotNullP( edge)
                         && !edge->isInverted())
                 {
                     edge = edge->nextSucc();
                 }
-                LAYOUT_ASSERTD( isNullP( edge)
-                                || edge->isInverted(), "Should be inverted or null");
-            } else
-            {
-                edge = edge->nextPred();
-                while ( isNotNullP( edge)
-                        && edge->isInverted())
-                {
-                    edge = edge->nextPred();
-                }
+            }
+        }
+    }
+    /** Node in direction of traversal */
+    AuxNode *nodeInDepth()
+    {
+        LAYOUT_ASSERTD( isNotNullP( edge), "Null ptr to edge in ordering traversal");
 
-                if ( isNullP( edge))
-                {
-                    inverted = true;
-                    edge = node->firstSucc();
-                    while ( isNotNullP( edge)
-                            && !edge->isInverted())
-                    {
-                        edge = edge->nextSucc();
-                    }
-                }
-            }
-        }
-        /** Node in direction of traversal */
-        AuxNode *nodeInDepth()
+        if ( edge->isInverted())
         {
-            LAYOUT_ASSERTD( isNotNullP( edge), "Null ptr to edge in ordering traversal");
-            
-            if ( edge->isInverted())
-            {
-                return edge->succ();
-            } else
-            {
-                return edge->pred();
-            }
+            return edge->succ();
+        } else
+        {
+            return edge->pred();
         }
-    };
-    
+    }
+};
+
+/**
+ * Assign order to nodes by numbering in a reverse DFS traversal
+ */
+void AuxGraph::orderNodesByDFS()
+{
+    if ( layout_in_process)
+        return;
+
     Marker m = newMarker(); // Marker for visiting nodes
-    QStack< DfsStepInfo *> stack;
+    QStack< ::DfsStepInfo *> stack;
     GraphNum num = 0;
     
     /* Fill stack with nodes that have no predecessors */
@@ -854,7 +854,7 @@ void AuxGraph::orderNodesByDFS()
             /* Walk graph with marker and perform classification */
             while ( !stack.isEmpty())
             {
-                DfsStepInfo *info = stack.top();
+                ::DfsStepInfo *info = stack.top();
                 
                 if ( isNotNullP( info->edge)) // Add successor to stack
                 {

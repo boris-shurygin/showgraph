@@ -148,7 +148,7 @@ EdgeItem::EdgeItem( GEdge *e_p): edge_p( e_p)
 {
     curr_mode = ModeShow;
     QGraphicsItem::setCursor( Qt::ArrowCursor);
-	setFlag( ItemIsSelectable);
+    setFlag( ItemIsSelectable);
     setFlag( ItemIsFocusable);
     //setCacheMode( DeviceCoordinateCache);
     setZValue(1);
@@ -541,12 +541,12 @@ void EdgeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *ev)
 {
     update();
     /** Select this edge */
-	edge()->graph()->emptySelection();
-	edge()->graph()->selectEdge( this->edge());
-	/** Show context menu */
+    edge()->graph()->emptySelection();
+    edge()->graph()->selectEdge( this->edge());
+    /** Show context menu */
     if ( ev->button() & Qt::RightButton)
     {
-	    QMenu *menu = edge()->graph()->view()->createMenuForEdge( edge());
+        QMenu *menu = edge()->graph()->view()->createMenuForEdge( edge());
         edge()->graph()->view()->setCurrPos( ev->pos());
         menu->exec( ev->screenPos());
         delete menu;
