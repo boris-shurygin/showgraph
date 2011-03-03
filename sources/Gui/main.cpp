@@ -10,7 +10,6 @@
 #include "../Utils/utils_iface.h"
 #include "../QtGUI/gui_iface.h"
 #include "../Frontend/fe_iface.h"
-#include <windows.h>
 
 /**
  * In debug mode project is linked with Qt's dll-oriented build.
@@ -18,7 +17,7 @@
  */
 #ifndef _DEBUG
   #include <QtPlugin>
-  Q_IMPORT_PLUGIN(qico);
+  //Q_IMPORT_PLUGIN(qico);
   //Q_IMPORT_PLUGIN(qgif);
   //Q_IMPORT_PLUGIN(qjpeg);
   //Q_IMPORT_PLUGIN(qmng);

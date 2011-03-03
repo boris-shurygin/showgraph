@@ -6,7 +6,6 @@
  * Copyright (C) 2009  Boris Shurygin
  */
 #include "utest_impl.h"
-#include <windows.h>
 
 #undef UNIT_TEST_GUI
 
