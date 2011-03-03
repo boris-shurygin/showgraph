@@ -25,7 +25,7 @@ class CFNode;
 class Dep;
 class Expr;
 
-#include "../QtGui/gui_iface.h"
+#include "../QtGUI/gui_iface.h"
 #include "cfedge.h"
 #include "cfnode.h"
 #include "cfg.h"
