@@ -19,12 +19,6 @@
         <in>symtab.h</in>
       </df>
       <df name="Graph" kind="SOURCE_LOGICAL_FOLDER">
-        <df name="dist" kind="SOURCE_LOGICAL_FOLDER">
-          <df name="Debug" kind="SOURCE_LOGICAL_FOLDER">
-            <df name="MinGW-Windows" kind="SOURCE_LOGICAL_FOLDER">
-            </df>
-          </df>
-        </df>
         <in>agraph.h</in>
         <in>edge.cpp</in>
         <in>edge.h</in>
@@ -33,7 +27,6 @@
         <in>graph.h</in>
         <in>graph_iface.h</in>
         <in>marker.h</in>
-        <in>moc_edge.cpp</in>
         <in>node.cpp</in>
         <in>node.h</in>
         <in>num.h</in>
@@ -184,16 +177,16 @@
         <in>ir.h</in>
         <in>ir_iface.h</in>
         <in>ir_impl.h</in>
-        <in>moc_ir.cpp</in>
+        <in>ir_moc.cpp</in>
       </df>
       <df name="Layout" kind="SOURCE_LOGICAL_FOLDER">
         <in>aux_edge.h</in>
         <in>aux_graph.cpp</in>
         <in>aux_graph.h</in>
+        <in>aux_graph_moc.cpp</in>
         <in>aux_node.h</in>
         <in>layout.cpp</in>
         <in>layout_iface.h</in>
-        <in>moc_aux_graph.cpp</in>
         <in>node_group.cpp</in>
         <in>node_group.h</in>
       </df>
@@ -208,6 +201,7 @@
         <in>edge_item.h</in>
         <in>graph_view.cpp</in>
         <in>graph_view.h</in>
+        <in>graph_view_moc.cpp</in>
         <in>gstyle.h</in>
         <in>gui_iface.h</in>
         <in>gui_impl.h</in>
@@ -215,17 +209,15 @@
         <in>gview_impl.h</in>
         <in>main_window.cpp</in>
         <in>main_window.h</in>
-        <in>moc_edge_item.cpp</in>
-        <in>moc_graph_view.cpp</in>
-        <in>moc_graph_widget.cpp</in>
-        <in>moc_main_window.cpp</in>
-        <in>moc_style_edit.cpp</in>
+        <in>main_window_moc.cpp</in>
         <in>node_item.cpp</in>
         <in>node_item.h</in>
         <in>style_edit.cpp</in>
         <in>style_edit.h</in>
+        <in>style_edit_moc.cpp</in>
         <in>text_view.cpp</in>
         <in>text_view.h</in>
+        <in>text_view_moc.cpp</in>
       </df>
       <df name="UnitTest" kind="SOURCE_LOGICAL_FOLDER">
         <in>fe_utest.cpp</in>
@@ -235,12 +227,6 @@
         <in>utest_impl.h</in>
       </df>
       <df name="Utils" kind="SOURCE_LOGICAL_FOLDER">
-        <df name="dist" kind="SOURCE_LOGICAL_FOLDER">
-          <df name="Debug" kind="SOURCE_LOGICAL_FOLDER">
-            <df name="MinGW-Windows" kind="SOURCE_LOGICAL_FOLDER">
-            </df>
-          </df>
-        </df>
         <in>asrt.h</in>
         <in>conf.cpp</in>
         <in>conf.h</in>
@@ -272,6 +258,7 @@
                    projectFiles="false"
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>../Makefile</itemPath>
+      <itemPath>../Makefile-impl</itemPath>
       <itemPath>Showgraph-Makefile.mk</itemPath>
     </logicalFolder>
   </logicalFolder>
@@ -283,8 +270,8 @@
     <conf name="Default" type="0">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <compilerSet>MinGW|MinGW</compilerSet>
-        <platform>3</platform>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
       </toolsSet>
       <makefileType>
         <makeTool>

@@ -1,0 +1,103 @@
+#
+# @file Makefile-impl
+# Auxiliary makefile for ShowGraph project
+# @author Boris Shurygin
+#
+# This makefile is to be called by main Makefile to build gui
+# and console versions of ShowGraph.
+#
+
+#Includes
+QT_INCLUDE_DIRS = include \
+                  include/Qt \
+                  include/QtGui \
+                  include/QtXml \
+                  include/QtCore
+
+RELEASE_INCLUDE_FLAGS = $(addprefix -I$(QT_DIR)/, $(QT_INCLUDE_DIRS))
+DEBUG_INCLUDE_FLAGS = $(addprefix -I$(QT_DIR)/, $(QT_INCLUDE_DIRS))
+
+# Final debug and release flags
+DEBUG_CPPFLAGS = -D_DEBUG
+RELEASE_CPPFLAGS = $(RELEASE_INCLUDE_FLAGS)
+
+# Library sets for debug and release
+DEBUG_LIB_NAMES = QtGuid QtCored QtXmld
+RELEASE_LIB_NAMES = QtGui QtCore QtXml
+
+DEBUG_LIBS = $(addprefix -l, $(DEBUG_LIB_NAMES))
+DEBUG_LIB_FLAGS = -L$(QT_DIR)/lib
+RELEASE_LIBS = $(addprefix -l, $(RELEASE_LIB_NAMES))
+RELEASE_LIB_FLAGS = -L$(QT_DIR)/lib
+
+SOURCES_CPP:= $(wildcard $(SOURCES)/*/*.cpp $(SOURCES)/*/*.c)
+
+HEADERS:= $(wildcard $(SOURCES)/*/*.h)
+RELEASE_MOC_HEADERS:= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(HEADERS))
+RELEASE_MOCS= $(RELEASE_MOC_HEADERS:.h=.moc)
+
+RESOURCES:=$(wildcard $(SOURCES)/*/*.qrc)
+RELEASE_QRC:= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(RESOURCES))
+RELEASE_RCCS=$(RELEASE_QRC:.qrc=.rcc)
+RCCS:=$(RESOURCES:.qrc=.rcc)
+
+
+
+RELEASE_SRC_NAMES= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(SOURCES_CPP))
+RELEASE_OBJS = $(RELEASE_SRC_NAMES:.cpp=.o)
+RELEASE_DEPS = $(RELEASE_SRC_NAMES:.cpp=.d)
+RELEASE_OBJS_GUI = $(filter-out $(RELEASE_OBJECTS_DIR)/console/% $(RELEASE_OBJECTS_DIR)/UnitTest/%,$(RELEASE_OBJS))
+RELEASE_OBJS_CL = $(filter-out $(RELEASE_OBJECTS_DIR)/Gui/% $(RELEASE_OBJECTS_DIR)/UnitTest/%,$(RELEASE_OBJS))
+
+
+showgraph_impl: $(RELEASE_OBJS_GUI)
+	$(MKDIR) -p $(BIN_DIR)
+	$(CXX) $(RELEASE_LIB_FLAGS) -o $(BIN_DIR)/showgraph $(RELEASE_OBJS_GUI) $(RELEASE_LIBS)
+
+showgraphcl_impl: $(RELEASE_OBJS_CL)
+	$(MKDIR) -p $(BIN_DIR)
+	$(CXX) $(RELEASE_LIB_FLAGS) -o $(BIN_DIR)/showgraphcl $(RELEASE_OBJS_CL) $(RELEASE_LIBS)
+
+# Unit Test
+unittest:
+
+#
+# This part generates new CPP files from headers that have Q_OBJECT usage
+#
+# run QT meta-object compiler on headers to generate additional .cpp files.
+# list of created files can be found in NEW_MOCS variable later
+release_moc: $(RELEASE_MOCS) $(RELEASE_RCCS)
+
+# rule for moc run
+$(RELEASE_OBJECTS_DIR)/%.moc: $(SOURCES)/%.h
+	$(MKDIR) -p $(dir $@)
+	$(TOUCH) $@
+	(! $(GREP) -q Q_OBJECT $< || $(MOC) $< -o $(SOURCES)/$*_moc.cpp)
+# rule for resource compiler
+$(RELEASE_OBJECTS_DIR)/%.rcc: $(SOURCES)/%.qrc
+	$(MKDIR) -p $(dir $@)
+	$(TOUCH) $@
+	$(RCC) $< -o $(@:.rcc=.cpp)
+
+#
+# Rules that run CPP compiler
+#
+
+
+#Dependency generation
+$(RELEASE_OBJECTS_DIR)/%.d: $(SOURCES)/%.cpp
+	$(MKDIR) -p $(dir $@)
+	$(CXX) -MM $(RELEASE_CPPFLAGS) $< -MF $@ -MT "$@ $(@:.d=.o)"
+
+include $(RELEASE_DEPS)
+
+#Objects generation
+$(RELEASE_OBJECTS_DIR)/%.o: $(SOURCES)/%.cpp
+	$(MKDIR) -p $(dir $@)
+	$(CXX) -c $(RELEASE_CPPFLAGS) $< -o $@
+
+
+
+
+
+

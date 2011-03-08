@@ -1,69 +1,57 @@
 #
+# @file Makefile
 # Makefile for ShowGraph project
+# @author Boris Shurygin
+#
+# Main targets are:
+#   all - build gui and console versinos of Showgraph in debug and release modes
+#   debug (not yet implemented) - build debug vesion of ShowGraph (both gui and console)
+#   release - build release version of ShowGraph
+#
+#   targets are buit in two steps:
+#     1. Generate additional .cpp files by QT tools ( MOC and RCC)
+#     2. Compile all .cpp to .o and link them with Qt libs
 #
 
-# Variables
-CC = gcc
-CXX = g++
-PERL = perl
-MKDIR = mkdir
-RM = rm
-GREP = grep
+
+#Makefile that implements main building functionality
+MAKEFILE_IMPL = Makefile-impl
+
+
+# Tools
+export CC = gcc
+export CXX = g++
+exportPERL = perl
+export MKDIR = mkdir
+export RM = rm
+export GREP = grep
+export TOUCH = touch
 
 #Directories
-BIN_DIR := bin
-OBJECT_DIR := objects
-SOURCES := sources
-DEBUG_OBJECTS_DIR := $(OBJECT_DIR)/debug
-RELEASE_OBJECTS_DIR := $(OBJECT_DIR)/release
+export BIN_DIR := bin
+export OBJECT_DIR := objects
+export SOURCES := sources
+export DEBUG_OBJECTS_DIR := $(OBJECT_DIR)/debug
+export RELEASE_OBJECTS_DIR := $(OBJECT_DIR)/release
+export QT_DIR = /usr/local/Trolltech/Qt-4.7.0
 
-QT_DEBUG_DIR = /usr/local/Trolltech/Qt-4.7.0
-QT_RELEASE_DIR = /usr/local/Trolltech/Qt-4.7.0
-
-MOC = $(QT_RELEASE_DIR)/bin/moc
-RCC = $(QT_RELEASE_DIR)/bin/rcc
-
-
-#Compiler configureations
-
-#Includes
-QT_INCLUDE_DIRS = include \
-                  include/Qt \
-                  include/QtGui \
-                  include/QtXml \
-                  include/QtCore
-
-RELEASE_INCLUDE_FLAGS = $(addprefix -I$(QT_RELEASE_DIR)/, $(QT_INCLUDE_DIRS))
-DEBUG_INCLUDE_FLAGS = $(addprefix -I$(QT_DEBUG_DIR)/, $(QT_INCLUDE_DIRS))
-
-# Final debug and release flags
-DEBUG_CPPFLAGS = -D_DEBUG
-RELEASE_CPPFLAGS = $(RELEASE_INCLUDE_FLAGS)
-
-# Library sets for debug and release
-DEBUG_LIB_NAMES = QtGuid QtCored QtXmld
-RELEASE_LIB_NAMES = QtGui QtCore QtXml
-
-DEBUG_LIBS = $(addprefix -l, $(DEBUG_LIB_NAMES))
-DEBUG_LIB_FLAGS = -L$(QT_DEBUG_DIR)/lib
-RELEASE_LIBS = $(addprefix -l, $(RELEASE_LIB_NAMES))
-RELEASE_LIB_FLAGS = -L$(QT_RELEASE_DIR)/lib
-
-SOURCES_CPP:= $(wildcard $(SOURCES)/*/*.cpp $(SOURCES)/*/*.c)
+#QT tools
+export MOC = $(QT_DIR)/bin/moc
+export RCC = $(QT_DIR)/bin/rcc
+	
 HEADERS:= $(wildcard $(SOURCES)/*/*.h)
-MOCS:= $(HEADERS:.h=.moc)
+RELEASE_MOC_HEADERS:= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(HEADERS))
+RELEASE_MOCS= $(RELEASE_MOC_HEADERS:.h=.moc)
+DEBUG_MOC_HEADERS:= $(patsubst $(SOURCES)/%,$(DEBUG_OBJECTS_DIR)/%,$(HEADERS))
+DEBUG_MOCS= $(DEBUG_MOC_HEADERS:.h=.moc)
+
+
 RESOURCES:=$(wildcard $(SOURCES)/*/*.qrc)
-RCCS:=$(RESOURCES:.qrc=.rcc)
-
-
-
-RELEASE_SRC_NAMES= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(SOURCES_CPP))
-RELEASE_OBJS = $(RELEASE_SRC_NAMES:.cpp=.o)
-RELEASE_DEPS = $(RELEASE_SRC_NAMES:.cpp=.d)
-RELEASE_OBJS_GUI = $(filter-out $(RELEASE_OBJECTS_DIR)/console/% $(RELEASE_OBJECTS_DIR)/UnitTest/%,$(RELEASE_OBJS))
-RELEASE_OBJS_CL = $(filter-out $(RELEASE_OBJECTS_DIR)/Gui/% $(RELEASE_OBJECTS_DIR)/UnitTest/%,$(RELEASE_OBJS))
-
-
+RELEASE_QRC:= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(RESOURCES))
+RELEASE_RCCS=$(RELEASE_QRC:.qrc=.rcc)
+DEBUG_QRC:= $(patsubst $(SOURCES)/%,$(DEBUG_OBJECTS_DIR)/%,$(RESOURCES))
+DEBUG_RCCS=$(RELEASE_QRC:.qrc=.rcc)
+	
 #
 # All targets
 #
@@ -77,48 +65,34 @@ debug:
 # Release targets
 release: showgraph showgraphcl
 
-showgraph: $(RELEASE_OBJS_GUI)
-	$(MKDIR) -p $(BIN_DIR)
-	$(CXX) $(RELEASE_LIB_FLAGS) -o $(BIN_DIR)/$@ $(RELEASE_OBJS_GUI) $(RELEASE_LIBS)
-
-showgraphcl: $(RELEASE_OBJS_CL)
-	$(MKDIR) -p $(BIN_DIR)
-	$(CXX) $(RELEASE_LIB_FLAGS) -o $(BIN_DIR)/$@ $(RELEASE_OBJS_CL) $(RELEASE_LIBS)
-
 # Unit Test
 unittest:
+
+showgraph: release_moc showgraph_impl
+
+showgraphcl: release_moc showgraphcl_impl
+
+showgraph_impl showgraphcl_impl:
+	$(MAKE) -f $(MAKEFILE_IMPL) $@
 
 #
 # This part generates new CPP files from headers that have Q_OBJECT usage
 #
-# run QT meta-object compiler on headers to generate additional .cpp files. 
+# run QT meta-object compiler on headers to generate additional .cpp files.
 # list of created files can be found in NEW_MOCS variable later
-moc: $(MOCS) $(RCCS)
+release_moc: $(RELEASE_MOCS) $(RELEASE_RCCS)
 
 # rule for moc run
-%.moc: %.h
-	(! $(GREP) -q Q_OBJECT $< || $(MOC) $< -o $*_moc.cpp)
+$(RELEASE_OBJECTS_DIR)/%.moc: $(SOURCES)/%.h
+	$(MKDIR) -p $(dir $@)
+	$(TOUCH) $@
+	(! $(GREP) -q Q_OBJECT $< || $(MOC) $< -o $(SOURCES)/$*_moc.cpp)
 # rule for resource compiler
-%.rcc: %.qrc
+$(RELEASE_OBJECTS_DIR)/%.rcc: $(SOURCES)/%.qrc
+	$(MKDIR) -p $(dir $@)
+	$(TOUCH) $@
 	$(RCC) $< -o $(@:.rcc=.cpp)
-
-#
-# Rules that run CPP compiler
-#
-
 	
-#Dependency generation
-$(RELEASE_OBJECTS_DIR)/%.d: $(SOURCES)/%.cpp
-	$(MKDIR) -p $(dir $@)
-	$(CXX) -MM $(RELEASE_CPPFLAGS) $< -MF $@ -MT "$@ $(@:.d=.o)"
-	
-include $(RELEASE_DEPS)	
-
-#Objects generation
-$(RELEASE_OBJECTS_DIR)/%.o: $(SOURCES)/%.cpp
-	$(MKDIR) -p $(dir $@)
-	$(CXX) -c $(RELEASE_CPPFLAGS) $< -o $@
-
 #
 # Cleanup routines
 #
