@@ -661,6 +661,7 @@ GraphView::drawBackground(QPainter *painter, const QRectF &rect)
 void 
 GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
 {
+    QGraphicsView::mouseDoubleClickEvent( ev);   
     if( ev->button() & Qt::LeftButton)
     {
         QPoint p = ev->pos();
@@ -682,7 +683,6 @@ GraphView::mouseDoubleClickEvent(QMouseEvent *ev)
             graph()->deleteNode( qgraphicsitem_cast<NodeItem *>( node)->node());
         }
     }
-    QGraphicsView::mouseDoubleClickEvent( ev);   
 }
 
 void
