@@ -597,7 +597,10 @@ void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         if ( event->button() & Qt::LeftButton && !node()->isEdgeControl())
         {
             if ( textInteractionFlags() == Qt::NoTextInteraction)
+            {
                 setTextInteractionFlags(Qt::TextEditorInteraction);
+                setFocus( Qt::MouseFocusReason);
+            }
 			    //QGraphicsTextItem::mousePressEvent(event);
         }
     } else
