@@ -31,6 +31,7 @@ export TOUCH = touch
 export BIN_DIR := bin
 export OBJECT_DIR := objects
 export SOURCES := sources
+export MOC_DIR = $(OBJECT_DIR)/mocs
 export DEBUG_OBJECTS_DIR := $(OBJECT_DIR)/debug
 export RELEASE_OBJECTS_DIR := $(OBJECT_DIR)/release
 export QT_DIR = /usr/local/Trolltech/Qt-4.7.0
@@ -40,17 +41,12 @@ export MOC = $(QT_DIR)/bin/moc
 export RCC = $(QT_DIR)/bin/rcc
 	
 HEADERS:= $(wildcard $(SOURCES)/*/*.h)
-RELEASE_MOC_HEADERS:= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(HEADERS))
-RELEASE_MOCS= $(RELEASE_MOC_HEADERS:.h=.moc)
-DEBUG_MOC_HEADERS:= $(patsubst $(SOURCES)/%,$(DEBUG_OBJECTS_DIR)/%,$(HEADERS))
-DEBUG_MOCS= $(DEBUG_MOC_HEADERS:.h=.moc)
-
+MOC_HEADERS:= $(patsubst $(SOURCES)/%,$(MOC_DIR)/%,$(HEADERS))
+MOCS= $(MOC_HEADERS:.h=.moc)
 
 RESOURCES:=$(wildcard $(SOURCES)/*/*.qrc)
-RELEASE_QRC:= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(RESOURCES))
-RELEASE_RCCS=$(RELEASE_QRC:.qrc=.rcc)
-DEBUG_QRC:= $(patsubst $(SOURCES)/%,$(DEBUG_OBJECTS_DIR)/%,$(RESOURCES))
-DEBUG_RCCS=$(RELEASE_QRC:.qrc=.rcc)
+QRC:= $(patsubst $(SOURCES)/%,$(MOC_DIR)/%,$(RESOURCES))
+RCCS=$(QRC:.qrc=.rcc)
 	
 #
 # All targets
@@ -60,7 +56,14 @@ all: release debug unittest
 #showgraphcl showgraphd showgraphcld
 
 #Debug targets
-debug:
+debug: showgraphd showgraphcld
+
+showgraphd: gen showgraphd_impl
+
+showgraphcld: gen showgraphcld_impl
+
+showgraphd_impl showgraphcld_impl:
+	$(MAKE) -f $(MAKEFILE_IMPL) $@
 
 # Release targets
 release: showgraph showgraphcl
@@ -68,9 +71,9 @@ release: showgraph showgraphcl
 # Unit Test
 unittest:
 
-showgraph: release_moc showgraph_impl
+showgraph: gen showgraph_impl
 
-showgraphcl: release_moc showgraphcl_impl
+showgraphcl: gen showgraphcl_impl
 
 showgraph_impl showgraphcl_impl:
 	$(MAKE) -f $(MAKEFILE_IMPL) $@
@@ -80,18 +83,18 @@ showgraph_impl showgraphcl_impl:
 #
 # run QT meta-object compiler on headers to generate additional .cpp files.
 # list of created files can be found in NEW_MOCS variable later
-release_moc: $(RELEASE_MOCS) $(RELEASE_RCCS)
+gen: $(MOCS) $(RCCS)
 
 # rule for moc run
-$(RELEASE_OBJECTS_DIR)/%.moc: $(SOURCES)/%.h
+$(MOC_DIR)/%.moc: $(SOURCES)/%.h
 	$(MKDIR) -p $(dir $@)
 	$(TOUCH) $@
 	(! $(GREP) -q Q_OBJECT $< || $(MOC) $< -o $(SOURCES)/$*_moc.cpp)
 # rule for resource compiler
-$(RELEASE_OBJECTS_DIR)/%.rcc: $(SOURCES)/%.qrc
+$(MOC_DIR)/%.rcc: $(SOURCES)/%.qrc
 	$(MKDIR) -p $(dir $@)
 	$(TOUCH) $@
-	$(RCC) $< -o $(@:.rcc=.cpp)
+	$(RCC) $< -o $(<:.qrc=.cpp)
 	
 #
 # Cleanup routines
