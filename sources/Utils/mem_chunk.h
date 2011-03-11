@@ -181,7 +181,7 @@ namespace MemImpl
         e->is_busy = true;
 #endif
 #ifdef USE_MEM_EVENTS        
-        e->alloc_event = MemMgr::instance()->allocEvent();
+        e->alloc_event = Mem::MemMgr::instance()->allocEvent();
 #endif        
         Data *res = static_cast<Data *>( e);
         free_entry = e->nextFree();
@@ -200,7 +200,7 @@ namespace MemImpl
         e->is_busy = false;
 #endif
 #ifdef USE_MEM_EVENTS        
-        e->dealloc_event = MemMgr::instance()->deallocEvent();
+        e->dealloc_event = Mem::MemMgr::instance()->deallocEvent();
 #endif 
         e->setNextFree( free_entry);
         free_entry = e->pos();

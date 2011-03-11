@@ -188,9 +188,9 @@ public:
     inline Edge* nextEdgeInDir( GraphDir dir)
     {
         GRAPH_ASSERTD( dir < GRAPH_DIRS_NUM, "Wrong direction parameter");
-        GRAPH_ASSERTD( GRAPH_DIR_DOWN == EDGE_LIST_SUCCS,
+        GRAPH_ASSERTD( (int) GRAPH_DIR_DOWN == (int) EDGE_LIST_SUCCS,
                        "Enums of direction and edge lists are not having right values");
-        GRAPH_ASSERTD( GRAPH_DIR_UP == EDGE_LIST_PREDS,
+        GRAPH_ASSERTD( (int) GRAPH_DIR_UP == (int) EDGE_LIST_PREDS,
                        "Enums of direction and edge lists are not having right values");
         return next( dir);
     }

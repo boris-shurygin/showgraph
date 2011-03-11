@@ -18,11 +18,14 @@ RELEASE_INCLUDE_FLAGS = $(addprefix -I$(QT_DIR)/, $(QT_INCLUDE_DIRS))
 DEBUG_INCLUDE_FLAGS = $(addprefix -I$(QT_DIR)/, $(QT_INCLUDE_DIRS))
 
 # Final debug and release flags
-DEBUG_CPPFLAGS = -D_DEBUG
-RELEASE_CPPFLAGS = $(RELEASE_INCLUDE_FLAGS)
+DEBUG_OPT_FLAGS = -g -D_DEBUG
+RELEASE_OPT_FLAGS = -O3
+
+DEBUG_CPPFLAGS = $(DEBUG_OPT_FLAGS) $(DEBUG_INCLUDE_FLAGS)
+RELEASE_CPPFLAGS = $(RELEASE_OPT_FLAGS) $(RELEASE_INCLUDE_FLAGS)
 
 # Library sets for debug and release
-DEBUG_LIB_NAMES = QtGuid QtCored QtXmld
+DEBUG_LIB_NAMES = QtGui QtCore QtXml
 RELEASE_LIB_NAMES = QtGui QtCore QtXml
 
 DEBUG_LIBS = $(addprefix -l, $(DEBUG_LIB_NAMES))
@@ -41,7 +44,11 @@ RELEASE_QRC:= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(RESOURCES))
 RELEASE_RCCS=$(RELEASE_QRC:.qrc=.rcc)
 RCCS:=$(RESOURCES:.qrc=.rcc)
 
-
+DEBUG_SRC_NAMES= $(patsubst $(SOURCES)/%,$(DEBUG_OBJECTS_DIR)/%,$(SOURCES_CPP))
+DEBUG_OBJS = $(DEBUG_SRC_NAMES:.cpp=.o)
+DEBUG_DEPS = $(DEBUG_SRC_NAMES:.cpp=.d)
+DEBUG_OBJS_GUI = $(filter-out $(DEBUG_OBJECTS_DIR)/console/% $(DEBUG_OBJECTS_DIR)/UnitTest/%,$(DEBUG_OBJS))
+DEBUG_OBJS_CL = $(filter-out $(DEBUG_OBJECTS_DIR)/Gui/% $(DEBUG_OBJECTS_DIR)/UnitTest/%,$(DEBUG_OBJS))
 
 RELEASE_SRC_NAMES= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(SOURCES_CPP))
 RELEASE_OBJS = $(RELEASE_SRC_NAMES:.cpp=.o)
@@ -49,6 +56,13 @@ RELEASE_DEPS = $(RELEASE_SRC_NAMES:.cpp=.d)
 RELEASE_OBJS_GUI = $(filter-out $(RELEASE_OBJECTS_DIR)/console/% $(RELEASE_OBJECTS_DIR)/UnitTest/%,$(RELEASE_OBJS))
 RELEASE_OBJS_CL = $(filter-out $(RELEASE_OBJECTS_DIR)/Gui/% $(RELEASE_OBJECTS_DIR)/UnitTest/%,$(RELEASE_OBJS))
 
+showgraphd_impl: $(DEBUG_OBJS_GUI)
+	$(MKDIR) -p $(BIN_DIR)
+	$(CXX) $(DEBUG_LIB_FLAGS) -o $(BIN_DIR)/showgraphd $(DEBUG_OBJS_GUI) $(DEBUG_LIBS)
+
+showgraphcld_impl: $(DEBUG_OBJS_CL)
+	$(MKDIR) -p $(BIN_DIR)
+	$(CXX) $(DEBUG_LIB_FLAGS) -o $(BIN_DIR)/showgraphcld $(DEBUG_OBJS_CL) $(DEBUG_LIBS)
 
 showgraph_impl: $(RELEASE_OBJS_GUI)
 	$(MKDIR) -p $(BIN_DIR)
@@ -58,30 +72,20 @@ showgraphcl_impl: $(RELEASE_OBJS_CL)
 	$(MKDIR) -p $(BIN_DIR)
 	$(CXX) $(RELEASE_LIB_FLAGS) -o $(BIN_DIR)/showgraphcl $(RELEASE_OBJS_CL) $(RELEASE_LIBS)
 
-# Unit Test
-unittest:
-
-#
-# This part generates new CPP files from headers that have Q_OBJECT usage
-#
-# run QT meta-object compiler on headers to generate additional .cpp files.
-# list of created files can be found in NEW_MOCS variable later
-release_moc: $(RELEASE_MOCS) $(RELEASE_RCCS)
-
-# rule for moc run
-$(RELEASE_OBJECTS_DIR)/%.moc: $(SOURCES)/%.h
-	$(MKDIR) -p $(dir $@)
-	$(TOUCH) $@
-	(! $(GREP) -q Q_OBJECT $< || $(MOC) $< -o $(SOURCES)/$*_moc.cpp)
-# rule for resource compiler
-$(RELEASE_OBJECTS_DIR)/%.rcc: $(SOURCES)/%.qrc
-	$(MKDIR) -p $(dir $@)
-	$(TOUCH) $@
-	$(RCC) $< -o $(@:.rcc=.cpp)
-
 #
 # Rules that run CPP compiler
 #
+#Dependency generation
+$(DEBUG_OBJECTS_DIR)/%.d: $(SOURCES)/%.cpp
+	$(MKDIR) -p $(dir $@)
+	$(CXX) -MM $(DEBUG_CPPFLAGS) $< -MF $@ -MT "$@ $(@:.d=.o)"
+
+include $(DEBUG_DEPS)
+
+#Objects generation
+$(DEBUG_OBJECTS_DIR)/%.o: $(SOURCES)/%.cpp
+	$(MKDIR) -p $(dir $@)
+	$(CXX) -c $(DEBUG_CPPFLAGS) $< -o $@
 
 
 #Dependency generation
