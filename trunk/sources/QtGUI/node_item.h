@@ -91,6 +91,8 @@ public:
     QRectF boundingRect() const;
     /** Get node shape */
     QPainterPath shape() const;
+    /** Determine that node's shape contains point */
+    bool contains(const QPointF &point) const;
     /** Paint procedure */
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     /** Reimplementation of mouse press event handler */
@@ -107,7 +109,6 @@ public:
     void adjustAssociates();
     /** Update associated items */
     void updateAssociates();
-
     /** Item change event handler */
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 	/** 

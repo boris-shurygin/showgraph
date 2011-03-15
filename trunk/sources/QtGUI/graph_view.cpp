@@ -615,7 +615,8 @@ GraphView::GraphView():
     smooth_focus( false),
     editable( false),
     view_mode( WHOLE_GRAPH_VIEW),
-    style_edit_info( NULL)
+    style_edit_info( NULL),
+    helper( new EdgeHelper)
 {
     QGraphicsScene *scene = new QGraphicsScene( this);
     //scene->setItemIndexMethod( QGraphicsScene::NoIndex);
@@ -636,6 +637,7 @@ GraphView::GraphView():
 	createMenus();
 	show_menus = true;
 	setAcceptDrops( false);
+    scene->addItem( helper);
 }
 
 /** Destructor */
@@ -644,6 +646,7 @@ GraphView::~GraphView()
     scene()->setItemIndexMethod( QGraphicsScene::NoIndex);
     delete graph_p;
     delete view_history;
+    delete helper;
 }
 
 void GraphView::startAnimationNodes()
@@ -740,7 +743,6 @@ GraphView::mouseReleaseEvent( QMouseEvent *ev)
                     }
 				}
             }
-			
         } else if ( !scene()->itemAt( mapToScene( ev->pos())))
         {
             QMenu *menu = new QMenu( tr( "&View Menu"));
@@ -750,6 +752,8 @@ GraphView::mouseReleaseEvent( QMouseEvent *ev)
             delete menu;
         }
     }
+    helper->hide();
+    helper->reset();
     QGraphicsView::mouseReleaseEvent(ev);
 	createEdge = false;
 	show_menus = true;
@@ -759,6 +763,32 @@ GraphView::mouseReleaseEvent( QMouseEvent *ev)
 void
 GraphView::mouseMoveEvent(QMouseEvent *ev)
 {
+    if ( createEdge)
+    {
+        QGraphicsItem* item = scene()->itemAt( mapToScene( ev->pos()));
+        if ( isNotNullP( item))
+        {
+            NodeItem *node_item = qgraphicsitem_cast<NodeItem *>(item);
+            if ( isNotNullP( node_item)
+                 && node_item->node()->isSimple())
+            {   
+                if ( areNotEqP( node_item->node(), tmpSrc))
+                    helper->switchToRegular();
+                helper->setDst( node_item);
+            } else
+            {
+                helper->switchToRegular();
+                helper->setDstP( helper->mapFromScene( mapToScene( ev->pos())));
+                helper->setDst( NULL);
+            }
+        } else
+        {
+            helper->switchToRegular();
+            helper->setDstP( helper->mapFromScene( mapToScene( ev->pos())));
+            helper->setDst( NULL);
+        }
+        helper->adjust();
+    }
     QGraphicsView::mouseMoveEvent(ev);
 }
 

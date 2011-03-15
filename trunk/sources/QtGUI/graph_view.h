@@ -363,15 +363,14 @@ class GraphView: public QGraphicsView
 {
     Q_OBJECT; /** For MOC */
 private:
-    
-   
-
     /** Pointer to model graph */   
     GGraph * graph_p;
     /** History of view events */
     GraphViewHistory *view_history;
     /** View mode */
     GraphViewMode view_mode;
+    /** Item for showing future edge during the edge creation process */
+    EdgeHelper *helper;
     /** Edition enabled/disabled */
     bool editable;
     /** Deleted items lists */
@@ -628,6 +627,15 @@ public:
     inline void SetTmpSrc( GNode* node)
     {
         tmpSrc = node;
+        helper->setSrc( node->item());
+        helper->setDst( NULL);
+        helper->adjust();
+    }
+    /** Show edge helper item */
+    inline void showHelper()
+    {
+        helper->adjust();
+        helper->show();
     }
     /** Get the pointer to source node of new edge */
     inline GNode* GetTmpSrc()
