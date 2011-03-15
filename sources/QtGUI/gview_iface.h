@@ -41,7 +41,8 @@ class StyleEdit;
 enum { 
     TypeNode = QGraphicsItem::UserType + 1, /** Node item */
     TypeEdge = QGraphicsItem::UserType + 2, /** Edge item */
-    TypeEdgeControl = QGraphicsItem::UserType + 3 /** EdgeControl item */
+    TypeEdgeControl = QGraphicsItem::UserType + 3,/** EdgeControl item */
+    TypeEdgeHelper = QGraphicsItem::UserType + 4 /** Edge helper item */
 };
 
 /** Max opacity level for items in graph view */
@@ -72,6 +73,7 @@ private:
 #include "gstyle.h"
 #include "edge_item.h"
 #include "node_item.h"
+#include "edge_helper.h"
 #include "graph_view.h"
 #include "style_edit.h"
 

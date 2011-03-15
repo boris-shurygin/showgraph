@@ -226,11 +226,14 @@ public:
     /** Set edge's style */
 inline void GEdge::setStyle( GStyle *st)
 {
-    if ( isNotNullP( _style))
-        _style->decNumItems();
-    _style = st;
-    if ( isNotNullP( _style))
-        _style->incNumItems();
+    if ( areNotEqP( _style, st))
+    {
+        if ( isNotNullP( _style))
+            _style->decNumItems();
+        _style = st;
+        if ( isNotNullP( _style))
+            _style->incNumItems();
+    }
     item()->update();
 }
 #endif

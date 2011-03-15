@@ -188,6 +188,21 @@
 			Name="GraphView"
 			>
 			<File
+				RelativePath=".\edge_helper.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\edge_helper.h"
+				>
+			</File>
+			<File
 				RelativePath=".\edge_item.cpp"
 				>
 			</File>

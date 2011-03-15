@@ -437,6 +437,11 @@ NodeItem::shape() const
     }
 }
 
+bool NodeItem::contains(const QPointF &point) const
+{
+    return shape().contains(point);
+}
+
 /**
  * Painting procedure for NodeItem
  */
@@ -534,6 +539,7 @@ void NodeItem::mousePressEvent( QGraphicsSceneMouseEvent *event)
         {
             node()->graph()->view()->SetCreateEdge( true);
             node()->graph()->view()->SetTmpSrc( node());
+            node()->graph()->view()->showHelper();
         }
     } else if ( node()->isEdgeControl() || node()->isEdgeLabel())
     {
