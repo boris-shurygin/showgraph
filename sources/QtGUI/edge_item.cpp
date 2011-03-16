@@ -183,6 +183,7 @@ QPainterPath EdgeItem::selfEdgePath() const
 void
 EdgeItem::adjust()
 {
+    prepareGeometryChange();
     if ( edge()->pred()->item()->isVisible()
          && edge()->succ()->item()->isVisible())
     {
@@ -202,7 +203,7 @@ EdgeItem::adjust()
         cp1 = center + QPointF( (r.width() / 2) + SE_HOR_MARGIN, 0);
         btmRight = cp1 + QPointF( 0, r.height()/2 + SE_VERT_MARGIN);
         
-        prepareGeometryChange();
+        update();
         return;
     }
     srcP = mapFromItem( pred()->item(), pred()->item()->boundingRect().center());
@@ -341,7 +342,7 @@ EdgeItem::adjust()
     btmRight.setX( max< qreal>( btmRight.x(), cp2.x()));
     btmRight.setY( max< qreal>( btmRight.y(), cp2.y()));
 
-    prepareGeometryChange();
+    update();
 }
 
 QRectF 
