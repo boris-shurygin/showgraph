@@ -627,6 +627,7 @@ void NodeItem::focusOutEvent(QFocusEvent *event)
  */
 void NodeItem::keyPressEvent(QKeyEvent *event)
 {
+    prepareGeometryChange();
     QGraphicsTextItem::keyPressEvent(event);
     GEdge *edge = NULL;
 
@@ -638,7 +639,7 @@ void NodeItem::keyPressEvent(QKeyEvent *event)
     {
         edge->item()->adjust();
     }
-    prepareGeometryChange();
+    update();
 }
 
 /** 

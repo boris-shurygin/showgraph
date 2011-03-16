@@ -501,8 +501,17 @@ void GGraph::UpdatePlacement()
           isNotNullP( n);
           n = n->nextNode())
     {
-        qreal x = n->modelX() + ( n->item()->borderRect().width() - n->item()->textRect().width()) / 2;
-        qreal y = n->modelY() + ( n->item()->borderRect().height() - n->item()->textRect().height()) / 2;
+        qreal x, y;
+        
+        if ( !n->isEdgeControl())
+        {
+            x = n->modelX() + ( n->item()->borderRect().width() - n->item()->textRect().width()) / 2;
+            y = n->modelY() + ( n->item()->borderRect().height() - n->item()->textRect().height()) / 2;
+        } else
+        {
+            x = n->modelX() + n->item()->borderRect().width() / 2;
+            y = n->modelY() + n->item()->borderRect().height() / 2;
+        }
         n->item()->setPos( x, y);
     }
 
