@@ -704,14 +704,14 @@ FindWidget::FindWidget(QWidget *parent)
     toolPrevious->setAutoRaise(true);
     //toolPrevious->setText(tr("Previous"));
     toolPrevious->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    toolPrevious->setIcon(QIcon(QString::fromUtf8("images/%1/previous.png").arg(system)));
+    toolPrevious->setIcon(QIcon(QString::fromUtf8(":/images/%1/previous.png").arg(system)));
     hboxLayout->addWidget(toolPrevious);
 
     toolNext = new QToolButton(this);
     toolNext->setAutoRaise(true);
     //toolNext->setText(tr("Next"));
     toolNext->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    toolNext->setIcon(QIcon(QString::fromUtf8("images/%1/next.png").arg(system)));
+    toolNext->setIcon(QIcon(QString::fromUtf8(":/images/%1/next.png").arg(system)));
     hboxLayout->addWidget(toolNext);
 
     checkCase = new QCheckBox(tr("Case Sensitive"), this);
@@ -729,11 +729,11 @@ FindWidget::FindWidget(QWidget *parent)
 
     labelWrapped = new QLabel(this);
     labelWrapped->setMinimumSize(QSize(0, 20));
-    labelWrapped->setMaximumSize(QSize(105, 20));
+    labelWrapped->setMaximumSize(QSize(125, 20));
     labelWrapped->setTextFormat(Qt::RichText);
     labelWrapped->setScaledContents(true);
     labelWrapped->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
-    labelWrapped->setText(tr("<img src=\"images/wrap.png\">&nbsp;Search wrapped"));
+    labelWrapped->setText(tr("<img src=\":/images/wrap.png\">&nbsp;Search wrapped"));
     hboxLayout->addWidget(labelWrapped);
 
     spacerItem = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
