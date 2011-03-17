@@ -15,13 +15,15 @@
  * In debug mode project is linked with Qt's dll-oriented build.
  * Plugins are supported without any additional actions
  */
-#ifndef _DEBUG
-  #include <QtPlugin>
+#ifdef _MSC_VER
+#  ifndef _DEBUG
+#    include <QtPlugin>
   Q_IMPORT_PLUGIN(qico);
   //Q_IMPORT_PLUGIN(qgif);
   //Q_IMPORT_PLUGIN(qjpeg);
   //Q_IMPORT_PLUGIN(qmng);
   //Q_IMPORT_PLUGIN(qtiff);
+#  endif
 #endif
 
 /**
