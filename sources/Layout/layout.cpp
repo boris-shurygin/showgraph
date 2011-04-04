@@ -690,11 +690,19 @@ void AuxGraph::doLayoutConcurrent()
     /** 6. Move edge controls to enchance the picture readability */
 }
 
+#define SIMPLE_DFS
 /**
  * Check if a node doesn't have any successors ( including inverted predecessors)
  */
 static bool isStartNode( AuxNode *n)
 {
+#ifdef SIMPLE_DFS
+    if ( isNotNullP( n->firstSucc()))
+    {
+        return false;
+    } 
+    return true;
+#else
     AuxEdge *edge = n->firstSucc();
     if ( isNullP( edge))
     {
@@ -731,6 +739,7 @@ static bool isStartNode( AuxNode *n)
         }
     }
     return true;
+#endif
 }
 
 /** Structure used for dfs traversal */
@@ -740,6 +749,28 @@ struct DfsStepInfo
     AuxEdge *edge; // Next edge
     bool inverted;
 
+#ifdef SIMPLE_DFS
+    /* Constructor */
+    DfsStepInfo( AuxNode *n)
+    {
+        LAYOUT_ASSERTD( isNotNullP( n), "Null ptr to node in ordering traversal");
+        node = n;
+        edge = n->firstPred();
+        inverted = false;
+    }
+    /** Next edge of this node */
+    void shiftEdge()
+    {
+        LAYOUT_ASSERTD( isNotNullP( edge), "Null ptr to edge in ordering traversal");
+        edge = edge->nextPred();
+    }
+    /** Node in direction of traversal */
+    AuxNode *nodeInDepth()
+    {
+        LAYOUT_ASSERTD( isNotNullP( edge), "Null ptr to edge in ordering traversal");
+        return edge->pred();
+    }
+#else 
     /* Constructor */
     DfsStepInfo( AuxNode *n)
     {
@@ -827,6 +858,7 @@ struct DfsStepInfo
             return edge->pred();
         }
     }
+#endif
 };
 
 /**
@@ -839,7 +871,7 @@ void AuxGraph::orderNodesByDFS()
 
     Marker m = newMarker(); // Marker for visiting nodes
     QStack< ::DfsStepInfo *> stack;
-    GraphNum num = 0;
+    GraphNum num = nodeCount();
     
     /* Fill stack with nodes that have no predecessors */
     for ( AuxNode *n = firstNode();
@@ -848,7 +880,7 @@ void AuxGraph::orderNodesByDFS()
     {
         if ( isStartNode( n) && !n->isMarked( m))
         {
-            n->setOrder( num++);
+            //n->setOrder( num++);
             stack.push( new DfsStepInfo( n));
 
             /* Walk graph with marker and perform classification */
@@ -864,10 +896,11 @@ void AuxGraph::orderNodesByDFS()
                     if ( pred_node->mark( m))
                     {
                         stack.push( new DfsStepInfo( pred_node));
-                        pred_node->setOrder( num++);
+                        //pred_node->setOrder( num++);
                     }
                 } else // We're done with this node
                 {
+                    info->node->setOrder( num--);
                     delete info;
                     stack.pop();
                 }
