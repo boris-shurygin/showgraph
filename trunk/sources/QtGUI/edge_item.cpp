@@ -428,7 +428,8 @@ EdgeItem::paint( QPainter *painter,
     if ( edge()->graph()->view()->isContext())
         painter->setOpacity( opacity);
 
-    QPen pen( option->palette.foreground().color(), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen( option->palette.foreground().color(),
+              1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
         
     if ( isNotNullP( edge()->style()))
     {

@@ -507,6 +507,9 @@ void GGraph::UpdatePlacement()
         {
             x = n->modelX() + ( n->item()->borderRect().width() - n->item()->textRect().width()) / 2;
             y = n->modelY() + ( n->item()->borderRect().height() - n->item()->textRect().height()) / 2;
+
+            //QString str = QString("DFS num %1").arg(n->order());
+            //n->item()->setPlainText(str);
         } else
         {
             x = n->modelX() + n->item()->borderRect().width() / 2;
