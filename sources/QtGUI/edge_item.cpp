@@ -582,11 +582,25 @@ void
 EdgeItem::keyPressEvent(QKeyEvent *event)
 {
     int key = event->key();
+    GNode *n = NULL;
     
+    VEdge vedge( edge());
+
     switch( key)
     {
         case Qt::Key_Up:
+            n = vedge.nodeUp();
+            break;
         case Qt::Key_Down:
+            n = vedge.nodeDown();
+            break;
+        case Qt::Key_Left:
+            n = vedge.nodeLeft();
+            break;
+        case Qt::Key_Right:
+            n = vedge.nodeRight();
+            break;
+#if 0
             {
                 bool up = (key == Qt::Key_Up);
                 GNode *pred = edge()->realPred();
@@ -616,8 +630,19 @@ EdgeItem::keyPressEvent(QKeyEvent *event)
                 }
             }
             break;
+#endif
         default:
             break;
+    }
+    if ( isNotNullP( n))
+    {
+        if ( edge()->graph()->view()->isContext())
+        {
+            edge()->graph()->emptySelection();
+            edge()->graph()->selectNode( n);
+            edge()->graph()->view()->findContext();
+        }
+        edge()->graph()->view()->focusOnNode( n, true);
     }
     QGraphicsItem::keyPressEvent( event);
 }

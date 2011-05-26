@@ -76,5 +76,6 @@ private:
 #include "edge_helper.h"
 #include "graph_view.h"
 #include "style_edit.h"
+#include "visible_edge.h"
 
 #endif /* GVIEW_IFACE_H */
