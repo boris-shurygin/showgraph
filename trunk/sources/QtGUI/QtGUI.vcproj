@@ -258,6 +258,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\navigation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\navigation.h"
+				>
+			</File>
+			<File
 				RelativePath=".\node_item.cpp"
 				>
 			</File>
