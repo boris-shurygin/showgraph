@@ -17,6 +17,13 @@ NodeNav::NodeNav( GNode *curr_node, NavSector nav_sector):
 {
 
 }
+    
+/** Get edge to the bottom of current node */
+GEdge *
+NodeNav::edgeDown() const
+{
+    return NULL;
+}
 
 /** Get edge to the left of given edge */
 GEdge *
@@ -24,7 +31,8 @@ NodeNav::edgeLeft( GEdge * edge) const
 {
     /* Applicable only for top and bottom sectors */
     if ( sector() == LEFT_SECTOR
-        || sector() == RIGHT_SECTOR)
+         || sector() == RIGHT_SECTOR
+         || sector() == UNDEF_SECTOR)
     {
         return NULL;
     }
@@ -98,7 +106,7 @@ bool NodeNav::isEdgeInSector( GEdge * edge) const
 {
     GNode *n = otherEnd( edge);
     /* item corresponding to other (than node_priv) node */
-    if ( isNullP( n))
+    if ( isNullP( n) || sector() == UNDEF_SECTOR)
         return false;
 
     NodeItem *item = n->item();
@@ -137,6 +145,9 @@ qreal NodeNav::sectorMaxAngle() const
         case RIGHT_SECTOR:
             line = QLineF( center, rect.topRight());
             break;
+        case UNDEF_SECTOR:
+        default:
+            return 0;
     }
     return line.angle();
 }
@@ -162,6 +173,9 @@ qreal NodeNav::sectorMinAngle() const
         case RIGHT_SECTOR:
             line = QLineF( center, rect.bottomRight());
             break;
+        case UNDEF_SECTOR:
+        default:
+            return 0;
     }
     return line.angle();
 }

@@ -134,7 +134,7 @@ protected:
     QList< GNode* > sel_nodes;
     QList< GEdge* > sel_edges;
     QHash< QString, GStyle *> styles;
-    GNode *node_in_focus;
+    NodeNav node_in_focus;// Node in focus + navigation sector
     
     /** Node creation reimplementaiton */
     virtual Node * createNode( int _id)
@@ -154,7 +154,7 @@ public:
     inline GGraph( GraphView *v, bool create_pools):
         AuxGraph( false),
         view_p( v),
-        node_in_focus( NULL)
+        node_in_focus( NULL, UNDEF_SECTOR)
     {
         nodeTextIsShown = newMarker();
  
@@ -234,12 +234,17 @@ public:
     /** Get node in focus */
     inline GNode* nodeInFocus() const
     {
-        return node_in_focus;
+        return node_in_focus.node();
+    }
+    /** Get node in focus */
+    inline NavSector nodeNavigationSector() const
+    {
+        return node_in_focus.sector();
     }
     /** Set node in focus */
-    inline void setNodeInFocus( GNode *n)
+    inline void setNodeInFocus( GNode *n, NavSector sector = UNDEF_SECTOR)
     {
-        node_in_focus = n;
+        node_in_focus = NodeNav( n, sector);
     }
     void selectOneNode(GNode *n);
     /**
