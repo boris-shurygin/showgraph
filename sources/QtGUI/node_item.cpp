@@ -627,17 +627,50 @@ void NodeItem::focusOutEvent(QFocusEvent *event)
  */
 void NodeItem::keyPressEvent(QKeyEvent *event)
 {
+    
     prepareGeometryChange();
-    QGraphicsTextItem::keyPressEvent(event);
-    GEdge *edge = NULL;
-
-    for ( edge = node()->firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
+    if ( textInteractionFlags() == Qt::TextEditorInteraction)
     {
-        edge->item()->adjust();
-    }
-    for ( edge = node()->firstPred(); isNotNullP( edge); edge = edge->nextPred())
+        GEdge *edge = NULL;
+        QGraphicsTextItem::keyPressEvent(event);
+        for ( edge = node()->firstSucc(); isNotNullP( edge); edge = edge->nextSucc())
+        {
+            edge->item()->adjust();
+        }
+        for ( edge = node()->firstPred(); isNotNullP( edge); edge = edge->nextPred())
+        {
+            edge->item()->adjust();
+        }
+    } else
     {
-        edge->item()->adjust();
+        int key = event->key();
+        GEdge *edge = NULL;
+        if ( node()->isNodeInFocus())
+        {
+            switch( key)
+            {
+                case Qt::Key_Up:
+                    break;
+                case Qt::Key_Down:
+                    node()->graph()->setNodeInFocus( node(), BOTTOM_SECTOR);
+                    edge = NodeNav( node(), BOTTOM_SECTOR).edgeDown();
+                    break;
+                case Qt::Key_Left:
+                    break;
+                case Qt::Key_Right:
+                    break;
+                default:
+                    break;
+            }
+            if ( isNotNullP( edge))
+            {
+                // Get focus on edge
+                scene()->clearFocus();
+                scene()->clearSelection();
+                edge->item()->setFocus();
+                edge->item()->setSelected( true);
+            }
+        }
     }
     update();
 }

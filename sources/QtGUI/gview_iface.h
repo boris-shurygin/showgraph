@@ -69,14 +69,13 @@ private:
     QString msg_priv;
 };
 
-
+#include "navigation.h"
+#include "visible_edge.h"
 #include "gstyle.h"
 #include "edge_item.h"
 #include "node_item.h"
 #include "edge_helper.h"
 #include "graph_view.h"
 #include "style_edit.h"
-#include "visible_edge.h"
-#include "navigation.h"
 
 #endif /* GVIEW_IFACE_H */

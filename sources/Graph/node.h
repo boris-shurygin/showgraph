@@ -9,6 +9,51 @@
 #ifndef NODE_H
 #define NODE_H
 
+/** Parameter for iterator template specialization (pred traversal) */
+struct PredIterImpl
+{
+    Edge *edge;    
+};
+/** Parameter for iterator template specialization (succ traversal) */
+struct SuccIterImpl
+{
+    Edge *edge;    
+};
+/** Parameter for iterator template specialization (undirected traversal) */
+struct UnDirIterImpl
+{
+    Edge *edge;
+    bool is_pred;
+};
+
+template < class EdgeIterImpl> class EdgeIterIface
+{   
+public:
+    /** Default constructor */
+    inline EdgeIterIface();
+    /** Copy constructor */
+    inline EdgeIterIface( const EdgeIterIface& proto);
+    /** Destructor */
+    inline ~EdgeIterIface();
+    /** Preincrement operator */
+    inline EdgeIterIface & operator++();
+    /** Postincrement operator */
+    inline EdgeIterIface operator++( int);
+    /** Dereferenece operator*/
+    inline Edge * operator*();
+    /** Comparison operator */
+    inline bool operator==(const EdgeIterIface& o) const; 
+    /** Not equals operator */
+    inline bool operator!=(const EdgeIterIface& o) const;
+private:
+    /** Constructor from node */
+    inline EdgeIterIface( Node *n);
+    friend class Node;
+
+    /** Parameter-dependent implementation */
+    EdgeIterImpl impl;
+};
+
 /**
  * Representation of graph node. 
  *
@@ -177,7 +222,89 @@ public:
      * Read properties from XML
      */
     virtual void readFromElement( QDomElement elem);
+
+    /**
+     * Iterator for successors
+     */
+    typedef EdgeIterIface< SuccIterImpl> Succ;
+    /**
+     * Iterator for predecessors
+     */
+    typedef EdgeIterIface< PredIterImpl> Pred;
+    /**
+     * Undirected iterator for edges
+     */
+    typedef EdgeIterIface< UnDirIterImpl> EdgeIter;
+    /**
+     * Create iterator for first succ
+     */
+    inline Succ succsBegin();
+    /**
+     * Create iterator pointing to succ end
+     */
+    inline Succ succsEnd();
+    /**
+     * Create iterator for first succ
+     */
+    inline Pred predsBegin();
+    /**
+     * Create iterator pointing to succ end
+     */
+    inline Pred predsEnd();
+        /**
+     * Create iterator for first succ
+     */
+    inline EdgeIter edgesBegin();
+    /**
+     * Create iterator pointing to succ end
+     */
+    inline EdgeIter edgesEnd();
 };
+
+/**
+ * Create iterator for first succ
+ */
+Node::Succ Node::succsBegin()
+{
+    return Succ( this);
+}
+
+/**
+ * Create iterator pointing to succ end
+ */
+Node::Succ Node::succsEnd()
+{
+    return Succ();
+}
+/**
+ * Create iterator for first succ
+ */
+Node::Pred Node::predsBegin()
+{
+    return Pred( this);
+}
+/**
+ * Create iterator pointing to succ end
+ */
+Node::Pred Node::predsEnd()
+{
+    return Pred();
+}
+
+/**
+ * Create iterator for first succ
+ */
+Node::EdgeIter Node::edgesBegin()
+{
+    return EdgeIter( this);
+}
+/**
+ * Create iterator pointing to succ end
+ */
+Node::EdgeIter Node::edgesEnd()
+{
+    return EdgeIter();
+}
 
 /**
  * Add an edge to this node in specified direction
@@ -223,6 +350,151 @@ inline void
 Node::readFromElement( QDomElement e)
 {
     element = e;
+}
+
+/** Constructor specialization for preds */
+template <>
+EdgeIterIface< PredIterImpl>::EdgeIterIface( Node *n)
+{
+    impl.edge = n->firstPred();
+}
+
+/** Constructor specialization for succs */
+template <>
+EdgeIterIface< SuccIterImpl>::EdgeIterIface( Node *n)
+{
+    impl.edge = n->firstSucc();
+}
+
+/** Constructor specialization for undirected traversal */
+template <>
+EdgeIterIface< UnDirIterImpl>::EdgeIterIface( Node *n)
+{
+    impl.edge = n->firstPred();
+    impl.is_pred = true;
+    if ( isNullP( impl.edge))
+    {
+        impl.edge = n->firstSucc();
+        impl.is_pred = false;
+    }
+}
+
+/** Specialization for undirected traversal */
+template <>
+EdgeIterIface< UnDirIterImpl>::EdgeIterIface()
+{
+    impl.edge = NULL;
+    impl.is_pred = false;
+}
+
+/** Constructor */
+template < class EdgeIterImpl>
+EdgeIterIface< EdgeIterImpl>::EdgeIterIface()
+{
+    impl.edge = NULL;
+}
+
+
+
+/** Copy constructor */
+template < class EdgeIterImpl> 
+EdgeIterIface< EdgeIterImpl>::EdgeIterIface( const EdgeIterIface& proto)
+{
+    impl = proto.impl;
+}
+
+/** Destructor */
+template < class EdgeIterImpl> 
+EdgeIterIface< EdgeIterImpl>::~EdgeIterIface()
+{
+
+}
+
+/** Preincrement operator */
+template <>
+EdgeIterIface< PredIterImpl> & 
+EdgeIterIface< PredIterImpl>::operator++()
+{
+    GRAPH_ASSERTD( isNotNullP( impl.edge), "Edge iterator is at end ( NULL in edge pointer)");
+    impl.edge = impl.edge->nextPred();
+    return *this;
+}
+
+/** Preincrement operator */
+template <>
+EdgeIterIface< SuccIterImpl> & 
+EdgeIterIface< SuccIterImpl>::operator++()
+{
+    GRAPH_ASSERTD( isNotNullP( impl.edge), "Edge iterator is at end ( NULL in edge pointer)");
+    impl.edge = impl.edge->nextSucc();
+    return *this;
+}
+
+/** Preincrement operator */
+template <>
+EdgeIterIface< UnDirIterImpl> & 
+EdgeIterIface< UnDirIterImpl>::operator++()
+{
+    GRAPH_ASSERTD( isNotNullP( impl.edge), "Edge iterator is at end ( NULL in edge pointer)");
+    
+    if ( impl.is_pred && isNullP( impl.edge->nextPred()))
+    {
+        impl.is_pred = false;
+        impl.edge = impl.edge->succ()->firstSucc();
+    } else
+    {
+        if ( impl.is_pred)
+        {
+            impl.edge = impl.edge->nextPred();
+        } else
+        {
+            impl.edge = impl.edge->nextSucc();
+        }
+    }
+    return *this;
+}
+
+/** Postincrement operator */
+template < class EdgeIterImpl>
+EdgeIterIface< EdgeIterImpl> 
+EdgeIterIface< EdgeIterImpl>::operator++( int)
+{
+	EdgeIterIface tmp = *this;
+    ++*this;
+    return tmp;
+}
+
+/** Dereferenece operator*/
+template < class EdgeIterImpl>
+Edge * 
+EdgeIterIface< EdgeIterImpl>::operator*()
+{
+    return impl.edge;
+}
+    
+/** Comparison operator */
+template < class EdgeIterImpl> 
+bool
+EdgeIterIface< EdgeIterImpl>::operator==(const EdgeIterIface< EdgeIterImpl>& o) const
+{
+    return impl.edge == o.impl.edge;
+} 
+
+/** Comparison operator specialization for undirected traversal */
+template <> 
+bool
+EdgeIterIface< UnDirIterImpl>::operator==(const EdgeIterIface< UnDirIterImpl>& o) const
+{
+    return impl.edge == o.impl.edge
+           && impl.is_pred == o.impl.is_pred;
+} 
+
+/** Not equals operator */
+template < class EdgeIterImpl>
+bool
+EdgeIterIface< EdgeIterImpl>::operator!=(const EdgeIterIface< EdgeIterImpl>& o) const
+{
+    return !(*this == o);
 }
 
 #endif

@@ -31,7 +31,9 @@ enum NavSector
     /** Sector to the left of the node */
     LEFT_SECTOR,
     /** Sector to the right of the node */
-    RIGHT_SECTOR
+    RIGHT_SECTOR,
+    /** Undefined sector */
+    UNDEF_SECTOR
 };
 
 
@@ -45,6 +47,8 @@ public:
     /** Constructor */
     NodeNav( GNode *curr_node, NavSector nav_sector);
 
+    /** Get edge to the left of given edge */
+    GEdge *edgeDown() const;
     /** Get edge to the left of given edge */
     GEdge *edgeLeft( GEdge * edge) const;
     /** Check that given edge is in current sector */

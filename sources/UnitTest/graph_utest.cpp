@@ -15,25 +15,61 @@ using namespace std;
   */
 bool uTestGraphOwn()
 {
-    AGraph graph( true);
-    ANode *dummy = graph.newNode();
-    graph.deleteNode( dummy);
-    ANode *pred = graph.newNode();
-    ANode *succ = graph.newNode();
-    AEdge *edge = graph.newEdge( pred, succ);
-    
-    /** Check node insertion */
-    ANode *new_node = edge->insertNode();
-    AEdge *edge2 = new_node->firstSucc();
-    assert( areEqP( new_node->firstPred(), pred->firstSucc())); 
-    assert( areEqP( new_node->firstSucc(), succ->firstPred()));
-    assert( areEqP( edge->pred(), pred));
-    assert( areEqP( pred->firstSucc(), edge));
-    assert( areEqP( edge->succ(), new_node));
-    assert( areEqP( new_node->firstPred(), edge));
-    assert( areEqP( edge2->pred(), new_node));
-    assert( areEqP( edge2->succ(), succ));
-    assert( areEqP( succ->firstPred(), edge2));
+    {
+        AGraph graph( true);
+        ANode *dummy = graph.newNode();
+        graph.deleteNode( dummy);
+        ANode *pred = graph.newNode();
+        ANode *succ = graph.newNode();
+        AEdge *edge = graph.newEdge( pred, succ);
+        
+        /** Check node insertion */
+        ANode *new_node = edge->insertNode();
+        AEdge *edge2 = new_node->firstSucc();
+        assert( areEqP( new_node->firstPred(), pred->firstSucc())); 
+        assert( areEqP( new_node->firstSucc(), succ->firstPred()));
+        assert( areEqP( edge->pred(), pred));
+        assert( areEqP( pred->firstSucc(), edge));
+        assert( areEqP( edge->succ(), new_node));
+        assert( areEqP( new_node->firstPred(), edge));
+        assert( areEqP( edge2->pred(), new_node));
+        assert( areEqP( edge2->succ(), succ));
+        assert( areEqP( succ->firstPred(), edge2));
+    }
+
+    /** Test iterators */
+    {
+        AGraph graph( true);
+        ANode *node1 = graph.newNode();
+        ANode *node2 = graph.newNode();
+        ANode *node3 = graph.newNode();
+        AEdge *edge1 = graph.newEdge( node1, node2);
+        AEdge *edge2 = graph.newEdge( node2, node3);
+        
+        for ( Node::Succ succ_iter = node2->succsBegin(),
+                         succ_iter_end = node2->succsEnd();
+              succ_iter != succ_iter_end;
+              succ_iter++ )
+        {
+            assert( areEqP( *succ_iter, edge2));
+        }
+        for ( Node::Pred pred_iter = node2->predsBegin(),
+                         pred_iter_end = node2->predsEnd();
+              pred_iter != pred_iter_end;
+              pred_iter++ )
+        {
+            assert( areEqP( *pred_iter, edge1));
+        }
+        Node::EdgeIter edge_iter = node2->edgesBegin();
+        Node::EdgeIter edge_iter_end = node2->edgesEnd();
+        assert( edge_iter != edge_iter_end);
+        assert( areEqP( *edge_iter, edge1) || areEqP( *edge_iter, edge2));
+        edge_iter++;
+        assert( edge_iter != edge_iter_end);
+        assert( areEqP( *edge_iter, edge1) || areEqP( *edge_iter, edge2));
+        edge_iter++;
+        assert( edge_iter == edge_iter_end);
+    }
 
     return true;
 }
