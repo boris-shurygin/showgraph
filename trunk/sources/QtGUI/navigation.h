@@ -36,6 +36,21 @@ enum NavSector
     UNDEF_SECTOR
 };
 
+/**
+ * Directions around node: four sectors between
+ * diagonals of node's bounding rectangle
+ */
+enum NavDirection
+{
+    /** Upward direction of navigation */
+    NAV_DIR_UP,
+    /** Downward direction of navigation */
+    NAV_DIR_DOWN,
+    /** Left direction of navigation */
+    NAV_DIR_LEFT,
+    /** Right direction of navigation */
+    NAV_DIR_RIGHT
+};
 
 /**
  * Navigation around node: edge selection and jump to one of its endpoints
@@ -48,9 +63,9 @@ public:
     NodeNav( GNode *curr_node, NavSector nav_sector);
 
     /** Get edge to the left of given edge */
-    GEdge *edgeDown() const;
-    /** Get edge to the left of given edge */
-    GEdge *edgeLeft( GEdge * edge) const;
+    GEdge *firstEdgeInSector() const;
+    /** Get edge in given direction of given edge */
+    GEdge *edgeInDir( GEdge * edge, NavDirection dir) const;
     /** Check that given edge is in current sector */
     bool isEdgeInSector( GEdge * edge) const;    
     
@@ -58,6 +73,12 @@ public:
     inline GNode* node() const;
     /** Get sector */
     inline NavSector sector() const;
+    /** Check if navigation direction is applicable in current sector */
+    static bool isDirApplicable( NavDirection dir, NavSector s);
+    /** Check that given point is in given direction from reference point */
+    static bool isPointInDir( QPointF point, QPointF ref, NavDirection dir);
+    /** Compute coordinate difference between points in given direction */
+    static qreal deltaInDir( QPointF point, QPointF ref, NavDirection dir);
 
 private:    
 

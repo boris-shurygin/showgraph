@@ -583,54 +583,53 @@ EdgeItem::keyPressEvent(QKeyEvent *event)
 {
     int key = event->key();
     GNode *n = NULL;
-    
+    GEdge *e = NULL;
     VEdge vedge( edge());
-
+    NavSector sector = edge()->graph()->nodeNavigationSector();
+    GNode *curr_node = edge()->graph()->nodeInFocus();
+    NodeNav node_nav( curr_node, sector);
     switch( key)
     {
         case Qt::Key_Up:
-            n = vedge.nodeUp();
-            break;
-        case Qt::Key_Down:
-            n = vedge.nodeDown();
-            break;
-        case Qt::Key_Left:
-            n = vedge.nodeLeft();
-            break;
-        case Qt::Key_Right:
-            n = vedge.nodeRight();
-            break;
-#if 0
+            if ( isNotNullP( curr_node) 
+                 && ( sector == LEFT_SECTOR || sector == RIGHT_SECTOR))
             {
-                bool up = (key == Qt::Key_Up);
-                GNode *pred = edge()->realPred();
-                GNode *succ = edge()->realSucc();
-                
-                if ( pred->item()->pos().y() >
-                     succ->item()->pos().y() + succ->item()->boundingRect().height())
-                {
-                    //Successor over predecessor
-                    if ( edge()->graph()->view()->isContext())
-                    {
-                        edge()->graph()->emptySelection();
-                        edge()->graph()->selectNode( up? succ: pred);
-                        edge()->graph()->view()->findContext();
-                    }
-                    edge()->graph()->view()->focusOnNode( up? succ: pred, true);
-                } else
-                {
-                    //Predecessor over successor
-                    if ( edge()->graph()->view()->isContext())
-                    {
-                        edge()->graph()->emptySelection();
-                        edge()->graph()->selectNode( up? pred: succ);
-                        edge()->graph()->view()->findContext();
-                    }
-                    edge()->graph()->view()->focusOnNode( up? pred: succ, true);
-                }
+                e = node_nav.edgeInDir( edge(), NAV_DIR_UP);
+            } else
+            {
+                n = vedge.nodeUp();
             }
             break;
-#endif
+        case Qt::Key_Down:
+            if ( isNotNullP( curr_node) 
+                 && ( sector == LEFT_SECTOR || sector == RIGHT_SECTOR) )
+            {
+                e = node_nav.edgeInDir( edge(), NAV_DIR_DOWN);
+            } else
+            {
+                n = vedge.nodeDown();
+            }
+            break;
+        case Qt::Key_Left:
+            if ( isNotNullP( curr_node) 
+                 && ( sector == TOP_SECTOR || sector == BOTTOM_SECTOR) )
+            {
+                e = node_nav.edgeInDir( edge(), NAV_DIR_LEFT);
+            } else
+            {
+                n = vedge.nodeLeft();
+            }
+            break;
+        case Qt::Key_Right:
+            if ( isNotNullP( curr_node) 
+                 && ( sector == TOP_SECTOR || sector == BOTTOM_SECTOR) )
+            {
+                e = node_nav.edgeInDir( edge(), NAV_DIR_RIGHT);
+            } else
+            {
+                n = vedge.nodeRight();
+            }
+            break;
         default:
             break;
     }
@@ -643,7 +642,19 @@ EdgeItem::keyPressEvent(QKeyEvent *event)
             edge()->graph()->view()->findContext();
         }
         edge()->graph()->view()->focusOnNode( n, true);
+        
+        scene()->clearFocus();
+        scene()->clearSelection();
+        n->item()->setFocus();
+        n->item()->setSelected( true);
+    } else if ( isNotNullP( e))
+    {
+        // Get focus on edge
+        scene()->clearFocus();
+        scene()->clearSelection();
+        e->item()->setFocus();
+        e->item()->setSelected( true);
     }
-    QGraphicsItem::keyPressEvent( event);
+    //QGraphicsItem::keyPressEvent( event);
 }
 

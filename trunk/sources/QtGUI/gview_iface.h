@@ -15,6 +15,13 @@
 #ifndef GVIEW_IFACE_H
 #define GVIEW_IFACE_H
 
+/**
+ * Debug assert for graph library
+ */
+#if !defined(GVIEW_ASSERTD)
+#    define GVIEW_ASSERTD(cond, what) ASSERT_XD(cond, "GUI", what)
+#endif
+
 /** Predeclarations */
 class GGraph;
 class GNode;
