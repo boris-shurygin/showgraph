@@ -219,7 +219,7 @@ void
 NodeItem::SetInitFlags()
 {
     setFlag( ItemIsMovable);
-    setFlag( ItemIsFocusable, false);
+    setFlag( ItemIsFocusable);
 // needed for Qt 4.6 and higher
 #if (QT_VERSION >= QT_VERSION_CHECK(4, 6, 0))
     setFlag( ItemSendsGeometryChanges);
@@ -618,7 +618,7 @@ void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 void NodeItem::focusOutEvent(QFocusEvent *event)
 {
     setTextInteractionFlags(Qt::NoTextInteraction);
-	setFlag( ItemIsFocusable, false);
+	//setFlag( ItemIsFocusable, false);
     QGraphicsTextItem::focusOutEvent(event);
 }
 
@@ -645,23 +645,31 @@ void NodeItem::keyPressEvent(QKeyEvent *event)
     {
         int key = event->key();
         GEdge *edge = NULL;
+        NavSector sector = UNDEF_SECTOR;
         if ( node()->isNodeInFocus())
         {
             switch( key)
             {
                 case Qt::Key_Up:
+                    sector = TOP_SECTOR;
                     break;
                 case Qt::Key_Down:
-                    node()->graph()->setNodeInFocus( node(), BOTTOM_SECTOR);
-                    edge = NodeNav( node(), BOTTOM_SECTOR).edgeDown();
+                    sector = BOTTOM_SECTOR;
                     break;
                 case Qt::Key_Left:
+                    sector = LEFT_SECTOR;
                     break;
                 case Qt::Key_Right:
+                    sector = RIGHT_SECTOR;
                     break;
                 default:
+                    sector = UNDEF_SECTOR;
                     break;
             }
+            
+            node()->graph()->setNodeInFocus( node(), sector);
+            edge = NodeNav( node(), sector).firstEdgeInSector();
+                    
             if ( isNotNullP( edge))
             {
                 // Get focus on edge

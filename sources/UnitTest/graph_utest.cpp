@@ -64,9 +64,27 @@ bool uTestGraphOwn()
         Node::EdgeIter edge_iter_end = node2->edgesEnd();
         assert( edge_iter != edge_iter_end);
         assert( areEqP( *edge_iter, edge1) || areEqP( *edge_iter, edge2));
+        if ( areEqP( *edge_iter, edge1))
+        {
+            assert( areEqP( edge_iter.node(), edge1->pred()));
+            assert( areEqP( edge_iter.node(), node1));
+        } else
+        {
+            assert( areEqP( edge_iter.node(), edge2->succ()));
+            assert( areEqP( edge_iter.node(), node3));
+        }
         edge_iter++;
         assert( edge_iter != edge_iter_end);
         assert( areEqP( *edge_iter, edge1) || areEqP( *edge_iter, edge2));
+        if ( areEqP( *edge_iter, edge1))
+        {
+            assert( areEqP( edge_iter.node(), edge1->pred()));
+            assert( areEqP( edge_iter.node(), node1));
+        } else
+        {
+            assert( areEqP( edge_iter.node(), edge2->succ()));
+            assert( areEqP( edge_iter.node(), node3));
+        }
         edge_iter++;
         assert( edge_iter == edge_iter_end);
     }

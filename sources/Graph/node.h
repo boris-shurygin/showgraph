@@ -45,6 +45,10 @@ public:
     inline bool operator==(const EdgeIterIface& o) const; 
     /** Not equals operator */
     inline bool operator!=(const EdgeIterIface& o) const;
+    /** Get Edge */
+    inline Edge *edge() const;
+    /** Get node on the end of edge */
+    inline Node *node() const;
 private:
     /** Constructor from node */
     inline EdgeIterIface( Node *n);
@@ -495,6 +499,44 @@ bool
 EdgeIterIface< EdgeIterImpl>::operator!=(const EdgeIterIface< EdgeIterImpl>& o) const
 {
     return !(*this == o);
+}
+
+/** Get Edge */
+template < class EdgeIterImpl>
+Edge *
+EdgeIterIface< EdgeIterImpl>::edge() const
+{
+    return impl.edge;
+}
+
+/** Get node on the end of edge */
+template <>
+Node *
+EdgeIterIface< SuccIterImpl>::node() const
+{
+    return impl.edge->succ();
+}
+
+/** Get node on the end of edge */
+template <>
+Node *
+EdgeIterIface< PredIterImpl>::node() const
+{
+    return impl.edge->pred();
+}
+
+/** Get node on the end of edge */
+template <>
+Node *
+EdgeIterIface< UnDirIterImpl>::node() const
+{
+    if ( impl.is_pred)
+    {
+        return impl.edge->pred();
+    } else
+    {
+        return impl.edge->succ();
+    }
 }
 
 #endif

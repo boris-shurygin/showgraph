@@ -38,6 +38,13 @@
 #ifndef GUI_IFACE_H
 #define GUI_IFACE_H
 
+/**
+ * Debug assert for graph library
+ */
+#if !defined(GUI_ASSERTD)
+#    define GUI_ASSERTD(cond, what) ASSERT_XD(cond, "GUI", what)
+#endif
+
 #include "gview_iface.h"
 #include "../Frontend/fe_iface.h"
 #include "../IR/ir_iface.h"
