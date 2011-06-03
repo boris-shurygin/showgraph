@@ -236,7 +236,7 @@ public:
     {
         return node_in_focus.node();
     }
-    /** Get node in focus */
+    /** Get current navigation sector */
     inline NavSector nodeNavigationSector() const
     {
         return node_in_focus.sector();

@@ -24,7 +24,15 @@ CFG::CFG( GraphView *v, bool create_pools): GGraph( v, false)
 /** Destructor */
 CFG::~CFG()
 {
-
+    for ( CFNode *node = firstNode();
+          isNotNullP( node);
+          )
+    {
+        CFNode* next = node->nextNode();
+        int ir_id = node->irId();
+        deleteNode( node);
+        node = next;
+    }
 }
 
 CFNode*
