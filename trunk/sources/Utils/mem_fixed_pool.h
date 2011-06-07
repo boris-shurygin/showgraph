@@ -143,7 +143,7 @@ namespace Mem
         {
             first_chunk = chunk->next( MemImpl::CHUNK_LIST_ALL);
         }
-        //chunk->~Chunk();
+        chunk->~Chunk();
         delete[] (quint8 *)chunk;
     }
 
