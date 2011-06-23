@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="QtGUI"
-	ProjectGUID="{C74995DD-8FE9-4022-8766-7BCE51065554}"
-	RootNamespace="QtGUI"
+	Name="GraphView"
+	ProjectGUID="{429A4F46-3F62-4ACE-9471-356C42534B70}"
+	RootNamespace="GraphView"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -143,45 +143,48 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Interface"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
-			>
-			<File
-				RelativePath=".\gui_iface.h"
-				>
-			</File>
-			<File
-				RelativePath=".\gui_impl.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="moc result"
 			>
 			<File
-				RelativePath=".\moc_main_window.cpp"
+				RelativePath=".\moc_edge_item.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\moc_graph_view.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\moc_style_edit.cpp"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="GUI"
+			Name="sources"
 			>
 			<File
-				RelativePath=".\main_window.cpp"
+				RelativePath=".\edge_helper.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\main_window.h"
+				RelativePath=".\edge_helper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\edge_item.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\edge_item.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Running MOC for MainWindow"
-						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 main_window.h -o moc_main_window.cpp&#x0D;&#x0A;"
-						Outputs="moc_main_window.cpp"
+						Description="Running MOC for EdgeItem"
+						CommandLine="moc edge_item.h -o moc_edge_item.cpp&#x0D;&#x0A;"
+						AdditionalDependencies=""
+						Outputs="moc_edge_item.cpp"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -189,18 +192,107 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Running MOC for MainWindow"
-						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 main_window.h -o moc_main_window.cpp&#x0D;&#x0A;"
-						Outputs="moc_main_window.cpp"
+						Description="Running MOC for EdgeItem"
+						CommandLine="moc edge_item.h -o moc_edge_item.cpp&#x0D;&#x0A;"
+						Outputs="moc_edge_item.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\text_view.cpp"
+				RelativePath=".\graph_view.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\text_view.h"
+				RelativePath=".\graph_view.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for GraphView"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 graph_view.h -o moc_graph_view.cpp&#x0D;&#x0A;"
+						AdditionalDependencies=""
+						Outputs="moc_graph_view.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for GraphView"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 graph_view.h -o moc_graph_view.cpp&#x0D;&#x0A;"
+						Outputs="moc_graph_view.cpp"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\gstyle.h"
+				>
+			</File>
+			<File
+				RelativePath=".\navigation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\navigation.h"
+				>
+			</File>
+			<File
+				RelativePath=".\node_item.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\node_item.h"
+				>
+			</File>
+			<File
+				RelativePath=".\style_edit.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\style_edit.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for StyleEdit"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 style_edit.h -o moc_style_edit.cpp&#x0D;&#x0A;"
+						Outputs="moc_style_edit.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Running MOC for StyleEdit"
+						CommandLine="moc.exe -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_EDITION=QT_EDITION_DESKTOP -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -D_MSC_VER=1500 style_edit.h -o moc_style_edit.cpp&#x0D;&#x0A;"
+						Outputs="moc_style_edit.cpp"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\visible_edge.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\visible_edge.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="iface"
+			>
+			<File
+				RelativePath=".\gview_iface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gview_impl.h"
 				>
 			</File>
 		</Filter>

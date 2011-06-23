@@ -3,6 +3,7 @@
  * Graph class definition/implementation.
  *
  * @defgroup Graph Graph representation
+ * @ingroup Core
  *
  * Graph representation is implemented through 3 tightly connected classes Graph, Node and Edge.
  */

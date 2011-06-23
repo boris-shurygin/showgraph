@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="Console"
 	ProjectGUID="{E522C423-2319-4E6E-932C-FDFA087AE448}"
 	RootNamespace="console"
@@ -129,8 +129,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib QtGui.lib QtCore.lib QtXml.lib imm32.lib winmm.lib ws2_32.lib qico.lib qtiff.lib qgif.lib qmng.lib qjpeg.lib"
+				UseLibraryDependencyInputs="true"
+				AdditionalDependencies="qtmain.lib QtGui.lib QtCore.lib QtXml.lib imm32.lib winmm.lib ws2_32.lib qico.lib"
 				OutputFile="$(OutDir)\showgraphcl.exe"
+				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
