@@ -6,6 +6,7 @@
  * Copyright (C) 2009  Boris Shurygin
  *
  * @defgroup Layout 2D Graph layout
+ * @ingroup Core
  * Drawing graph on a 2D plane is done via Sugiyama-like algorithm. 
  * Drawing is done in two steps:
  * - Ranking, wich defines vertical position of every node and inserts

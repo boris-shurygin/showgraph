@@ -45,7 +45,7 @@
 #    define GUI_ASSERTD(cond, what) ASSERT_XD(cond, "GUI", what)
 #endif
 
-#include "gview_iface.h"
+#include "../Core/core_iface.h"
 #include "../Frontend/fe_iface.h"
 #include "../IR/ir_iface.h"
 #include "text_view.h"

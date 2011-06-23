@@ -46,17 +46,17 @@ sub initInfo
     $info->{results} = {};
     $info->{tests} = tests();
     $info->{cwd} = abs_path( getcwd());
-    $info->{bindir} = abs_path( addPath( $info->{cwd}, "../bin"));
-    $info->{testdir} = abs_path( addPath( $info->{cwd}, "../testing/tests"));
+    $info->{bindir} = abs_path( addPath( $info->{cwd}, "..\\bin"));
+    $info->{testdir} = abs_path( addPath( $info->{cwd}, "..\\testing\\tests"));
     dprint( CONFIG, "Work directory is: ".$info->{cwd});
     dprint( CONFIG, "Binaries directory is: ".$info->{bindir});
     dprint( CONFIG, "Binaries directory is: ".$info->{testdir});
     
     #should be OS-dependent
-    $info->{showgraph} = abs_path( addPath( $info->{bindir},"showgraphcl.exe"));
+    $info->{showgraph} = addPath( $info->{bindir},"showgraphcld.exe");
     
     #iteration number for taking average runtime to get more stable results
-    $info->{iterations} = 3;
+    $info->{iterations} = 1;
     return $info;
 }
 
