@@ -7,7 +7,11 @@
  */
 #include "utils_iface.h"
 
+
+/** Testing class for singleton */
 class A;
+
+/** Singleton derived from class A */
 typedef Single< A> SingleA;
 
 /** Sample class */

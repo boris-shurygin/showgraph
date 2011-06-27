@@ -66,12 +66,18 @@ uTestRef()
     return true;
 }
 
+/** Sample object used as a baseclass for more complicated pool-stored objects */
 class PoolBase: public PoolObj 
 {
     virtual void setVal( quint32 val) = 0;
     virtual quint32 val() const = 0;
 };
 
+/**
+ * @brief Fairly complex pool-stored object
+ * Class for testing complex objects stored in pool. Built with 
+ * multiple inheritance, virtual functions and additional members.
+ */
 class MyPoolObj: public PoolBase, public SListIface< MyPoolObj, SListItem>
 {
     quint32 priv_field;

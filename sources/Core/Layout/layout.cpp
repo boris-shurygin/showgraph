@@ -1031,7 +1031,9 @@ void AuxGraph::layoutPostProcess()
 {
 
 }
-
+/**
+ * Next step in concurrent processing of layout
+ */
 void AuxGraph::layoutNextStep()
 {
     if ( cur_pass)

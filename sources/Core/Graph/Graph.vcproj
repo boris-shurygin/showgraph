@@ -183,6 +183,10 @@
 				RelativePath=".\num.h"
 				>
 			</File>
+			<File
+				RelativePath=".\predecls.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="interface"
@@ -195,10 +199,6 @@
 			</File>
 			<File
 				RelativePath=".\graph_iface.h"
-				>
-			</File>
-			<File
-				RelativePath=".\predecls.h"
 				>
 			</File>
 		</Filter>

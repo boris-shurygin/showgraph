@@ -159,7 +159,7 @@ class AGraph: public Graph
         node_pool = new FixedPool< ANode>();
         edge_pool = new FixedPool< AEdge>();
     }
-
+    /** Constructor */
     AGraph( bool create_pools): Graph( false)
     {
         if ( create_pools)

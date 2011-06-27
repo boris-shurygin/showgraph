@@ -10,7 +10,9 @@
 
 #include "gview_impl.h"
 
+/** Maximal contangent for edge to be considered 'vertical' */
 const qreal MAX_COT_VERTICAL = 0.1;
+/** Maximal tangent for edge to be considered 'horizontal' */
 const qreal MAX_TAN_HORIZONTAL = 0.1;
 
 /** Constructor from two nodes */
