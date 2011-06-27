@@ -9,6 +9,8 @@
 #include "gview_impl.h"
 
 //#define DRAW_AXIS
+
+/** Constant for adjusting item's border rectangle */
 const qreal box_adjust = 5;
         
 

@@ -92,6 +92,12 @@ public:
     void showExprNext();
 };
 
+/**
+ * @brief Compiler intermediate representation view
+ * Used as a view class for data structures like DFG or any other graph
+ * that is built with individual expressions/operations represented by nodes
+ * and dependencies between the represented by edges.
+ */
 class IRView: public GraphView
 {
     Q_OBJECT;

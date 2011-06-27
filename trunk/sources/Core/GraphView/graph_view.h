@@ -424,6 +424,11 @@ signals:
     /** Signal that node is clicked */
     void nodeClicked( GNode *n);
 public:
+    /**
+     * @brief Stores temporary info used for saving old style and node/edge being edited.
+     * When showing style edit dialog we need to remember old state and the object
+     * that is being edited. The StyleEditInfo structure is used for these purposes.
+     */
     struct StyleEditInfo
     {
         GEdge* edge;
@@ -439,6 +444,7 @@ public:
         {}
     };
 protected:
+    /** Temporary info for style edition */
     StyleEditInfo *style_edit_info;
 public slots:
     /** Navigate backward */
@@ -699,6 +705,7 @@ public:
             /** deleteItems(); !!! FIXME: MEMORY LEACKAGE( yes, not potential... known leakage) */
         }
     }
+    /** Set the pointer to style edition temporary info */
     inline void setStyleEditInfo( StyleEditInfo* info)
     {
         style_edit_info = info;

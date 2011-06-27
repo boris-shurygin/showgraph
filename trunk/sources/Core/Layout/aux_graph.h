@@ -63,6 +63,8 @@ private:
     bool layout_in_process;
     int cur_level; //last processed level
     int cur_pass; // current pass
+    
+    /** Watcher for processing layout in parallel with main event loop */
     QFutureWatcher< void> *watcher;
 
     /** Array of node lists for ranks */
@@ -79,9 +81,6 @@ private:
 
     /** Maximum used for ranking */
     GraphNum max_rank;
-
-    /** Marker for nodes that have are subject to horizontal placement */
-    Marker for_placement;
 
     /**
      * Structure used for dfs traversal loop-wise implementation
@@ -165,6 +164,7 @@ protected:
     /** Arrange nodes horizontally with respect of stable nodes */
     void arrangeHorizontallyWithStable( Rank min, Rank max);
 public slots:
+    /** Process next level while doing layout in parallel with main event loop */
     void layoutNextStep();
 signals:
     /** signal some progess in layout process */
@@ -211,21 +211,7 @@ public:
         out( "AuxGraph debug print");
         Graph::debugPrint();
     }
-    inline void freePlacementMarker()
-    {
-        freeMarker( for_placement);
-    }
-    inline Marker newPlacement()
-    {
-        freeMarker( for_placement);
-        for_placement = newMarker();
-        return for_placement;
-    }
-    inline Marker placementMarker() const
-    {
-        return for_placement;
-    }
-
+    
     /** Perform layout */
     void doLayout();
     
