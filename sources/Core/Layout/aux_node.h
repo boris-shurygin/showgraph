@@ -70,11 +70,12 @@ public:
     inline AuxEdge* firstSucc();
     /** Get first predecessor */
     inline AuxEdge* firstPred();
-
+    /** Check is node should be 'more stable' during layout process */
     inline bool isStable() const
     {
         return stable;
     }
+    /** Set node to be 'more stable' during layout process */
     inline void setStable( bool st = true)
     {
         stable = st;

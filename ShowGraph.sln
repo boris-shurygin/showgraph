@@ -41,6 +41,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gui", "sources\Gui\Gui.vcpr
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IR", "sources\IR\IR.vcproj", "{98CBA9D3-EB98-4C16-AED8-05979FCD2D1E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EAC10F69-9AB1-4675-9A80-BAE4BC69A4C6} = {EAC10F69-9AB1-4675-9A80-BAE4BC69A4C6}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graph", "sources\Core\Graph\Graph.vcproj", "{04D4EEAD-2118-4889-9D9D-620C7C46F8ED}"
 EndProject
