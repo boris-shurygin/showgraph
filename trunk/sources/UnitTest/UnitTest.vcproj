@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				UseLibraryDependencyInputs="false"
 				AdditionalDependencies="qtmaind.lib QtGuid4.lib QtCored4.lib QtXmld4.lib"
 				OutputFile="$(OutDir)\utestd.exe"
 				LinkIncremental="2"
