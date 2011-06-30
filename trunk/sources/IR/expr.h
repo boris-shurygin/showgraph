@@ -85,7 +85,7 @@ public:
     /** Get first edge in given direction */
     inline Dep* firstEdgeInDir( GraphDir dir)
     {
-        return static_cast< Dep*>( AuxNode::first_edge[ dir]);
+        return static_cast< Dep*>( AuxNode::firstEdgeInDir( dir));
     }
     /** Get first successor */
     inline Dep* firstSucc()

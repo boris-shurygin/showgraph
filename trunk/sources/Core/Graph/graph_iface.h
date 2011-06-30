@@ -80,5 +80,6 @@
 
 /** Implementation of inlined functinality */
 #include "edge_inline.h"
+#include "node_inline.h"
 
 #endif

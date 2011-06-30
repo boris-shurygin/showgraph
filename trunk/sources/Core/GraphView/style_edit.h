@@ -18,14 +18,17 @@
 class ColorButton: public QAbstractButton
 {
 public:
-    ColorButton( QWidget *parent = 0);
-    void paintEvent( QPaintEvent *event);
-    QSize sizeHint() const;
-    void setColor( QColor &cl)
+    ColorButton( QWidget *parent = 0);    /** Constructor */
+    void paintEvent( QPaintEvent *event); /** Paint event handler reimplementation */
+    QSize sizeHint() const;               /** Size hint reimplementation */
+    
+    /** Change the button's color */
+    void setColor( QColor &cl)            
     {
         color = cl;
     }
 private:
+    /** Color of the button */
     QColor color;
 };
 
@@ -41,6 +44,7 @@ public:
     /** Set style */
     void setGStyle( GStyle *);
 signals:
+    /** Lets everyone know that the style has changed and affected objects should be redrwan */
     void styleChanged( GStyle *style);
 
 public slots:

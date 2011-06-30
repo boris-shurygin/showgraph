@@ -17,7 +17,7 @@
 inline AuxEdge*
 AuxNode::firstEdgeInDir( GraphDir dir)
 {
-    return static_cast< AuxEdge*>( Node::first_edge[ dir]);
+    return static_cast< AuxEdge*>( Node::firstEdgeInDir( dir));
 }
 /** Get first successor */
 inline AuxEdge*

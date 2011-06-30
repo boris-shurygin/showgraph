@@ -745,9 +745,9 @@ static bool isStartNode( AuxNode *n)
 /** Structure used for dfs traversal */
 struct DfsStepInfo
 {
-    AuxNode *node; // Node in consideration
-    AuxEdge *edge; // Next edge
-    bool inverted;
+    AuxNode *node; /** Node in consideration */
+    AuxEdge *edge; /** Next edge */
+    bool inverted; /** If we have already processed preds and */
 
 #ifdef SIMPLE_DFS
     /* Constructor */

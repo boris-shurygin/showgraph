@@ -196,7 +196,7 @@ inline Edge * AGraph::createEdge( int _id, Node *_pred, Node* _succ)
 inline AEdge*
 ANode::firstEdgeInDir( GraphDir dir)
 {
-    return static_cast< AEdge*>( Node::first_edge[ dir]);
+    return static_cast< AEdge*>( Node::firstEdgeInDir( dir));
 }
 /** Get first successor */
 inline AEdge*
