@@ -160,6 +160,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\edge_inline.h"
+				>
+			</File>
+			<File
 				RelativePath=".\graph.cpp"
 				>
 			</File>
@@ -180,6 +184,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\node_inline.h"
+				>
+			</File>
+			<File
+				RelativePath=".\node_iter.h"
+				>
+			</File>
+			<File
 				RelativePath=".\num.h"
 				>
 			</File>
@@ -193,10 +205,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\edge_inline.h"
-				>
-			</File>
 			<File
 				RelativePath=".\graph_iface.h"
 				>

@@ -43,13 +43,18 @@ public:
 	FindWidget(QWidget *parent = 0);
     /** Destructor */
 	~FindWidget();
-
+	/** Get current searching mode */
+	inline FindMode mode() const;
 signals:
+    /** Signals that 'next'( or '->') button is pressed */
     void findNext();
+    /** Signals that 'prev'( or '<-') button is pressed */
     void findPrevious();
 
 private slots:
+    /** Update the look of widget and hide/show buttons according to mode */
     void updateButtons();
+    /** React to mode change */
 	void modeSet();
 
 private:
@@ -62,16 +67,13 @@ private:
     QCheckBox *checkWholeWords;
 	QComboBox *comboMode;
 	friend class MainWindow;
-
-public:
-	
-	/** Get current searching mode */
-	inline FindMode mode() const
-	{
-		return ( FindMode)comboMode->itemData( comboMode->currentIndex()).toInt();
-	}
 };
 
+/** Get current searching mode */
+FindMode FindWidget::mode() const
+{
+	return ( FindMode)comboMode->itemData( comboMode->currentIndex()).toInt();
+}
 
 /**
  * Main window class

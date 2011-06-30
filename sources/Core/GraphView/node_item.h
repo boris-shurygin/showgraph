@@ -237,7 +237,7 @@ public:
     /** Get first edge in given direction */
     inline GEdge* firstEdgeInDir( GraphDir dir)
     {
-        return static_cast< GEdge*>( AuxNode::first_edge[ dir]);
+        return static_cast< GEdge*>( AuxNode::firstEdgeInDir( dir));
     }
     /** Get first successor */
     inline GEdge* firstSucc()

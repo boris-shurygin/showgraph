@@ -79,7 +79,7 @@ public:
     /** Get first edge in given direction */
     inline CFEdge* firstEdgeInDir( GraphDir dir)
     {
-        return static_cast< CFEdge*>( AuxNode::first_edge[ dir]);
+        return static_cast< CFEdge*>( AuxNode::firstEdgeInDir( dir));
     }
     /** Get first successor */
     inline CFEdge* firstSucc()
