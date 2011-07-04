@@ -29,11 +29,11 @@ protected:
 class PredIterImpl: public IterImplBase
 {
 public:
-    inline void nextEdge();       /** Move on to the next pred */
-    inline Node *node() const;    /** Get node */
-    inline PredIterImpl(){};      /** Default constructor */
-    inline PredIterImpl( Node *n);/** Configures iterator with node's first pred */
-    inline bool operator==(const PredIterImpl& o) const /** Comparison operator */
+    inline void nextEdge();       /**< Move on to the next pred */
+    inline Node *node() const;    /**< Get node */
+    inline PredIterImpl(){};      /**< Default constructor */
+    inline PredIterImpl( Node *n);/**< Configures iterator with node's first pred */
+    inline bool operator==(const PredIterImpl& o) const /**< Comparison operator */
     { 
         return edge_p == o.edge_p;
     }
@@ -42,11 +42,11 @@ public:
 class SuccIterImpl: public IterImplBase
 {
 public:
-    inline void nextEdge();       /** Move on to the next succ */
-    inline Node *node() const;    /** Get node */
-    inline SuccIterImpl(){};      /** Default constructor */
-    inline SuccIterImpl( Node *n);/** Configures iterator with node's first succ */
-    inline bool operator==(const SuccIterImpl& o) const /** Comparison operator */
+    inline void nextEdge();       /**< Move on to the next succ */
+    inline Node *node() const;    /**< Get node */
+    inline SuccIterImpl(){};      /**< Default constructor */
+    inline SuccIterImpl( Node *n);/**< Configures iterator with node's first succ */
+    inline bool operator==(const SuccIterImpl& o) const /**< Comparison operator */
     { 
         return edge_p == o.edge_p;
     }
@@ -56,11 +56,11 @@ public:
 class UnDirIterImpl: public IterImplBase
 {
 public:
-    inline void nextEdge();        /** Move on to the next edge */
-    inline Node *node() const;     /** Get node */
-    inline UnDirIterImpl():is_pred( false){};      /** Default consturctor */
-    inline UnDirIterImpl( Node *n);/** Configures iterator with node's first edge */
-    inline bool operator==(const UnDirIterImpl& o) const /** Comparison operator */
+    inline void nextEdge();        /**< Move on to the next edge */
+    inline Node *node() const;     /**< Get node */
+    inline UnDirIterImpl():is_pred( false){};      /**< Default consturctor */
+    inline UnDirIterImpl( Node *n);/**< Configures iterator with node's first edge */
+    inline bool operator==(const UnDirIterImpl& o) const /**< Comparison operator */
     { 
         return edge_p == o.edge_p 
                && is_pred == o.is_pred;

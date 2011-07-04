@@ -15,12 +15,12 @@ enum ListTypes
     LISTS_NUM
 };
 /** Derive class of linked objects */
-class A: public MListIface< A, MListItem<LISTS_NUM>, LISTS_NUM>
+class classA: public MListIface< classA, MListItem<LISTS_NUM>, LISTS_NUM>
 {
 
 };
 /** Derive class from A */
-class B: public MListIface< B, A, LISTS_NUM>
+class B: public MListIface< B, classA, LISTS_NUM>
 {
 
 };
