@@ -9,25 +9,25 @@
 
 
 /** Testing class for singleton */
-class A;
+class classA;
 
 /** Singleton derived from class A */
-typedef Single< A> SingleA;
+typedef Single< classA> SingleA;
 
 /** Sample class */
-class A
+class classA
 {
 private:
     /** private constructors, assignment and destructor */
-    A(){};
-    A( const A&){};
-    A& operator =( const A&){};
-    ~A(){};
+    classA(){};
+    classA( const classA&){};
+    classA& operator =( const classA&){};
+    ~classA(){};
     /** Needed for singleton creation */
-    friend class Single< A>;
+    friend class Single< classA>;
 };
 /** instantiation of singleton */
-SINGLETON_INSTANCE( A);    
+SINGLETON_INSTANCE( classA);    
 
 /**
  * Test simple singleton
@@ -36,8 +36,8 @@ bool uTestSingle()
 {
     SingleA::init();
 
-    A* a1 = SingleA::instance();
-    A* a2 = SingleA::instance();
+    classA* a1 = SingleA::instance();
+    classA* a2 = SingleA::instance();
     ASSERT( areEqP( a1, a2));
     SingleA::deinit();
     return true;
