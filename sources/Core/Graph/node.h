@@ -20,7 +20,7 @@
  * 
  * @par
  * A graph node has two lists of edges which represent predecessors and successors. 
- * Node's predecessors and successors can be traversed by using two interfaces:
+ * Node's predecessors and successors can be traversed by using three interfaces:
  * -# Get first edge in direction of interest via firstSucc(),firstPred() and then 
  *    use Edge's interface Edge::nextSucc(), Edge::nextPred()
  * -# Use iterators Node::Succ and Node::Pred wich are used for successor and predecessor traversal of edges. 
@@ -52,8 +52,9 @@
   }
   @endcode
  * @par
- * A node can be @ref Marked "marked" and @ref Numbered "numbered". @ref Mark "Marker" and @ref Nums "Numeration" manager class 
- * is graph.
+ * A node can be @ref Marked "marked" and @ref Numbered "numbered". @ref Mark "Markers" and
+ * @ref Nums "numerations" are managed by @ref Graph "graph". Note that @ref Edge "edges" can be marked with the
+ * same marker or numbered in the same numeration.
  * 
  * @par
  * All nodes in graph are linked in a list. Previous and next nodes can be obtained
@@ -84,7 +85,7 @@ public:
     virtual ~Node();
     
     inline QDomElement elem() const;           /**< Return corresponding element */
-	inline void setElement( QDomElement elem); /**< Set element                  */
+    inline void setElement( QDomElement elem); /**< Set element                  */
 
     inline GraphUid id() const;  /**< Get node's unique ID           */
     inline Graph * graph() const;/**< Get node's corresponding graph */
@@ -119,13 +120,13 @@ public:
     typedef EdgeIterIface< PredIterImpl> Pred;      /**< Iterator for predecessors     */
     typedef EdgeIterIface< UnDirIterImpl> EdgeIter; /**< Undirected iterator for edges */
      
-    inline Succ succsBegin(); /**< Create iterator for first succ */
+    inline Succ succsBegin(); /**< Create iterator for first succ       */
     inline Succ succsEnd();   /**< Create iterator pointing to succ end */
     
-    inline Pred predsBegin(); /**< Create iterator for first succ */
+    inline Pred predsBegin(); /**< Create iterator for first succ       */
     inline Pred predsEnd();   /**< Create iterator pointing to succ end */
 
-    inline EdgeIter edgesBegin(); /**< Create iterator for first succ */
+    inline EdgeIter edgesBegin(); /**< Create iterator for first succ       */
     inline EdgeIter edgesEnd();   /**< Create iterator pointing to succ end */
 
 protected:
@@ -142,7 +143,7 @@ private:
     QDomElement element;
 
     /* Connection with inclusive graph */
-    GraphUid uid; /**< Unique id */
+    GraphUid uid;   /**< Unique id        */
     Graph * graph_p;/**< Pointer to graph */
 
     /** First edges in graph's directions */

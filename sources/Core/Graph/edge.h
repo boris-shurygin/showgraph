@@ -22,12 +22,35 @@ enum EdgeListType
 };
 
 /**
- *  Representation of graph edge
+ * @brief  Representation of graph edge
+ * @ingroup Graph
  *
- *  @ingroup Graph  
- *  Edge class implements basic concept of graph edge.
- *  It has two Nodes as its end points. Edge is a member of 3 lists: 
- *  edge list in graph, pred list in succ node and succ list in pred node
+ * @par
+ * Edge class implements basic concept of graph edge. Every edge has two adjacent nodes.
+ * Use pred() and succ() routines to get them. Edge is a member of 3 lists: edge list in graph,
+ * pred list in succ node and succ list in pred node. To traverse these lists use nextEdge(),
+ * nextPred() and  nextSucc() routines. Also for debug purposes all edges in a graph
+ * have unique id, which can be usefull for printing to console or setting breakpoint conditions.
+ *
+ * @par
+ * An edge can be @ref Marked "marked" and @ref Numbered "numbered". @ref Mark "Markers" and
+ * @ref Nums "numerations" are managed by @ref Graph "graph". Note that @ref Node "nodes" can be marked with the
+ * same marker or numbered in the same numeration.
+ * Also for debug purposes all nodes in a graph
+ * have unique id, which can be usefull for printing to console or setting breakpoint conditions.
+ *
+ * @par
+ * Edges reside in memory pool that is controlled by Graph. Operator new can't be called
+ * directly. Edges can be only created by calling Graph::newEdge().
+ *
+ * @par
+ * Every edge have associated QDomElement for XML export support. The updateElement() routine should be called before
+ * export to get element in sync with edge's properties.
+ *
+ * @sa Graph
+ * @sa Node
+ * @sa Mark
+ * @sa Nums
  */
 class Edge: 
     public MListIface< Edge, // List item
@@ -38,8 +61,67 @@ class Edge:
     public PoolObj
 {
 public:
-	/** Edge list item type */
-    //typedef ListItem< Edge> EdgeListIt;
+    /** Get edge's unique ID */
+    inline GraphUid id() const;
+
+    /** Get edge's graph */
+    inline Graph * graph() const;
+
+    /** 
+     *  Destructor.
+     *  Delete edge from list in graph.
+     *  Deletion from node lists MUST be performed manually.
+     */
+    virtual ~Edge();
+
+    /**
+     * Connect edge to a node in specified direction.
+     * Note that node treats this edge in opposite direction. I.e. an edge that has node in
+     * GRAPH_DIR_UP is treated as edge in GRAPH_DIR_DOWN directions inside that node
+     */
+    inline void setNode( Node *n, GraphDir dir);
+    
+    /** Connect edge with given node as a predecessor */
+    inline void setPred( Node *n);
+    /** Connect edge with given node as a successor   */
+    inline void setSucc( Node *n);
+
+    /** Get node in specified direction  */
+    inline Node *node( GraphDir dir) const;
+    inline Node *pred() const;/**< Get predecessor node of edge */
+    inline Node *succ() const;/**< Get successor node of edge   */
+
+    /** Return next edge of the graph */
+    inline Edge* nextEdge();
+
+    /** Return next edge of the same node in given direction  */
+    inline Edge* nextEdgeInDir( GraphDir dir);
+    inline Edge* nextSucc();/**< Next successor */
+    inline Edge* nextPred();/**< Next predecessor */
+    
+    /** Print edge in dot fomat to stdout */
+    virtual void debugPrint();
+
+    /** Return corresponding document element */
+    inline QDomElement elem() const;
+
+    /** Set document element */
+    inline void setElement( QDomElement elem);
+
+    /** Update DOM element */
+    virtual void updateElement();
+
+    /** Read properties from XML */
+    virtual void readFromElement( QDomElement elem);
+
+    /**
+     * Insert a node on this edge
+     *
+     * Creates a node on edge and a new edge from new node to former successor of original edge.
+     * Original edge goes to new node.
+     * Return new node.
+     */
+    virtual Node *insertNode();
 private:
     /** Representation in document */
     QDomElement element;
@@ -52,7 +134,7 @@ private:
     Node *nodes[ GRAPH_DIRS_NUM]; //Adjacent nodes
     /** Node checking routine */
     bool checkNodes( Node* _pred, Node* _succ);
-        
+
 protected:
     /** Graph should have access to Edge's members */
     friend class Graph;
@@ -60,7 +142,7 @@ protected:
 	friend class Node;
 
     /** Constructors are made private, only nodes and graph can create edges */
-    Edge( Graph *_graph_p, GraphUid _id, Node *_pred, Node* _succ): 
+    Edge( Graph *_graph_p, GraphUid _id, Node *_pred, Node* _succ):
         uid(_id), graph_p(_graph_p)
     {
         GRAPH_ASSERTD( checkNodes( _pred, _succ),
@@ -81,158 +163,120 @@ protected:
     {
         detach( EDGE_LIST_GRAPH);
     }
-public:
-    /**
-	 * Return corresponding document element
-	 */
-    inline QDomElement elem() const
-    {
-        return element;
-    }
-
-    /**
-	 * Set document element
-	 */    
-    inline void setElement( QDomElement elem)
-    {
-        element = elem;
-    }
-
-    /**
-     * Get edge's unique ID
-     */
-    inline GraphUid id() const
-    {
-        return uid;
-    }
-
-    /**
-     * Get edge's corresponding graph
-     */
-    inline Graph * graph() const
-    {
-        return graph_p;
-    }
-
-    /** 
-     *  Destructor.
-	 *  Delete edge from list in graph.
-     *  Deletion from node lists MUST be performed manually.
-     *  Example: 
-     *      Graph graph;
-     *      ...
-     *      Edge * edge = graph.newEdge(...);
-     *  
-     *      //Typical deletion of edge is done by consequent calls of
-     *      edge->DetachFromNode( GRAPH_DIR_UP);
-     *      edge->DetachFromNode( GRAPH_DIR_DOWN);
-     *      graph.deleteEdge( edge);
-     */
-    virtual ~Edge();
-
-    /**
-     * Connect edge to a node in specified direction.
-     * Note that node treats this edge in opposite direction. I.e. an edge that has node in
-     * GRAPH_DIR_UP is treated as edge in GRAPH_DIR_DOWN directions inside that node
-     */
-    inline void setNode( Node *n, GraphDir dir);
-    
-    /**
-     * Connect edge with given node as a predecessor
-     */
-    inline void setPred( Node *n)
-    {
-        setNode( n, GRAPH_DIR_UP);
-    }
-    /**
-     * Connect edge with given node as a successor
-     */
-    inline void setSucc( Node *n)
-    {
-        setNode( n, GRAPH_DIR_DOWN);
-    }
-
-    /**
-     * Get node in specified direction
-     */
-    inline Node *node( GraphDir dir) const 
-    {
-        return nodes[ dir];
-    }
-    /**
-     * Get predecessor of edge
-     */
-    inline Node *pred() const 
-    {
-        return node( GRAPH_DIR_UP);
-    }
-    /**
-     * Get successor of edge
-     */
-    inline Node *succ() const 
-    {
-        return node( GRAPH_DIR_DOWN);
-    }
-
-    /**
-     * Return next edge of the same node in given direction
-     */
-    inline Edge* nextEdge()
-    {
-        return next( EDGE_LIST_GRAPH);
-    }
-
-    /**
-     * Return next edge of the same node in given direction
-     */
-    inline Edge* nextEdgeInDir( GraphDir dir)
-    {
-        GRAPH_ASSERTD( dir < GRAPH_DIRS_NUM, "Wrong direction parameter");
-        GRAPH_ASSERTD( (int) GRAPH_DIR_DOWN == (int) EDGE_LIST_SUCCS,
-                       "Enums of direction and edge lists are not having right values");
-        GRAPH_ASSERTD( (int) GRAPH_DIR_UP == (int) EDGE_LIST_PREDS,
-                       "Enums of direction and edge lists are not having right values");
-        return next( dir);
-    }
-    
-    /** 
-     * Next successor
-     */
-    inline Edge* nextSucc()
-    {
-        return nextEdgeInDir( GRAPH_DIR_DOWN);
-    }
-	/** 
-     * Next predecessor
-     */
-    inline Edge* nextPred()
-    {
-        return nextEdgeInDir( GRAPH_DIR_UP);
-    }
-    
-    /**
-     * Print edge in dot fomat to stdout
-     */
-    virtual void debugPrint();
-
-    /** 
-     * Update DOM element
-     */
-    virtual void updateElement();
-
-    /**
-     * Read properties from XML
-     */
-    virtual void readFromElement( QDomElement elem);
-
-    /**
-     * Insert a node on this edge
-	 *
-	 * Creates a node on edge and a new edge from new node to former successor of original edge.
-	 * Original edge goes to new node. 
-	 * Return new node.
-	 */
-    virtual Node *insertNode();
 };
+
+/**
+     * Return corresponding document element
+     */
+inline QDomElement Edge::elem() const
+{
+    return element;
+}
+
+/**
+ * Set document element
+ */
+inline void Edge::setElement( QDomElement elem)
+{
+    element = elem;
+}
+
+/**
+ * Get edge's unique ID
+ */
+inline GraphUid Edge::id() const
+{
+    return uid;
+}
+
+/**
+ * Get edge's corresponding graph
+ */
+inline Graph * Edge::graph() const
+{
+    return graph_p;
+}
+
+/**
+ * Connect edge to a node in specified direction.
+ * Note that node treats this edge in opposite direction. I.e. an edge that has node in
+ * GRAPH_DIR_UP is treated as edge in GRAPH_DIR_DOWN directions inside that node
+ */
+inline void setNode( Node *n, GraphDir dir);
+
+/**
+ * Connect edge with given node as a predecessor
+ */
+inline void Edge::setPred( Node *n)
+{
+    setNode( n, GRAPH_DIR_UP);
+}
+/**
+ * Connect edge with given node as a successor
+ */
+inline void Edge::setSucc( Node *n)
+{
+    setNode( n, GRAPH_DIR_DOWN);
+}
+
+/**
+ * Get node in specified direction
+ */
+inline Node *Edge::node( GraphDir dir) const
+{
+    return nodes[ dir];
+}
+/**
+ * Get predecessor of edge
+ */
+inline Node *Edge::pred() const
+{
+    return node( GRAPH_DIR_UP);
+}
+/**
+ * Get successor of edge
+ */
+inline Node *Edge::succ() const
+{
+    return node( GRAPH_DIR_DOWN);
+}
+
+/**
+ * Return next edge of the graph
+ */
+inline Edge* Edge::nextEdge()
+{
+    return next( EDGE_LIST_GRAPH);
+}
+
+/**
+ * Return next edge of the same node in given direction
+ */
+inline Edge* Edge::nextEdgeInDir( GraphDir dir)
+{
+    GRAPH_ASSERTD( dir < GRAPH_DIRS_NUM, "Wrong direction parameter");
+    GRAPH_ASSERTD( (int) GRAPH_DIR_DOWN == (int) EDGE_LIST_SUCCS,
+                   "Enums of direction and edge lists are not having right values");
+    GRAPH_ASSERTD( (int) GRAPH_DIR_UP == (int) EDGE_LIST_PREDS,
+                   "Enums of direction and edge lists are not having right values");
+    return next( dir);
+}
+
+/**
+ * Next successor
+ */
+inline Edge* Edge::nextSucc()
+{
+    return nextEdgeInDir( GRAPH_DIR_DOWN);
+}
+
+/**
+ * Next predecessor
+ */
+inline Edge* Edge::nextPred()
+{
+    return nextEdgeInDir( GRAPH_DIR_UP);
+}
+
 
 #endif
