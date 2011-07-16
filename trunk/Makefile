@@ -7,6 +7,7 @@
 #   all - build gui and console versinos of Showgraph in debug and release modes
 #   debug (not yet implemented) - build debug vesion of ShowGraph (both gui and console)
 #   release - build release version of ShowGraph
+#   doc - run doxygen to generate documentation from source code
 #
 #   targets are buit in two steps:
 #     1. Generate additional .cpp files by QT tools ( MOC and RCC)
