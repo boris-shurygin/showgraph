@@ -40,7 +40,7 @@ export QT_DIR = /usr/local/Trolltech/Qt-4.7.0
 export MOC = $(QT_DIR)/bin/moc
 export RCC = $(QT_DIR)/bin/rcc
 	
-HEADERS:= $(wildcard $(SOURCES)/*/*.h)
+HEADERS:= $(wildcard $(SOURCES)/*/*.h $(SOURCES)/Core/*/*.h)
 MOC_HEADERS:= $(patsubst $(SOURCES)/%,$(MOC_DIR)/%,$(HEADERS))
 MOCS= $(MOC_HEADERS:.h=.moc)
 
@@ -87,14 +87,16 @@ gen: $(MOCS) $(RCCS)
 
 # rule for moc run
 $(MOC_DIR)/%.moc: $(SOURCES)/%.h
-	$(MKDIR) -p $(dir $@)
-	$(TOUCH) $@
-	(! $(GREP) -q Q_OBJECT $< || $(MOC) $< -o $(SOURCES)/$*_moc.cpp)
+	@echo [moc] $*.h
+	@$(MKDIR) -p $(dir $@)
+	@$(TOUCH) $@
+	@(! $(GREP) -q Q_OBJECT $< || $(MOC) $< -o $(SOURCES)/$*_moc.cpp)
 # rule for resource compiler
 $(MOC_DIR)/%.rcc: $(SOURCES)/%.qrc
-	$(MKDIR) -p $(dir $@)
-	$(TOUCH) $@
-	$(RCC) $< -o $(<:.qrc=.cpp)
+	@echo [rcc] $*.qrc
+	@$(MKDIR) -p $(dir $@)
+	@$(TOUCH) $@
+	@$(RCC) $< -o $(<:.qrc=.cpp)
 	
 #
 # Cleanup routines

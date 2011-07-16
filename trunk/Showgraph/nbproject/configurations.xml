@@ -7,6 +7,77 @@
         <in>render.cpp</in>
         <in>render.h</in>
       </df>
+      <df name="Core">
+        <df name="Graph" kind="SOURCE_LOGICAL_FOLDER">
+          <in>agraph.h</in>
+          <in>edge.cpp</in>
+          <in>edge.h</in>
+          <in>edge_inline.h</in>
+          <in>graph.cpp</in>
+          <in>graph.h</in>
+          <in>graph_iface.h</in>
+          <in>marker.h</in>
+          <in>node.cpp</in>
+          <in>node.h</in>
+          <in>num.h</in>
+          <in>predecls.h</in>
+        </df>
+        <df name="GraphView" kind="SOURCE_LOGICAL_FOLDER">
+          <in>edge_helper.cpp</in>
+          <in>edge_helper.h</in>
+          <in>edge_item.cpp</in>
+          <in>edge_item.h</in>
+          <in>graph_view.cpp</in>
+          <in>graph_view.h</in>
+          <in>gstyle.h</in>
+          <in>gview_iface.h</in>
+          <in>gview_impl.h</in>
+          <in>navigation.cpp</in>
+          <in>navigation.h</in>
+          <in>node_item.cpp</in>
+          <in>node_item.h</in>
+          <in>style_edit.cpp</in>
+          <in>style_edit.h</in>
+          <in>visible_edge.cpp</in>
+          <in>visible_edge.h</in>
+        </df>
+        <df name="Layout" kind="SOURCE_LOGICAL_FOLDER">
+          <in>aux_edge.h</in>
+          <in>aux_graph.cpp</in>
+          <in>aux_graph.h</in>
+          <in>aux_node.h</in>
+          <in>layout.cpp</in>
+          <in>layout_iface.h</in>
+          <in>node_group.cpp</in>
+          <in>node_group.h</in>
+        </df>
+        <df name="Utils" kind="SOURCE_LOGICAL_FOLDER">
+          <in>asrt.h</in>
+          <in>conf.cpp</in>
+          <in>conf.h</in>
+          <in>conf_utest.cpp</in>
+          <in>list.h</in>
+          <in>list_utest.cpp</in>
+          <in>mem.h</in>
+          <in>mem_chunk.h</in>
+          <in>mem_entry.h</in>
+          <in>mem_fixed_pool.h</in>
+          <in>mem_mgr.cpp</in>
+          <in>mem_mgr.h</in>
+          <in>mem_obj.h</in>
+          <in>mem_pool.cpp</in>
+          <in>mem_pool.h</in>
+          <in>mem_ref.h</in>
+          <in>mem_utest.cpp</in>
+          <in>misc.h</in>
+          <in>print.h</in>
+          <in>singleton.h</in>
+          <in>ulist.h</in>
+          <in>utils.cpp</in>
+          <in>utils_iface.h</in>
+          <in>utils_utest.cpp</in>
+        </df>
+      </df>
       <df name="Frontend" kind="SOURCE_LOGICAL_FOLDER">
         <in>fe_gcc.cpp</in>
         <in>fe_gcc.h</in>
@@ -17,20 +88,6 @@
         <in>parser.cpp</in>
         <in>parser.h</in>
         <in>symtab.h</in>
-      </df>
-      <df name="Graph" kind="SOURCE_LOGICAL_FOLDER">
-        <in>agraph.h</in>
-        <in>edge.cpp</in>
-        <in>edge.h</in>
-        <in>edge_inline.h</in>
-        <in>graph.cpp</in>
-        <in>graph.h</in>
-        <in>graph_iface.h</in>
-        <in>marker.h</in>
-        <in>node.cpp</in>
-        <in>node.h</in>
-        <in>num.h</in>
-        <in>predecls.h</in>
       </df>
       <df name="Gui" kind="SOURCE_LOGICAL_FOLDER">
         <df name="images" kind="SOURCE_LOGICAL_FOLDER">
@@ -180,44 +237,21 @@
         <in>ir_moc.cpp</in>
       </df>
       <df name="Layout" kind="SOURCE_LOGICAL_FOLDER">
-        <in>aux_edge.h</in>
-        <in>aux_graph.cpp</in>
-        <in>aux_graph.h</in>
         <in>aux_graph_moc.cpp</in>
-        <in>aux_node.h</in>
-        <in>layout.cpp</in>
-        <in>layout_iface.h</in>
-        <in>node_group.cpp</in>
-        <in>node_group.h</in>
       </df>
-      <df name="QtGUI" kind="SOURCE_LOGICAL_FOLDER">
-        <df name="images" kind="SOURCE_LOGICAL_FOLDER">
+      <df name="QtGUI">
+        <df name="images">
           <df name="mac" kind="SOURCE_LOGICAL_FOLDER">
           </df>
           <df name="win" kind="SOURCE_LOGICAL_FOLDER">
           </df>
         </df>
-        <in>edge_item.cpp</in>
-        <in>edge_item.h</in>
-        <in>graph_view.cpp</in>
-        <in>graph_view.h</in>
-        <in>graph_view_moc.cpp</in>
-        <in>gstyle.h</in>
         <in>gui_iface.h</in>
         <in>gui_impl.h</in>
-        <in>gview_iface.h</in>
-        <in>gview_impl.h</in>
         <in>main_window.cpp</in>
         <in>main_window.h</in>
-        <in>main_window_moc.cpp</in>
-        <in>node_item.cpp</in>
-        <in>node_item.h</in>
-        <in>style_edit.cpp</in>
-        <in>style_edit.h</in>
-        <in>style_edit_moc.cpp</in>
         <in>text_view.cpp</in>
         <in>text_view.h</in>
-        <in>text_view_moc.cpp</in>
       </df>
       <df name="UnitTest" kind="SOURCE_LOGICAL_FOLDER">
         <in>fe_utest.cpp</in>
@@ -225,32 +259,6 @@
         <in>gui_utest.cpp</in>
         <in>main.cpp</in>
         <in>utest_impl.h</in>
-      </df>
-      <df name="Utils" kind="SOURCE_LOGICAL_FOLDER">
-        <in>asrt.h</in>
-        <in>conf.cpp</in>
-        <in>conf.h</in>
-        <in>conf_utest.cpp</in>
-        <in>list.h</in>
-        <in>list_utest.cpp</in>
-        <in>mem.h</in>
-        <in>mem_chunk.h</in>
-        <in>mem_entry.h</in>
-        <in>mem_fixed_pool.h</in>
-        <in>mem_mgr.cpp</in>
-        <in>mem_mgr.h</in>
-        <in>mem_obj.h</in>
-        <in>mem_pool.cpp</in>
-        <in>mem_pool.h</in>
-        <in>mem_ref.h</in>
-        <in>mem_utest.cpp</in>
-        <in>misc.h</in>
-        <in>print.h</in>
-        <in>singleton.h</in>
-        <in>ulist.h</in>
-        <in>utils.cpp</in>
-        <in>utils_iface.h</in>
-        <in>utils_utest.cpp</in>
       </df>
     </df>
     <logicalFolder name="ExternalFiles"
@@ -278,7 +286,7 @@
           <buildCommandWorkingDir>..</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath></executablePath>
+          <executablePath>../bin/showgraphcl</executablePath>
           <ccTool>
             <incDir>
               <pElem>/c/QtStatic/qt/include</pElem>
@@ -294,8 +302,6 @@
       <item path="../sources/Gui/resource.h" ex="true" tool="3">
       </item>
       <item path="../sources/Gui/resource1.h" ex="true" tool="3">
-      </item>
-      <item path="../sources/Utils/ulist.h" ex="true" tool="3">
       </item>
     </conf>
   </confs>
