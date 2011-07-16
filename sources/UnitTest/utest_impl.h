@@ -4,7 +4,7 @@
  */
 #include <stdio.h>
 #include <QRegExp>
-#include "../Core/core_iface.h"
+#include "../Core/GraphView/gview_iface.h"
 #include "../QtGUI/gui_iface.h"
 #include "../Frontend/fe_iface.h"
 

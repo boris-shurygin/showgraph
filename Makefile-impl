@@ -29,13 +29,14 @@ DEBUG_LIB_NAMES = QtGui QtCore QtXml
 RELEASE_LIB_NAMES = QtGui QtCore QtXml
 
 DEBUG_LIBS = $(addprefix -l, $(DEBUG_LIB_NAMES))
-DEBUG_LIB_FLAGS = -L$(QT_DIR)/lib
+DEBUG_LIB_FLAGS = -L$(QT_DIR)/lib -L$(QT_DIR)/plugins/imageformats
 RELEASE_LIBS = $(addprefix -l, $(RELEASE_LIB_NAMES))
-RELEASE_LIB_FLAGS = -L$(QT_DIR)/lib
+RELEASE_LIB_FLAGS = -L$(QT_DIR)/lib -L$(QT_DIR)/plugins/imageformats
 
-SOURCES_CPP:= $(wildcard $(SOURCES)/*/*.cpp $(SOURCES)/*/*.c)
+SOURCES_CPP:= $(wildcard $(SOURCES)/*/*.cpp $(SOURCES)/*/*.c\
+	                 $(SOURCES)/Core/*/*.cpp $(SOURCES)/Core/*/*.c)
 
-HEADERS:= $(wildcard $(SOURCES)/*/*.h)
+HEADERS:= $(wildcard $(SOURCES)/*/*.h $(SOURCES)/Core/*/*.h)
 RELEASE_MOC_HEADERS:= $(patsubst $(SOURCES)/%,$(RELEASE_OBJECTS_DIR)/%,$(HEADERS))
 RELEASE_MOCS= $(RELEASE_MOC_HEADERS:.h=.moc)
 
@@ -57,48 +58,56 @@ RELEASE_OBJS_GUI = $(filter-out $(RELEASE_OBJECTS_DIR)/console/% $(RELEASE_OBJEC
 RELEASE_OBJS_CL = $(filter-out $(RELEASE_OBJECTS_DIR)/Gui/% $(RELEASE_OBJECTS_DIR)/UnitTest/%,$(RELEASE_OBJS))
 
 showgraphd_impl: $(DEBUG_OBJS_GUI)
-	$(MKDIR) -p $(BIN_DIR)
-	$(CXX) $(DEBUG_LIB_FLAGS) -o $(BIN_DIR)/showgraphd $(DEBUG_OBJS_GUI) $(DEBUG_LIBS)
+	@echo [linking] showgraphd
+	@$(MKDIR) -p $(BIN_DIR)
+	@$(CXX) $(DEBUG_LIB_FLAGS) -o $(BIN_DIR)/showgraphd $(DEBUG_OBJS_GUI) $(DEBUG_LIBS)
 
 showgraphcld_impl: $(DEBUG_OBJS_CL)
-	$(MKDIR) -p $(BIN_DIR)
-	$(CXX) $(DEBUG_LIB_FLAGS) -o $(BIN_DIR)/showgraphcld $(DEBUG_OBJS_CL) $(DEBUG_LIBS)
+	@echo [linking] showgraphcld
+	@$(MKDIR) -p $(BIN_DIR)
+	@$(CXX) $(DEBUG_LIB_FLAGS) -o $(BIN_DIR)/showgraphcld $(DEBUG_OBJS_CL) $(DEBUG_LIBS)
 
 showgraph_impl: $(RELEASE_OBJS_GUI)
-	$(MKDIR) -p $(BIN_DIR)
-	$(CXX) $(RELEASE_LIB_FLAGS) -o $(BIN_DIR)/showgraph $(RELEASE_OBJS_GUI) $(RELEASE_LIBS)
+	@echo [linking] showgraph
+	@$(MKDIR) -p $(BIN_DIR)
+	@$(CXX) $(RELEASE_LIB_FLAGS) -o $(BIN_DIR)/showgraph $(RELEASE_OBJS_GUI) $(RELEASE_LIBS)
 
 showgraphcl_impl: $(RELEASE_OBJS_CL)
-	$(MKDIR) -p $(BIN_DIR)
-	$(CXX) $(RELEASE_LIB_FLAGS) -o $(BIN_DIR)/showgraphcl $(RELEASE_OBJS_CL) $(RELEASE_LIBS)
+	@echo [linking] showgraphcl
+	@$(MKDIR) -p $(BIN_DIR)
+	@$(CXX) $(RELEASE_LIB_FLAGS) -o $(BIN_DIR)/showgraphcl $(RELEASE_OBJS_CL) $(RELEASE_LIBS)
 
 #
 # Rules that run CPP compiler
 #
 #Dependency generation
 $(DEBUG_OBJECTS_DIR)/%.d: $(SOURCES)/%.cpp
-	$(MKDIR) -p $(dir $@)
-	$(CXX) -MM $(DEBUG_CPPFLAGS) $< -MF $@ -MT "$@ $(@:.d=.o)"
+	@echo [generating deps] $*.cpp
+	@$(MKDIR) -p $(dir $@)
+	@$(CXX) -MM $(DEBUG_CPPFLAGS) $< -MF $@ -MT "$@ $(@:.d=.o)"
 
 include $(DEBUG_DEPS)
 
 #Objects generation
 $(DEBUG_OBJECTS_DIR)/%.o: $(SOURCES)/%.cpp
-	$(MKDIR) -p $(dir $@)
-	$(CXX) -c $(DEBUG_CPPFLAGS) $< -o $@
+	@echo [compiling] $*.cpp
+	@$(MKDIR) -p $(dir $@)
+	@$(CXX) -c $(DEBUG_CPPFLAGS) $< -o $@
 
 
 #Dependency generation
 $(RELEASE_OBJECTS_DIR)/%.d: $(SOURCES)/%.cpp
-	$(MKDIR) -p $(dir $@)
-	$(CXX) -MM $(RELEASE_CPPFLAGS) $< -MF $@ -MT "$@ $(@:.d=.o)"
+	@echo [generating deps] $*.cpp
+	@$(MKDIR) -p $(dir $@)
+	@$(CXX) -MM $(RELEASE_CPPFLAGS) $< -MF $@ -MT "$@ $(@:.d=.o)"
 
 include $(RELEASE_DEPS)
 
 #Objects generation
 $(RELEASE_OBJECTS_DIR)/%.o: $(SOURCES)/%.cpp
-	$(MKDIR) -p $(dir $@)
-	$(CXX) -c $(RELEASE_CPPFLAGS) $< -o $@
+	@echo [compiling] $*.cpp
+	@$(MKDIR) -p $(dir $@)
+	@$(CXX) -c $(RELEASE_CPPFLAGS) $< -o $@
 
 
 
