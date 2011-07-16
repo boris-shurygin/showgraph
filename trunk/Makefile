@@ -26,6 +26,7 @@ export MKDIR = mkdir
 export RM = rm
 export GREP = grep
 export TOUCH = touch
+export DOXYGEN = doxygen
 
 #Directories
 export BIN_DIR := bin
@@ -98,6 +99,12 @@ $(MOC_DIR)/%.rcc: $(SOURCES)/%.qrc
 	@$(TOUCH) $@
 	@$(RCC) $< -o $(<:.qrc=.cpp)
 	
+#
+# Documentation
+#
+doc: 
+	@echo [doxygen]
+	@cd autodoc;$(DOXYGEN) Doxyfile
 #
 # Cleanup routines
 #
