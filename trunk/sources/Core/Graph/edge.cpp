@@ -39,20 +39,6 @@ Edge::debugPrint()
 }
 
 /**
- * Low level correction of node's edge list in corresponding direction
- */
-void
-Edge::detachFromNode( GraphDir dir)
-{
-    if ( isNotNullP( node( dir)))
-    {
-        Node *n = node( dir);
-        n->deleteEdgeInDir( RevDir( dir), (Edge* )this);
-        detach( RevDir( dir));
-        nodes[ dir] = 0;
-    }
-}
-/**
  * Update DOM tree element
  */
 
