@@ -4,7 +4,7 @@
  *
  * @defgroup Nums Numeration of objects
  *
- * @ingroup Graph
+ * @ingroup GraphBase
  * Numerations can be used to assign numbers to objects.
  * Usage model is following. To make an object numerable you derive it from 'Numbered' class.
  * Then if you have some class representing a container for this objects you derive it from

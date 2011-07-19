@@ -16,7 +16,7 @@
  * @class Node
  * @brief Representation of graph node. 
  *
- * @ingroup Graph
+ * @ingroup GraphBase
  * 
  * @par
  * A graph node has two lists of edges which represent predecessors and successors. 

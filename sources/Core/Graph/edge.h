@@ -11,7 +11,7 @@
 
 /**
  * Edge lists identificators
- * @ingroup Graph 
+ * @ingroup GraphBase 
  */
 enum EdgeListType
 {
@@ -22,8 +22,9 @@ enum EdgeListType
 };
 
 /**
+ * @class Edge
  * @brief  Representation of graph edge
- * @ingroup Graph
+ * @ingroup GraphBase
  *
  * @par
  * Edge class implements basic concept of graph edge. Every edge has two adjacent nodes.
