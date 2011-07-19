@@ -4,7 +4,7 @@
  *
  * @defgroup AGr Test Graph
  *
- * @ingroup Graph
+ * @ingroup GraphBase
  * AGraph, ANode and AEdge classes present mimnimal code
  * that you need to write to employ Graph Library functionality.
  * AGraph classes differ from base in only one member of ( int) type

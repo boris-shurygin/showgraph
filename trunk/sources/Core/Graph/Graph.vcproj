@@ -172,6 +172,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\graph_inline.h"
+				>
+			</File>
+			<File
 				RelativePath=".\marker.h"
 				>
 			</File>

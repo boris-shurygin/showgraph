@@ -4,7 +4,7 @@
  *
  * @defgroup Mark Markers
  *
- * @ingroup Graph
+ * @ingroup GraphBase
  *
  * Markers are used to mark objects. An object can be marked with several markers.
  * For each marker we can test if an object is marked with it.
