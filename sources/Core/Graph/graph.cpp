@@ -161,14 +161,14 @@ Graph::clearNumerationsInObjects()
     Node *n;
     Edge *e;
     /** Clean markers in nodes */
-    for (  n = firstNode(); isNotNullP( n); n = n->nextNode())
+    for ( n = firstNode(); isNotNullP( n); n = n->nextNode())
     {
-        clearUnusedNumerations( static_cast<Numbered *>(n));
+        clearUnusedNumerations( n);
     }
     /** Clean markers in edges */
-    for (  e = firstEdge(); isNotNullP( e); e = e->nextEdge())
+    for ( e = firstEdge(); isNotNullP( e); e = e->nextEdge())
     {
-        clearUnusedNumerations( static_cast<Numbered *>(n));
+        clearUnusedNumerations( e);
     }
 }
 
