@@ -3,7 +3,7 @@
  * Description of CF node
  * @author Boris Shurygin
  */
-/**
+/*
  * IR interface
  * Copyright (C) 2009  Boris Shurygin
  */

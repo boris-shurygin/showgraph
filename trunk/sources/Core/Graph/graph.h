@@ -1,11 +1,6 @@
 /**
  * @file: graph.h 
  * Graph class definition/implementation.
- *
- * @defgroup GraphBase Graph representation
- * @ingroup Core
- *
- * Graph representation is implemented through 3 tightly connected classes Graph, Node and Edge.
  */
 /*
  * Graph library, internal representation of graphs in ShowGraph tool.

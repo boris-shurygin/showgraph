@@ -63,7 +63,7 @@
          if ( obj->number( num)) // Get object's number
             obj->someAction();
      }
-     man.freeNum(); // Free numeration
+     man.freeNum( num); // Free numeration
  }
  @endcode
  * You can have not more than MAX_NUMERATIONS at one time so if you forget to 
@@ -164,10 +164,6 @@ class Numeration
 public:
     /** Default constructor */
     inline Numeration();
-    /** Copy constructor */
-    inline Numeration( const Numeration& proto);
-    /** Assignement operator */
-    inline Numeration& operator =( const Numeration& proto);
 private:
     
     /** Nums index */
@@ -185,20 +181,6 @@ inline Numeration::Numeration():
     index( MAX_NUMERATIONS), value( NUM_VAL_CLEAN)
 {
 
-}
-
-/** Copy constructor */
-inline Numeration::Numeration( const Numeration& proto):
-    index( proto.index), value( proto.value)
-{
-    
-}
-/** Assignement operator */
-inline Numeration& Numeration::operator =( const Numeration& proto)
-{
-    index = proto.index;
-    value = proto.value;  
-    return *this;
 }
 
 /**
@@ -256,7 +238,7 @@ inline Numbered::Numbered()
 }
 
 /**
- * mark node with num. Return false if node is already numbered. True otherwise.
+ * Assign a number to object. Return false if object is already numbered. True otherwise.
  */
 inline bool 
 Numbered::setNumber( Numeration num,

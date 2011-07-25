@@ -8,7 +8,7 @@
  * control flow and data flow graphs, it can also have some analytical data like
  * dominator/posdominator and loop trees
  */
-/**
+/*
  * IR interface
  * Copyright (C) 2009  Boris Shurygin
  */
