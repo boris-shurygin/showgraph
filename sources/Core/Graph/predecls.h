@@ -20,14 +20,21 @@ using namespace std;
 
 #include "../Utils/utils_iface.h"
 
-/** 
- * namespaces import
- */
+/* namespaces import */
 using namespace Utils;
 using namespace Mem;
 
 /**
+ * Debug assert for graph library
+ * @ingroup GraphBase
+ */
+#if !defined(GRAPH_ASSERTD)
+#    define GRAPH_ASSERTD(cond, what) ASSERT_XD(cond, "Graph", what)
+#endif
+
+/**
  * Directions type in graph
+ * @ingroup GraphBase
  */
 enum GraphDir
 {
@@ -41,37 +48,51 @@ enum GraphDir
 
 /**
  * Return direction that is reverse to given one
+ * @ingroup GraphBase
  */
 inline GraphDir
 RevDir( GraphDir dir)
 {
-    assert( GRAPH_DIRS_NUM == 2);
+    GRAPH_ASSERTD( GRAPH_DIRS_NUM == 2, "Graph implementation is suited for two directions only");
+#ifdef DIR_INVERTION_LONG_VERSION
     return ( dir == GRAPH_DIR_UP)? GRAPH_DIR_DOWN: GRAPH_DIR_UP; 
+#else
+    return (GraphDir)!dir;
+#endif
 }
 
-/** Number type used for numbering nodes and edges in graph */
+/**
+ * Number type used for numbering nodes and edges in graph
+ * @ingroup GraphBase
+ */
 typedef quint32 GraphNum;
-/** Node/edge ID type */
+/**
+ * Node/edge ID type
+ * @ingroup GraphBase
+ */
 typedef quint64 GraphUid;
 
-/** Maximum number of nodes */
+/** 
+ * Maximum number of nodes
+ * @ingroup GraphBase
+ */
 const GraphNum GRAPH_MAX_NODE_NUM = ( GraphNum)( -1);
-/** Maximum number of edges */
+/**
+ * Maximum number of edges
+ * @ingroup GraphBase
+ */
 const GraphNum GRAPH_MAX_EDGE_NUM = ( GraphNum)( -1);
 
-/** Indentation for XML writing */
+/**
+ * Indentation for XML writing
+ * @ingroup GraphBase
+ */
 const int IndentSize = 4;
 
+/* Predeclarations of graph-related classes */
 class Graph;
 class Node;
 class Edge;
-
-/**
- * Debug assert for graph library
- */
-#if !defined(GRAPH_ASSERTD)
-#    define GRAPH_ASSERTD(cond, what) ASSERT_XD(cond, "Graph", what)
-#endif
 
 #include "marker.h"
 #include "num.h"

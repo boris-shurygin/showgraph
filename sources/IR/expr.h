@@ -3,7 +3,7 @@
  * Description of IR node ( expression)
  * @author Boris Shurygin
  */
-/**
+/*
  * IR interface
  * Copyright (C) 2009  Boris Shurygin
  */

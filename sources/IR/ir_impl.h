@@ -3,7 +3,7 @@
  * Internal implementation header of Showgraph's IR package
  * @author Boris Shurygin
  */
-/**
+/*
  * IR interface
  * Copyright (C) 2009  Boris Shurygin
  */
