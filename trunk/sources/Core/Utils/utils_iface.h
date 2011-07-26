@@ -1,8 +1,9 @@
 /**
  * @file: utils_iface.h 
  * Interface of Utils library in ShowGraph
- * @defgroup Utils Low level utils
+ * @defgroup Utils Utils
  * @ingroup Core
+ * @brief Low level utils
  */
 /*
  * Utils library in Showgraph tool

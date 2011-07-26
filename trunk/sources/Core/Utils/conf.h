@@ -1,6 +1,9 @@
 /**
  * @file: conf.h
- * Implementation of internal configuration of ShowGraph
+ * Implementation of options configuration of ShowGraph
+ * @defgroup Opts Options
+ * @brief Classes for configuring and parsing command-line options
+ * @ingroup Utils
  */
 /*
  * Utils library in Showgraph tool
@@ -14,6 +17,7 @@
 
 /**
  * Command line option type
+ * @ingroup Opts
  */
 enum OptType
 {
@@ -31,6 +35,7 @@ enum OptType
 
 /**
  * Union type for option's values
+ * @ingroup Opts
  */
 union OptValues
 {
@@ -44,6 +49,7 @@ union OptValues
 
 /**
  * Command line option descrition
+ * @ingroup Opts
  */
 class Option
 {
@@ -188,7 +194,35 @@ public:
 };
 
 /**
- * Configuration class
+ * @brief Configuration represention
+ * @ingroup Opts
+ *
+ * @par
+ * Allows for configuring command line options and reading them from C-string array.
+ * Usage example:
+ @code
+ // simple main routine
+ int main( int argc, char **argv)
+ {
+     Conf conf;
+
+     // Configuring possible options and their type
+     conf.addOption( new Option( OPT_STRING, "f", "file", "input graph description file name"));
+     conf.addOption( new Option( OPT_STRING, "o", "output", "output image file name"));
+     conf.readArgs( argc, argv);
+
+     //checking options and reading their values
+     if ( conf.longOption("file")->isDefined() 
+          && conf.longOption("output")->isDefined())
+     { 
+         QString xmlname = conf.longOption("file")->string(); // read value passed with '-file ...'
+         ...
+     } else
+     {
+         conf.printOpts(); // Print options to console
+     }
+ }
+ @endcode
  */
 class Conf
 {
@@ -247,7 +281,11 @@ public:
     /** Print value defaults */
     void printDefaults();
 
-    /** Parse args */
+    /**
+     * Parse arguments from C-string
+     * @param argc number of arguments
+     * @param argv pointer to array of C-strings
+     */
     void readArgs( int argc, char** argv);
 
     /** Get option based on its name */

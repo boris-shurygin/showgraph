@@ -74,7 +74,7 @@
  * @sa Mark
  * @sa Nums
  */
-class Node: public Marked, public Numbered, public PoolObj, public SListIface< Node, SListItem>
+class Node: public Marked, public Numbered, public PoolObj, public SListIface< Node>
 {
 public:
     /**
