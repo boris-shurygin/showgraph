@@ -2,9 +2,11 @@
  * @file: graph_iface.h
  * Interface of Graph library
  *
- * @defgroup GraphBase Graph representation
+ * @defgroup GraphBase Graph
  * @ingroup Core
  *
+ * @brief Representation of graphs
+ * 
  * Graph representation is implemented through 3 tightly connected classes Graph, Node and Edge.
  */
 /*

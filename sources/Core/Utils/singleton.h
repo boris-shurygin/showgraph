@@ -1,6 +1,8 @@
 /**
  * @file: singleton.h 
- * Definition of singleton template
+ * @defgroup Singleton Singleton
+ * @brief Definition of singleton template
+ * @ingroup Utils
  */
 /*
  * Copyright (C) 2009  Boris Shurygin
@@ -12,6 +14,7 @@
 
 /**
  * Template for simple singleton objects
+ * @ingroup Singleton
  */
 template < class T> class Single
 {

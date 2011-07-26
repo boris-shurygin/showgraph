@@ -1,19 +1,26 @@
 /**
- * File: misc.h - Various auxiliary routines for ShowGraph
+ * @file: misc.h 
+ * @defgroup Misc Miscellaneous
+ * @brief Various auxiliary routines
+ * @ingroup Utils
+ */
+/*
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef MISC_H
 #define MISC_H
 
 /**
- * If pointer is not null
+ * Check if pointer is not null
+ * @ingroup Misc
  */
 inline bool isNotNullP( const void *pointer)
 {
     return pointer != NULL;
 }
 /**
- * If pointer is null
+ * Check if pointer is null
+ * @ingroup Misc
  */
 inline bool isNullP( const void *pointer)
 {
@@ -21,7 +28,8 @@ inline bool isNullP( const void *pointer)
 }
 
 /**
- * If pointers are equal
+ * Check if pointers are equal
+ * @ingroup Misc
  */
 inline bool areEqP( const void *p1, const void *p2)
 {
@@ -29,7 +37,8 @@ inline bool areEqP( const void *p1, const void *p2)
 }
 
 /**
- * If pointers are equal
+ * Check if pointers are not equal
+ * @ingroup Misc
  */
 inline bool areNotEqP( const void *p1, const void *p2)
 {
@@ -37,8 +46,14 @@ inline bool areNotEqP( const void *p1, const void *p2)
 }
 
 /**
- * abs template 
- * operators "<" and "-" must be defined for parameter class
+ * @brief Get absolute value
+ * @ingroup Misc
+ * @param Value value type
+ * @param val signed value used to get absolute value
+ *
+ * @par 
+ * Returns absolute value for a given signed operand. Note that operators
+ * "<" and "-" must be defined for parameter class
  */
 template<class Value> inline Value abs( Value val)
 {

@@ -1,6 +1,6 @@
 /**
  * @file: utils_utest.cpp 
- * Implementation of testing of memory manager
+ * Implementation of testing of utils
  */
 /*
  * Copyright (C) 2009  Boris Shurygin

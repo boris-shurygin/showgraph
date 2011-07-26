@@ -1,12 +1,20 @@
 /**
  * @file: asrt.h 
  * Assertion related routines of Utils library for ShowGraph
+ * @defgroup Asserts Assertions
+ * @brief Assertion routines/macros
+ * @ingroup Utils
+ */
+/*
  * Copyright (C) 2009  Boris Shurygin
  */
 #ifndef ASRT_H
 #define ASRT_H
 
-/** Debug assert */
+/**
+ * Assert macro that works only in debug version
+ * @ingroup Asserts
+ */
 #if !defined(ASSERTD)
 #  ifdef _DEBUG
 #    define ASSERTD(cond) Q_ASSERT(cond)
@@ -15,7 +23,15 @@
 #  endif
 #endif
 
-/** Debug assert with description */
+/**
+ * @brief Assert macro with description that works only in debug version
+ * @ingroup Asserts
+ * @param cond The condition
+ * @param where Description of functionality where failure occured
+ * @param what Error message explaining what happened
+ *
+ * Assertion that in case of failure provides additional info about what happened
+ */
 #if !defined(ASSERT_XD)
 #  ifdef _DEBUG
 #    define ASSERT_XD(cond, where, what) Q_ASSERT_X(cond, where, what)
@@ -24,44 +40,17 @@
 #  endif
 #endif
 
-/** Simple assert */
+/** 
+ * Simple assert macro
+ * @ingroup Asserts
+ */
 #if !defined(ASSERT)
 #  define ASSERT(cond) Q_ASSERT(cond)
 #endif
 
 /**
- * Type of error
- */
-enum ErrorT
-{
-    ERROR_GENERIC
-};
-
-/**
- * Error's severity
- */
-enum Severity
-{
-    CRITICAL
-};
-
-/**
- * Error description
- */
-class Error
-{
-    ErrorT type;
-    Severity sev;
-public:
-    Error()
-    {
-        type = ERROR_GENERIC;
-        sev = CRITICAL;
-    }
-};
-
-/**
- * Generic assertion template
+ * Generic assertion routine template
+ * @ingroup Asserts
  */
 template<class Excpt> inline void assert( bool assertion)
 {
@@ -72,7 +61,8 @@ template<class Excpt> inline void assert( bool assertion)
 }
 
 /**
- * Assertion template parameterized with thrown exception type
+ * Assertion routine template parameterized with thrown exception type
+ * @ingroup Asserts
  */
 template<class Excpt> inline void assert( bool asrt, Excpt e)
 {
@@ -83,7 +73,8 @@ template<class Excpt> inline void assert( bool asrt, Excpt e)
 }
 
 /**
- * Generic assert
+ * Simple assertion routine 
+ * @ingroup Asserts
  */
 inline void assert( bool asrt)
 {
@@ -91,7 +82,8 @@ inline void assert( bool asrt)
 }
 
 /**
- * Debug assert
+ * Assert that works only in debug version
+ * @ingroup Asserts
  */
 inline void assertd( bool asrt)
 {

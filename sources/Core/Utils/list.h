@@ -1,6 +1,6 @@
 /**
  * @file: list.h 
- * Some expiriments with list implementation
+ * List-related functionality implementation
  * @defgroup List Two-way linked list
  *
  * Implementation of two-way linked list
@@ -13,10 +13,11 @@
 #ifndef LIST_H
 #define LIST_H
 /**
- * Types of direction in lists.
+ * @brief Types of direction in lists.
+ * @ingroup List  
+ *
  * Lists are built from left to right by default.
  * That means if you take next in default direction - it will be element to the right.
- * @ingroup List
  */
 enum ListDir
 {
@@ -45,9 +46,12 @@ ListRDir( ListDir dir)
 
 
 /**
- * Container for list elements. Data is accessed via pointer
- * Implements headless list data structure
+ * @brief Item of two-way connected list of pointers
  * @ingroup List
+ *
+ * @par
+ * ListItem is used for storing pointers to objects in list. Items in list are two-way connected 
+ * with each other. This allows insertion and deletion of items in constant time.
  */
 template <class Data> class ListItem
 {
@@ -77,7 +81,7 @@ public:
     {
         peer[ dir] = p;
     }
-    /** Default peers gets */
+    /* Default peers gets */
     /** Return next peer in default direction */
     inline ListItem<Data> *next() const
     {
@@ -127,7 +131,7 @@ public:
     /** Detach from neighbours */
     inline void Detach()
     {
-        /** Correct links in peers */
+        /* Correct links in peers */
         if ( isNotNullP( peer[ LIST_DIR_DEFAULT]))
         {
             peer[ LIST_DIR_DEFAULT]->SetPeerInDir( peer[ LIST_DIR_RDEFAULT], LIST_DIR_RDEFAULT);
@@ -185,18 +189,23 @@ public:
 typedef quint16 ListId;
 
 /**
- * Class for objects that should have pointers to next/prev objects of their type( behave like list elements)
- * Inherited object can be member of several lists
- * Implements headless list data structure
- * Data is accessed by static cast -> less overhead since no additional indirection
+ * @brief List item that can be part of multiple lists. 
+ * @param dim Number of lists
  * @ingroup List
+ *
+ * The MListItem class provides means for making an object an item of multiple lists. The
+ * implementation is intrusive: you have to inherit MListItem in your object to make it
+ * a multiple list item. It is more convenient to inherit MListIface though, which in
+ * turn inherits MListItem and provides list-related routines in terms of client type. E.g.
+ * if you implement some MyObj class this way your MyObj::next() routine will return MyObj * instead of 
+ * MListItem<num_of_lists> *.
  */
 template <unsigned int dim> class MListItem
 {
     MListItem< dim> * peer[ dim][ LIST_DIR_NUM];
 public:
     
-        /** Get neighbour */
+    /** Get neighbour */
     inline MListItem< dim> * peerInDir( ListId list, ListDir dir) const
     {
         ASSERTD( list < dim);
@@ -218,7 +227,7 @@ public:
             setPeerInDir( list, NULL, LIST_DIR_RDEFAULT);
         }
     }
-    /** Default peers gets */
+    /* Default peers gets */
     /** Return next peer in default direction */
     inline MListItem< dim> *next( ListId list) const
     {
@@ -269,7 +278,7 @@ public:
     inline void detach( ListId list)
     {
         ASSERTD( list < dim);
-        /** Correct links in peers */
+        /* Correct links in peers */
         if ( isNotNullP( peer[ list][ LIST_DIR_DEFAULT]))
         {
             peer[ list][ LIST_DIR_DEFAULT]->setPeerInDir( list, peer[ list][ LIST_DIR_RDEFAULT], LIST_DIR_RDEFAULT);
@@ -318,8 +327,31 @@ public:
 };
 
 /**
- * Interface for Multi-list
+ * @brief Interface for Multi-list
  * @ingroup List
+ * @param Item The type of list item
+ * @param ListBase MListItem parameterized by list number or some derived class
+ * @param dim Number of lists
+ * 
+ * Allows for incorporating a list item functionality into object via inheritance. 
+ * Example:
+ * @code
+ // Define the lists we use
+ enum ListTypes { LIST_ONE, LIST_TWO, LISTS_NUM };
+ // Derive class of linked objects
+ class MyObj: public MListIface< MyObj, MListItem<LISTS_NUM>, LISTS_NUM>
+ { ... };
+ // Usage
+ void foo()
+ {
+     MyObj obj1();
+     MyObj obj2();
+     MyObj obj3();
+     obj1.attach( LIST_ONE, &obj2); // "LIST_ONE" is now obj1--obj2
+     obj2.attach( LIST_ONE, &obj3); // "LIST_ONE" is now obj1--obj2--obj3
+     obj1.attach( LIST_TWO, &obj3); // "LIST_TWO" is now obj1--obj3
+ }
+ @endcode
  */
 template < class Item, class ListBase, unsigned int dim> class MListIface: public ListBase
 {
@@ -348,10 +380,8 @@ public:
 };
 
 /**
- * Class for objects that should have pointers to next/prev objects of their type( behave like list elements)
- * Specilized for one list
- * Implements headless list data structure
- * Data is accessed by static cast -> less overhead since no additional indirection
+ * @brief Specialization of the MListItem template for important case when the object 
+ * is intended to be item in only one list.
  * @ingroup List
  */
 template<> class MListItem<1>
@@ -377,7 +407,7 @@ public:
         setPeerInDir( NULL, LIST_DIR_DEFAULT);
         setPeerInDir( NULL, LIST_DIR_RDEFAULT);
     }    
-    /** Default peers gets */
+    /* Default peers gets */
     /** Return next peer in default direction */
     inline MListItem< 1> *next() const
     {
@@ -427,7 +457,7 @@ public:
     /** Detach from neighbours */
     inline void detach()
     {
-        /** Correct links in peers */
+        /* Correct links in peers */
         if ( isNotNullP( peer[ LIST_DIR_DEFAULT]))
         {
             peer[ LIST_DIR_DEFAULT]->setPeerInDir( peer[ LIST_DIR_RDEFAULT], LIST_DIR_RDEFAULT);
@@ -471,8 +501,12 @@ public:
 typedef MListItem< 1> SListItem;
 
 /**
- * Specialization of interface for simple list
+ * @brief Specialization of MListIface for case of one list
  * @ingroup List
+ * @param Item The type of list item
+ * @param ListBase MListItem or some derived class
+ * 
+ * Allows for incorporating a single-list item functionality into object via inheritance. 
  */
 template< class Item, class ListBase> class MListIface< Item, ListBase, 1>: public ListBase
 {
@@ -499,10 +533,29 @@ public:
 };
 
 /**
- * Specialization of interface for simple list
+ * @brief Interface for simple list item
  * @ingroup List
+ * @param Item The type of list item
+ * @param ListBase SListItem (default) or some derived class.
+ * 
+ * Allows for incorporating a list item functionality into object via inheritance. 
+ * Example:
+ * @code
+ // Derive class of linked objects
+ class MyObj: public SListIface< MyObj>
+ { ... };
+ // Usage
+ void foo()
+ {
+     MyObj obj1();
+     MyObj obj2();
+     MyObj obj3();
+     obj1.attach( &obj2); // list is now obj1--obj2
+     obj2.attach( &obj3); // list is now obj1--obj2--obj3
+ }
+ @endcode
  */
-template< class Item, class ListBase> class SListIface: public ListBase
+template< class Item, class ListBase=SListItem> class SListIface: public ListBase
 {
 public:
     /** Return next item in default direction */

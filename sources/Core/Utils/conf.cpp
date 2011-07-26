@@ -51,7 +51,7 @@ void Conf::printDefaults()
 
 }
 
-/** Read input args */
+/** Read input arguments */
 void Conf::readArgs( int argc, char** argv)
 {
     app_name = QString( argv[ 0]);
@@ -92,7 +92,7 @@ void Conf::readArgs( int argc, char** argv)
         } else
         {
             out("WTF");
-            /** Is not an option specifier */
+            /* Is not an option specifier */
             err << "Unrecognized argument " << curr << endl;
             unknown_options.push_back( curr);
         }
@@ -109,7 +109,7 @@ void Conf::readArgs( int argc, char** argv)
                         i++; // advance in argument array
                         QString val( argv[ i]);
                         opt->setBoolVal( val.toInt());
-                    } else /** However most bool options have default value of 'false' */
+                    } else /* However most bool options have default value of 'false' */
                     {
                         opt->setBoolVal( true);
                     }

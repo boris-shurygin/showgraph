@@ -1,7 +1,7 @@
 /**
  * @file: core_iface.h 
  * Interface file of showgraph's core library
- * @defgroup Core Library for Graphs Visualization
+ * @defgroup Core Core library for visualization of graphs
  */
 /* 
  * GraphCore for ShowGraph tool.
