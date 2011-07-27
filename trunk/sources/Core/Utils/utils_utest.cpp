@@ -26,8 +26,6 @@ private:
     /** Needed for singleton creation */
     friend class Single< classA>;
 };
-/** instantiation of singleton */
-SINGLETON_INSTANCE( classA);    
 
 /**
  * Test simple singleton
