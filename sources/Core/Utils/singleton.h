@@ -18,8 +18,6 @@
  */
 template < class T> class Single
 {
-    /** Pointer to client object */
-    static T* instance_p; // MUST be assigned to zero by client code
 public:
     /** Create and initialize client object */
     static void init();
@@ -27,8 +25,8 @@ public:
     static void deinit();
     /** Get a pointer to client object */
     static T* instance();
-private:
-    /** Uniqueness ensurance */
+
+private:/* Uniqueness ensurance */
     /** Private constructor */
     Single();
     /** Private copy constructor */
@@ -37,6 +35,12 @@ private:
     Single& operator = ( const Single&);
     /** Private destructor */
     ~Single();
+    /**
+     * @brief Pointer to client object.
+     * 
+     * Initialized to NULL on start and points to instance after init() is called 
+     */
+    static T* instance_p; 
 };
 
 /**
@@ -72,13 +76,9 @@ Single< T>::instance()
 }
 
 /**
- * Access to client object
- * is implemented as a macro for using in client .cpp file
- * WARNING: without calling this macro singleton object won't work
+ * Initialization of instance pointer
  */
-#define SINGLETON_INSTANCE(CLIENT_CLASS)   \
-template <> \
-CLIENT_CLASS* Single<CLIENT_CLASS>::instance_p = 0;                                       
+template < class T> T *Single<T>::instance_p = 0;                                       
 
 
 

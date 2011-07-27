@@ -10,9 +10,6 @@
 
 using namespace MemImpl;
 
-/** instantiation of singleton */
-SINGLETON_INSTANCE( MemInfo); 
-
 MemInfo::MemInfo()
 {
     alloc_counter = 1;
