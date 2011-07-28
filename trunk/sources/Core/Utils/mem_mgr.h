@@ -10,7 +10,10 @@
 
 namespace MemImpl
 {
-    /** Event id type */
+    /**
+     * Event id type
+     * @ingroup MemImpl
+     */
     typedef quint64 MemEventId;
 
     /**

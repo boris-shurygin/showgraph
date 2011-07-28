@@ -39,12 +39,16 @@
 
 /**
  * Debug assert in memory manager
+ * @ingroup Mem
  */
 #if !defined(MEM_ASSERTD)
 #    define MEM_ASSERTD(cond, what) ASSERT_XD(cond, "Memory manager", what)
 #endif
 
-/** Namespace for memory-related routines */
+/**
+ * Namespace for memory-related routines
+ * @ingroup Mem
+ */
 namespace Mem
 {
     /* Class pool predeclaration */
@@ -56,30 +60,43 @@ namespace Mem
 /**
  * Low level functinality for Mem package 
  * @defgroup MemImpl Memory Manager Low Level
+ * @ingroup Mem
  */
 namespace MemImpl
 {
-    /** Low-level implementation of memory manager */
+    /* Predeclaration on MemInfo */
     class MemInfo;
     /* Predeclaration of mem entry class */
     template < class Data> class Entry;
     /* Predeclaration of chunk class */
     template < class Data> class Chunk;
-    /** position in chunk */
+    /**
+     * Position in chunk type
+     * @ingroup MemImpl
+     */
     typedef quint8 ChunkPos;
-    /** Max number of entries in chunk */
+    /** 
+     * Max number of entries in chunk
+     * @ingroup MemImpl
+     */
 #ifndef MEM_SMALL_CHUNKS
     const quint8 MAX_CHUNK_ENTRIES_NUM = ( quint8)( -1);
 #else
     const quint8 MAX_CHUNK_ENTRIES_NUM = 2;
 #endif
-    /** 'NULL' equivalent for ChunkPos */
+    /**
+     * 'NULL' equivalent for ChunkPos
+     * @ingroup MemImpl
+     */
     const ChunkPos UNDEF_POS = MAX_CHUNK_ENTRIES_NUM; 
 };
 
 namespace Mem
 {
-    /** Singleton for memory manager */
+    /**
+     * Singleton for memory manager
+     * @ingroup MemImpl
+     */
     typedef Single< MemImpl::MemInfo> MemMgr;
 };
 

@@ -17,7 +17,10 @@
 
 namespace MemImpl
 {
-    /** Chunk lists identificators */
+    /**
+     * Chunk lists identificators
+     * @ingroup MemImpl
+     */
     enum ChunkListType
     {
         CHUNK_LIST_ALL,
@@ -26,7 +29,8 @@ namespace MemImpl
     };
 
     /**
-     * Class to control memory chunks
+     * Memory chunk representation
+     * @ingroup MemImpl
      */
     template<class Data> class Chunk: 
         public MListIface< Chunk< Data>, // List client data

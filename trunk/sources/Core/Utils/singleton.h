@@ -13,8 +13,48 @@
 #define SINGLETON_H
 
 /**
- * Template for simple singleton objects
+ * @brief Template for simple singleton objects.
  * @ingroup Singleton
+ * @param T type of client object
+ *
+ * Singleton is a type of object that is guaranteed to have only one instance at any
+ * given point of program execution. The Single template manages global access to single
+ * instance of client object. Client object type is specified by template parameter. 
+ * A pointer to the single instance of client object can be obtained by calling intance().
+ * To control singleton's lifetime its initialization and destruction are made explicit.
+ * Use init() and deinit() routines for these purposes.
+ * Example of usage:
+ @code
+ // Sample class
+ class classA
+ {
+ public:
+     doSomething() {...}
+ private:
+     // private constructors, assignment and destructor
+     classA(){};
+     classA( const classA&){};
+     classA& operator =( const classA&){};
+     ~classA(){};
+     // Needed for singleton opration
+     friend class Single< classA>;
+ };
+ 
+ // Typedef for classA encapsulated in singleton
+ typedef Single< classA> SingleA;
+
+ //void myfunc()
+ {
+    SingleA::instance()->doSomething();
+ }
+ // Usage
+ void useSingleA()
+ {
+    SingleA::init();
+    myfunc();
+    SingleA::deinit();
+ }
+ @endcode
  */
 template < class T> class Single
 {
