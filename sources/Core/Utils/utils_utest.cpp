@@ -8,12 +8,6 @@
 #include "utils_iface.h"
 
 
-/** Testing class for singleton */
-class classA;
-
-/** Singleton derived from class A */
-typedef Single< classA> SingleA;
-
 /** Sample class */
 class classA
 {
@@ -26,6 +20,9 @@ private:
     /** Needed for singleton creation */
     friend class Single< classA>;
 };
+
+/** Typedef for classA encapsulated in singleton */
+typedef Single< classA> SingleA;
 
 /**
  * Test simple singleton

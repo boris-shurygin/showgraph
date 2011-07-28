@@ -105,15 +105,15 @@ namespace Mem
     MemImpl::Chunk< Data> *
     FixedPool< Data>::allocateChunk()
     {
-        /** We should only allocate chunk if there are no free chunks left */
+        /* We should only allocate chunk if there are no free chunks left */
         MEM_ASSERTD( isNullP( free_chunk ), "Tried to deallocate chunk while there is a free chunk");
         
-        /** Allocate memory for chunk */
+        /* Allocate memory for chunk */
         void *chunk_mem = 
               ( MemImpl::Chunk< Data> *) new quint8[ CHUNK_SIZE];
         MemImpl::Chunk< Data> * chunk = new ( chunk_mem) MemImpl::Chunk< Data>();
 
-        /** Add this chunk to pool */
+        /* Add this chunk to pool */
         chunk->attach( MemImpl::CHUNK_LIST_ALL, first_chunk);
         chunk->attach( MemImpl::CHUNK_LIST_FREE, free_chunk);
         first_chunk = chunk;
@@ -147,7 +147,7 @@ namespace Mem
         delete[] (quint8 *)chunk;
     }
 
-    /** Calculate pointer to chunk from pointer to entry */
+    /* Calculate pointer to chunk from pointer to entry */
     template < class Data> 
     MemImpl::Chunk< Data> *
     FixedPool<Data>::entryChunk( MemImpl::Entry< Data> *e)
@@ -158,7 +158,7 @@ namespace Mem
         return (MemImpl::Chunk< Data> *) ptr;
     }
 
-    /** Allocate new memory block */
+    /* Allocate new memory block */
     template < class Data> 
     void* 
     FixedPool<Data>::allocate( size_t size)
@@ -166,16 +166,16 @@ namespace Mem
         MEM_ASSERTD( sizeof( Data) == size,
                      "Allocation size doesn't match FixedPool's template parameter size");
         void *ptr = NULL;
-        /** If we don't have a free chunk */
+        /* If we don't have a free chunk */
         if ( isNullP( free_chunk))
         {
-            /** We need to create new chunk */
+            /* We need to create new chunk */
             allocateChunk();
         } 
         MEM_ASSERTD( free_chunk->isFree(), "Pool's first free chunk is not free");
-        /** allocate one entry */
+        /* allocate one entry */
         ptr = ( void *)free_chunk->allocateEntry();
-        /** if no more entries left */
+        /* if no more entries left */
         if ( !free_chunk->isFree())
         {
             MemImpl::Chunk< Data> *chunk = free_chunk;
@@ -191,38 +191,41 @@ namespace Mem
     void
     FixedPool<Data>::deallocate( void *ptr)
     {
-        /** @{*/
-        /** -# Check pointer */
+        /* 1. Check pointer */
         MEM_ASSERTD( isNotNullP( ptr), "Deallocation tried on NULL pointer");
         
-        /** -# Check entry count */
+        /* 2. Check entry count */
         MEM_ASSERTD( entry_count > 0, "Trying deallocate entry of an empty pool"); 
 
         MemImpl::Entry< Data> *e =(MemImpl::Entry< Data> *) ptr;
         
-        /** -# Get chunk of the deallocated entry */
+        /* 3. Get chunk of the deallocated entry */
         MemImpl::Chunk< Data> *chunk = entryChunk( e);
 
 #ifdef CHECK_CHUNKS
-        /** -# Check that we are deleting entry from this pool */
+        /* 4. Check that we are deleting entry from this pool */
         MEM_ASSERTD( areEqP( this, chunk->pool), "Trying deallocate entry from a wrong pool"); 
 #endif
-        /**
-         * If chunk is free already - it must be in free list 
+        /*
+         * 5. If chunk is free already - it must be in free list 
          * no need to add it again
          */
         bool add_to_free_list = !chunk->isFree();
 
-        /** -# Free entry in chunk */
+        /* 6. Free entry in chunk */
         chunk->deallocateEntry( e);
         
+        /*
+         * 7. If this chunk is not the same as the current 'free chunk' 
+         *     add it to free list or deallocate it if it is empty
+         */
         if ( areNotEqP( chunk, free_chunk))
         {
             if ( add_to_free_list)
             {
-                /** -# Add chunk to free list if it is not already there */
+                /* Add chunk to free list if it is not already there */
                 chunk->attach( MemImpl::CHUNK_LIST_FREE, free_chunk);
-                /** -# Deallocate previous free chunk if it is empty */
+                /* Deallocate previous free chunk if it is empty */
                 if ( isNotNullP( free_chunk) && free_chunk->isEmpty())
                 {
                     deallocateChunk( free_chunk);
@@ -230,35 +233,31 @@ namespace Mem
                 free_chunk = chunk;
             } else if ( chunk->isEmpty())
             {
-                /** -# Deallocate this chunk if it is empty and not the first free chunk */
+                /* Deallocate this chunk if it is empty and not the first free chunk */
                 deallocateChunk( chunk);
             }
         }
         entry_count--;
-        /** @}*/
     }
     /** Functionality of 'operator delete' for pooled objects */
     template < class Data> 
     void
     FixedPool<Data>::destroy( void *ptr)
     {
-        /** @{*/
-        /** -# Check null pointer( in DEBUG mode) */
+        /* 1. Check null pointer( in DEBUG mode) */
         MEM_ASSERTD( isNotNullP( ptr), "Destruction tried on NULL pointer");
 
         Data *data_p = static_cast< Data *>( ptr);
         
 #ifdef CHECK_DELETE
-        /** -# Mark for deletion */
+        /* 2. Mark for deletion */
         data_p->toBeDeleted();
 #endif
-        /** -# Call destructor */
+        /* 3. Call destructor */
         data_p->~Data();
         
-        /** -# Free memory */
+        /* 4. Free memory */
         deallocate( ptr);
-
-        /** @}*/
     }
 }; /* namespace Mem */
 #endif /* MEM_FIXED_POOL_H */
