@@ -19,8 +19,49 @@
 namespace Mem
 {
     /**
-     * Memory pool with fixed-size chunks
+     * @brief Memory pool with fixed-size entries.
      * @ingroup Mem
+     * @param Data Type of objects stored in pool.
+     *
+     * @details  
+     * A <em>Fixed pool</em> is a pool that creates entries of the same size which
+     * is defined by template parameter. It uses the knowledge of the entry size for
+     * optimization of allocation/deallocation process and for simplifying the internal
+     * bookkeeping. This simplification significantly speeds up pool's operation.
+     *
+     * Internal implementation of a fixed pool is based on allocating memory in so-called
+     * <em>chunks</em>. A <em>chunk</em> is a continuous block of memory which holds
+     * a number of entries and is allocated with one system call. The allocated memory
+     * is managed by the pool and released to system when pool doesn't need it. This
+     * policy effectively avoids calling malloc() and free() routines for every entry
+     * and prevents fragmentation. FixedPool internal implementattion trades off compactness
+     * for quickness and uses additional info for every entry. Every entry keeps:
+     *  - Its own number. To calculate pointer to chunk info from pointer to entry.
+     *  - Number of next free entry in this chunk. For speeding up the allocation.
+     *  - Debug info like allocation/deallocation event number or ``free'' flag for checking 
+     *    double deallocation.
+     *
+     * The chunks are organized in doubly-liked list to have constant time for chunk 
+     * creation and destruction. Free chunks are also linked in list to speed up the 
+     * allocation. On allocation request pool simply gets its first free chunk and 
+     * returns pointer to its first entry. On deallocation, pointer to chunk is calculated
+     * from pointer to entry using its own number and entry is simply connected to the
+     * head of free entry list in the chunk. The chunk itself is enrolled in the list of
+     * free chunks if it isn't already there. If the chunk is completely empty after 
+     * this deallocation it may be deleted if there are other free chunks present. Both
+     * allocation and deallocation demand constant time unless we have to allocate a new
+     * chunk or free existing empty one.
+     *
+     * To decrease memory usage overhead the numbers in entries are effectively one byte long.
+     * Thats two byte per entry overhead if we don't align entries on 8, 16, 32 or 64 bytes.
+     * Thus memory overhead is significant if we store small objects in such a pool but for 
+     * a list unit this overhead is about 25% and for graph's node or edge it is 6.2%.
+     *
+     * When project is built in debug mode the pools keep track of every entry's allocation
+     * and deallocation ID. This allows programmer to put in a breakpoint if a memory leak
+     * or double-delete occurred. The conditional breakpoint should be placed in
+     * MemInfo::allocReg( n) or MemInfo::deallocReg( n) where 'n' should be the ID that
+     * can be obtained from suspicious entry.
      */
     template < class Data> 
     class FixedPool: public Pool
