@@ -154,6 +154,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\fe_llvm.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\fe_test.cpp"
 				>
 			</File>

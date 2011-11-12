@@ -26,6 +26,8 @@ typeToStr( DumpType tp)
         return QString("GCC CF dump");
     case DUMP_TYPE_ICC_IL0:
         return QString("IL0 CF dump");
+    case DUMP_TYPE_LLVM:
+        return QString("LLVM Bitcode text");
     default:
         return QString("");
     }
@@ -90,6 +92,10 @@ Parser::parseUnit( DumpUnitInfo *unit)
         return;
     case DUMP_TYPE_ICC_IL0:
         parseIL0Unit( unit);
+        return;
+    case DUMP_TYPE_LLVM:
+        parseLLVMUnit( unit);
+        return;
     default:
         return;
     }
@@ -103,6 +109,11 @@ void Parser::parseGCCUnit( DumpUnitInfo *unit)
 }
 /** Parse Il0 dump */
 void Parser::parseIL0Unit( DumpUnitInfo *unit)
+{
+
+}
+/** Parse LLVM dump */
+void Parser::parseLLVMUnit( DumpUnitInfo *unit)
 {
 
 }
@@ -208,6 +219,22 @@ Parser::collectInfo( DumpPos pos, QString line)
             unit_info_collected = false;
         }        
     }
+
+    if ( line.indexOf("define") != -1)
+    {
+        /** Remember that it might be a phase beginning in icc IL0 dump */
+        QRegExp fname_llvm_rx("^define (\\S+) @(\\S+)\\(");
+        if ( fname_llvm_rx.indexIn( line) != -1 )
+        {
+            unitEnd( pos);
+            phase_name = "unknown";
+            unit_name = fname_llvm_rx.cap(2);
+            unit_beg = pos;
+            _type = DUMP_TYPE_LLVM;
+            num_blocks = -1;
+            unit_info_collected = false;
+        }        
+    }
     
     if ( type() == DUMP_TYPE_UNKNOWN 
          || unit_info_collected)
@@ -263,6 +290,9 @@ Parser::collectInfo( DumpPos pos, QString line)
                 num_blocks = -1;
             }
         }
+    } else if ( _type == DUMP_TYPE_LLVM && line.indexOf("entry") != -1)
+    {
+        unit_info_collected = true;
     }
 }
 

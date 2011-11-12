@@ -251,7 +251,7 @@ void MainWindow::openFile( QString fileName)
         {
             QString routine_name = routine_names.first();
             bool ok;
-            if ( routine_names.count() > 1)
+            if ( routine_names.count() >= 1)
             {
                 QString routine = QInputDialog::getItem(  this, tr("Choose routine"),
                                                           tr("Routine:"),
