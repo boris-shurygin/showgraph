@@ -97,7 +97,7 @@
 #  define foreachNode(node, graph) ITERATE_GRAPH_NODES(node, graph)
 #endif
 
-/* Implementation of inlined functinality */
+/* Implementation of inline functinality */
 #include "edge_inline.h"
 #include "node_inline.h"
 #include "graph_inline.h"

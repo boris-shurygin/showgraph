@@ -155,6 +155,9 @@ void TestParser::highlightText( QTextDocument * doc)
     case DUMP_TYPE_ICC_IL0:
         highlightTextIL0( doc);
         return;
+    case DUMP_TYPE_LLVM:
+        highlightTextLLVM( doc);
+        return;
     case DUMP_TYPE_UNKNOWN:
     default:
         break;

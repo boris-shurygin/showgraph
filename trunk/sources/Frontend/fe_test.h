@@ -203,9 +203,28 @@ public:
     {
         return isStateNode() && nodeStartIL0( line);
     }
+    /** Highlight semantics in node's text*/
     void highlightText( QTextDocument * doc);
+    /** Highlight semantics in node's text (for GCC dump)*/
     void highlightTextGCC( QTextDocument * doc);
+    /** Highlight semantics in node's text (for IL0 dump)*/
     void highlightTextIL0( QTextDocument * doc);
+
+    /** Parse LLVM dump */
+    void parseLLVMUnit( DumpUnitInfo *unit);
+    /** Parse line in LLVM dump */
+    void parseLineLLVM( QString line);
+    /** Check if this line starts a new node text section */
+    bool nodeStartLLVM( QString line);
+    /** Chech if the given line is the end of nde text section */
+    inline  bool nodeStopLLVM( QString line)
+    {
+        return isStateNode() && nodeStartLLVM( line);
+    }
+    /** Check whether the given line should be treated as a next line */
+    bool nextLineLLVM( QString line);
+    /** highlight block of text in LLVM dump */
+    void highlightTextLLVM( QTextDocument * doc);
 };
 
 #endif

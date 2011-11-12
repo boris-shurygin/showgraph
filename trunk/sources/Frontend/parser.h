@@ -22,6 +22,8 @@ enum DumpType
     DUMP_TYPE_GCC_CF,
     /** ICC IL0 control flow dump */
     DUMP_TYPE_ICC_IL0,
+    /** LLVM bitcode dump */
+    DUMP_TYPE_LLVM,
     /** Number of types */
     DUMP_TYPES_NUM
 };
@@ -301,6 +303,8 @@ public:
     virtual void parseGCCUnit( DumpUnitInfo *unit);
     /** Parse Il0 dump */
     virtual void parseIL0Unit( DumpUnitInfo *unit);
+    /** Parse LLVM dump */
+    virtual void parseLLVMUnit( DumpUnitInfo *unit);
 };
 
 #endif
