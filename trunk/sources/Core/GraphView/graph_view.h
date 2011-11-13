@@ -684,6 +684,11 @@ public:
      */
     GNode* findNodeById( int id);
 
+     /**
+     * Find node by its label
+     */
+    GNode* findNodeByLabel( QString label);
+
     /**
      * Find next node with matching text
      */

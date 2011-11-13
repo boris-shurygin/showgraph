@@ -144,6 +144,9 @@ void MainWindow::textClicked( const QUrl & link)
 	if ( valid)
 	{
 		graph_view->findNodeById( node_id);
+	} else
+    {
+    	graph_view->findNodeByLabel( link.toString());
 	}
 }
 
@@ -422,14 +425,19 @@ void MainWindow::findNext()
 	if ( findWidget->mode() == FIND_MODE_NODE)
 	{
 		bool goodId = false;
-		int id = findStr.toInt( &goodId);
+		GNode *n = NULL;
+        int id = findStr.toInt( &goodId);
 		if ( goodId)
 		{
-            if ( isNullP( graph_view->findNodeById( id)))
-                p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+            n = graph_view->findNodeById( id);
         } else
-		{
-		    p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+        {
+            n = graph_view->findNodeByLabel( findStr);
+        } 
+        /* Set color of find textbox */
+        if ( isNullP( n))
+        {
+            p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
         }
 	} else if ( findWidget->mode() == FIND_MODE_TEXT)
 	{
