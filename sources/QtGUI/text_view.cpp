@@ -119,7 +119,7 @@ TextView::openFile( QString fileName)
      }
 }
 
-bool TextView::nodeIdClicked( QPoint pos, int *id_p)
+QString TextView::nodeIdClicked( QPoint pos)
 {
     QString str = anchorAt( pos);
         
@@ -133,29 +133,16 @@ bool TextView::nodeIdClicked( QPoint pos, int *id_p)
             cursor.movePosition( QTextCursor::NextCharacter);
             href = cursor.charFormat().anchorHref();
         }
-
-        if ( !href.isEmpty())
-        {
-            bool success = false;
-            int id = href.toInt( &success);
-            if ( success)
-            {
-                if ( isNotNullP( id_p))
-                {
-                    *id_p = id;
-                }
-                return true;
-            }
-        }
+        return href;
     }
-    return false;
+    return str;
 }
 
 void TextView::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu *menu;
-      
-    if ( nodeIdClicked( event->pos(), NULL))
+    QString id_clicked = nodeIdClicked( event->pos());
+    if ( !id_clicked.isEmpty())
     {
         menu = new QMenu( this);
         menu->addAction(tr("My Menu Item"));
@@ -172,11 +159,21 @@ void TextView::mouseReleaseEvent( QMouseEvent * ev)
     if ( ev->button() & Qt::LeftButton)
     {
         /** Change node */
-        int id = -1;
-        if ( nodeIdClicked( ev->pos(), &id))
+        QString href = nodeIdClicked( ev->pos());
+        
+        if ( !href.isEmpty())
         {
-            CFNode *new_node = 
-                static_cast< CFNode *>( node->graph()->view()->findNodeById( id));
+            CFNode *new_node;
+            bool success = false;
+            int id = href.toInt( &success);
+            if ( success)
+            {
+                new_node = static_cast< CFNode *>( node->graph()->view()->findNodeById( id));
+            } else
+            {
+                new_node = static_cast< CFNode *>( node->graph()->view()->findNodeByLabel( href));
+            }
+            
             if ( isNotNullP( new_node)) 
             {
                 if( !new_node->isTextShown())

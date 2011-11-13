@@ -620,8 +620,8 @@ void NodeItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 void NodeItem::focusOutEvent(QFocusEvent *event)
 {
     setTextInteractionFlags(Qt::NoTextInteraction);
-	//setFlag( ItemIsFocusable, false);
-    QGraphicsTextItem::focusOutEvent(event);
+	QGraphicsTextItem::focusOutEvent(event);
+    setFlag( ItemIsFocusable, true);
 }
 
 /**

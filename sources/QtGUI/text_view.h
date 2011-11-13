@@ -60,7 +60,7 @@ public:
      */
     void highlightText();
     
-    bool nodeIdClicked( QPoint pos, int *id_p);
+    QString nodeIdClicked( QPoint pos);
     void mouseReleaseEvent( QMouseEvent * mouseEvent);
     void mousePressEvent( QMouseEvent * mouseEvent);
     void contextMenuEvent(QContextMenuEvent *event);

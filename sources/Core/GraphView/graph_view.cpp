@@ -1281,6 +1281,39 @@ GNode* GraphView::findNodeById( int id)
 		return NULL;
 	}
 }
+
+/**
+ * Find node by its label
+ */
+GNode* GraphView::findNodeByLabel( QString label)
+{
+	GNode *n;
+	foreachNode( n, graph())
+	{
+        if ( !n->isEdgeControl()
+             && !n->isEdgeLabel())
+        {
+            QString node_label = n->item()->toPlainText();        
+            if ( node_label == label)
+                 break;
+        }
+	}
+	if ( isNotNullP( n))
+	{
+        if ( isContext())
+        {
+            graph()->emptySelection();
+            graph()->selectNode( n);
+            findContext();
+        }
+        focusOnNode( n, true);
+		return n;
+	} else
+	{
+		return NULL;
+	}
+}
+
 /** Repeat navigation event */
 void GraphView::replayNavigationEvent( NavEvent *ev)
 {
